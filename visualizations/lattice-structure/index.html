@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Build and explore a two-dimensional periodic lattice with custom translation vectors and basis atoms.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>2D Lattice Builder | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../js/main.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lattice-builder">Skip to lattice builder</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Visualization navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>MSE</strong>
+          <small>Learning Lab</small>
+        </span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="visualizer-shell" id="lattice-builder">
+    <header class="visualizer-intro">
+      <div>
+        <p class="eyebrow">Interactive visualization 01</p>
+        <h1>Build a two-dimensional lattice</h1>
+      </div>
+      <p>
+        Shape two translation vectors, place a basis, and watch one unit cell
+        repeat into a periodic structure. The symmetry report separates the
+        translation lattice from the atom-decorated pattern.
+      </p>
+    </header>
+
+    <div class="builder-layout">
+      <section class="canvas-panel" aria-labelledby="graphic-title">
+        <div class="canvas-heading">
+          <div>
+            <p class="panel-kicker">Graphic window</p>
+            <h2 id="graphic-title">Lattice construction</h2>
+          </div>
+          <div class="canvas-actions" aria-label="View actions">
+            <button class="small-button" id="fit-view" type="button">Fit view</button>
+            <button class="small-button" id="reset-example" type="button">Reset example</button>
+          </div>
+        </div>
+
+        <div class="canvas-frame" id="canvas-frame">
+          <canvas
+            id="lattice-canvas"
+            role="img"
+            aria-label="Interactive two-dimensional lattice. Drag the arrow tips to change the translation vectors, or use the controls beside the graphic."
+          >
+            Your browser does not support the canvas element.
+          </canvas>
+        </div>
+
+        <p class="canvas-help" id="canvas-help">
+          Drag the red and blue arrow tips to change <b>a<sub>1</sub></b> and
+          <b>a<sub>2</sub></b>. Select “Place atoms,” then click anywhere near
+          the origin to add the chosen atom type.
+        </p>
+        <p class="sr-only" id="screen-reader-summary" aria-live="polite"></p>
+      </section>
+
+      <aside class="control-panel" aria-label="Lattice controls">
+        <section class="control-step" aria-labelledby="vectors-title">
+          <div class="step-heading">
+            <span>1</span>
+            <div>
+              <p>Translation vectors</p>
+              <h2 id="vectors-title">Shape the unit cell</h2>
+            </div>
+          </div>
+          <p class="step-note">Drag either arrow tip or enter its Cartesian components.</p>
+
+          <div class="vector-editor vector-one">
+            <strong>a<sub>1</sub></strong>
+            <label>
+              <span>x</span>
+              <input id="a1-x" type="number" step="1" min="-300" max="300" inputmode="decimal">
+            </label>
+            <label>
+              <span>y</span>
+              <input id="a1-y" type="number" step="1" min="-300" max="300" inputmode="decimal">
+            </label>
+          </div>
+
+          <div class="vector-editor vector-two">
+            <strong>a<sub>2</sub></strong>
+            <label>
+              <span>x</span>
+              <input id="a2-x" type="number" step="1" min="-300" max="300" inputmode="decimal">
+            </label>
+            <label>
+              <span>y</span>
+              <input id="a2-y" type="number" step="1" min="-300" max="300" inputmode="decimal">
+            </label>
+          </div>
+
+          <p class="validation-message" id="vector-message" role="status"></p>
+        </section>
+
+        <section class="control-step" aria-labelledby="basis-title">
+          <div class="step-heading">
+            <span>2</span>
+            <div>
+              <p>Basis atoms</p>
+              <h2 id="basis-title">Decorate the lattice</h2>
+            </div>
+          </div>
+          <p class="step-note">
+            Use up to four atom types and 16 basis sites. Positions are
+            fractional, so atoms move with the unit cell when a vector changes.
+          </p>
+
+          <div class="type-list" id="type-list" aria-label="Atom types"></div>
+          <button class="small-button full-control" id="add-type" type="button">Add atom type</button>
+
+          <div class="mode-buttons" aria-label="Canvas editing mode">
+            <button class="mode-button is-active" id="place-mode" type="button" aria-pressed="true">Place atoms</button>
+            <button class="mode-button" id="move-mode" type="button" aria-pressed="false">Select / move</button>
+          </div>
+          <button class="small-button full-control add-site-control" id="add-origin-site" type="button">Add selected type at origin</button>
+
+          <div class="basis-heading">
+            <strong>Placed basis sites</strong>
+            <span id="basis-count">0 sites</span>
+          </div>
+          <div class="basis-list" id="basis-list"></div>
+
+          <div class="basis-actions">
+            <button class="small-button" id="delete-site" type="button" disabled>Delete selected</button>
+            <button class="small-button" id="clear-sites" type="button">Clear basis</button>
+          </div>
+        </section>
+
+        <section class="control-step" aria-labelledby="repeat-title">
+          <div class="step-heading">
+            <span>3</span>
+            <div>
+              <p>Repetition</p>
+              <h2 id="repeat-title">Extend the lattice</h2>
+            </div>
+          </div>
+
+          <label class="range-label" for="repeat-a1">
+            <span>Copies on each side along a<sub>1</sub></span>
+            <output id="repeat-a1-value" for="repeat-a1">3</output>
+          </label>
+          <input class="range-control" id="repeat-a1" type="range" min="1" max="8" step="1" value="3">
+
+          <label class="range-label" for="repeat-a2">
+            <span>Copies on each side along a<sub>2</sub></span>
+            <output id="repeat-a2-value" for="repeat-a2">3</output>
+          </label>
+          <input class="range-control" id="repeat-a2" type="range" min="1" max="8" step="1" value="3">
+        </section>
+
+        <section class="control-step symmetry-step" aria-labelledby="symmetry-title">
+          <div class="step-heading">
+            <span>4</span>
+            <div>
+              <p>Symmetry</p>
+              <h2 id="symmetry-title">Detected structure</h2>
+            </div>
+          </div>
+
+          <dl class="symmetry-results">
+            <div>
+              <dt>Translation lattice</dt>
+              <dd id="bravais-result">&mdash;</dd>
+            </div>
+            <div>
+              <dt>Decorated point group</dt>
+              <dd id="point-group-result">&mdash;</dd>
+            </div>
+          </dl>
+          <p class="symmetry-detail" id="symmetry-detail" aria-live="polite"></p>
+          <p class="tolerance-note">Approximate detection uses a 2.5% drawing tolerance, checks for a smaller basis-induced primitive cell, and does not assign a wallpaper group.</p>
+        </section>
+
+        <section class="control-step export-step" aria-labelledby="export-title">
+          <div class="step-heading">
+            <span>5</span>
+            <div>
+              <p>Export</p>
+              <h2 id="export-title">Save the figure</h2>
+            </div>
+          </div>
+          <button class="button primary export-button" id="download-png" type="button">Download current figure as PNG</button>
+          <p class="export-message" id="export-message" role="status"></p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Interactive lattice visualization &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
