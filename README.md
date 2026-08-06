@@ -80,6 +80,10 @@ deployment step. Deployment is intentionally not performed by local setup alone.
 Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS origin when publishing so social
 sharing metadata resolves to the deployed domain.
 
+The repository also contains a GitHub Pages workflow. Pushes to `main` use a
+Pages-specific Next.js static export and publish it at
+`https://muralipalla.github.io/MSE_web/`.
+
 ## Assessment note
 
 The included quiz system is designed for self-learning. Client-side questions and

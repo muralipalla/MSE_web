@@ -5,6 +5,8 @@ import { QuestionBankExplorer } from "@/components/quiz";
 import { QUESTION_BANK, QUIZ_TOPICS } from "@/content/questions/question-bank";
 import styles from "@/components/quiz/quiz.module.css";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Question bank",
   description:

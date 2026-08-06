@@ -3,6 +3,8 @@ import Link from "next/link";
 import DiffusionSimulator from "@/components/interactives/DiffusionSimulator";
 import styles from "./page.module.css";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Interactive simulations",
   description: "Run accessible materials science simulations, beginning with an Arrhenius and Fick-inspired diffusion profile model.",

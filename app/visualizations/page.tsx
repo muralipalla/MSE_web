@@ -5,6 +5,8 @@ import StressStrainExplorer from "@/components/interactives/StressStrainExplorer
 import UnitCellPreview from "@/components/interactives/UnitCellPreview";
 import styles from "./page.module.css";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Interactive visualizations",
   description: "Explore crystal structures, point defects and stress–strain response with accessible 2D and 3D learning tools.",

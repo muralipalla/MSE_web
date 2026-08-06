@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Teaching content",
   description: "Browse the Materials Science & Engineering curriculum by domain and topic.",

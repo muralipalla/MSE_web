@@ -3,10 +3,18 @@ import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import "./globals.css";
 
+const publicBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const configuredSiteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000/";
+const siteBaseUrl = new URL(
+  configuredSiteUrl.endsWith("/") ? configuredSiteUrl : `${configuredSiteUrl}/`,
+);
+const socialImageUrl = new URL("og.png", siteBaseUrl).toString();
+
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  metadataBase: siteBaseUrl,
   title: {
     default: "MSE Learning Lab",
     template: "%s | MSE Learning Lab",
@@ -15,8 +23,8 @@ export const metadata: Metadata = {
     "Learn materials science through clear teaching, interactive visualizations, simulations, and topic-built practice quizzes.",
   applicationName: "MSE Learning Lab",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: `${publicBasePath}/favicon.svg`,
+    shortcut: `${publicBasePath}/favicon.svg`,
   },
   openGraph: {
     title: "MSE Learning Lab",
@@ -25,7 +33,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.png",
+        url: socialImageUrl,
         width: 1200,
         height: 630,
         alt: "MSE Learning Lab crystal lattice, engineering materials, and learning graphs",
@@ -37,7 +45,7 @@ export const metadata: Metadata = {
     title: "MSE Learning Lab",
     description:
       "Explore how structure, processing, properties, and performance connect.",
-    images: ["/og.png"],
+    images: [socialImageUrl],
   },
 };
 

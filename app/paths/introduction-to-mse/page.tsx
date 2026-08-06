@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "Introduction to MSE learning path",
   description: "A ten-topic foundation path through Materials Science & Engineering.",
