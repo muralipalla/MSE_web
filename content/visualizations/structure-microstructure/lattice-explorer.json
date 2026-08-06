@@ -1,0 +1,14 @@
+{
+  "id": "viz.lattice-explorer",
+  "type": "visualization",
+  "slug": "lattice-explorer",
+  "title": "Crystal lattice explorer",
+  "summary": "Compare cubic lattices and introduce selected point defects.",
+  "domainId": "structure-microstructure",
+  "topicIds": ["crystal-structures", "defects-microstructure"],
+  "outcomeIds": ["lo.crystal.01", "lo.defects.01"],
+  "level": "foundation",
+  "estimatedMinutes": 12,
+  "status": "published",
+  "version": 1
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "id": "foundations",
+    "title": "Foundations",
+    "summary": "The materials paradigm, atomic bonding, units, and scientific tools.",
+    "order": 1
+  },
+  {
+    "id": "structure-microstructure",
+    "title": "Structure and Microstructure",
+    "summary": "Crystal structures, defects, grains, phases, and structure measurement.",
+    "order": 2
+  },
+  {
+    "id": "thermodynamics-kinetics",
+    "title": "Thermodynamics and Kinetics",
+    "summary": "Free energy, diffusion, equilibrium, phase diagrams, and transformations.",
+    "order": 3
+  },
+  {
+    "id": "properties-performance",
+    "title": "Properties and Performance",
+    "summary": "Mechanical, thermal, electrical, optical, magnetic, and degradation behavior.",
+    "order": 4
+  },
+  {
+    "id": "materials-classes",
+    "title": "Materials Classes",
+    "summary": "Metals, ceramics, polymers, composites, electronic materials, and biomaterials.",
+    "order": 5
+  },
+  {
+    "id": "processing-characterization",
+    "title": "Processing and Characterization",
+    "summary": "Manufacturing routes, testing, microscopy, diffraction, and spectroscopy.",
+    "order": 6
+  },
+  {
+    "id": "design-sustainability",
+    "title": "Materials Design and Sustainability",
+    "summary": "Selection, trade-offs, lifecycle thinking, circularity, and responsible design.",
+    "order": 7
+  }
+]

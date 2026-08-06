@@ -1,0 +1,26 @@
+[
+  {
+    "term": "Atomic packing factor",
+    "slug": "atomic-packing-factor",
+    "definition": "The fraction of a unit-cell volume occupied by idealized atoms.",
+    "topicIds": ["crystal-structures"]
+  },
+  {
+    "term": "Dislocation",
+    "slug": "dislocation",
+    "definition": "A line defect associated with local lattice distortion and plastic deformation.",
+    "topicIds": ["defects-microstructure", "mechanical-properties", "strengthening"]
+  },
+  {
+    "term": "Diffusion coefficient",
+    "slug": "diffusion-coefficient",
+    "definition": "A proportionality constant describing the rate of species transport by diffusion.",
+    "topicIds": ["diffusion"]
+  },
+  {
+    "term": "Toughness",
+    "slug": "toughness",
+    "definition": "The energy per unit volume a material absorbs before fracture.",
+    "topicIds": ["mechanical-properties", "failure"]
+  }
+]

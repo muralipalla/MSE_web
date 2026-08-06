@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mse-learning-lab.local/schemas/question.schema.json",
+  "title": "MSE formative question",
+  "type": "object",
+  "required": ["id", "version", "status", "primaryTopicId", "topicIds", "outcomeIds", "type", "difficulty", "stem", "answer", "feedback"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^q\\.[a-z0-9.-]+$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["draft", "reviewed", "published", "retired"] },
+    "primaryTopicId": { "type": "string" },
+    "topicIds": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "outcomeIds": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "type": { "enum": ["single-choice", "multiple-select", "true-false", "numeric", "matching", "ordering"] },
+    "difficulty": { "enum": ["foundation", "intermediate", "advanced"] },
+    "bloomLevel": { "enum": ["remember", "understand", "apply", "analyze", "evaluate", "create"] },
+    "estimatedSeconds": { "type": "integer", "minimum": 10 },
+    "stem": { "type": "string", "minLength": 5 },
+    "choices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "text"],
+        "properties": {
+          "id": { "type": "string" },
+          "text": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "answer": { "type": "object" },
+    "feedback": {
+      "type": "object",
+      "required": ["explanation"],
+      "properties": {
+        "explanation": { "type": "string", "minLength": 20 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
