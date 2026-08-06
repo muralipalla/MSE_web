@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Run an illustrative uniaxial tension test with ASTM-proportioned specimens, a model UTM, live stress-strain plotting, measurements, and a short quiz.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Uniaxial Tension Test | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../js/main.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#tension-lab">Skip to tension test</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Simulation navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>MSE</strong>
+          <small>Learning Lab</small>
+        </span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="tension-shell" id="tension-lab">
+    <header class="simulation-intro">
+      <div>
+        <p class="eyebrow">Interactive simulation 01</p>
+        <h1>Uniaxial Tension Test</h1>
+      </div>
+      <div class="intro-copy">
+        <p>
+          Load a specimen into a model universal testing machine, prescribe the
+          crosshead rate, and follow uniform deformation, localization, and
+          fracture while the engineering stress&ndash;strain curve is drawn live.
+        </p>
+        <p class="accuracy-note">
+          Numerical readings follow the selected idealized curve. Deformation
+          in the machine view is magnified, and classroom playback is time-scaled.
+        </p>
+      </div>
+    </header>
+
+    <section class="lab-panel setup-panel" aria-labelledby="setup-title">
+      <div class="panel-heading">
+        <div class="step-number" aria-hidden="true">1</div>
+        <div>
+          <p class="panel-kicker">Test setup</p>
+          <h2 id="setup-title">Choose and load a specimen</h2>
+        </div>
+      </div>
+
+      <div class="setup-grid">
+        <label class="field-label" for="material-select">
+          <span>Sample</span>
+          <select id="material-select">
+            <option value="mild-steel">ASTM A36 mild steel</option>
+            <option value="copper">Annealed C11000 copper</option>
+            <option value="high-speed-steel">M2 high-speed steel</option>
+            <option value="alumina">99.5% alumina ceramic</option>
+            <option value="polycarbonate">Polycarbonate</option>
+          </select>
+        </label>
+
+        <label class="field-label" for="rate-input">
+          <span>Crosshead displacement rate</span>
+          <span class="input-with-unit">
+            <input id="rate-input" type="number" min="0.1" max="10" step="0.025" value="0.375" inputmode="decimal" list="rate-suggestions">
+            <span>mm/min</span>
+          </span>
+        </label>
+        <datalist id="rate-suggestions">
+          <option value="0.1"></option>
+          <option value="0.125"></option>
+          <option value="0.35"></option>
+          <option value="0.375"></option>
+          <option value="1"></option>
+          <option value="5"></option>
+          <option value="50"></option>
+          <option value="500"></option>
+        </datalist>
+
+        <div class="setup-reading" aria-live="polite">
+          <span>Nominal gauge strain rate</span>
+          <strong id="strain-rate-value">2.50 &times; 10<sup>&minus;4</sup> s<sup>&minus;1</sup></strong>
+          <small id="rate-guidance">Illustrative quasi-static metal rate</small>
+        </div>
+
+        <div class="setup-actions" aria-label="Test controls">
+          <button class="button primary" id="load-specimen" type="button">Load specimen</button>
+          <button class="button secondary" id="start-test" type="button" disabled>Start test</button>
+          <button class="button secondary" id="pause-test" type="button" disabled>Pause</button>
+          <button class="text-button" id="reset-test" type="button" disabled>Reset / unload</button>
+          <div class="playback-control" role="group" aria-labelledby="playback-control-label">
+            <span id="playback-control-label">Animation speed</span>
+            <button class="speed-button" id="slower-playback" type="button">Slower</button>
+            <output id="playback-speed-value" aria-live="polite">1&times;</output>
+            <button class="speed-button" id="faster-playback" type="button">Faster</button>
+          </div>
+          <p class="playback-speed-help" id="playback-speed-help">
+            Use 0.01&times; for initial elastic data or 0.1&times; for general recording; speed can change during the test.
+          </p>
+        </div>
+      </div>
+
+      <div class="specimen-summary" id="specimen-summary">
+        <div>
+          <span>Geometry basis</span>
+          <strong id="standard-name">ASTM E8/E8M subsize, flat</strong>
+        </div>
+        <div>
+          <span>Displayed dimensions</span>
+          <strong id="dimension-summary">100 &times; 10 &times; 3 mm; 25 mm gauge; 6 mm reduced width</strong>
+        </div>
+        <div>
+          <span>Original area, A<sub>0</sub></span>
+          <strong id="area-value">18.0 mm<sup>2</sup></strong>
+        </div>
+        <div>
+          <span>Expected sequence</span>
+          <strong id="sequence-value">Elastic &rarr; yield &rarr; hardening &rarr; necking &rarr; fracture</strong>
+        </div>
+      </div>
+      <p class="material-note" id="material-note"></p>
+    </section>
+
+    <div class="test-status" aria-live="polite" aria-atomic="true">
+      <div>
+        <span>Machine state</span>
+        <strong id="machine-state">Waiting for specimen</strong>
+      </div>
+      <p id="playback-note">Select a sample, set its rate, then load it into the grips.</p>
+    </div>
+
+    <section class="workbench" aria-label="Universal testing machine and live graph">
+      <article class="lab-panel machine-panel" aria-labelledby="machine-title">
+        <div class="panel-heading compact-heading">
+          <div class="step-number" aria-hidden="true">2</div>
+          <div>
+            <p class="panel-kicker">Model UTM</p>
+            <h2 id="machine-title">Specimen deformation</h2>
+          </div>
+        </div>
+
+        <div class="utm-frame">
+          <svg id="utm-svg" viewBox="0 0 480 520" role="img" aria-labelledby="utm-title utm-description">
+            <title id="utm-title">Universal testing machine with a tensile specimen</title>
+            <desc id="utm-description">The machine is empty. Load a specimen to begin.</desc>
+            <defs>
+              <linearGradient id="steel-gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#c7d1d8"></stop>
+                <stop offset="0.45" stop-color="#f4f7f8"></stop>
+                <stop offset="1" stop-color="#9caab4"></stop>
+              </linearGradient>
+              <linearGradient id="specimen-gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#b6311c"></stop>
+                <stop offset="0.48" stop-color="#f06a49"></stop>
+                <stop offset="1" stop-color="#9c2615"></stop>
+              </linearGradient>
+            </defs>
+
+            <rect class="machine-backdrop" x="22" y="18" width="436" height="474" rx="22"></rect>
+            <rect class="machine-column" x="46" y="62" width="34" height="386" rx="10"></rect>
+            <rect class="machine-column" x="400" y="62" width="34" height="386" rx="10"></rect>
+            <rect class="machine-base" x="28" y="438" width="424" height="34" rx="12"></rect>
+            <rect class="machine-top" x="28" y="42" width="424" height="34" rx="12"></rect>
+
+            <g id="crosshead-group">
+              <rect class="crosshead" x="76" y="91" width="328" height="42" rx="9"></rect>
+              <rect class="load-cell" x="216" y="129" width="48" height="34" rx="8"></rect>
+              <text class="machine-label" x="240" y="116" text-anchor="middle">MOVING CROSSHEAD</text>
+            </g>
+
+            <g id="upper-grip-group">
+              <path class="grip" d="M196 160 H284 L269 201 H211 Z"></path>
+              <rect class="grip-jaw" x="218" y="184" width="44" height="34" rx="5"></rect>
+            </g>
+            <g id="lower-grip-group">
+              <path class="grip" d="M211 397 H269 L284 438 H196 Z"></path>
+              <rect class="grip-jaw" x="218" y="380" width="44" height="34" rx="5"></rect>
+            </g>
+
+            <path id="specimen-full" class="specimen" d=""></path>
+            <path id="specimen-top" class="specimen" d="" hidden></path>
+            <path id="specimen-bottom" class="specimen" d="" hidden></path>
+            <g id="fracture-mark" hidden aria-hidden="true">
+              <path d="M220 295 L231 286 L239 298 L248 285 L260 296"></path>
+              <circle cx="212" cy="288" r="3"></circle>
+              <circle cx="269" cy="291" r="2.4"></circle>
+            </g>
+
+            <line class="gauge-mark" id="gauge-mark-top" x1="222" y1="253" x2="258" y2="253"></line>
+            <line class="gauge-mark" id="gauge-mark-bottom" x1="222" y1="347" x2="258" y2="347"></line>
+            <path class="force-arrow" d="M110 223 V171 M110 171 l-8 13 M110 171 l8 13"></path>
+            <path class="force-arrow" d="M110 333 V385 M110 385 l-8 -13 M110 385 l8 -13"></path>
+            <text class="force-label" x="95" y="282" text-anchor="middle">F</text>
+            <text class="material-label" id="utm-material-label" x="240" y="486" text-anchor="middle">No specimen loaded</text>
+          </svg>
+        </div>
+
+        <p class="stage-explanation" id="stage-explanation">
+          The upper crosshead will pull the specimen while the lower grip remains fixed.
+        </p>
+      </article>
+
+      <article class="lab-panel graph-panel" aria-labelledby="graph-title">
+        <div class="panel-heading compact-heading">
+          <div class="step-number" aria-hidden="true">3</div>
+          <div>
+            <p class="panel-kicker">Live result</p>
+            <h2 id="graph-title">Engineering stress&ndash;strain</h2>
+          </div>
+        </div>
+
+        <div class="graph-frame" id="graph-frame">
+          <canvas
+            id="stress-strain-chart"
+            role="img"
+            aria-label="Live engineering stress versus engineering strain graph. The graph is empty until the test starts."
+          >
+            Your browser does not support the canvas element.
+          </canvas>
+        </div>
+        <p class="graph-caption">
+          Engineering stress uses the original area A<sub>0</sub>; engineering
+          strain uses the original gauge length L<sub>0</sub>.
+        </p>
+      </article>
+    </section>
+
+    <section class="live-readings" aria-labelledby="readings-title">
+      <h2 class="sr-only" id="readings-title">Live test readings</h2>
+      <dl>
+        <div><dt>Test time</dt><dd id="time-value">0.00 s</dd></div>
+        <div><dt>Extension, &Delta;L</dt><dd id="extension-value">0.000 mm</dd></div>
+        <div><dt>Load, F</dt><dd id="load-value">0.000 kN</dd></div>
+        <div><dt>Engineering strain</dt><dd id="strain-value">0.000%</dd></div>
+        <div><dt>Engineering stress</dt><dd id="stress-value">0.0 MPa</dd></div>
+        <div><dt>Deformation stage</dt><dd id="stage-value">Not loaded</dd></div>
+      </dl>
+    </section>
+
+    <section class="lab-panel measurement-panel" aria-labelledby="measurement-title">
+      <div class="panel-heading">
+        <div class="step-number" aria-hidden="true">4</div>
+        <div>
+          <p class="panel-kicker">Measurements</p>
+          <h2 id="measurement-title">Record observations</h2>
+        </div>
+      </div>
+      <div class="measurement-actions">
+        <button class="button primary" id="record-reading" type="button" disabled>Record current reading</button>
+        <button class="button secondary" id="download-csv" type="button" disabled>Download recorded CSV</button>
+        <button class="button secondary" id="download-calculation-csv" type="button" disabled>Download calculation CSV</button>
+        <button class="text-button" id="clear-readings" type="button" disabled>Clear readings</button>
+        <span id="measurement-message" role="status"></span>
+      </div>
+      <p class="measurement-guidance">
+        Suggested workflow: record zero before starting, use 0.01&times; for two
+        or more elastic readings, then increase playback and sample across the
+        full curve. After fracture, download the calculation CSV for the
+        numerical questions; it always includes elastic points, UTS, and fracture.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <caption class="sr-only">Recorded uniaxial tension test measurements</caption>
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Time (s)</th>
+              <th scope="col">Extension (mm)</th>
+              <th scope="col">Load (kN)</th>
+              <th scope="col">Strain (%)</th>
+              <th scope="col">Stress (MPa)</th>
+              <th scope="col">Stage</th>
+            </tr>
+          </thead>
+          <tbody id="measurement-body">
+            <tr class="empty-row"><td colspan="7">No readings recorded yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lab-panel quiz-panel is-locked" id="quiz-panel" aria-labelledby="quiz-title">
+      <div class="panel-heading">
+        <div class="step-number" aria-hidden="true">5</div>
+        <div>
+          <p class="panel-kicker">Post-test check</p>
+          <h2 id="quiz-title">Interpret the experiment</h2>
+        </div>
+      </div>
+      <p class="quiz-lock-message" id="quiz-lock-message">
+        Complete one test to unlock four numerical questions and the calculation
+        CSV used to check them.
+      </p>
+
+      <form id="quiz-form">
+        <fieldset data-metric="modulus" disabled>
+          <legend>1. Calculate Young&rsquo;s modulus from the initial linear portion of the data.</legend>
+          <p class="calculation-hint">Use E = &Delta;&sigma; / &Delta;&epsilon;. Enter the result in GPa.</p>
+          <label class="numeric-answer" for="answer-modulus">
+            <span>Your answer</span>
+            <span class="answer-input">
+              <input id="answer-modulus" name="q1" type="number" min="0" step="any" inputmode="decimal">
+              <span>GPa</span>
+            </span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset data-metric="ultimate" disabled>
+          <legend>2. Determine the ultimate tensile strength from the maximum engineering stress.</legend>
+          <p class="calculation-hint">Find the greatest stress value in your recorded data or curve.</p>
+          <label class="numeric-answer" for="answer-ultimate">
+            <span>Your answer</span>
+            <span class="answer-input">
+              <input id="answer-ultimate" name="q2" type="number" min="0" step="any" inputmode="decimal">
+              <span>MPa</span>
+            </span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset data-metric="resilience" disabled>
+          <legend>3. Calculate the approximate modulus of resilience.</legend>
+          <p class="calculation-hint">
+            Integrate stress&ndash;strain data up to the elastic limit. For a
+            linear elastic region, U<sub>r</sub> = &sigma;<sup>2</sup> / (2E).
+          </p>
+          <label class="numeric-answer" for="answer-resilience">
+            <span>Your answer</span>
+            <span class="answer-input">
+              <input id="answer-resilience" name="q3" type="number" min="0" step="any" inputmode="decimal">
+              <span>MJ/m<sup>3</sup></span>
+            </span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset data-metric="toughness" disabled>
+          <legend>4. Estimate the tensile toughness from the complete engineering stress&ndash;strain data.</legend>
+          <p class="calculation-hint">
+            Use the trapezoidal rule to find the total area under the curve up to fracture.
+          </p>
+          <label class="numeric-answer" for="answer-toughness">
+            <span>Your answer</span>
+            <span class="answer-input">
+              <input id="answer-toughness" name="q4" type="number" min="0" step="any" inputmode="decimal">
+              <span>MJ/m<sup>3</sup></span>
+            </span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <div class="quiz-actions">
+          <button class="button primary" id="check-quiz" type="submit" disabled>Check answers</button>
+          <p id="quiz-result" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="lab-panel reference-panel" aria-labelledby="reference-title">
+      <div class="panel-heading">
+        <div class="step-number reference-number" aria-hidden="true">i</div>
+        <div>
+          <p class="panel-kicker">Scientific basis</p>
+          <h2 id="reference-title">Geometry, data, and limits</h2>
+        </div>
+      </div>
+      <p>
+        The specimen outlines preserve the main proportions of common test
+        specimens. The curves join published endpoint properties with clearly
+        idealized interpolation so that the deformation stages can be explored.
+        They are educational examples, not material certificates or design data.
+      </p>
+
+      <details>
+        <summary>Standards and specimen proportions</summary>
+        <ul>
+          <li>
+            Metals use the 100 mm overall, 25 mm gauge, 6 mm reduced-width
+            subsize outline summarized for
+            <a href="https://store.astm.org/e0008_e0008m-25.html">ASTM E8/E8M-25</a>
+            and reproduced by
+            <a href="https://www.zwickroell.com/industries/metals/metals-standards/metals-tensile-test-astm-e8/">ZwickRoell</a>;
+            3 mm thickness is an illustrative choice.
+          </li>
+          <li>
+            Polycarbonate uses ASTM D638 Type I proportions: 165 mm overall,
+            50 mm gauge, 13 mm narrow width, and 3.2 mm illustrative thickness.
+            See <a href="https://store.astm.org/d0638-22.html">ASTM D638-22</a>
+            and <a href="https://www.instron.com/en/testing-solutions/astm-standards/astm-d638/">Instron&rsquo;s dimension summary</a>.
+          </li>
+          <li>
+            Alumina uses a C1273-inspired cylindrical button-head outline,
+            160 mm overall with a 35 mm gauge and 6.35 mm gauge diameter.
+            <a href="https://store.astm.org/c1273-18r24.html">ASTM C1273-18(2024)</a>
+            permits several suggested ceramic geometries and emphasizes alignment
+            and flaw statistics; this drawing is not a compliance specimen.
+          </li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>Representative material property sources</summary>
+        <ul>
+          <li>
+            A36 steel: 250 MPa minimum yield, 400&ndash;550 MPa tensile range,
+            and minimum elongation from
+            <a href="https://www.ssab.com/en-us/brands-and-products/commercial-steel/structural-steel/astm-a36">SSAB ASTM A36</a>;
+            200 GPa modulus from the
+            <a href="https://www.aisc.org/globalassets/aisc/publications/standards/a360-16w-rev-june-2019.pdf">AISC Specification</a>.
+          </li>
+          <li>
+            Annealed C11000 copper: modulus, 0.5%-extension yield, tensile
+            strength, and elongation from the
+            <a href="https://alloys.copper.org/alloy/C11000">Copper Development Association</a>.
+          </li>
+          <li>
+            Heat-treated M2 HSS: strength and elongation from
+            <a href="https://www.metalpowder.sandvik/en/products/metal-powder-alloys/tool-and-high-speed-steel/osprey-m2/?html-to-pdf=true">Sandvik Osprey M2</a>;
+            219 GPa modulus from the
+            <a href="https://www.voestalpine.com/highperformancemetals/international/app/uploads/sites/249/productdb/api/s600_en_gb.pdf">B&ouml;hler S600 datasheet</a>.
+          </li>
+          <li>
+            AD-995 alumina: 262 MPa representative direct tensile strength from
+            <a href="https://coorstekwwwtest.coorstek.com/media/4218/ceramic-sensor-components.pdf">CoorsTek ceramic sensor data</a>
+            and 370&ndash;380 GPa modulus from
+            <a href="https://www2.coorstek.com/media/8909/advanced-alumina-semiconductor-specific-02022.pdf">CoorsTek advanced alumina data</a>.
+          </li>
+          <li>
+            Makrolon 2405 polycarbonate: 2.4 GPa modulus, 65 MPa yield at 6%,
+            and 125% strain at break from the
+            <a href="https://www.albis.com/en/products/download/doc/en/SI/covestro/Makrolon2405.pdf">Covestro-authored datasheet</a>.
+          </li>
+        </ul>
+      </details>
+
+      <p class="standards-disclaimer">
+        Specimen outlines are ASTM-proportioned illustrations only. Consult the
+        current purchased standard and applicable product specification for
+        tolerances, preparation, conditioning, alignment, strain measurement,
+        safety, and rate. Real polymers and ceramics can be strongly rate- and
+        environment-sensitive; this simulation changes elapsed time, not the
+        selected representative curve.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Illustrative uniaxial tension test &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
