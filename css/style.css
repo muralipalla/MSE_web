@@ -521,6 +521,18 @@ summary:focus-visible {
   margin-top: 1rem;
 }
 
+.lab-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.lab-card-actions .button {
+  flex: 1 1 8.5rem;
+  margin-top: 0;
+}
+
 /* 6. Practice section and footer */
 .practice-grid,
 .lesson-columns {
