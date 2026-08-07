@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Run virtual Brinell and Vickers hardness tests, measure microscopic indentations, calculate hardness, and estimate repeatability uncertainty.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Brinell and Vickers Hardness Test | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js" defer></script>
+  <script src="app.js?v=1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#hardness-lab">Skip to hardness test</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Simulation navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>MSE</strong>
+          <small>Learning Lab</small>
+        </span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="hardness-shell" id="hardness-lab">
+    <header class="simulation-intro">
+      <div>
+        <p class="eyebrow">Interactive simulation 02</p>
+        <h1>Hardness Test</h1>
+        <p class="method-title">Brinell &amp; Vickers indentation</p>
+      </div>
+      <div class="intro-copy">
+        <p>
+          Produce an indentation, inspect it under a virtual microscope, place
+          calibrated measuring lines, and calculate hardness from your own
+          recorded dimensions.
+        </p>
+        <p class="accuracy-note">
+          Each specimen contains small, repeatable local variations. Complete
+          at least three locations to estimate mean hardness and repeatability uncertainty.
+        </p>
+      </div>
+    </header>
+
+    <section class="lab-panel setup-panel" aria-labelledby="setup-title">
+      <div class="panel-heading">
+        <div class="step-number" aria-hidden="true">1</div>
+        <div>
+          <p class="panel-kicker">Test setup</p>
+          <h2 id="setup-title">Choose the method and specimen</h2>
+        </div>
+      </div>
+
+      <div class="setup-grid">
+        <label class="field-label" for="method-select">
+          <span>Test method</span>
+          <select id="method-select">
+            <option value="brinell">Brinell (HBW)</option>
+            <option value="vickers">Vickers (HV)</option>
+          </select>
+        </label>
+
+        <label class="field-label" for="material-select">
+          <span>Specimen</span>
+          <select id="material-select"></select>
+        </label>
+
+        <label class="field-label" for="load-select">
+          <span>Test load</span>
+          <select id="load-select"></select>
+        </label>
+
+        <label class="field-label" for="dwell-select">
+          <span>Dwell time</span>
+          <select id="dwell-select">
+            <option value="10">10 s</option>
+            <option value="15">15 s</option>
+          </select>
+        </label>
+
+        <label class="field-label" for="reading-count-select">
+          <span>Target readings</span>
+          <select id="reading-count-select">
+            <option value="3">3 readings &mdash; recommended</option>
+            <option value="4">4 readings</option>
+            <option value="5">5 readings</option>
+          </select>
+        </label>
+
+        <label class="field-label" for="playback-select">
+          <span>Animation speed</span>
+          <select id="playback-select">
+            <option value="0.5">0.5&times;</option>
+            <option value="1" selected>1&times;</option>
+            <option value="2">2&times;</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="condition-grid" aria-live="polite">
+        <div>
+          <span>Indenter</span>
+          <strong id="indenter-summary">10 mm tungsten-carbide ball</strong>
+        </div>
+        <div>
+          <span>Test notation</span>
+          <strong id="notation-summary">HBW 10/500</strong>
+        </div>
+        <div>
+          <span>Applied force</span>
+          <strong id="force-summary">4.903 kN (500 kgf)</strong>
+        </div>
+        <div>
+          <span>Microscope least count</span>
+          <strong id="resolution-summary">0.01 mm</strong>
+        </div>
+      </div>
+      <p class="material-note" id="material-note"></p>
+
+      <div class="location-section">
+        <div>
+          <p class="location-label">Choose a test location</p>
+          <p class="location-help">Used locations remain marked so repeat indentations are kept apart.</p>
+        </div>
+        <div class="specimen-map" id="specimen-map" aria-label="Specimen test locations">
+          <span class="map-edge-label" aria-hidden="true">Polished specimen surface</span>
+          <button type="button" class="location-point is-selected" data-location="A" style="--location-x: 19%; --location-y: 32%;" aria-pressed="true">A</button>
+          <button type="button" class="location-point" data-location="B" style="--location-x: 50%; --location-y: 25%;" aria-pressed="false">B</button>
+          <button type="button" class="location-point" data-location="C" style="--location-x: 80%; --location-y: 34%;" aria-pressed="false">C</button>
+          <button type="button" class="location-point" data-location="D" style="--location-x: 27%; --location-y: 72%;" aria-pressed="false">D</button>
+          <button type="button" class="location-point" data-location="E" style="--location-x: 58%; --location-y: 68%;" aria-pressed="false">E</button>
+          <button type="button" class="location-point" data-location="F" style="--location-x: 84%; --location-y: 73%;" aria-pressed="false">F</button>
+        </div>
+      </div>
+
+      <div class="setup-actions" aria-label="Hardness test controls">
+        <button class="button primary" id="mount-specimen" type="button">Mount specimen</button>
+        <button class="button secondary" id="start-indentation" type="button" disabled>Make indentation</button>
+        <button class="button secondary" id="pause-animation" type="button" disabled>Pause animation</button>
+        <button class="text-button" id="reset-experiment" type="button" disabled>Reset experiment</button>
+      </div>
+    </section>
+
+    <div class="test-status" aria-live="polite" aria-atomic="true">
+      <div>
+        <span>Machine state</span>
+        <strong id="machine-state">Waiting for specimen</strong>
+      </div>
+      <p id="status-copy">Choose a method, specimen, and test location, then mount the specimen.</p>
+    </div>
+
+    <section class="workbench" aria-label="Hardness tester and microscope">
+      <article class="lab-panel tester-panel" aria-labelledby="tester-title">
+        <div class="panel-heading compact-heading">
+          <div class="step-number" aria-hidden="true">2</div>
+          <div>
+            <p class="panel-kicker">Model hardness tester</p>
+            <h2 id="tester-title">Loading and recovery</h2>
+          </div>
+        </div>
+
+        <div class="tester-frame">
+          <svg id="tester-svg" viewBox="0 0 600 500" role="img" aria-labelledby="tester-svg-title tester-svg-description">
+            <title id="tester-svg-title">Hardness testing machine cross-section</title>
+            <desc id="tester-svg-description">The specimen is not mounted.</desc>
+            <defs>
+              <linearGradient id="tester-metal-gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#718392"></stop>
+                <stop offset="0.48" stop-color="#eef3f5"></stop>
+                <stop offset="1" stop-color="#556675"></stop>
+              </linearGradient>
+              <linearGradient id="sample-gradient" x1="0" y1="0" x2="0" y2="1">
+                <stop id="sample-stop-light" offset="0" stop-color="#d8dee2"></stop>
+                <stop id="sample-stop-dark" offset="1" stop-color="#75828c"></stop>
+              </linearGradient>
+              <radialGradient id="plastic-gradient">
+                <stop offset="0" stop-color="#f8a27e" stop-opacity="0.72"></stop>
+                <stop offset="1" stop-color="#f05030" stop-opacity="0"></stop>
+              </radialGradient>
+            </defs>
+
+            <rect class="tester-backdrop" x="20" y="18" width="560" height="456" rx="24"></rect>
+            <rect class="tester-column" x="52" y="42" width="48" height="386" rx="14"></rect>
+            <rect class="tester-column" x="500" y="42" width="48" height="386" rx="14"></rect>
+            <rect class="tester-crosshead" x="84" y="50" width="432" height="55" rx="14"></rect>
+            <rect class="tester-load-cell" x="263" y="100" width="74" height="58" rx="12"></rect>
+            <text class="tester-label" x="300" y="135" text-anchor="middle">LOAD CELL</text>
+
+            <g id="indenter-group">
+              <rect class="indenter-shaft" x="278" y="146" width="44" height="64" rx="8"></rect>
+              <circle id="ball-indenter" class="ball-indenter" cx="300" cy="226" r="22"></circle>
+              <path id="vickers-indenter" class="vickers-indenter" d="M266 204 H334 L300 246 Z" hidden></path>
+            </g>
+
+            <ellipse id="plastic-zone" class="plastic-zone" cx="300" cy="331" rx="75" ry="38"></ellipse>
+            <path id="sample-surface" class="sample-surface" d="M105 318 H495 V430 H105 Z"></path>
+            <path id="residual-indent" class="residual-indent" d="M270 318 Q300 338 330 318" hidden></path>
+            <rect class="anvil" x="82" y="429" width="436" height="30" rx="10"></rect>
+
+            <g class="force-meter" aria-hidden="true">
+              <rect x="120" y="130" width="28" height="148" rx="12"></rect>
+              <rect id="force-fill" x="124" y="274" width="20" height="0" rx="8"></rect>
+              <text x="134" y="300" text-anchor="middle">F</text>
+            </g>
+
+            <text id="tester-method-label" class="method-label" x="300" y="458" text-anchor="middle">No specimen mounted</text>
+            <text id="dwell-counter" class="dwell-counter" x="300" y="285" text-anchor="middle"></text>
+          </svg>
+        </div>
+        <p class="stage-explanation" id="stage-explanation">
+          The indenter will approach the polished surface, apply the selected force, dwell, and unload.
+        </p>
+      </article>
+
+      <article class="lab-panel microscope-panel" aria-labelledby="microscope-title">
+        <div class="panel-heading compact-heading">
+          <div class="step-number" aria-hidden="true">3</div>
+          <div>
+            <p class="panel-kicker">Optical measurement</p>
+            <h2 id="microscope-title">Microscope and calipers</h2>
+          </div>
+        </div>
+
+        <div class="microscope-frame">
+          <svg id="microscope-svg" viewBox="0 0 600 430" role="img" aria-labelledby="microscope-svg-title microscope-svg-description">
+            <title id="microscope-svg-title">Microscope view of the indentation</title>
+            <desc id="microscope-svg-description">Make an indentation to activate the microscope.</desc>
+            <defs>
+              <filter id="focus-blur" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur id="focus-blur-node" stdDeviation="0"></feGaussianBlur>
+              </filter>
+              <radialGradient id="brinell-indent-gradient">
+                <stop offset="0" stop-color="#263747"></stop>
+                <stop offset="0.65" stop-color="#71808b"></stop>
+                <stop offset="0.92" stop-color="#d4dadd"></stop>
+                <stop offset="1" stop-color="#4d5c67"></stop>
+              </radialGradient>
+              <linearGradient id="vickers-indent-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#1f3040"></stop>
+                <stop offset="0.48" stop-color="#81909a"></stop>
+                <stop offset="0.52" stop-color="#dbe0e3"></stop>
+                <stop offset="1" stop-color="#304251"></stop>
+              </linearGradient>
+              <clipPath id="microscope-clip">
+                <circle cx="300" cy="206" r="188"></circle>
+              </clipPath>
+            </defs>
+
+            <circle class="lens-rim" cx="300" cy="206" r="202"></circle>
+            <circle id="lens-surface" class="lens-surface" cx="300" cy="206" r="188"></circle>
+            <g class="surface-texture" clip-path="url(#microscope-clip)" aria-hidden="true">
+              <path d="M110 145 Q190 108 263 144 T490 137"></path>
+              <path d="M118 238 Q202 194 290 232 T486 224"></path>
+              <path d="M142 320 Q229 280 312 322 T467 307"></path>
+              <path d="M175 44 Q212 130 166 214 T191 371"></path>
+              <path d="M400 35 Q356 123 410 205 T394 378"></path>
+              <circle cx="206" cy="105" r="5"></circle>
+              <circle cx="433" cy="281" r="4"></circle>
+              <circle cx="155" cy="285" r="3"></circle>
+            </g>
+
+            <g id="micrograph-group" filter="url(#focus-blur)">
+              <ellipse id="brinell-impression" class="brinell-impression" cx="300" cy="206" rx="0" ry="0" hidden></ellipse>
+              <path id="vickers-impression" class="vickers-impression" d="" hidden></path>
+              <ellipse id="pileup-ring" class="pileup-ring" cx="300" cy="206" rx="0" ry="0" hidden></ellipse>
+            </g>
+
+            <g id="measurement-overlay" class="measurement-overlay" hidden>
+              <line id="measure-horizontal" class="measure-line horizontal" x1="220" y1="206" x2="380" y2="206"></line>
+              <line id="measure-vertical" class="measure-line vertical" x1="300" y1="126" x2="300" y2="286"></line>
+              <circle id="handle-left" class="measure-handle horizontal-handle" data-handle="left" cx="220" cy="206" r="13"></circle>
+              <circle id="handle-right" class="measure-handle horizontal-handle" data-handle="right" cx="380" cy="206" r="13"></circle>
+              <circle id="handle-top" class="measure-handle vertical-handle" data-handle="top" cx="300" cy="126" r="13"></circle>
+              <circle id="handle-bottom" class="measure-handle vertical-handle" data-handle="bottom" cx="300" cy="286" r="13"></circle>
+              <text id="horizontal-tool-label" class="tool-label" x="198" y="202" text-anchor="end">d1</text>
+              <text id="vertical-tool-label" class="tool-label" x="308" y="102">d2</text>
+            </g>
+
+            <g class="scale-bar" aria-hidden="true">
+              <line id="scale-bar-line" x1="390" y1="376" x2="490" y2="376"></line>
+              <text id="scale-bar-label" x="440" y="399" text-anchor="middle">Scale</text>
+            </g>
+            <text id="microscope-placeholder" class="microscope-placeholder" x="300" y="210" text-anchor="middle">Indentation not available</text>
+          </svg>
+        </div>
+
+        <div class="microscope-controls">
+          <label class="range-field" for="focus-range">
+            <span>Microscope focus <output id="focus-output">Not available</output></span>
+            <input id="focus-range" type="range" min="0" max="100" step="1" value="50" disabled>
+          </label>
+          <button class="button secondary compact-button" id="autofocus" type="button" disabled>Auto focus</button>
+
+          <label class="range-field" for="diameter-one-range">
+            <span id="diameter-one-label">Horizontal diameter, d1 <output id="diameter-one-output">&mdash;</output></span>
+            <input id="diameter-one-range" type="range" min="0" max="1" step="0.01" value="0" disabled>
+          </label>
+          <label class="range-field" for="diameter-two-range">
+            <span id="diameter-two-label">Vertical diameter, d2 <output id="diameter-two-output">&mdash;</output></span>
+            <input id="diameter-two-range" type="range" min="0" max="1" step="0.01" value="0" disabled>
+          </label>
+
+          <div class="measurement-buttons">
+            <button class="button secondary" id="reset-calipers" type="button" disabled>Reset measuring lines</button>
+            <button class="button primary" id="record-dimensions" type="button" disabled>Record dimensions</button>
+          </div>
+          <p class="measurement-message" id="measurement-message" role="status"></p>
+        </div>
+      </article>
+    </section>
+
+    <section class="live-readings" aria-labelledby="live-readings-title">
+      <h2 class="visually-hidden" id="live-readings-title">Live hardness test readings</h2>
+      <dl>
+        <div><dt>Phase</dt><dd id="phase-value">Not mounted</dd></div>
+        <div><dt>Applied force</dt><dd id="live-force-value">0 N</dd></div>
+        <div><dt>Indentation depth</dt><dd id="depth-value">0.000 mm</dd></div>
+        <div><dt id="live-d1-label">Diameter d1</dt><dd id="live-d1-value">&mdash;</dd></div>
+        <div><dt id="live-d2-label">Diameter d2</dt><dd id="live-d2-value">&mdash;</dd></div>
+        <div><dt>Mean dimension</dt><dd id="mean-diameter-value">&mdash;</dd></div>
+      </dl>
+    </section>
+
+    <section class="lab-panel records-panel" aria-labelledby="records-title">
+      <div class="panel-heading">
+        <div class="step-number" aria-hidden="true">4</div>
+        <div>
+          <p class="panel-kicker">Measurements</p>
+          <h2 id="records-title">Record, calculate, and repeat</h2>
+        </div>
+      </div>
+
+      <div class="calculation-workspace" id="calculation-workspace" aria-live="polite">
+        <div>
+          <p class="formula-label">Current calculation</p>
+          <p class="formula-display" id="formula-display">
+            Record an indentation to begin the hardness calculation.
+          </p>
+          <p class="formula-substitution" id="formula-substitution"></p>
+        </div>
+        <form id="hardness-form">
+          <label class="numeric-answer" for="hardness-answer">
+            <span id="hardness-answer-label">Your calculated hardness</span>
+            <span class="answer-input">
+              <input id="hardness-answer" type="number" min="0" step="any" inputmode="decimal" disabled>
+              <span id="hardness-unit">HBW</span>
+            </span>
+          </label>
+          <div class="calculation-actions">
+            <button class="button primary" id="check-hardness" type="submit" disabled>Check and save</button>
+            <button class="button secondary" id="show-worked-result" type="button" hidden>Use worked result</button>
+          </div>
+          <p class="answer-feedback" id="hardness-feedback" role="status"></p>
+        </form>
+      </div>
+
+      <div class="record-actions">
+        <button class="button secondary" id="new-location" type="button" disabled>Move to a new location</button>
+        <button class="button secondary" id="download-csv" type="button" disabled>Download readings CSV</button>
+        <span id="record-progress" role="status">0 of 3 target readings complete.</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Recorded hardness-test measurements</caption>
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Location</th>
+              <th scope="col">Scale</th>
+              <th scope="col">d1 (mm)</th>
+              <th scope="col">d2 (mm)</th>
+              <th scope="col">Mean d (mm)</th>
+              <th scope="col">Calculated hardness</th>
+            </tr>
+          </thead>
+          <tbody id="records-body">
+            <tr class="empty-row"><td colspan="7">No dimensions recorded yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lab-panel quiz-panel is-locked" id="quiz-panel" aria-labelledby="quiz-title">
+      <div class="panel-heading">
+        <div class="step-number" aria-hidden="true">5</div>
+        <div>
+          <p class="panel-kicker">Repeatability analysis</p>
+          <h2 id="quiz-title">Calculate hardness and uncertainty</h2>
+        </div>
+      </div>
+      <p class="quiz-lock-message" id="quiz-lock-message">
+        Complete three verified readings to unlock the numerical analysis.
+      </p>
+
+      <form id="quiz-form">
+        <fieldset data-metric="first-hardness" disabled>
+          <legend>1. Recalculate the hardness of reading 1 from its recorded dimensions.</legend>
+          <p class="calculation-hint" id="first-hardness-hint">Use the method equation and the mean of d1 and d2.</p>
+          <label class="numeric-answer" for="answer-first-hardness">
+            <span>Your answer</span>
+            <span class="answer-input"><input id="answer-first-hardness" type="number" min="0" step="any" inputmode="decimal"><span class="quiz-unit">H</span></span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset data-metric="mean" disabled>
+          <legend>2. Calculate the arithmetic mean hardness.</legend>
+          <p class="calculation-hint">H&#772; = &Sigma;H<sub>i</sub> / n</p>
+          <label class="numeric-answer" for="answer-mean">
+            <span>Your answer</span>
+            <span class="answer-input"><input id="answer-mean" type="number" min="0" step="any" inputmode="decimal"><span class="quiz-unit">H</span></span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset data-metric="standard-deviation" disabled>
+          <legend>3. Calculate the sample standard deviation.</legend>
+          <p class="calculation-hint">s = &radic;[&Sigma;(H<sub>i</sub> &minus; H&#772;)<sup>2</sup> / (n &minus; 1)]</p>
+          <label class="numeric-answer" for="answer-standard-deviation">
+            <span>Your answer</span>
+            <span class="answer-input"><input id="answer-standard-deviation" type="number" min="0" step="any" inputmode="decimal"><span class="quiz-unit">H</span></span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset data-metric="standard-uncertainty" disabled>
+          <legend>4. Calculate the standard uncertainty of the mean from repeatability.</legend>
+          <p class="calculation-hint">u<sub>A</sub> = s / &radic;n</p>
+          <label class="numeric-answer" for="answer-standard-uncertainty">
+            <span>Your answer</span>
+            <span class="answer-input"><input id="answer-standard-uncertainty" type="number" min="0" step="any" inputmode="decimal"><span class="quiz-unit">H</span></span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset data-metric="expanded-uncertainty" disabled>
+          <legend>5. Calculate the two-sided 95% expanded repeatability uncertainty.</legend>
+          <p class="calculation-hint" id="expanded-hint">U<sub>95</sub> = t<sub>0.975,n&minus;1</sub>u<sub>A</sub></p>
+          <label class="numeric-answer" for="answer-expanded-uncertainty">
+            <span>Your answer</span>
+            <span class="answer-input"><input id="answer-expanded-uncertainty" type="number" min="0" step="any" inputmode="decimal"><span class="quiz-unit">H</span></span>
+          </label>
+          <p class="answer-feedback" aria-live="polite"></p>
+        </fieldset>
+
+        <div class="quiz-actions">
+          <button class="button primary" id="check-quiz" type="submit" disabled>Check calculations</button>
+          <p id="quiz-result" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+
+      <div class="results-visual" id="results-visual" hidden>
+        <h3>Repeat readings and 95% interval</h3>
+        <svg id="results-plot" viewBox="0 0 680 190" role="img" aria-labelledby="results-plot-title results-plot-description">
+          <title id="results-plot-title">Hardness repeatability plot</title>
+          <desc id="results-plot-description">Individual readings, their mean, and the repeatability-only 95 percent interval.</desc>
+        </svg>
+        <p id="reported-result"></p>
+      </div>
+    </section>
+
+    <section class="lab-panel reference-panel" aria-labelledby="reference-title">
+      <div class="panel-heading">
+        <div class="step-number reference-number" aria-hidden="true">i</div>
+        <div>
+          <p class="panel-kicker">Scientific basis</p>
+          <h2 id="reference-title">Equations, standards, and limitations</h2>
+        </div>
+      </div>
+
+      <div class="reference-grid">
+        <div>
+          <h3>Brinell</h3>
+          <p>
+            A tungsten-carbide ball is pressed into the surface. Two perpendicular
+            residual diameters are averaged, then HBW is calculated from load,
+            ball diameter, and the spherical indentation area.
+          </p>
+          <p class="reference-formula">
+            HBW = 2P / [&pi;D(D &minus; &radic;(D<sup>2</sup> &minus; d<sup>2</sup>))]
+          </p>
+        </div>
+        <div>
+          <h3>Vickers</h3>
+          <p>
+            A 136&deg; square-based diamond pyramid creates a four-sided impression.
+            The two diagonals are averaged before the Vickers value is calculated.
+          </p>
+          <p class="reference-formula">HV = 1.8544P / d<sup>2</sup></p>
+        </div>
+      </div>
+
+      <details>
+        <summary>Sources and representative specimen data</summary>
+        <ul class="source-list">
+          <li><a href="https://store.astm.org/standards/e10">ASTM E10-23</a> defines Brinell testing of metallic materials and includes an uncertainty appendix.</li>
+          <li><a href="https://store.astm.org/standards/e92">ASTM E92-23</a> covers Vickers and Knoop hardness testing of metallic materials.</li>
+          <li><a href="https://www.buehler.com/uk/brinell-hardness-testing/">Buehler Brinell guidance</a> describes ball sizes, loads, dwell, perpendicular diameter measurements, and the HB equation.</li>
+          <li><a href="https://www.struers.com/en/Knowledge/Hardness-testing/Vickers">Struers Vickers guidance</a> documents the 136&deg; diamond, optical diagonal measurement, load ranges, and HV equation.</li>
+          <li>Representative presets draw on <a href="https://www.hydro.com/globalassets/08-about-hydro/hydro-worldwide/poland/trzcianka/katalog-profili/web_katalog_profili.pdf">Hydro 6061-T6 aluminium data</a>, <a href="https://alloys.copper.org/alloy/C93600">Copper Development Association C93600 data</a>, <a href="https://www.uddeholm.com/en/products/uddeholm-formax/">Uddeholm Formax data</a>, and <a href="https://www.metallurgy.nist.gov/techactv1995/microhard.html">NIST microhardness reference materials</a>.</li>
+          <li>The small-sample interval uses the Student-t form described in the <a href="https://www.itl.nist.gov/div898/handbook/eda/section3/eda352.htm">NIST/SEMATECH statistical handbook</a>.</li>
+        </ul>
+      </details>
+
+      <p class="standards-disclaimer">
+        This is an illustrative teaching experiment, not a conformity test.
+        The reported uncertainty describes repeatability of this small virtual
+        sample only; it omits force, indenter, microscope calibration, surface
+        preparation, thickness, spacing, and other systematic contributions.
+        Consult the current purchased standard for laboratory work.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Illustrative Brinell and Vickers hardness test &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
