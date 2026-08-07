@@ -1,14 +1,9 @@
-(() => {
-"use strict";
-
-const THREE = window.THREE;
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js";
 
 const stage = document.querySelector("[data-materials-tetrahedron]");
 
-if (stage && THREE) {
+if (stage) {
   initialiseMaterialsTetrahedron(stage);
-} else if (stage) {
-  console.warn("Three.js did not load; showing the materials tetrahedron fallback.");
 }
 
 function initialiseMaterialsTetrahedron(renderStage) {
@@ -30,8 +25,8 @@ function initialiseMaterialsTetrahedron(renderStage) {
     renderStage.append(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-    camera.position.set(0, 0.04, 6.8);
+    const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+    camera.position.set(0, 0.04, 8.4);
 
     scene.add(new THREE.AmbientLight(0xffffff, 1.8));
 
@@ -44,16 +39,36 @@ function initialiseMaterialsTetrahedron(renderStage) {
     scene.add(fillLight);
 
     const concepts = [
-      { key: "processing", colour: 0xf05030, position: new THREE.Vector3(1, 1, 1) },
-      { key: "structure", colour: 0x9a89e0, position: new THREE.Vector3(-1, -1, 1) },
-      { key: "properties", colour: 0x68a7d8, position: new THREE.Vector3(-1, 1, -1) },
-      { key: "performance", colour: 0x54ad8d, position: new THREE.Vector3(1, -1, -1) }
+      {
+        label: "Processing",
+        colour: 0xf05030,
+        accent: "#f05030",
+        position: new THREE.Vector3(1, 1, 1)
+      },
+      {
+        label: "Structure",
+        colour: 0x9a89e0,
+        accent: "#9a89e0",
+        position: new THREE.Vector3(-1, -1, 1)
+      },
+      {
+        label: "Properties",
+        colour: 0x68a7d8,
+        accent: "#68a7d8",
+        position: new THREE.Vector3(-1, 1, -1)
+      },
+      {
+        label: "Performance",
+        colour: 0x54ad8d,
+        accent: "#54ad8d",
+        position: new THREE.Vector3(1, -1, -1)
+      }
     ];
 
     concepts.forEach((concept) => concept.position.multiplyScalar(1.2));
 
     const tetrahedron = new THREE.Group();
-    tetrahedron.rotation.set(-0.18, 0.58, 0.05);
+    tetrahedron.rotation.set(0, 0, 0.05);
     scene.add(tetrahedron);
 
     const faceGeometry = new THREE.BufferGeometry().setFromPoints(
@@ -97,7 +112,7 @@ function initialiseMaterialsTetrahedron(renderStage) {
       ));
     });
 
-    const vertexGeometry = new THREE.SphereGeometry(0.13, 28, 18);
+    const vertexGeometry = new THREE.SphereGeometry(0.2, 32, 24);
     concepts.forEach((concept) => {
       const vertex = new THREE.Mesh(
         vertexGeometry,
@@ -111,17 +126,14 @@ function initialiseMaterialsTetrahedron(renderStage) {
       );
       vertex.position.copy(concept.position);
       tetrahedron.add(vertex);
+
+      const label = createLabelSprite(concept.label, concept.accent);
+      label.position
+        .copy(concept.position)
+        .add(concept.position.clone().normalize().multiplyScalar(0.5));
+      tetrahedron.add(label);
     });
 
-    const labels = new Map();
-    concepts.forEach((concept) => {
-      const label = figure.querySelector(`[data-tetrahedron-label="${concept.key}"]`);
-      if (label) {
-        labels.set(concept.key, label);
-      }
-    });
-
-    const projectedPosition = new THREE.Vector3();
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
     let animationFrame = 0;
     let previousTime = 0;
@@ -129,48 +141,10 @@ function initialiseMaterialsTetrahedron(renderStage) {
     let isDragging = false;
     let previousPointerX = 0;
     let previousPointerY = 0;
-    let baseRotationX = -0.18;
-
-    function updateLabels() {
-      const width = renderStage.clientWidth;
-      const height = renderStage.clientHeight;
-      if (!width || !height) {
-        return;
-      }
-
-      scene.updateMatrixWorld(true);
-      concepts.forEach((concept) => {
-        const label = labels.get(concept.key);
-        if (!label) {
-          return;
-        }
-
-        projectedPosition
-          .copy(concept.position)
-          .applyMatrix4(tetrahedron.matrixWorld)
-          .project(camera);
-
-        const halfWidth = label.offsetWidth / 2;
-        const halfHeight = label.offsetHeight / 2;
-        const x = clamp(
-          (projectedPosition.x * 0.5 + 0.5) * width,
-          halfWidth + 10,
-          width - halfWidth - 10
-        );
-        const y = clamp(
-          (-projectedPosition.y * 0.5 + 0.5) * height,
-          halfHeight + 52,
-          height - halfHeight - 48
-        );
-
-        label.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
-        label.style.zIndex = String(Math.round((1 - projectedPosition.z) * 10) + 3);
-      });
-    }
+    let baseRotationX = 0;
 
     function renderScene() {
       renderer.render(scene, camera);
-      updateLabels();
       figure.classList.add("is-ready");
     }
 
@@ -288,6 +262,74 @@ function initialiseMaterialsTetrahedron(renderStage) {
   }
 }
 
+function createLabelSprite(text, accentColour) {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  const fontSize = 34;
+  const horizontalPadding = 34;
+  const accentWidth = 12;
+  const height = 76;
+
+  context.font = `800 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+  canvas.width = Math.ceil(context.measureText(text).width + horizontalPadding * 2 + accentWidth);
+  canvas.height = height;
+
+  context.font = `800 ${fontSize}px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+  context.textAlign = "left";
+  context.textBaseline = "middle";
+
+  drawRoundedRectangle(context, 1, 1, canvas.width - 2, canvas.height - 2, height / 2);
+  context.fillStyle = "rgba(255, 255, 255, 0.96)";
+  context.fill();
+  context.lineWidth = 2;
+  context.strokeStyle = "rgba(255, 255, 255, 0.82)";
+  context.stroke();
+
+  context.save();
+  drawRoundedRectangle(context, 1, 1, canvas.width - 2, canvas.height - 2, height / 2);
+  context.clip();
+  context.fillStyle = accentColour;
+  context.fillRect(1, 1, accentWidth, canvas.height - 2);
+  context.restore();
+
+  context.fillStyle = "#2e2a74";
+  context.fillText(text, horizontalPadding + accentWidth, height / 2 + 1);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+    depthTest: false,
+    depthWrite: false,
+    map: texture,
+    sizeAttenuation: false,
+    toneMapped: false,
+    transparent: true
+  }));
+  const spriteHeight = 0.06;
+  sprite.scale.set(spriteHeight * (canvas.width / canvas.height), spriteHeight, 1);
+  sprite.renderOrder = 10;
+  return sprite;
+}
+
+function drawRoundedRectangle(context, x, y, width, height, radius) {
+  const corner = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + corner, y);
+  context.lineTo(x + width - corner, y);
+  context.quadraticCurveTo(x + width, y, x + width, y + corner);
+  context.lineTo(x + width, y + height - corner);
+  context.quadraticCurveTo(x + width, y + height, x + width - corner, y + height);
+  context.lineTo(x + corner, y + height);
+  context.quadraticCurveTo(x, y + height, x, y + height - corner);
+  context.lineTo(x, y + corner);
+  context.quadraticCurveTo(x, y, x + corner, y);
+  context.closePath();
+}
+
 function createEdge(start, end, material) {
   const direction = new THREE.Vector3().subVectors(end, start);
   const length = direction.length();
@@ -306,5 +348,3 @@ function createEdge(start, end, material) {
 function clamp(value, minimum, maximum) {
   return Math.min(Math.max(value, minimum), maximum);
 }
-
-})();
