@@ -10,3 +10,8 @@ Current module:
     |-- index.html    Page and controls
     |-- style.css     Module-only layout
     |-- app.js        Canvas drawing and interaction
+
+    miller-indices/
+    |-- index.html    Cubic unit cell and index controls
+    |-- style.css     Module-only layout
+    |-- app.js        Three.js directions and planes

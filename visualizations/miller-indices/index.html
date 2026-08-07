@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Plot crystallographic directions and Miller planes inside an interactive cubic unit cell.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Miller Indices Explorer | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#miller-explorer">Skip to Miller indices explorer</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Visualization navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>MSE</strong>
+          <small>Learning Lab</small>
+        </span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="miller-shell" id="miller-explorer">
+    <header class="miller-intro">
+      <div>
+        <p class="eyebrow">Interactive visualization 02</p>
+        <h1>Explore directions and planes in a cubic crystal</h1>
+      </div>
+      <p>
+        Enter integer indices, then rotate the unit cell to see how a direction
+        <strong>[uvw]</strong> and a plane <strong>(hkl)</strong> occupy three-dimensional space.
+      </p>
+    </header>
+
+    <div class="explorer-layout">
+      <section class="viewer-panel" aria-labelledby="viewer-title">
+        <div class="viewer-heading">
+          <div>
+            <p class="panel-kicker">Cubic unit cell</p>
+            <h2 id="viewer-title">Crystallographic view</h2>
+          </div>
+          <div class="viewer-tools">
+            <label class="view-control" for="view-orientation">
+              <span>View</span>
+              <select id="view-orientation">
+                <option value="isometric">Isometric</option>
+                <option value="a">Along a</option>
+                <option value="b">Along b</option>
+                <option value="c">Along c</option>
+                <option value="custom" hidden>Custom</option>
+              </select>
+            </label>
+            <button class="small-button" id="download-png" type="button">Download PNG</button>
+          </div>
+        </div>
+
+        <div class="viewer-frame" id="viewer-frame">
+          <canvas
+            id="miller-canvas"
+            role="img"
+            aria-label="Interactive cubic unit cell showing the selected crystallographic direction and Miller plane. Drag to rotate, scroll to zoom, and right-drag to pan."
+          >
+            Your browser does not support the canvas element.
+          </canvas>
+          <div class="viewer-fallback" id="viewer-fallback" role="alert" hidden>
+            The 3D view could not start. Try a current browser with WebGL enabled.
+          </div>
+          <div class="viewer-legend" aria-label="Graphic legend">
+            <span><i class="direction-key" aria-hidden="true"></i>Direction</span>
+            <span><i class="plane-key" aria-hidden="true"></i>Plane</span>
+          </div>
+        </div>
+
+        <p class="viewer-help">Drag to rotate &middot; Scroll or pinch to zoom &middot; Right-drag to pan</p>
+        <p class="selection-summary" id="selection-summary" aria-live="polite">
+          Showing direction [1 1 0] and plane (1 1 1).
+        </p>
+        <p class="download-message" id="download-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="controls-panel" aria-label="Miller index controls">
+        <section class="control-block direction-control" aria-labelledby="direction-title">
+          <div class="control-heading">
+            <span aria-hidden="true">[ ]</span>
+            <div>
+              <p>Direction</p>
+              <h2 id="direction-title">Plot [u v w]</h2>
+            </div>
+          </div>
+          <p class="control-note">The three integers give relative steps along the <b>a</b>, <b>b</b>, and <b>c</b> axes.</p>
+
+          <form id="direction-form">
+            <div class="index-fields" aria-label="Direction indices">
+              <label for="direction-u"><span>u</span><input id="direction-u" name="u" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
+              <label for="direction-v"><span>v</span><input id="direction-v" name="v" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
+              <label for="direction-w"><span>w</span><input id="direction-w" name="w" type="number" min="-9" max="9" step="1" value="0" inputmode="decimal" required></label>
+            </div>
+            <div class="control-actions">
+              <button class="button primary compact-button" type="submit">Plot direction</button>
+              <button class="small-button" id="clear-direction" type="button">Hide</button>
+            </div>
+          </form>
+
+          <label class="preset-label" for="direction-preset">Try a common direction</label>
+          <select id="direction-preset">
+            <option value="">Choose an example</option>
+            <option value="1,0,0">[1 0 0] cube edge</option>
+            <option value="1,1,0">[1 1 0] face diagonal</option>
+            <option value="1,1,1">[1 1 1] body diagonal</option>
+            <option value="1,-1,0">[1 −1 0] negative index</option>
+          </select>
+          <p class="control-message" id="direction-message" role="status"></p>
+        </section>
+
+        <section class="control-block plane-control" aria-labelledby="plane-title">
+          <div class="control-heading">
+            <span aria-hidden="true">( )</span>
+            <div>
+              <p>Plane</p>
+              <h2 id="plane-title">Plot (h k l)</h2>
+            </div>
+          </div>
+          <p class="control-note">A zero index means the plane is parallel to that axis. A negative index places its intercept on the negative axis.</p>
+
+          <form id="plane-form">
+            <div class="index-fields" aria-label="Plane indices">
+              <label for="plane-h"><span>h</span><input id="plane-h" name="h" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
+              <label for="plane-k"><span>k</span><input id="plane-k" name="k" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
+              <label for="plane-l"><span>l</span><input id="plane-l" name="l" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
+            </div>
+            <div class="control-actions">
+              <button class="button primary compact-button" type="submit">Plot plane</button>
+              <button class="small-button" id="clear-plane" type="button">Hide</button>
+            </div>
+          </form>
+
+          <label class="preset-label" for="plane-preset">Try a common plane</label>
+          <select id="plane-preset">
+            <option value="">Choose an example</option>
+            <option value="1,0,0">(1 0 0) cube face</option>
+            <option value="1,1,0">(1 1 0) diagonal plane</option>
+            <option value="1,1,1">(1 1 1) triangular plane</option>
+            <option value="1,-1,0">(1 −1 0) negative index</option>
+          </select>
+          <p class="control-message" id="plane-message" role="status"></p>
+        </section>
+
+        <section class="concept-note" aria-labelledby="cubic-note-title">
+          <h2 id="cubic-note-title">Cubic-crystal shortcut</h2>
+          <p>The normal to plane (h k l) is parallel to direction [h k l] in a cubic crystal.</p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Miller indices visualization &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
