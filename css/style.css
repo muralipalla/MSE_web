@@ -11,6 +11,8 @@
   --lavender-light: #eeeaf7;
   --blue: #386694;
   --blue-light: #e7f0f6;
+  --navy: #18375f;
+  --navy-hover: #102a4d;
   --line: rgba(46, 42, 116, 0.14);
   --shadow: 0 16px 42px rgba(46, 42, 116, 0.1);
   --page-width: 74rem;
@@ -61,6 +63,18 @@ summary:focus-visible {
 
 .skip-link:focus {
   transform: translateY(0);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* 3. Header and hero */
@@ -223,6 +237,14 @@ summary:focus-visible {
   background: #a92f19;
 }
 
+.button.intro-button {
+  background: var(--navy);
+}
+
+.button.intro-button:hover {
+  background: var(--navy-hover);
+}
+
 .button.secondary {
   border-color: var(--ink);
   background: var(--canvas);
@@ -233,40 +255,142 @@ summary:focus-visible {
 }
 
 .hero-model {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 1.4rem;
+  position: relative;
+  width: min(100%, 31rem);
+  min-height: clamp(18rem, 32vw, 26rem);
+  aspect-ratio: 1;
+  justify-self: center;
+  margin: 0;
+  overflow: hidden;
   border-radius: 2rem;
-  background: var(--ink);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(103, 87, 168, 0.42), transparent 44%),
+    linear-gradient(145deg, #211d5f, var(--ink));
   color: white;
   box-shadow: 0 24px 50px rgba(46, 42, 116, 0.22);
+  isolation: isolate;
 }
 
-.model-node {
-  padding: 1rem;
-  border-radius: 1rem;
+.hero-model::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  content: "";
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent 88%);
+}
+
+.tetrahedron-stage,
+.tetrahedron-label-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.tetrahedron-stage {
+  z-index: 1;
+}
+
+.tetrahedron-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  opacity: 0;
+  touch-action: none;
+  transition: opacity 240ms ease;
+}
+
+.tetrahedron-stage canvas.is-dragging {
+  cursor: grabbing;
+}
+
+.materials-tetrahedron.is-ready .tetrahedron-stage canvas {
+  opacity: 1;
+}
+
+.tetrahedron-label-layer {
+  z-index: 3;
+  pointer-events: none;
+}
+
+.tetrahedron-label {
+  --concept-colour: var(--paper);
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.42rem 0.68rem 0.42rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-left: 0.34rem solid var(--concept-colour);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ink);
+  box-shadow: 0 0.6rem 1.3rem rgba(8, 8, 42, 0.24);
+  font-size: clamp(0.7rem, 1.6vw, 0.86rem);
+  font-weight: 850;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  will-change: transform;
+}
+
+.materials-tetrahedron.is-ready .tetrahedron-label {
+  opacity: 1;
+}
+
+.concept-processing { --concept-colour: var(--coral-bright); }
+.concept-structure { --concept-colour: #9a89e0; }
+.concept-properties { --concept-colour: #68a7d8; }
+.concept-performance { --concept-colour: #54ad8d; }
+
+.tetrahedron-title,
+.tetrahedron-note {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.tetrahedron-title {
+  top: 1rem;
+  left: 1.1rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(14, 13, 61, 0.5);
   color: white;
-  font-weight: 900;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tetrahedron-note {
+  right: 1rem;
+  bottom: 0.9rem;
+  left: 1rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.76rem;
+  font-weight: 700;
   text-align: center;
 }
 
-.node-one { background: var(--lavender); }
-.node-two { background: var(--blue); }
-.node-three { background: var(--coral); }
-
-.model-arrow {
-  font-size: 1.5rem;
-  font-weight: 900;
+.tetrahedron-fallback {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: min(80%, 22rem);
+  color: white;
+  font-weight: 850;
+  line-height: 1.7;
+  text-align: center;
+  transform: translate(-50%, -50%);
 }
 
-.hero-model p {
-  grid-column: 1 / -1;
-  margin: 0.35rem 0 0;
-  color: #f6e8dc;
-  font-size: 0.9rem;
-  text-align: center;
+.materials-tetrahedron.is-ready .tetrahedron-fallback {
+  display: none;
 }
 
 /* 4. Shared section styles */
@@ -297,7 +421,6 @@ summary:focus-visible {
   color: var(--ink-soft);
 }
 
-.map-grid,
 .card-grid,
 .lab-grid {
   display: grid;
@@ -305,7 +428,6 @@ summary:focus-visible {
   gap: 1rem;
 }
 
-.map-card,
 .content-card,
 .question-card,
 .author-card,
@@ -317,12 +439,6 @@ summary:focus-visible {
   box-shadow: 0 10px 28px rgba(46, 42, 116, 0.07);
 }
 
-.map-card span {
-  color: var(--coral);
-  font-weight: 950;
-}
-
-.map-card h3,
 .content-card h3,
 .lab-card h3,
 .question-card h3,
@@ -332,7 +448,6 @@ summary:focus-visible {
   line-height: 1.25;
 }
 
-.map-card p,
 .content-card p,
 .lab-card p,
 .question-card p,
@@ -340,10 +455,6 @@ summary:focus-visible {
   margin: 0;
   color: var(--ink-soft);
 }
-
-.map-card:nth-child(2) { background: var(--lavender-light); }
-.map-card:nth-child(3) { background: var(--blue-light); }
-.map-card:nth-child(4) { background: #fff0eb; }
 
 .teaching-section {
   padding-top: 2rem;
@@ -588,7 +699,6 @@ details p {
     min-height: auto;
   }
 
-  .map-grid,
   .lab-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -612,15 +722,9 @@ details p {
   }
 
   .hero-model {
-    grid-template-columns: 1fr;
+    width: min(100%, 29rem);
   }
 
-  .model-arrow {
-    transform: rotate(90deg);
-    text-align: center;
-  }
-
-  .map-grid,
   .card-grid,
   .lab-grid,
   .practice-grid,

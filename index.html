@@ -8,6 +8,7 @@
   <title>MSE Learning Lab</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="js/main.js" defer></script>
+  <script type="module" src="js/materials-tetrahedron.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -26,7 +27,6 @@
       </a>
 
       <div class="nav-links">
-        <a href="#map">The MSE map</a>
         <a href="#topics">Teaching</a>
         <a href="#lab">Interactive lab</a>
         <a href="#practice">Practice</a>
@@ -43,65 +43,35 @@
           Every new activity can be added as an independent page.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="teaching/introduction.html">Read the introduction</a>
+          <a class="button primary intro-button" href="teaching/introduction.html">Read the introduction</a>
           <a class="button secondary" href="#lab">Explore the lab plan</a>
         </div>
       </div>
 
-      <div class="hero-model" aria-label="Structure, processing, properties, and performance relationship">
-        <div class="model-node node-one">Structure</div>
-        <span class="model-arrow" aria-hidden="true">&rarr;</span>
-        <div class="model-node node-two">Properties</div>
-        <span class="model-arrow" aria-hidden="true">&rarr;</span>
-        <div class="model-node node-three">Performance</div>
-        <p>Processing changes structure and completes the loop.</p>
-      </div>
+      <figure class="hero-model materials-tetrahedron" aria-labelledby="materials-tetrahedron-caption">
+        <div class="tetrahedron-stage" data-materials-tetrahedron aria-hidden="true"></div>
+        <div class="tetrahedron-label-layer" aria-hidden="true">
+          <span class="tetrahedron-label concept-processing" data-tetrahedron-label="processing">Processing</span>
+          <span class="tetrahedron-label concept-structure" data-tetrahedron-label="structure">Structure</span>
+          <span class="tetrahedron-label concept-properties" data-tetrahedron-label="properties">Properties</span>
+          <span class="tetrahedron-label concept-performance" data-tetrahedron-label="performance">Performance</span>
+        </div>
+        <strong class="tetrahedron-title" aria-hidden="true">Materials tetrahedron</strong>
+        <span class="tetrahedron-note" aria-hidden="true">Drag to rotate &middot; All four corners are linked</span>
+        <span class="tetrahedron-fallback" aria-hidden="true">Processing &middot; Structure &middot; Properties &middot; Performance</span>
+        <figcaption class="visually-hidden" id="materials-tetrahedron-caption">
+          The materials tetrahedron links processing, structure, properties, and performance. Each part influences the other three.
+        </figcaption>
+      </figure>
     </div>
   </header>
 
   <main id="main-content">
-    <!-- Section 2: the central materials-science idea -->
-    <section class="section" id="map" aria-labelledby="map-title">
-      <div class="section-heading">
-        <div>
-          <p class="section-kicker">Section 2</p>
-          <h2 id="map-title">The materials science map</h2>
-        </div>
-        <p>
-          This four-part relationship can organize every future lesson,
-          simulation, and quiz.
-        </p>
-      </div>
-
-      <div class="map-grid">
-        <article class="map-card">
-          <span>01</span>
-          <h3>Processing</h3>
-          <p>How a material is made, shaped, heated, cooled, or treated.</p>
-        </article>
-        <article class="map-card">
-          <span>02</span>
-          <h3>Structure</h3>
-          <p>Arrangement from electrons and atoms to grains and phases.</p>
-        </article>
-        <article class="map-card">
-          <span>03</span>
-          <h3>Properties</h3>
-          <p>Mechanical, thermal, electrical, magnetic, and optical response.</p>
-        </article>
-        <article class="map-card">
-          <span>04</span>
-          <h3>Performance</h3>
-          <p>How well the material meets the needs of an application.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- Section 3: links to independent teaching pages -->
+    <!-- Section 2: links to independent teaching pages -->
     <section class="section teaching-section" id="topics" aria-labelledby="topics-title">
       <div class="section-heading">
         <div>
-          <p class="section-kicker">Section 3</p>
+          <p class="section-kicker">Section 2</p>
           <h2 id="topics-title">Teaching content</h2>
         </div>
         <p>
@@ -135,12 +105,12 @@
       </div>
     </section>
 
-    <!-- Section 4: future independent demonstrations -->
+    <!-- Section 3: future independent demonstrations -->
     <section class="lab-section" id="lab" aria-labelledby="lab-title">
       <div class="section">
         <div class="section-heading light-heading">
           <div>
-            <p class="section-kicker">Section 4</p>
+            <p class="section-kicker">Section 3</p>
             <h2 id="lab-title">Interactive lab</h2>
           </div>
           <p>
@@ -172,11 +142,11 @@
       </div>
     </section>
 
-    <!-- Section 5: a very small self-check and authoring guide -->
+    <!-- Section 4: a very small self-check and authoring guide -->
     <section class="section practice-section" id="practice" aria-labelledby="practice-title">
       <div class="section-heading">
         <div>
-          <p class="section-kicker">Section 5</p>
+          <p class="section-kicker">Section 4</p>
           <h2 id="practice-title">Check your understanding</h2>
         </div>
         <p>
