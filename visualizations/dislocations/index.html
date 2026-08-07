@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare edge and screw dislocations in an interactive three-dimensional atomic lattice and trace their Burgers vectors.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Dislocations in 3D | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#dislocation-explorer">Skip to dislocation visualization</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Visualization navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>MSE</strong>
+          <small>Learning Lab</small>
+        </span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="dislocation-shell" id="dislocation-explorer">
+    <header class="dislocation-intro">
+      <div>
+        <p class="eyebrow">Interactive visualization 03</p>
+        <h1>See how dislocations distort a crystal</h1>
+      </div>
+      <p>
+        Compare an <strong>edge dislocation</strong> formed by an extra half-plane
+        with a <strong>screw dislocation</strong> formed by shear. Rotate the model
+        and see the closure failure after a Burgers circuit is mapped into a
+        perfect reference lattice.
+      </p>
+    </header>
+
+    <div class="explorer-layout">
+      <section class="viewer-panel" aria-labelledby="viewer-title">
+        <div class="viewer-heading">
+          <div>
+            <p class="panel-kicker">Simple-cubic teaching model</p>
+            <h2 id="viewer-title">Edge dislocation</h2>
+          </div>
+          <label class="view-control" for="view-orientation">
+            <span>View</span>
+            <select id="view-orientation">
+              <option value="isometric">Isometric</option>
+              <option value="along-line">Along dislocation line</option>
+              <option value="side">Perpendicular to line</option>
+              <option value="custom" hidden>Custom</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="viewer-frame" id="viewer-frame" data-mode="edge">
+          <canvas
+            id="dislocation-canvas"
+            role="img"
+            aria-label="Interactive atomic lattice showing an edge dislocation, its extra half-plane, dislocation line, Burgers circuit, and Burgers vector. Drag to rotate, scroll to zoom, and right-drag to pan."
+          >
+            Your browser does not support the canvas element.
+          </canvas>
+          <div class="viewer-fallback" id="viewer-fallback" role="alert" hidden>
+            The 3D view could not start. Try a current browser with WebGL enabled.
+          </div>
+          <div class="viewer-legend" aria-label="Graphic legend">
+            <span><i class="atom-key" aria-hidden="true"></i>Atoms</span>
+            <span id="defect-legend-item"><i class="defect-key" aria-hidden="true"></i><b id="defect-legend">Extra half-plane</b></span>
+            <span id="circuit-legend-item"><i class="circuit-key" aria-hidden="true"></i>Mapped circuit</span>
+            <span id="burgers-legend-item"><i class="burgers-key" aria-hidden="true"></i><b>b</b></span>
+            <span><i class="line-key" aria-hidden="true"></i><b>&xi;</b></span>
+          </div>
+        </div>
+
+        <p class="viewer-help">Drag to rotate &middot; Scroll or pinch to zoom &middot; Right-drag to pan</p>
+        <p class="selection-summary" id="selection-summary" aria-live="polite">
+          For an edge dislocation, the Burgers vector b is perpendicular to the dislocation line &xi;.
+        </p>
+      </section>
+
+      <aside class="controls-panel" aria-label="Dislocation controls">
+        <section class="control-block" aria-labelledby="type-title">
+          <p class="control-kicker">Compare defects</p>
+          <h2 id="type-title">Dislocation type</h2>
+          <div class="mode-buttons" role="group" aria-label="Choose a dislocation type">
+            <button class="mode-button is-active" id="edge-mode" type="button" aria-pressed="true">Edge</button>
+            <button class="mode-button" id="screw-mode" type="button" aria-pressed="false">Screw</button>
+          </div>
+          <p class="control-note" id="mode-description">
+            An extra half-plane ends at the core. Rows above it are compressed,
+            while the region below is stretched.
+          </p>
+        </section>
+
+        <section class="control-block" aria-labelledby="display-title">
+          <p class="control-kicker">Layers</p>
+          <h2 id="display-title">What to show</h2>
+          <label class="toggle-control" for="show-circuit">
+            <input id="show-circuit" type="checkbox" checked>
+            <span>
+              <strong>Mapped circuit and b</strong>
+              <small>See the closure failure in a perfect reference lattice.</small>
+            </span>
+          </label>
+          <label class="toggle-control" for="show-defect-surface">
+            <input id="show-defect-surface" type="checkbox" checked>
+            <span>
+              <strong id="surface-control-label">Highlight extra half-plane</strong>
+              <small id="surface-control-note">Color the inserted atomic plane.</small>
+            </span>
+          </label>
+          <label class="toggle-control" for="show-bonds">
+            <input id="show-bonds" type="checkbox" checked>
+            <span>
+              <strong>Atomic connections</strong>
+              <small>Follow how neighboring rows distort.</small>
+            </span>
+          </label>
+        </section>
+
+        <section class="relationship-note" aria-labelledby="relationship-title">
+          <p class="control-kicker">Key relationship</p>
+          <h2 id="relationship-title">Burgers vector vs. line</h2>
+          <p class="relationship-symbol" id="relationship-symbol"><i>b</i> &perp; <i>&xi;</i></p>
+          <p class="relationship-indices" id="relationship-indices"><i>b</i> = a[100] &middot; &xi; = [001]</p>
+          <p id="relationship-explanation">
+            The edge-dislocation line runs along the end of the extra half-plane,
+            while b points across that plane.
+          </p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Dislocations in 3D &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

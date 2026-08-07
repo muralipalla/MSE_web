@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Run a virtual powder X-ray diffraction experiment and compare BCC, FCC, HCP, diamond-cubic, and mixed-phase diffraction patterns.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Virtual XRD Experiment | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js" defer></script>
+  <script src="app.js?v=1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#xrd-lab">Skip to XRD experiment</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Simulation navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </span>
+        <span>
+          <strong>MSE</strong>
+          <small>Learning Lab</small>
+        </span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="xrd-shell" id="xrd-lab">
+    <header class="simulation-intro">
+      <div>
+        <p class="eyebrow">Interactive simulation 03</p>
+        <h1>Virtual XRD Experiment</h1>
+        <p class="method-title">Powder diffraction in &theta;&ndash;2&theta; geometry</p>
+      </div>
+      <div class="intro-copy">
+        <p>
+          Load a crystalline powder, sweep the detector through 2&theta;, and use
+          the peak positions and systematic absences to distinguish common crystal structures.
+        </p>
+        <p class="accuracy-note">
+          The patterns use monochromatic Cu K&alpha;<sub>1</sub> radiation, representative room-temperature
+          lattice parameters, finite peak width, and deterministic counting noise.
+        </p>
+      </div>
+    </header>
+
+    <section class="lab-panel setup-panel" aria-labelledby="setup-title">
+      <div class="panel-heading">
+        <div class="step-number" aria-hidden="true">1</div>
+        <div>
+          <p class="panel-kicker">Experiment setup</p>
+          <h2 id="setup-title">Choose a powder and scan range</h2>
+        </div>
+      </div>
+
+      <div class="setup-grid">
+        <label class="field-label" for="sample-select">
+          <span>Powder specimen</span>
+          <select id="sample-select">
+            <option value="ferrite">&alpha;-iron &mdash; BCC</option>
+            <option value="copper">Copper &mdash; FCC</option>
+            <option value="magnesium">Magnesium &mdash; HCP</option>
+            <option value="silicon">Silicon &mdash; diamond cubic</option>
+            <option value="mixture">&alpha;-Fe + Cu mixture &mdash; BCC + FCC</option>
+          </select>
+        </label>
+
+        <label class="field-label" for="start-angle">
+          <span>Start angle, 2&theta;</span>
+          <span class="number-field"><input id="start-angle" type="number" min="10" max="80" step="1" value="20"><b>&deg;</b></span>
+        </label>
+
+        <label class="field-label" for="end-angle">
+          <span>End angle, 2&theta;</span>
+          <span class="number-field"><input id="end-angle" type="number" min="40" max="130" step="1" value="100"><b>&deg;</b></span>
+        </label>
+
+        <label class="field-label" for="playback-select">
+          <span>Scan playback</span>
+          <select id="playback-select">
+            <option value="0.5">0.5&times; &mdash; observe slowly</option>
+            <option value="1" selected>1&times; &mdash; normal</option>
+            <option value="3">3&times; &mdash; fast</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="condition-grid" aria-live="polite">
+        <div><span>Crystal structure</span><strong id="structure-summary">Body-centred cubic</strong></div>
+        <div><span>Lattice parameter</span><strong id="lattice-summary">a = 2.8665 &Aring;</strong></div>
+        <div><span>Radiation</span><strong>Cu K&alpha;<sub>1</sub>, &lambda; = 1.540593 &Aring;</strong></div>
+        <div><span>Reflection condition</span><strong id="rule-summary">h + k + l is even</strong></div>
+      </div>
+      <p class="sample-note" id="sample-note"></p>
+      <p class="setup-message" id="setup-message" role="status" aria-live="polite"></p>
+
+      <div class="setup-actions" aria-label="XRD experiment controls">
+        <button class="button primary" id="load-sample" type="button">Load sample</button>
+        <button class="button secondary" id="start-scan" type="button" disabled>Start scan</button>
+        <button class="button secondary" id="pause-scan" type="button" disabled>Pause scan</button>
+        <button class="text-button" id="reset-experiment" type="button" disabled>Reset experiment</button>
+      </div>
+    </section>
+
+    <div class="test-status">
+      <div role="status" aria-live="polite" aria-atomic="true">
+        <span>Diffractometer state</span>
+        <strong id="machine-state">Waiting for sample</strong>
+      </div>
+      <p id="status-copy">Choose a specimen and scan range, then load the powder holder.</p>
+      <div class="progress-track" aria-hidden="true"><span id="scan-progress"></span></div>
+    </div>
+
+    <section class="workbench" aria-label="Diffractometer and diffraction pattern">
+      <article class="lab-panel instrument-panel" aria-labelledby="instrument-title">
+        <div class="panel-heading compact-heading">
+          <div class="step-number" aria-hidden="true">2</div>
+          <div>
+            <p class="panel-kicker">Model diffractometer</p>
+            <h2 id="instrument-title">&theta;&ndash;2&theta; scan</h2>
+          </div>
+        </div>
+
+        <div class="instrument-frame">
+          <svg id="instrument-svg" viewBox="0 0 680 430" role="img" aria-labelledby="instrument-svg-title instrument-svg-description">
+            <title id="instrument-svg-title">Powder X-ray diffractometer</title>
+            <desc id="instrument-svg-description">The sample holder is empty and the detector is parked at 20 degrees two-theta.</desc>
+            <defs>
+              <linearGradient id="metal-gradient" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#627789"></stop>
+                <stop offset="0.5" stop-color="#edf3f7"></stop>
+                <stop offset="1" stop-color="#506473"></stop>
+              </linearGradient>
+              <linearGradient id="sample-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop id="sample-stop-light" offset="0" stop-color="#d8dde2"></stop>
+                <stop id="sample-stop-dark" offset="1" stop-color="#7d8994"></stop>
+              </linearGradient>
+              <filter id="beam-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="3" result="blur"></feGaussianBlur>
+                <feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+              </filter>
+            </defs>
+
+            <rect class="instrument-backdrop" x="18" y="18" width="644" height="394" rx="28"></rect>
+            <path class="goniometer-track" d="M140 255 A200 200 0 0 1 540 255"></path>
+            <path class="goniometer-track inner" d="M170 255 A170 170 0 0 1 510 255"></path>
+            <rect class="instrument-base" x="112" y="344" width="456" height="42" rx="14"></rect>
+
+            <g class="source-unit" aria-hidden="true">
+              <rect x="42" y="215" width="112" height="76" rx="18"></rect>
+              <rect class="source-window" x="145" y="238" width="32" height="30" rx="7"></rect>
+              <circle id="source-indicator" cx="74" cy="253" r="10"></circle>
+              <text x="98" y="247" text-anchor="middle">Cu tube</text>
+              <text x="98" y="268" text-anchor="middle">40 kV &middot; 30 mA</text>
+            </g>
+
+            <line id="incident-beam-glow" class="beam beam-glow" x1="177" y1="253" x2="340" y2="253"></line>
+            <line id="incident-beam" class="beam" x1="177" y1="253" x2="340" y2="253"></line>
+            <line id="diffracted-beam-glow" class="beam beam-glow" x1="340" y1="253" x2="528" y2="185"></line>
+            <line id="diffracted-beam" class="beam" x1="340" y1="253" x2="528" y2="185"></line>
+
+            <g id="sample-stage" transform="rotate(-10 340 253)">
+              <rect class="sample-platform" x="270" y="252" width="140" height="18" rx="6"></rect>
+              <path id="powder-sample" class="powder-sample" d="M285 246 Q340 228 395 246 V253 H285 Z" hidden></path>
+              <line class="sample-normal" x1="340" y1="247" x2="340" y2="199"></line>
+              <text class="theta-label" x="348" y="210">&theta;</text>
+            </g>
+
+            <line id="detector-arm-line" class="detector-arm-line" x1="340" y1="253" x2="528" y2="185"></line>
+            <g id="detector-group" transform="translate(528 185) rotate(-20)">
+              <rect class="detector-body" x="-34" y="-40" width="68" height="80" rx="13"></rect>
+              <rect class="detector-window" x="-42" y="-15" width="16" height="30" rx="5"></rect>
+              <circle id="detector-indicator" cx="8" cy="0" r="9"></circle>
+              <text x="4" y="5" text-anchor="middle">D</text>
+            </g>
+
+            <circle class="axis-pin" cx="340" cy="253" r="12"></circle>
+            <path id="angle-arc" class="angle-arc" d="M390 253 A50 50 0 0 0 387 236"></path>
+            <text id="angle-label" class="angle-label" x="402" y="232">2&theta; = 20.0&deg;</text>
+            <text id="sample-label" class="sample-label" x="340" y="330" text-anchor="middle">No sample loaded</text>
+          </svg>
+        </div>
+        <dl class="instrument-mobile-readout" aria-label="Diffractometer settings">
+          <div><dt>Source</dt><dd>Cu K&alpha;<sub>1</sub> &middot; 40 kV &middot; 30 mA</dd></div>
+          <div><dt>Detector</dt><dd id="mobile-detector-angle">2&theta; = 20.0&deg;</dd></div>
+          <div><dt>Sample</dt><dd id="mobile-sample-state">No sample loaded</dd></div>
+        </dl>
+        <p class="stage-explanation" id="stage-explanation">
+          The source is fixed. During a coupled scan, the specimen turns through &theta;
+          while the detector moves through 2&theta;.
+        </p>
+      </article>
+
+      <article class="lab-panel pattern-panel" aria-labelledby="pattern-title">
+        <div class="panel-heading compact-heading pattern-heading">
+          <div class="heading-copy">
+            <div class="step-number" aria-hidden="true">3</div>
+            <div>
+              <p class="panel-kicker">Live result</p>
+              <h2 id="pattern-title">Diffractogram</h2>
+            </div>
+          </div>
+          <label class="label-toggle" for="show-labels"><input id="show-labels" type="checkbox" checked> Show hkl labels</label>
+        </div>
+
+        <div class="graph-frame" id="graph-frame">
+          <canvas id="xrd-chart" role="img" aria-label="Powder X-ray diffraction pattern. The graph is empty until a sample is loaded and scanned.">
+            Your browser does not support the canvas element.
+          </canvas>
+        </div>
+        <div class="phase-legend" id="phase-legend" aria-label="Pattern legend"></div>
+        <p class="peak-inspector" id="peak-inspector" aria-live="polite">Move over the graph or inspect a peak in the table.</p>
+        <div class="pattern-actions">
+          <button class="button secondary compact-button" id="download-csv" type="button" disabled>Download scan CSV</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="live-readings" aria-labelledby="readings-title">
+      <h2 class="visually-hidden" id="readings-title">Live XRD readings</h2>
+      <dl>
+        <div><dt>Detector angle, 2&theta;</dt><dd id="two-theta-value">20.00&deg;</dd></div>
+        <div><dt>Specimen angle, &theta;</dt><dd id="theta-value">10.00&deg;</dd></div>
+        <div><dt>Intensity</dt><dd id="intensity-value">0.0 a.u.</dd></div>
+        <div><dt>d corresponding to 2&theta;</dt><dd id="spacing-value">&mdash;</dd></div>
+        <div><dt>Nearest reflection</dt><dd id="reflection-value">&mdash;</dd></div>
+        <div><dt>Scan progress</dt><dd id="progress-value">0%</dd></div>
+      </dl>
+    </section>
+
+    <section class="lab-panel analysis-panel" aria-labelledby="analysis-title">
+      <div class="panel-heading analysis-heading">
+        <div class="heading-copy">
+          <div class="step-number" aria-hidden="true">4</div>
+          <div>
+            <p class="panel-kicker">Calculated phase fingerprint</p>
+            <h2 id="analysis-title">Reference reflections</h2>
+          </div>
+        </div>
+        <p id="peak-count">No reflections encountered</p>
+      </div>
+
+      <div class="fingerprint-summary">
+        <p id="fingerprint-copy">Load a sample to generate its allowed powder reflections.</p>
+        <p class="formula-line">Bragg law: <strong>2d sin &theta; = &lambda;</strong></p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <caption class="visually-hidden">Calculated reference reflections encountered during the XRD scan</caption>
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Phase</th>
+              <th scope="col">Structure</th>
+              <th scope="col">hkl</th>
+              <th scope="col">2&theta; (&deg;)</th>
+              <th scope="col">d (&Aring;)</th>
+              <th scope="col">I/I<sub>max</sub> (%)</th>
+              <th scope="col"><span class="visually-hidden">Inspect</span></th>
+            </tr>
+          </thead>
+          <tbody id="peak-table-body">
+            <tr class="empty-row"><td colspan="8">No reflections encountered yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lab-panel reference-panel" aria-labelledby="reference-title">
+      <div class="panel-heading">
+        <div class="step-number reference-number" aria-hidden="true">i</div>
+        <div>
+          <p class="panel-kicker">Scientific basis</p>
+          <h2 id="reference-title">Pattern assumptions and sources</h2>
+        </div>
+      </div>
+      <p>
+        Peak positions are calculated from the displayed lattice parameters and
+        Bragg&rsquo;s law. Relative intensities are representative powder values;
+        Gaussian broadening, background, and noise are added for an illustrative scan.
+      </p>
+      <ul class="reference-list">
+        <li>
+          The &alpha;-Fe reference pattern follows
+          <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular539v4.pdf">NBS Circular 539, Volume 4</a>;
+          Cu and Mg follow
+          <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular539v1.pdf">NBS Circular 539, Volume 1</a>.
+        </li>
+        <li>
+          Silicon uses the NIST SRM 640g powder lattice parameter at 22.5&nbsp;&deg;C from
+          <a href="https://doi.org/10.6028/NIST.SP.260-245">NIST Special Publication 260-245</a>.
+        </li>
+        <li>
+          Bragg&rsquo;s law and intensity/structure-factor interpretation follow the
+          <a href="https://dictionary.iucr.org/Bragg%27s_law">IUCr Online Dictionary of Crystallography</a>
+          and the IUCr educational article on
+          <a href="https://journals.iucr.org/j/issues/2023/03/00/dv5004/index.html">powder-pattern intensity</a>.
+        </li>
+      </ul>
+      <p class="standards-disclaimer">
+        This model uses monochromatic Cu K&alpha;<sub>1</sub> and does not simulate
+        the K&alpha;<sub>2</sub> line. Intensities are not suitable
+        for quantitative phase analysis, texture measurement, or instrument calibration.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Illustrative powder XRD experiment &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

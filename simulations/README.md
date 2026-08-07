@@ -26,3 +26,14 @@ external runtime dependencies and can be published as ordinary static files.
 
 Open `hardness-test/index.html` directly or through the Hardness test button on
 the home page. It uses no external runtime dependencies.
+
+`xrd-experiment/` contains a standalone illustrative powder X-ray diffraction lab with:
+
+- BCC &alpha;-Fe, FCC Cu, HCP Mg, diamond-cubic Si, and a mixed &alpha;-Fe + Cu powder pattern;
+- an animated coupled &theta;&ndash;2&theta; diffractometer with adjustable scan range and playback speed;
+- live peak plotting, Miller-index labels, phase fingerprints, and calculated Bragg spacings;
+- a calculated reference-reflection table with phase and representative intensity information; and
+- CSV export for the completed scan.
+
+Open `xrd-experiment/index.html` directly or through the XRD experiment button
+on the home page. It uses no external runtime dependencies.

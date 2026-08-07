@@ -15,3 +15,8 @@ Current module:
     |-- index.html    Cubic unit cell and index controls
     |-- style.css     Module-only layout
     |-- app.js        Three.js directions and planes
+
+    dislocations/
+    |-- index.html    Edge and screw dislocation controls
+    |-- style.css     Module-only responsive layout
+    |-- app.js        Three.js atomic models and Burgers circuits
