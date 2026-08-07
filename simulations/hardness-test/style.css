@@ -532,19 +532,11 @@ select:disabled {
 }
 
 .scale-band {
+  fill: transparent;
+  stroke: #111;
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
-}
-
-.horizontal-scale .scale-band {
-  fill: rgba(255, 236, 230, 0.74);
-  stroke: #c93b1f;
-}
-
-.vertical-scale .scale-band {
-  fill: rgba(235, 233, 255, 0.7);
-  stroke: #493bc2;
 }
 
 .scale-rail,
@@ -560,13 +552,10 @@ select:disabled {
 }
 
 .horizontal-scale .scale-rail,
-.horizontal-scale .scale-gradation {
-  stroke: #ff653f;
-}
-
+.horizontal-scale .scale-gradation,
 .vertical-scale .scale-rail,
 .vertical-scale .scale-gradation {
-  stroke: #493bc2;
+  stroke: #111;
 }
 
 .measure-handle {
