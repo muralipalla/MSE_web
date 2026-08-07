@@ -6,10 +6,9 @@
   <meta name="description" content="A modular learning lab for Materials Science and Engineering.">
   <meta name="theme-color" content="#fdf6ec">
   <title>MSE Learning Lab</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20260807">
   <script src="js/main.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
-  <script src="js/materials-tetrahedron.js" defer></script>
+  <script type="module" src="js/materials-tetrahedron.js?v=20260807"></script>
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -51,12 +50,6 @@
 
       <figure class="hero-model materials-tetrahedron" aria-labelledby="materials-tetrahedron-caption">
         <div class="tetrahedron-stage" data-materials-tetrahedron aria-hidden="true"></div>
-        <div class="tetrahedron-label-layer" aria-hidden="true">
-          <span class="tetrahedron-label concept-processing" data-tetrahedron-label="processing">Processing</span>
-          <span class="tetrahedron-label concept-structure" data-tetrahedron-label="structure">Structure</span>
-          <span class="tetrahedron-label concept-properties" data-tetrahedron-label="properties">Properties</span>
-          <span class="tetrahedron-label concept-performance" data-tetrahedron-label="performance">Performance</span>
-        </div>
         <strong class="tetrahedron-title" aria-hidden="true">Materials tetrahedron</strong>
         <span class="tetrahedron-note" aria-hidden="true">Drag to rotate &middot; All four corners are linked</span>
         <span class="tetrahedron-fallback" aria-hidden="true">Processing &middot; Structure &middot; Properties &middot; Performance</span>
