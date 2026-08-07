@@ -3,6 +3,7 @@
 
   const KG_FORCE_TO_NEWTONS = 9.80665;
   const BALL_DIAMETER_MM = 10;
+  const ANIMATION_SPEED = 0.2;
   const T_CRITICAL_95 = {
     2: 12.706,
     3: 4.303,
@@ -242,7 +243,6 @@
     loadSelect: document.querySelector("#load-select"),
     dwellSelect: document.querySelector("#dwell-select"),
     readingCountSelect: document.querySelector("#reading-count-select"),
-    playbackSelect: document.querySelector("#playback-select"),
     indenterSummary: document.querySelector("#indenter-summary"),
     notationSummary: document.querySelector("#notation-summary"),
     forceSummary: document.querySelector("#force-summary"),
@@ -258,7 +258,7 @@
     statusCopy: document.querySelector("#status-copy"),
     testerSvg: document.querySelector("#tester-svg"),
     testerDescription: document.querySelector("#tester-svg-description"),
-    indenterGroup: document.querySelector("#indenter-group"),
+    movingHeadGroup: document.querySelector("#moving-head-group"),
     ballIndenter: document.querySelector("#ball-indenter"),
     vickersIndenter: document.querySelector("#vickers-indenter"),
     sampleSurface: document.querySelector("#sample-surface"),
@@ -278,14 +278,18 @@
     vickersImpression: document.querySelector("#vickers-impression"),
     pileupRing: document.querySelector("#pileup-ring"),
     measurementOverlay: document.querySelector("#measurement-overlay"),
+    horizontalScaleBand: document.querySelector("#horizontal-scale-band"),
+    verticalScaleBand: document.querySelector("#vertical-scale-band"),
+    horizontalGradations: document.querySelector("#horizontal-gradations"),
+    verticalGradations: document.querySelector("#vertical-gradations"),
     measureHorizontal: document.querySelector("#measure-horizontal"),
     measureVertical: document.querySelector("#measure-vertical"),
     handleLeft: document.querySelector("#handle-left"),
     handleRight: document.querySelector("#handle-right"),
     handleTop: document.querySelector("#handle-top"),
     handleBottom: document.querySelector("#handle-bottom"),
-    scaleBarLine: document.querySelector("#scale-bar-line"),
-    scaleBarLabel: document.querySelector("#scale-bar-label"),
+    horizontalToolLabel: document.querySelector("#horizontal-tool-label"),
+    verticalToolLabel: document.querySelector("#vertical-tool-label"),
     microscopePlaceholder: document.querySelector("#microscope-placeholder"),
     focusRange: document.querySelector("#focus-range"),
     focusOutput: document.querySelector("#focus-output"),
@@ -346,7 +350,6 @@
     loadKgf: 0,
     dwellSeconds: Number(elements.dwellSelect.value),
     targetReadings: Number(elements.readingCountSelect.value),
-    playbackSpeed: Number(elements.playbackSelect.value),
     status: "setup",
     phase: "Not mounted",
     selectedLocation: "A",
@@ -463,8 +466,8 @@
     elements.hardnessAnswerLabel.textContent = `Your calculated ${hardnessUnit()} value`;
     elements.liveD1Label.textContent = state.method === "brinell" ? "Diameter d1" : "Diagonal d1";
     elements.liveD2Label.textContent = state.method === "brinell" ? "Diameter d2" : "Diagonal d2";
-    elements.diameterOneLabel.firstChild.textContent = state.method === "brinell" ? "Horizontal diameter, d1 " : "Horizontal diagonal, d1 ";
-    elements.diameterTwoLabel.firstChild.textContent = state.method === "brinell" ? "Vertical diameter, d2 " : "Vertical diagonal, d2 ";
+    elements.diameterOneLabel.firstChild.textContent = state.method === "brinell" ? "Horizontal scale, diameter d1 " : "Horizontal scale, diagonal d1 ";
+    elements.diameterTwoLabel.firstChild.textContent = state.method === "brinell" ? "Vertical scale, diameter d2 " : "Vertical scale, diagonal d2 ";
     document.querySelectorAll(".quiz-unit").forEach((unit) => {
       unit.textContent = hardnessUnit();
     });
@@ -484,7 +487,6 @@
     elements.loadSelect.disabled = !editable;
     elements.dwellSelect.disabled = !editable;
     elements.readingCountSelect.disabled = !editable;
-    elements.playbackSelect.disabled = !editable;
   }
 
   function updateLocationButtons() {
@@ -561,7 +563,7 @@
       translation = 58;
       depthFraction = 0.72;
     }
-    elements.indenterGroup.setAttribute("transform", `translate(0 ${translation})`);
+    elements.movingHeadGroup.setAttribute("transform", `translate(0 ${translation})`);
     elements.forceFill.setAttribute("y", String(274 - 140 * loadFraction));
     elements.forceFill.setAttribute("height", String(140 * loadFraction));
     elements.plasticZone.style.opacity = String(state.currentTrial ? Math.max(0, Math.min(0.82, depthFraction * 0.82)) : 0);
@@ -643,8 +645,8 @@
     state.lastAnnouncedPhase = phase;
     state.phase = phase;
     if (phase === "Approach") {
-      setStatus("Indenter approaching", "The indenter is moving toward the polished specimen surface.");
-      elements.stageExplanation.textContent = "The indenter approaches without applying measurable force.";
+      setStatus("Crosshead approaching", "The crosshead carries the load cell and indenter toward the polished specimen surface.");
+      elements.stageExplanation.textContent = "The crosshead, load cell, and indenter descend together without applying measurable force.";
     } else if (phase === "Loading") {
       setStatus("Applying test force", `The force rises smoothly toward ${formatForce(state.loadKgf, true)}.`);
       elements.stageExplanation.textContent = "Elastic and plastic deformation grow beneath the contact as the selected force is applied.";
@@ -667,7 +669,7 @@
     }
     const elapsed = Math.min(timestamp - state.animationLastTime, 80);
     state.animationLastTime = timestamp;
-    const duration = 5200 / state.playbackSpeed;
+    const duration = 5200 / ANIMATION_SPEED;
     state.animationProgress = clamp(state.animationProgress + elapsed / duration, 0, 1);
     const phaseData = animationPhase(state.animationProgress);
     announceAnimationPhase(phaseData.phase);
@@ -698,9 +700,9 @@
     state.measuredDiameterTwo = state.currentTrial.initialDiameterTwo;
     state.caliperAdjusted = { one: false, two: false };
     configureMeasurementControls();
-    setStatus("Inspect the indentation", "Adjust focus, then align both measuring lines with the impression boundary.");
+    setStatus("Inspect the indentation", "Adjust focus, then slide the triangular pins on both graduated scales to the impression boundary.");
     elements.stageExplanation.textContent = "The residual indentation is now ready for optical measurement.";
-    elements.measurementMessage.textContent = "Move both calipers to the visible boundary. The sliders provide a keyboard-accessible alternative to dragging.";
+    elements.measurementMessage.textContent = "Slide the d1 and d2 triangular pins to the visible boundary. The controls below provide a keyboard-accessible alternative to dragging.";
     renderAll();
   }
 
@@ -724,10 +726,48 @@
     elements.recordDimensions.disabled = false;
   }
 
-  function niceScaleLength(dimensionMm) {
-    const candidates = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2];
-    const desired = dimensionMm * 0.32;
+  function niceGraduationLength(dimensionMm) {
+    const candidates = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2];
+    const desired = dimensionMm / 14;
     return candidates.reduce((best, candidate) => Math.abs(candidate - desired) < Math.abs(best - desired) ? candidate : best, candidates[0]);
+  }
+
+  function graduationLabel(divisionMm) {
+    if (divisionMm < 0.1) {
+      return `${formatNumber(divisionMm * 1000, 0)} µm/div`;
+    }
+    return `${formatNumber(divisionMm, divisionMm < 1 ? 2 : 1)} mm/div`;
+  }
+
+  function renderGradations(group, axis, halfExtent, pixelsPerMm, divisionMm) {
+    const spacing = divisionMm * pixelsPerMm;
+    if (!(spacing > 0)) {
+      group.replaceChildren();
+      return;
+    }
+    const count = Math.min(40, Math.floor(halfExtent / spacing));
+    const fragment = document.createDocumentFragment();
+    for (let index = -count; index <= count; index += 1) {
+      const coordinate = (axis === "horizontal" ? 300 : 206) + index * spacing;
+      const isMajor = index % 5 === 0;
+      const attributes = axis === "horizontal"
+        ? {
+            x1: coordinate,
+            y1: isMajor ? 198 : 201,
+            x2: coordinate,
+            y2: isMajor ? 214 : 211,
+            class: `scale-gradation${isMajor ? " is-major" : ""}`
+          }
+        : {
+            x1: isMajor ? 292 : 295,
+            y1: coordinate,
+            x2: isMajor ? 308 : 305,
+            y2: coordinate,
+            class: `scale-gradation${isMajor ? " is-major" : ""}`
+          };
+      fragment.append(svgElement("line", attributes));
+    }
+    group.replaceChildren(fragment);
   }
 
   function renderMicroscope() {
@@ -772,14 +812,25 @@
 
     const halfWidth = state.measuredDiameterOne * ppm / 2;
     const halfHeight = state.measuredDiameterTwo * ppm / 2;
+    elements.horizontalScaleBand.setAttribute("x", String(300 - halfWidth));
+    elements.horizontalScaleBand.setAttribute("width", String(halfWidth * 2));
+    elements.verticalScaleBand.setAttribute("y", String(206 - halfHeight));
+    elements.verticalScaleBand.setAttribute("height", String(halfHeight * 2));
     elements.measureHorizontal.setAttribute("x1", String(300 - halfWidth));
     elements.measureHorizontal.setAttribute("x2", String(300 + halfWidth));
-    elements.handleLeft.setAttribute("cx", String(300 - halfWidth));
-    elements.handleRight.setAttribute("cx", String(300 + halfWidth));
+    elements.handleLeft.setAttribute("transform", `translate(${300 - halfWidth} 206)`);
+    elements.handleRight.setAttribute("transform", `translate(${300 + halfWidth} 206)`);
     elements.measureVertical.setAttribute("y1", String(206 - halfHeight));
     elements.measureVertical.setAttribute("y2", String(206 + halfHeight));
-    elements.handleTop.setAttribute("cy", String(206 - halfHeight));
-    elements.handleBottom.setAttribute("cy", String(206 + halfHeight));
+    elements.handleTop.setAttribute("transform", `translate(300 ${206 - halfHeight}) rotate(90)`);
+    elements.handleBottom.setAttribute("transform", `translate(300 ${206 + halfHeight}) rotate(90)`);
+
+    const graduation = niceGraduationLength(trial.meanDimension);
+    renderGradations(elements.horizontalGradations, "horizontal", halfWidth, ppm, graduation);
+    renderGradations(elements.verticalGradations, "vertical", halfHeight, ppm, graduation);
+    const divisionText = graduationLabel(graduation);
+    elements.horizontalToolLabel.textContent = `d1 · ${divisionText}`;
+    elements.verticalToolLabel.textContent = `d2 · ${divisionText}`;
 
     const digits = dimensionDigits();
     const suffix = " mm";
@@ -791,14 +842,6 @@
     elements.liveD2Value.textContent = `${formatNumber(state.measuredDiameterTwo, digits)} mm`;
     elements.meanDiameterValue.textContent = `${formatNumber((state.measuredDiameterOne + state.measuredDiameterTwo) / 2, digits)} mm`;
 
-    const scaleLength = niceScaleLength(trial.meanDimension);
-    const scalePixels = scaleLength * ppm;
-    elements.scaleBarLine.setAttribute("x1", String(475 - scalePixels));
-    elements.scaleBarLine.setAttribute("x2", "475");
-    elements.scaleBarLabel.setAttribute("x", String(475 - scalePixels / 2));
-    elements.scaleBarLabel.textContent = scaleLength < 0.1
-      ? `${formatNumber(scaleLength * 1000, 0)} µm`
-      : `${formatNumber(scaleLength, scaleLength < 1 ? 2 : 0)} mm`;
     elements.microscopeDescription.textContent = `${state.method === "brinell" ? "Circular Brinell impression" : "Diamond-shaped Vickers impression"} at location ${trial.location}. Horizontal measurement ${formatNumber(state.measuredDiameterOne, digits)} millimetres; vertical measurement ${formatNumber(state.measuredDiameterTwo, digits)} millimetres.`;
   }
 
@@ -968,7 +1011,7 @@
     elements.formulaDisplay.textContent = "Record an indentation to begin the hardness calculation.";
     elements.formulaSubstitution.textContent = "";
     elements.measurementMessage.textContent = "";
-    elements.stageExplanation.textContent = "The indenter will approach the polished surface, apply the selected force, dwell, and unload.";
+    elements.stageExplanation.textContent = "The moving crosshead carries the load cell and indenter toward the polished surface, applies the selected force, dwells, and unloads.";
     setStatus("Waiting for specimen", "Choose a method, specimen, and test location, then mount the specimen.");
     resetMicroscopeView();
     resetQuiz();
@@ -1023,7 +1066,12 @@
     if (!state.dragHandle) {
       return;
     }
-    const handle = event.target.closest?.(".measure-handle");
+    const handle = {
+      left: elements.handleLeft,
+      right: elements.handleRight,
+      top: elements.handleTop,
+      bottom: elements.handleBottom
+    }[state.dragHandle];
     if (handle) {
       handle.classList.remove("is-dragging");
       if (handle.hasPointerCapture(event.pointerId)) {
@@ -1038,7 +1086,7 @@
       return;
     }
     state.focus = state.currentTrial.focusTarget;
-    elements.measurementMessage.textContent = "Image focused. Align both measuring lines with the indentation boundary.";
+    elements.measurementMessage.textContent = "Image focused. Align each triangular pin with the indentation boundary.";
     renderMicroscope();
   }
 
@@ -1049,7 +1097,7 @@
     state.measuredDiameterOne = state.currentTrial.initialDiameterOne;
     state.measuredDiameterTwo = state.currentTrial.initialDiameterTwo;
     state.caliperAdjusted = { one: false, two: false };
-    elements.measurementMessage.textContent = "Measuring lines reset. Move both lines before recording.";
+    elements.measurementMessage.textContent = "Graduated scales reset. Move both pairs of triangular pins before recording.";
     renderMicroscope();
   }
 
@@ -1062,7 +1110,7 @@
       return;
     }
     if (!state.caliperAdjusted.one || !state.caliperAdjusted.two) {
-      elements.measurementMessage.textContent = "Move both measuring lines before recording d1 and d2.";
+      elements.measurementMessage.textContent = "Move the pins on both graduated scales before recording d1 and d2.";
       return;
     }
     const d1 = quantize(state.measuredDiameterOne, dimensionIncrement());
@@ -1075,7 +1123,7 @@
     }
     const expectedHardness = hardnessFromDimensions(state.method, state.loadKgf, BALL_DIAMETER_MM, d1, d2);
     if (!Number.isFinite(expectedHardness)) {
-      elements.measurementMessage.textContent = "The recorded dimensions are not physically valid for this test. Reposition the calipers.";
+      elements.measurementMessage.textContent = "The recorded dimensions are not physically valid for this test. Reposition the scale pins.";
       return;
     }
     const reading = {
@@ -1457,9 +1505,6 @@
     state.targetReadings = Number(elements.readingCountSelect.value);
     resetQuiz();
     renderRecords();
-  });
-  elements.playbackSelect.addEventListener("change", () => {
-    state.playbackSpeed = Number(elements.playbackSelect.value);
   });
   elements.locationPoints.forEach((button) => {
     button.addEventListener("click", () => {

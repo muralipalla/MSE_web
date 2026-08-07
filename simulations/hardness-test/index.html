@@ -38,8 +38,8 @@
       </div>
       <div class="intro-copy">
         <p>
-          Produce an indentation, inspect it under a virtual microscope, place
-          calibrated measuring lines, and calculate hardness from your own
+          Produce an indentation, inspect it under a virtual microscope, position
+          calibrated graduated scales, and calculate hardness from your own
           recorded dimensions.
         </p>
         <p class="accuracy-note">
@@ -94,14 +94,6 @@
           </select>
         </label>
 
-        <label class="field-label" for="playback-select">
-          <span>Animation speed</span>
-          <select id="playback-select">
-            <option value="0.5">0.5&times;</option>
-            <option value="1" selected>1&times;</option>
-            <option value="2">2&times;</option>
-          </select>
-        </label>
       </div>
 
       <div class="condition-grid" aria-live="polite">
@@ -189,14 +181,17 @@
             <rect class="tester-backdrop" x="20" y="18" width="560" height="456" rx="24"></rect>
             <rect class="tester-column" x="52" y="42" width="48" height="386" rx="14"></rect>
             <rect class="tester-column" x="500" y="42" width="48" height="386" rx="14"></rect>
-            <rect class="tester-crosshead" x="84" y="50" width="432" height="55" rx="14"></rect>
-            <rect class="tester-load-cell" x="263" y="100" width="74" height="58" rx="12"></rect>
-            <text class="tester-label" x="300" y="135" text-anchor="middle">LOAD CELL</text>
+            <g id="moving-head-group">
+              <rect class="tester-crosshead" x="84" y="50" width="432" height="55" rx="14"></rect>
+              <text class="crosshead-label" x="300" y="83" text-anchor="middle">MOVING CROSSHEAD</text>
+              <rect class="tester-load-cell" x="263" y="100" width="74" height="58" rx="12"></rect>
+              <text class="tester-label" x="300" y="135" text-anchor="middle">LOAD CELL</text>
 
-            <g id="indenter-group">
-              <rect class="indenter-shaft" x="278" y="146" width="44" height="64" rx="8"></rect>
-              <circle id="ball-indenter" class="ball-indenter" cx="300" cy="226" r="22"></circle>
-              <path id="vickers-indenter" class="vickers-indenter" d="M266 204 H334 L300 246 Z" hidden></path>
+              <g id="indenter-group">
+                <rect class="indenter-shaft" x="278" y="146" width="44" height="64" rx="8"></rect>
+                <circle id="ball-indenter" class="ball-indenter" cx="300" cy="226" r="22"></circle>
+                <path id="vickers-indenter" class="vickers-indenter" d="M266 204 H334 L300 246 Z" hidden></path>
+              </g>
             </g>
 
             <ellipse id="plastic-zone" class="plastic-zone" cx="300" cy="331" rx="75" ry="38"></ellipse>
@@ -215,7 +210,7 @@
           </svg>
         </div>
         <p class="stage-explanation" id="stage-explanation">
-          The indenter will approach the polished surface, apply the selected force, dwell, and unload.
+          The moving crosshead carries the load cell and indenter toward the polished surface, applies the selected force, dwells, and unloads.
         </p>
       </article>
 
@@ -224,7 +219,7 @@
           <div class="step-number" aria-hidden="true">3</div>
           <div>
             <p class="panel-kicker">Optical measurement</p>
-            <h2 id="microscope-title">Microscope and calipers</h2>
+            <h2 id="microscope-title">Microscope and graduated scales</h2>
           </div>
         </div>
 
@@ -273,19 +268,35 @@
             </g>
 
             <g id="measurement-overlay" class="measurement-overlay" hidden>
-              <line id="measure-horizontal" class="measure-line horizontal" x1="220" y1="206" x2="380" y2="206"></line>
-              <line id="measure-vertical" class="measure-line vertical" x1="300" y1="126" x2="300" y2="286"></line>
-              <circle id="handle-left" class="measure-handle horizontal-handle" data-handle="left" cx="220" cy="206" r="13"></circle>
-              <circle id="handle-right" class="measure-handle horizontal-handle" data-handle="right" cx="380" cy="206" r="13"></circle>
-              <circle id="handle-top" class="measure-handle vertical-handle" data-handle="top" cx="300" cy="126" r="13"></circle>
-              <circle id="handle-bottom" class="measure-handle vertical-handle" data-handle="bottom" cx="300" cy="286" r="13"></circle>
-              <text id="horizontal-tool-label" class="tool-label" x="198" y="202" text-anchor="end">d1</text>
-              <text id="vertical-tool-label" class="tool-label" x="308" y="102">d2</text>
-            </g>
+              <g class="graduated-scale horizontal-scale">
+                <rect id="horizontal-scale-band" class="scale-band" x="220" y="198" width="160" height="16" rx="4"></rect>
+                <line id="measure-horizontal" class="scale-rail" x1="220" y1="206" x2="380" y2="206"></line>
+                <g id="horizontal-gradations" class="scale-gradations" aria-hidden="true"></g>
+                <g id="handle-left" class="measure-handle horizontal-handle" data-handle="left" transform="translate(220 206)">
+                  <rect class="pin-hit-area" x="-22" y="-28" width="44" height="44"></rect>
+                  <path class="pin-face" d="M-12 -22 H12 L0 0 Z"></path>
+                </g>
+                <g id="handle-right" class="measure-handle horizontal-handle" data-handle="right" transform="translate(380 206)">
+                  <rect class="pin-hit-area" x="-22" y="-28" width="44" height="44"></rect>
+                  <path class="pin-face" d="M-12 -22 H12 L0 0 Z"></path>
+                </g>
+                <text id="horizontal-tool-label" class="tool-label" x="220" y="366" text-anchor="middle">d1 scale</text>
+              </g>
 
-            <g class="scale-bar" aria-hidden="true">
-              <line id="scale-bar-line" x1="390" y1="376" x2="490" y2="376"></line>
-              <text id="scale-bar-label" x="440" y="399" text-anchor="middle">Scale</text>
+              <g class="graduated-scale vertical-scale">
+                <rect id="vertical-scale-band" class="scale-band" x="292" y="126" width="16" height="160" rx="4"></rect>
+                <line id="measure-vertical" class="scale-rail" x1="300" y1="126" x2="300" y2="286"></line>
+                <g id="vertical-gradations" class="scale-gradations" aria-hidden="true"></g>
+                <g id="handle-top" class="measure-handle vertical-handle" data-handle="top" transform="translate(300 126) rotate(90)">
+                  <rect class="pin-hit-area" x="-22" y="-28" width="44" height="44"></rect>
+                  <path class="pin-face" d="M-12 -22 H12 L0 0 Z"></path>
+                </g>
+                <g id="handle-bottom" class="measure-handle vertical-handle" data-handle="bottom" transform="translate(300 286) rotate(90)">
+                  <rect class="pin-hit-area" x="-22" y="-28" width="44" height="44"></rect>
+                  <path class="pin-face" d="M-12 -22 H12 L0 0 Z"></path>
+                </g>
+                <text id="vertical-tool-label" class="tool-label" x="380" y="366" text-anchor="middle">d2 scale</text>
+              </g>
             </g>
             <text id="microscope-placeholder" class="microscope-placeholder" x="300" y="210" text-anchor="middle">Indentation not available</text>
           </svg>
@@ -299,16 +310,16 @@
           <button class="button secondary compact-button" id="autofocus" type="button" disabled>Auto focus</button>
 
           <label class="range-field" for="diameter-one-range">
-            <span id="diameter-one-label">Horizontal diameter, d1 <output id="diameter-one-output">&mdash;</output></span>
+            <span id="diameter-one-label">Horizontal scale, d1 <output id="diameter-one-output">&mdash;</output></span>
             <input id="diameter-one-range" type="range" min="0" max="1" step="0.01" value="0" disabled>
           </label>
           <label class="range-field" for="diameter-two-range">
-            <span id="diameter-two-label">Vertical diameter, d2 <output id="diameter-two-output">&mdash;</output></span>
+            <span id="diameter-two-label">Vertical scale, d2 <output id="diameter-two-output">&mdash;</output></span>
             <input id="diameter-two-range" type="range" min="0" max="1" step="0.01" value="0" disabled>
           </label>
 
           <div class="measurement-buttons">
-            <button class="button secondary" id="reset-calipers" type="button" disabled>Reset measuring lines</button>
+            <button class="button secondary" id="reset-calipers" type="button" disabled>Reset scales</button>
             <button class="button primary" id="record-dimensions" type="button" disabled>Record dimensions</button>
           </div>
           <p class="measurement-message" id="measurement-message" role="status"></p>

@@ -414,6 +414,14 @@ select:disabled {
   letter-spacing: 1px;
 }
 
+.crosshead-label {
+  fill: #243848;
+  font-family: system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 850;
+  letter-spacing: 1.2px;
+}
+
 .method-label {
   fill: var(--ink);
   font-size: 15px;
@@ -523,40 +531,78 @@ select:disabled {
   pointer-events: none;
 }
 
-.measure-line {
-  fill: none;
-  stroke-width: 3;
+.scale-band {
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
 
-.measure-line.horizontal {
+.horizontal-scale .scale-band {
+  fill: rgba(255, 236, 230, 0.74);
+  stroke: #c93b1f;
+}
+
+.vertical-scale .scale-band {
+  fill: rgba(235, 233, 255, 0.7);
+  stroke: #493bc2;
+}
+
+.scale-rail,
+.scale-gradation {
+  fill: none;
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.scale-gradation.is-major {
+  stroke-width: 2.8;
+}
+
+.horizontal-scale .scale-rail,
+.horizontal-scale .scale-gradation {
   stroke: #ff653f;
 }
 
-.measure-line.vertical {
+.vertical-scale .scale-rail,
+.vertical-scale .scale-gradation {
   stroke: #493bc2;
 }
 
 .measure-handle {
-  stroke: white;
-  stroke-width: 4;
   pointer-events: auto;
   cursor: ew-resize;
   touch-action: none;
 }
 
-.measure-handle.horizontal-handle {
+.pin-hit-area {
+  fill: transparent;
+  stroke: none;
+  pointer-events: all;
+}
+
+.pin-face {
+  stroke: white;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.horizontal-handle .pin-face {
   fill: #ff653f;
 }
 
-.measure-handle.vertical-handle {
+.vertical-handle .pin-face {
   fill: #493bc2;
+}
+
+.measure-handle.vertical-handle {
   cursor: ns-resize;
 }
 
-.measure-handle.is-dragging {
+.measure-handle.is-dragging .pin-face {
   stroke: #ffe7df;
-  stroke-width: 7;
+  stroke-width: 5;
 }
 
 .tool-label {
@@ -567,21 +613,6 @@ select:disabled {
   font-family: system-ui, sans-serif;
   font-size: 15px;
   font-weight: 900;
-}
-
-.scale-bar line {
-  stroke: #17134d;
-  stroke-width: 6;
-}
-
-.scale-bar text {
-  paint-order: stroke;
-  fill: #17134d;
-  stroke: rgba(255, 255, 255, 0.86);
-  stroke-width: 4;
-  font-family: system-ui, sans-serif;
-  font-size: 14px;
-  font-weight: 850;
 }
 
 .microscope-placeholder {
