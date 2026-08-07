@@ -1,9 +1,14 @@
-import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js";
+(() => {
+"use strict";
+
+const THREE = window.THREE;
 
 const stage = document.querySelector("[data-materials-tetrahedron]");
 
-if (stage) {
+if (stage && THREE) {
   initialiseMaterialsTetrahedron(stage);
+} else if (stage) {
+  console.warn("Three.js did not load; showing the materials tetrahedron fallback.");
 }
 
 function initialiseMaterialsTetrahedron(renderStage) {
@@ -301,3 +306,5 @@ function createEdge(start, end, material) {
 function clamp(value, minimum, maximum) {
   return Math.min(Math.max(value, minimum), maximum);
 }
+
+})();
