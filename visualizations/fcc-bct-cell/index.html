@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Reveal a body-centred tetragonal cell inside two adjacent FCC conventional cells and compare their crystallographic axes.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>FCC and Hidden BCT Cell | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#fcc-bct-explorer">Skip to FCC and BCT visualization</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Visualization navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="fcc-bct-shell" id="fcc-bct-explorer">
+    <header class="fcc-bct-intro">
+      <div>
+        <p class="eyebrow">Interactive visualization 04</p>
+        <h1>Reveal the BCT cell hidden inside FCC</h1>
+      </div>
+      <div class="intro-copy">
+        <p>
+          Rotate two adjacent FCC conventional cells and reveal an alternative
+          body-centred tetragonal cell built from the same lattice points.
+        </p>
+        <p class="intro-question">Why is the Bravais lattice still classified as FCC?</p>
+      </div>
+    </header>
+
+    <div class="explorer-layout">
+      <section class="viewer-panel" aria-labelledby="viewer-title">
+        <div class="viewer-heading">
+          <div>
+            <p class="panel-kicker">Common face-centre atom</p>
+            <h2 id="viewer-title">FCC lattice and alternative BCT cell</h2>
+          </div>
+          <button class="small-button" id="download-png" type="button">Download PNG</button>
+        </div>
+
+        <div class="viewer-frame" id="viewer-frame">
+          <canvas
+            id="fcc-bct-canvas"
+            role="img"
+            aria-label="Interactive model of two adjacent FCC conventional cells containing an alternative body-centred tetragonal cell. Drag to rotate, scroll to zoom, and right-drag to pan."
+          >
+            Your browser does not support the canvas element.
+          </canvas>
+          <div class="viewer-fallback" id="viewer-fallback" role="alert" hidden>
+            The 3D view could not start. Try a current browser with WebGL enabled.
+          </div>
+          <div class="viewer-legend" aria-label="Graphic legend">
+            <span><i class="fcc-key" aria-hidden="true"></i>FCC cells</span>
+            <span><i class="bct-key" aria-hidden="true"></i>BCT cell</span>
+            <span><i class="centre-key" aria-hidden="true"></i>Body centre</span>
+          </div>
+        </div>
+
+        <p class="viewer-help">Drag to rotate &middot; Scroll or pinch to zoom &middot; Right-drag to pan</p>
+        <p class="selection-summary" id="selection-summary" aria-live="polite">
+          Showing two FCC conventional cells and the alternative BCT cell.
+        </p>
+        <p class="download-message" id="download-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="controls-panel" aria-label="FCC and BCT display controls">
+        <section class="control-block" aria-labelledby="layers-title">
+          <div class="control-heading">
+            <span aria-hidden="true">01</span>
+            <div><p>Model layers</p><h2 id="layers-title">Choose what to show</h2></div>
+          </div>
+          <div class="toggle-list">
+            <label><input id="show-fcc-frames" type="checkbox" checked>Two FCC conventional cells</label>
+            <label><input id="show-atoms" type="checkbox" checked>FCC lattice points</label>
+            <label><input id="show-bct" type="checkbox" checked>Alternative BCT cell</label>
+            <label><input id="show-bct-highlights" type="checkbox" checked>BCT corners and body centre</label>
+            <label><input id="show-axes" type="checkbox" checked>Tetragonal axes</label>
+            <label><input id="auto-rotate" type="checkbox">Auto-rotate</label>
+          </div>
+        </section>
+
+        <section class="control-block" aria-labelledby="appearance-title">
+          <div class="control-heading">
+            <span aria-hidden="true">02</span>
+            <div><p>Appearance</p><h2 id="appearance-title">Adjust the model</h2></div>
+          </div>
+          <label class="range-field" for="fcc-opacity">
+            <span>FCC-cell transparency <output id="fcc-opacity-value" for="fcc-opacity">12%</output></span>
+            <input id="fcc-opacity" type="range" min="0" max="40" value="12">
+          </label>
+          <label class="range-field" for="bct-opacity">
+            <span>BCT-cell transparency <output id="bct-opacity-value" for="bct-opacity">18%</output></span>
+            <input id="bct-opacity" type="range" min="0" max="55" value="18">
+          </label>
+          <label class="range-field" for="atom-size">
+            <span>Atom marker size <output id="atom-size-value" for="atom-size">1.00&times;</output></span>
+            <input id="atom-size" type="range" min="7" max="21" value="13">
+          </label>
+        </section>
+
+        <section class="control-block" aria-labelledby="view-title">
+          <div class="control-heading">
+            <span aria-hidden="true">03</span>
+            <div><p>Camera</p><h2 id="view-title">Choose a view</h2></div>
+          </div>
+          <div class="view-buttons" aria-label="Camera views">
+            <button class="small-button" id="view-isometric" type="button">Isometric</button>
+            <button class="small-button" id="view-top" type="button">Top</button>
+            <button class="small-button" id="view-front" type="button">Front</button>
+            <button class="small-button" id="focus-bct" type="button">Focus BCT</button>
+            <button class="small-button reset-button" id="reset-view" type="button">Reset model</button>
+          </div>
+        </section>
+
+        <section class="concept-note" aria-labelledby="key-idea-title">
+          <h2 id="key-idea-title">Why FCC, not BCT?</h2>
+          <div class="legend-list" aria-label="Model colours">
+            <span><i class="fcc-key" aria-hidden="true"></i>FCC conventional-cell edges</span>
+            <span><i class="bct-key" aria-hidden="true"></i>Alternative BCT cell</span>
+            <span><i class="centre-key" aria-hidden="true"></i>BCT body-centre lattice point</span>
+          </div>
+          <p>The tetragonal axes follow FCC directions:</p>
+          <div class="axis-legend" aria-label="Tetragonal axis colours">
+            <span><i class="axis-u-key" aria-hidden="true"></i>[100]<sub>t</sub> &parallel; [110]<sub>&gamma;</sub></span>
+            <span><i class="axis-v-key" aria-hidden="true"></i>[010]<sub>t</sub> &parallel; [<span class="overbar">1</span>10]<sub>&gamma;</sub></span>
+            <span><i class="axis-w-key" aria-hidden="true"></i>[001]<sub>t</sub> &parallel; [001]<sub>&gamma;</sub></span>
+          </div>
+          <div class="equation-block" aria-label="Tetragonal lattice parameters">
+            <span>a<sub>t</sub> = a<sub>&gamma;</sub>/&radic;2</span>
+            <span>c<sub>t</sub> = a<sub>&gamma;</sub></span>
+            <span>c<sub>t</sub>/a<sub>t</sub> = &radic;2</span>
+          </div>
+          <p>
+            This is a non-standard I-centred tetragonal setting of FCC at the
+            special metric c<sub>t</sub>/a<sub>t</sub> = &radic;2. It is a re-description
+            of the same lattice points, not a phase transformation. The FCC conventional
+            cell displays the highest symmetry directly, so FCC is the standard
+            Bravais-lattice classification.
+          </p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>FCC and hidden BCT cell &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

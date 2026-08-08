@@ -546,6 +546,10 @@ summary:focus-visible {
   padding: clamp(1.5rem, 4vw, 2.5rem);
 }
 
+.question-card .button {
+  margin-top: 1.2rem;
+}
+
 details {
   margin-top: 1.25rem;
   border-top: 1px solid var(--line);
