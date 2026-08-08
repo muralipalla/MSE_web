@@ -22,6 +22,7 @@ Current teaching pages are:
 
     teaching/introduction.html
     teaching/atomic-bonding/index.html
+    teaching/visualization-of-structures/index.html
 
 Current quiz pages are:
 

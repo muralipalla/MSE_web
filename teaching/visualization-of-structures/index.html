@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive Three.js atlas of representative metallic, ceramic, layered, clay, and polymer structures for materials-science teaching.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Visualization of Structures | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=9">
+  <script src="../../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js?v=9"></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to lesson</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="structures-shell" id="lesson">
+    <header class="structures-intro">
+      <div>
+        <p class="eyebrow">Teaching page 03</p>
+        <h1>Visualization of Structures</h1>
+      </div>
+      <div class="structures-intro-copy">
+        <p>
+          A chemical formula tells us which atoms are present. A structure tells us
+          where they sit, which neighbours surround them, and how the pattern repeats.
+          Explore representative structures from metals, ceramics, layered solids,
+          clays, and polymers in one interactive atlas.
+        </p>
+        <p class="structures-scope-note">
+          This is an expandable teaching atlas, not an exhaustive catalogue of every
+          known crystal or polymer morphology.
+        </p>
+      </div>
+    </header>
+
+    <section class="structures-foundations" aria-labelledby="foundations-title">
+      <div class="structures-section-heading">
+        <p class="section-kicker">Before you rotate</p>
+        <h2 id="foundations-title">Read crystalline structures as lattice + basis</h2>
+      </div>
+      <div class="structures-foundation-grid">
+        <article>
+          <span aria-hidden="true">1</span>
+          <h3>Lattice</h3>
+          <p>The repeating translations define the Bravais lattice and the unit-cell geometry.</p>
+        </article>
+        <article>
+          <span aria-hidden="true">2</span>
+          <h3>Basis</h3>
+          <p>One or more atoms attached to each lattice point create the crystal structure.</p>
+        </article>
+        <article>
+          <span aria-hidden="true">3</span>
+          <h3>Coordination</h3>
+          <p>Nearest neighbours reveal local geometry; guide lines are not always literal covalent bonds.</p>
+        </article>
+      </div>
+      <p class="structures-foundation-note">
+        Polymer views use a different language: connectivity, conformation, architecture,
+        and morphology. An amorphous coil or cross-linked network does not imply a repeating unit cell.
+      </p>
+    </section>
+
+    <section class="structures-explorer" aria-labelledby="explorer-title">
+      <fieldset class="structures-control-group structures-model-picker">
+        <legend>Choose a model</legend>
+        <label for="structure-family">Material family</label>
+        <select id="structure-family" disabled>
+          <option value="elemental">Elements and common lattices</option>
+          <option value="binary">Binary compounds</option>
+          <option value="complex">Complex ceramics</option>
+          <option value="layered">Layered and clay structures</option>
+          <option value="polymer">Polymer conformation and architecture</option>
+        </select>
+
+        <label for="structure-model">Structure</label>
+        <select id="structure-model" disabled>
+          <option value="fcc">Face-centred cubic (FCC)</option>
+        </select>
+      </fieldset>
+
+      <div class="structures-viewer-panel">
+        <header class="structures-viewer-heading">
+          <div>
+            <p class="structures-panel-kicker" id="model-kind">Exact crystallographic prototype</p>
+            <h2 id="explorer-title">Face-centred cubic (FCC)</h2>
+            <p id="model-subtitle">Cu prototype &middot; cubic conventional cell</p>
+          </div>
+          <button class="structures-download" id="download-png" type="button" disabled>Download PNG</button>
+        </header>
+
+        <div class="structures-viewer-frame" id="structures-viewer-frame" role="group" aria-labelledby="explorer-title">
+          <canvas id="structures-canvas" aria-hidden="true"></canvas>
+          <div class="structures-fallback" id="structures-fallback" role="status">
+            <svg viewBox="0 0 260 190" role="img" aria-labelledby="fallback-title fallback-desc">
+              <title id="fallback-title">Schematic cubic unit cell</title>
+              <desc id="fallback-desc">A wireframe cube containing corner and face-centred atoms while the interactive model loads.</desc>
+              <g fill="none" stroke="currentColor" stroke-width="3">
+                <path d="M48 62 150 35 214 73 111 101Z M48 62v79l63 35 103-31V73 M111 101v75 M48 141l102-29 64 33 M150 35v77"/>
+              </g>
+              <g fill="currentColor">
+                <circle cx="48" cy="62" r="8"/><circle cx="150" cy="35" r="8"/>
+                <circle cx="214" cy="73" r="8"/><circle cx="111" cy="101" r="8"/>
+                <circle cx="48" cy="141" r="8"/><circle cx="111" cy="176" r="8"/>
+                <circle cx="214" cy="145" r="8"/><circle cx="150" cy="112" r="8"/>
+                <circle cx="99" cy="49" r="7"/><circle cx="162" cy="87" r="7"/>
+                <circle cx="80" cy="121" r="7"/>
+              </g>
+            </svg>
+            <strong>Preparing the three-dimensional structure atlas&hellip;</strong>
+            <span>If the 3D library or WebGL cannot load, use the selectors to browse every model's facts.</span>
+          </div>
+        </div>
+
+        <fieldset class="structures-control-group structures-camera-panel">
+          <legend>Camera</legend>
+          <div class="structures-view-buttons">
+            <button type="button" id="view-isometric" disabled>Isometric</button>
+            <button type="button" id="view-a" disabled>Along <em>a</em></button>
+            <button type="button" id="view-c" disabled>Along <em>c</em></button>
+            <button type="button" id="zoom-in" disabled>Zoom in</button>
+            <button type="button" id="zoom-out" disabled>Zoom out</button>
+            <button type="button" id="reset-view" disabled>Reset</button>
+          </div>
+        </fieldset>
+
+        <ul class="structures-legend" id="species-legend" aria-label="Atom legend">
+          <li><i class="structures-swatch structures-swatch-a" aria-hidden="true"></i><span>Cu &mdash; copper</span></li>
+        </ul>
+        <p class="structures-viewer-help">
+          Mouse: drag to rotate and use the wheel to zoom. Touch: drag sideways to rotate;
+          vertical movement scrolls the page and pinch zooms the page. Use Zoom in and Zoom out
+          to inspect dense models on a phone. Keyboard users can use all camera buttons.
+          Unit-cell boundary spheres are shared image atoms, and guides at the edge of a finite display may be truncated.
+        </p>
+      </div>
+
+      <aside class="structures-controls-panel" aria-label="Structure explorer controls">
+        <fieldset class="structures-control-group structures-toggle-group">
+          <legend>Display</legend>
+          <label><input id="show-cell" type="checkbox" checked disabled> Unit-cell frame</label>
+          <label><input id="show-links" type="checkbox" checked disabled> Nearest-neighbour guides</label>
+        </fieldset>
+
+        <section class="structures-facts" aria-labelledby="facts-title">
+          <p class="structures-panel-kicker">Current model</p>
+          <h3 id="facts-title">Structure facts</h3>
+          <dl>
+            <div><dt>Prototype</dt><dd id="fact-prototype">Cu (A1)</dd></div>
+            <div><dt>Crystal system</dt><dd id="fact-system">Cubic</dd></div>
+            <div><dt>Bravais lattice</dt><dd id="fact-lattice">Face-centred cubic</dd></div>
+            <div><dt>Cell contents</dt><dd id="fact-cell">4 effective atoms</dd></div>
+            <div><dt>Coordination</dt><dd id="fact-coordination">12</dd></div>
+          </dl>
+        </section>
+
+        <section class="structures-notice" aria-labelledby="notice-title">
+          <p class="structures-panel-kicker">Notice</p>
+          <h3 id="notice-title">What should I look for?</h3>
+          <p id="model-notice">Corner and face-centred sites belong to one translation-equivalent lattice.</p>
+        </section>
+
+        <p class="structures-status" id="structures-status" role="status" aria-live="polite">Preparing the interactive model.</p>
+      </aside>
+    </section>
+
+    <section class="structures-misconceptions" aria-labelledby="misconceptions-title">
+      <div class="structures-section-heading">
+        <p class="section-kicker">Structure is more than shape</p>
+        <h2 id="misconceptions-title">Three distinctions worth remembering</h2>
+      </div>
+      <div class="structures-misconception-grid">
+        <article>
+          <h3>Why is CsCl not BCC?</h3>
+          <p>
+            A translation by (&frac12;,&frac12;,&frac12;) exchanges Cs and Cl. Because
+            unlike atoms are not translation-equivalent, CsCl has a primitive-cubic
+            Bravais lattice with a two-species basis&mdash;not a BCC Bravais lattice.
+          </p>
+        </article>
+        <article>
+          <h3>Why is zinc blende not diamond?</h3>
+          <p>
+            Both have the same tetrahedral network topology, but diamond uses one
+            element while zinc blende alternates Zn and S. The basis changes the symmetry.
+          </p>
+        </article>
+        <article>
+          <h3>Does a formula determine a structure?</h3>
+          <p>
+            No. AB<sub>2</sub> and A<sub>2</sub>B<sub>3</sub> are compositions, not
+            structures. CaF<sub>2</sub> and &alpha;-Al<sub>2</sub>O<sub>3</sub> are
+            representative prototypes among many possible polymorphs.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="structures-catalogue" aria-labelledby="catalogue-title">
+      <div class="structures-section-heading">
+        <p class="section-kicker">Included in this atlas</p>
+        <h2 id="catalogue-title">From periodic unit cells to material architecture</h2>
+      </div>
+      <div class="structures-catalogue-grid">
+        <article>
+          <span class="structures-catalogue-mark" aria-hidden="true">MET</span>
+          <h3>Elements and common lattices</h3>
+          <p>Simple cubic, BCC, FCC, HCP, and diamond cubic.</p>
+        </article>
+        <article>
+          <span class="structures-catalogue-mark structures-catalogue-mark-blue" aria-hidden="true">AB</span>
+          <h3>Binary compounds</h3>
+          <p>NaCl rock salt, CsCl, zinc-blende ZnS, and wurtzite ZnS.</p>
+        </article>
+        <article>
+          <span class="structures-catalogue-mark structures-catalogue-mark-green" aria-hidden="true">CER</span>
+          <h3>Complex ceramics</h3>
+          <p>Fluorite, rutile, corundum, cubic perovskite, and layered YBCO.</p>
+        </article>
+        <article>
+          <span class="structures-catalogue-mark structures-catalogue-mark-purple" aria-hidden="true">LAY</span>
+          <h3>Layered and clay structures</h3>
+          <p>AB-stacked graphite, kaolinite 1:1 layers, and smectite 2:1 layers with an interlayer region.</p>
+        </article>
+        <article>
+          <span class="structures-catalogue-mark structures-catalogue-mark-blue" aria-hidden="true">POL</span>
+          <h3>Polymer conformation and architecture</h3>
+          <p>Linear, random-coil, branched, cross-linked, and folded-chain semicrystalline models.</p>
+        </article>
+      </div>
+      <p class="structures-catalogue-note">
+        Crystal prototypes are labelled as crystallographic models. Clay and polymer views are
+        deliberately labelled schematic because a broad family name does not specify one unique unit cell.
+      </p>
+    </section>
+
+    <section class="structures-references" aria-labelledby="references-title">
+      <div>
+        <p class="section-kicker">Model sources</p>
+        <h2 id="references-title">Where the crystallographic descriptions come from</h2>
+      </div>
+      <ul>
+        <li><a href="https://aflow.org/prototype-encyclopedia/" target="_blank" rel="noopener">AFLOW Encyclopedia of Crystallographic Prototypes</a> for the elemental and ceramic prototype cells.</li>
+        <li><a href="https://doi.org/10.1038/328606a0" target="_blank" rel="noopener">Calestani and Rizzoli, YBa₂Cu₃O₇ crystal structure</a> for the selected fully oxygenated YBCO phase.</li>
+        <li><a href="https://pubs.usgs.gov/of/2001/of01-041/htmldocs/clays/kaogr.htm" target="_blank" rel="noopener">USGS clay-mineral description</a> for the kaolinite 1:1 layer concept.</li>
+        <li><a href="https://iupac.org/wp-content/uploads/2022/09/Brief-Guide-to-Polymerization-Terminology-web20220815.pdf" target="_blank" rel="noopener">IUPAC polymer terminology guide</a> for the distinction between conformation and architecture.</li>
+      </ul>
+    </section>
+
+    <section class="structures-more" aria-labelledby="more-title">
+      <div>
+        <p class="section-kicker">Explore further</p>
+        <h2 id="more-title">Move from structure to crystallography</h2>
+      </div>
+      <div class="structures-more-links">
+        <a href="../../visualizations/lattice-structure/index.html">Build a 2D lattice</a>
+        <a href="../../visualizations/fcc-bct-cell/index.html">Compare FCC and BCT cells</a>
+        <a href="../../visualizations/miller-indices/index.html">Plot Miller indices</a>
+        <a href="../../visualizations/dislocations/index.html">Inspect dislocations</a>
+      </div>
+    </section>
+
+    <nav class="structures-lesson-nav" aria-label="Teaching module sequence">
+      <a class="structures-previous" href="../atomic-bonding/index.html">
+        <span>Previous module</span>
+        <strong>&larr; Atomic bonding and cohesive strength</strong>
+      </a>
+      <div class="structures-next-planned">
+        <span>Next module</span>
+        <strong>Defects and microstructure</strong>
+        <small>Planned</small>
+      </div>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Visualization of structures &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

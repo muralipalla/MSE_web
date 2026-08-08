@@ -3,11 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An introduction to the central relationship in Materials Science and Engineering.">
+  <meta name="description" content="An interactive introduction connecting elemental transformation, photosynthesis, atomic structure, energy-efficient lighting, plastics sustainability, and engineering performance.">
   <meta name="theme-color" content="#fdf6ec">
   <title>Introduction to MSE | MSE Learning Lab</title>
   <link rel="stylesheet" href="../css/style.css">
   <script src="../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="introduction.js?v=2"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to lesson</a>
@@ -31,34 +40,437 @@
     <header class="lesson-intro">
       <p class="eyebrow">Teaching page 01</p>
       <h1>Introduction to Materials Science and Engineering</h1>
-      <p>
-        Materials science explains how the way a material is made changes its
-        internal structure, and how that structure controls its properties and
-        performance.
-      </p>
+      <blockquote class="lesson-opening-quote">
+        <p>&ldquo;We live in a world of materials&mdash;surrounded by them, dependent on them, and defined by them.&rdquo;</p>
+        <cite>&mdash; Cyril Stanley Smith</cite>
+      </blockquote>
     </header>
 
     <article class="lesson-card">
-      <h2>The central relationship</h2>
-      <div class="lesson-map" aria-label="Processing leads to structure, properties, and performance">
-        <span>Processing</span>
-        <b aria-hidden="true">&rarr;</b>
-        <span>Structure</span>
-        <b aria-hidden="true">&rarr;</b>
-        <span>Properties</span>
-        <b aria-hidden="true">&rarr;</b>
-        <span>Performance</span>
-      </div>
+      <p class="section-kicker">A philosophy of transformation</p>
+      <h2>From five elements to living forms&mdash;and back again</h2>
       <p>
-        The arrows are not one-way rules. Engineers often start with a required
-        performance, choose suitable properties, design the structure that
-        produces them, and then select an appropriate processing route.
+        Several classical Indian traditions described the material world through
+        five <em>mah&#257;bh&#363;tas</em>&mdash;earth, water, fire, air, and
+        <em>&#257;k&#257;&#347;a</em> or space. These were broad philosophical categories,
+        not chemical elements in the modern sense. A tree, a fruit, an animal,
+        and the soil could be understood as different material forms arising as
+        those categories combined and transformed.
+      </p>
+
+      <p>
+        Seen through that historical lens, a living body is not one fixed
+        substance but a temporary organization sustained by its surroundings.
+        A tree grows and produces fruit; plants nourish animals, which build new
+        bodies; after death, the organized form dissolves and returns to the wider
+        environment. This is a useful interpretation of an ancient philosophy of
+        composition and change&mdash;not a claim that its thinkers already knew the
+        biochemical mechanism of photosynthesis.
+      </p>
+
+      <figure class="intro-five-figure">
+        <p class="intro-five-context"><strong>Historical lens</strong><span>These are philosophical categories, not scientific equivalents of modern substances.</span></p>
+        <ul class="intro-five-grid" aria-label="Five broad philosophical categories used in several classical Indian traditions">
+          <li class="intro-five-earth">
+            <strong>Earth</strong>
+            <span>solidity, form, support, and stability</span>
+          </li>
+          <li class="intro-five-water">
+            <strong>Water</strong>
+            <span>fluidity, cohesion, nourishment, and change</span>
+          </li>
+          <li class="intro-five-fire">
+            <strong>Fire</strong>
+            <span>heat, energy, conversion, and transformation</span>
+          </li>
+          <li class="intro-five-air">
+            <strong>Air</strong>
+            <span>movement, breath, expansion, and exchange</span>
+          </li>
+          <li class="intro-five-space">
+            <strong>Space</strong>
+            <span>room for form, relation, growth, and change</span>
+          </li>
+        </ul>
+
+        <ol class="intro-life-cycle" aria-label="A historical interpretation of transformation through a living cycle">
+          <li><strong>Composition</strong><span>the living form is understood through all five categories</span></li>
+          <li><strong>Transformation</strong><span>growth changes their organization and relationships</span></li>
+          <li><strong>Nourishment</strong><span>plants and animals depend on the surrounding world</span></li>
+          <li><strong>Dissolution and return</strong><span>the form breaks down and re-enters the environment</span></li>
+        </ol>
+
+        <div class="intro-five-bridge" aria-hidden="true">
+          <span>Historical lens&mdash;not scientific equivalence</span>
+          <b>&darr;</b>
+          <span>A measurable modern account</span>
+        </div>
+
+        <ul class="intro-modern-inputs" aria-label="Inputs and conditions in a modern account of tree growth">
+          <li><strong>CO<sub>2</sub></strong><span>from air</span></li>
+          <li><strong>H<sub>2</sub>O</strong><span>through roots</span></li>
+          <li><strong>Mineral ions</strong><span>from soil</span></li>
+          <li><strong>Light energy</strong><span>from the Sun</span></li>
+          <li><strong>Environment</strong><span>space for exchange</span></li>
+        </ul>
+
+        <div class="intro-photosynthesis" role="img" aria-label="Six carbon dioxide molecules plus six water molecules and light energy produce one glucose molecule and six oxygen molecules in the simplified photosynthesis equation">
+          <div class="intro-photo-inputs" aria-hidden="true">
+            <strong>6 CO<sub>2</sub> + 6 H<sub>2</sub>O</strong>
+            <small>matter entering the reaction</small>
+          </div>
+          <div class="intro-photo-energy" aria-hidden="true">
+            <span>light energy</span>
+            <b>&rarr;</b>
+          </div>
+          <div class="intro-photo-output" aria-hidden="true">
+            <strong>C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub></strong>
+            <small>sugar and oxygen</small>
+          </div>
+        </div>
+
+        <p class="intro-growth-line">
+          <strong>Sugars + mineral nutrients</strong>
+          <span aria-hidden="true">&rarr;</span>
+          <strong>wood, leaves, flowers, and fruit</strong>
+        </p>
+
+        <p class="intro-modern-cycle">
+          <strong>Tree &rarr; food &rarr; animal bodies &rarr; decomposition &rarr; environment</strong>
+          <span>Modern biology follows carbon, water, oxygen, and mineral nutrients as organisms build, consume, and break down matter.</span>
+        </p>
+
+        <figcaption>
+          The five <em>mah&#257;bh&#363;tas</em> were proposed as constituents of the
+          material world; they are not the chemical elements of the periodic table.
+          The diagram places that philosophy beside a modern account rather than
+          claiming that ancient thinkers knew photosynthesis. In modern science,
+          sunlight supplies energy rather than matter, while space is the setting
+          for exchange and growth. The equation is a simplified net description;
+          growth requires minerals and many further reactions.
+          Sources:
+          <a href="https://ignca.gov.in/eBooks/100007.pdf" target="_blank" rel="noopener">IGNCA overview of the five mah&#257;bh&#363;tas</a>
+          and
+          <a href="https://science.nasa.gov/earth/earth-observatory/the-carbon-cycle/" target="_blank" rel="noopener">NASA's modern carbon-cycle explanation <span aria-hidden="true">&rarr;</span></a>
+        </figcaption>
+      </figure>
+
+      <p>
+        This is not modern chemistry, but the intuition behind it is powerful:
+        matter can be transformed from one organized form into another. Modern
+        science identifies the inputs more precisely&mdash;carbon dioxide, water,
+        mineral nutrients, and energy&mdash;and follows atoms as molecules are broken
+        and rebuilt into cellulose, lignin, pigments, sugars, bone, and tissue.
+        Materials science adds the central question of this course: when the
+        constituents are reorganized, how does their new structure create new
+        properties?
+      </p>
+    </article>
+
+    <article class="lesson-card">
+      <p class="section-kicker">Composition is not enough</p>
+      <h2>Same carbon atoms, different materials</h2>
+      <p>
+        Rearranging atoms can change a material dramatically. Diamond and
+        graphite are both made from carbon, yet their bonding arrangements are
+        different. In diamond, each carbon atom belongs to a rigid
+        three-dimensional network. In graphite, carbon atoms form strong sheets
+        that can slide more easily over one another.
+      </p>
+
+      <figure class="intro-allotrope-figure">
+        <p class="intro-carbon-badge">Same element: carbon (C)</p>
+
+        <div class="intro-allotrope-grid">
+          <section class="intro-allotrope-panel">
+            <h3 id="intro-diamond-heading">Diamond: a repeating tetrahedral network</h3>
+            <div class="intro-crystal-viewer intro-diamond-viewer" id="intro-diamond-viewer" role="group" aria-labelledby="intro-diamond-heading">
+              <canvas
+                class="intro-crystal-canvas"
+                id="intro-diamond-canvas"
+                aria-hidden="true"
+              ></canvas>
+              <div class="intro-crystal-fallback intro-diamond-fallback" id="intro-diamond-fallback" role="status">
+                <svg viewBox="0 0 320 150" aria-hidden="true">
+                  <g class="intro-fallback-bonds">
+                    <path d="M35 112 92 76 149 112 206 76 263 112M63 38 92 76 121 38M177 38 206 76 235 38M92 76 149 44 206 76M149 44 149 112"></path>
+                  </g>
+                  <g class="intro-fallback-atoms">
+                    <circle cx="35" cy="112" r="9"></circle><circle cx="63" cy="38" r="9"></circle>
+                    <circle cx="92" cy="76" r="11"></circle><circle cx="121" cy="38" r="9"></circle>
+                    <circle class="is-focus" cx="149" cy="44" r="12"></circle><circle cx="149" cy="112" r="9"></circle>
+                    <circle cx="177" cy="38" r="9"></circle><circle cx="206" cy="76" r="11"></circle>
+                    <circle cx="235" cy="38" r="9"></circle><circle cx="263" cy="112" r="9"></circle>
+                  </g>
+                </svg>
+                <strong>Preparing the 3D diamond-cubic network</strong>
+                <span>If it does not appear, try a current browser with WebGL and an internet connection.</span>
+              </div>
+              <div class="intro-crystal-legend intro-diamond-legend" aria-hidden="true">
+                <span><i class="intro-diamond-main-key"></i>network atoms</span>
+                <span><i class="intro-diamond-focus-key"></i>highlighted tetrahedron</span>
+              </div>
+            </div>
+            <div class="intro-crystal-controls" role="group" aria-label="Diamond structure camera views">
+              <button class="intro-view-button" id="intro-diamond-network-view" type="button" disabled>Tetrahedral view</button>
+              <button class="intro-view-button" id="intro-diamond-layer-view" type="button" disabled>Atomic layer view</button>
+            </div>
+            <p class="intro-crystal-help">Mouse: drag to rotate and use the wheel to zoom &middot; Touch: drag sideways to rotate; pinch zooms the page &middot; View buttons provide keyboard access</p>
+            <p class="intro-crystal-status" id="intro-diamond-status" aria-live="polite">
+              Preparing the interactive diamond structure.
+            </p>
+            <p><strong>sp<sup>3</sup> bonding:</strong> every carbon has four neighbours arranged tetrahedrally at about 109.5&deg;. Diamond cubic is an FCC Bravais lattice with a two-carbon basis at (0, 0, 0) and (&frac14;, &frac14;, &frac14;). The repeated covalent network is exceptionally hard and normally electrically insulating.</p>
+          </section>
+
+          <section class="intro-allotrope-panel">
+            <h3 id="intro-graphite-heading">Graphite: stacked honeycomb sheets</h3>
+            <div class="intro-crystal-viewer intro-graphite-viewer" id="intro-graphite-viewer" role="group" aria-labelledby="intro-graphite-heading">
+              <canvas
+                class="intro-crystal-canvas"
+                id="intro-graphite-canvas"
+                aria-hidden="true"
+              ></canvas>
+              <div class="intro-crystal-fallback intro-graphite-fallback" id="intro-graphite-fallback" role="status">
+                <svg viewBox="0 0 320 150" aria-hidden="true">
+                  <g class="intro-fallback-bonds intro-fallback-layer-a">
+                    <path d="M25 43 48 29 71 43 71 69 48 83 25 69ZM71 43 94 29 117 43 117 69 94 83 71 69M117 43 140 29 163 43 163 69 140 83 117 69M163 43 186 29 209 43 209 69 186 83 163 69M209 43 232 29 255 43 255 69 232 83 209 69M255 43 278 29 301 43 301 69 278 83 255 69"></path>
+                  </g>
+                  <g class="intro-fallback-bonds intro-fallback-layer-b">
+                    <path d="M36 91 59 77 82 91 82 117 59 131 36 117ZM82 91 105 77 128 91 128 117 105 131 82 117M128 91 151 77 174 91 174 117 151 131 128 117M174 91 197 77 220 91 220 117 197 131 174 117M220 91 243 77 266 91 266 117 243 131 220 117"></path>
+                  </g>
+                </svg>
+                <strong>Preparing the 3D graphite layers</strong>
+                <span>If they do not appear, try a current browser with WebGL and an internet connection.</span>
+              </div>
+              <div class="intro-crystal-legend intro-graphite-legend" aria-hidden="true">
+                <span><i class="intro-graphite-layer-key"></i>all spheres are carbon</span>
+              </div>
+            </div>
+            <div class="intro-crystal-controls" role="group" aria-label="Graphite structure camera views">
+              <button class="intro-view-button" id="intro-graphite-stacked-view" type="button" disabled>Stacked layers</button>
+              <button class="intro-view-button" id="intro-graphite-sheet-view" type="button" disabled>Single sheet</button>
+            </div>
+            <p class="intro-crystal-help">Mouse: drag to rotate and use the wheel to zoom &middot; Touch: drag sideways to rotate; pinch zooms the page &middot; View buttons provide keyboard access</p>
+            <p class="intro-crystal-status" id="intro-graphite-status" aria-live="polite">
+              Preparing the interactive graphite structure.
+            </p>
+            <p><strong>sp<sup>2</sup> bonding:</strong> every interior carbon has three neighbours at 120&deg; within a honeycomb sheet (C&ndash;C &asymp; 1.42 &Aring;). Common hexagonal graphite alternates A and B layer registries, repeating ABAB; adjacent sheets are about 3.35 &Aring; apart. Strong in-plane bonds coexist with much weaker interlayer attraction, allowing easy basal sliding; electrical conduction is substantially greater parallel to the sheets than along the stacking direction.</p>
+          </section>
+        </div>
+
+        <figcaption>
+          Both materials are crystalline forms of pure carbon. The rotatable
+          diamond model shows that the tetrahedron is not an isolated molecule:
+          it repeats through multiple connected atomic layers. The graphite model
+          shows four finite honeycomb sheets in ABAB registry; no cylinders join
+          the sheets because those gaps do not contain ordinary carbon&ndash;carbon
+          covalent bonds. Both scenes are finite windows, so bonds are deliberately
+          cut at their outer boundaries. Atom sizes and sheet colours are viewing
+          aids, every sphere in both models is carbon, and the faint graphite
+          planes merely guide the eye rather than representing electron density.
+          Neither graphic shows a
+          practical route for converting graphite into diamond. Coal, by contrast,
+          is a heterogeneous carbon-rich material rather than a pure crystalline
+          allotrope.
+        </figcaption>
+      </figure>
+    </article>
+
+    <article class="lesson-card">
+      <p class="section-kicker">The materials science framework</p>
+      <h2>Processing, structure, properties, and performance</h2>
+      <ol class="lesson-map" aria-label="Processing, structure, properties, and performance form a connected sequence">
+        <li>Processing</li>
+        <li>Structure</li>
+        <li>Properties</li>
+        <li>Performance</li>
+      </ol>
+      <p>
+        A material is therefore more than a list of atoms or molecules. We must
+        also know how they are bonded and arranged, which phases and defects are
+        present, and how processing created that structure. Engineers can work
+        forward from processing to performance or backward from a required
+        performance to a suitable material and manufacturing route.
+      </p>
+    </article>
+
+    <article class="lesson-card">
+      <p class="section-kicker">Why engineers care</p>
+      <h2>Materials make engineering possible</h2>
+      <p>
+        Engineers make machines, buildings, devices, and tools&mdash;and every one
+        of them is made from materials. Material selection is not a final detail;
+        it is part of the design itself.
+      </p>
+
+      <div class="intro-impact-grid">
+        <article class="intro-impact-item">
+          <h3>Agricultural tools</h3>
+          <p>A cutting edge must resist wear and indentation, while the tool body must remain tough enough to survive impacts without brittle fracture.</p>
+        </article>
+        <article class="intro-impact-item">
+          <h3>What might come next?</h3>
+          <p>A practical, manufacturable superconductor that works near room temperature and ambient pressure could transform power transmission, magnets, transport, and computing.</p>
+        </article>
+      </div>
+
+      <figure class="intro-energy-figure">
+        <div class="intro-energy-copy">
+          <p class="section-kicker">A lighting revolution</p>
+          <h3>Same light, far less electrical energy</h3>
+          <p>
+            Practical incandescent lamps began with carbon filaments. Ductile
+            tungsten later allowed filaments to operate at higher temperatures.
+            The more fundamental change was solid-state lighting: advances in
+            gallium-nitride crystal growth, composition, and doping made efficient
+            blue LEDs possible, and blue light combined with phosphors enabled
+            efficient white lamps.
+          </p>
+          <p class="intro-energy-question">How much electricity is needed for the same brightness?</p>
+        </div>
+
+        <div class="intro-energy-chart" aria-labelledby="intro-energy-title">
+          <h4 id="intro-energy-title">Electricity used for 800 lumens over 1,000 hours</h4>
+          <div class="intro-energy-scale" aria-hidden="true">
+            <span>0</span><span>20</span><span>40</span><span>60 kWh</span>
+          </div>
+          <dl class="intro-energy-bars">
+            <div class="intro-energy-row">
+              <dt><strong>Incandescent</strong><span>60 W</span></dt>
+              <dd>
+                <span class="intro-energy-track" aria-hidden="true"><span class="intro-energy-fill intro-energy-incandescent"></span></span>
+                <strong>60 kWh</strong>
+              </dd>
+            </div>
+            <div class="intro-energy-row">
+              <dt><strong>LED</strong><span>5.9&ndash;10.5 W</span></dt>
+              <dd>
+                <span class="intro-energy-track" aria-hidden="true"><span class="intro-energy-fill intro-energy-led"></span></span>
+                <strong>5.9&ndash;10.5 kWh</strong>
+              </dd>
+            </div>
+          </dl>
+          <p class="intro-energy-saving"><strong>About 82&ndash;90% less electrical energy</strong> for the DOE-listed LED range at equal light output.</p>
+        </div>
+
+        <figcaption class="intro-source-note">
+          The LED bar extends to the upper end of the listed range. Actual lamps
+          vary, and this equal-brightness comparison does not claim that society's
+          total lighting demand fell by the same percentage.
+          Sources:
+          <a href="https://www.energy.gov/cmei/femp/purchasing-energy-efficient-light-bulbs" target="_blank" rel="noopener">U.S. Department of Energy comparison</a>,
+          <a href="https://americanhistory.si.edu/lighting/20thcent/prec20.htm" target="_blank" rel="noopener">Smithsonian lighting history</a>, and
+          <a href="https://www.nobelprize.org/prizes/physics/2014/popular-information/" target="_blank" rel="noopener">Nobel Prize blue-LED overview</a>.
+          For a visual history of the materials challenge, watch
+          <a href="https://www.youtube.com/watch?v=AF8d72mA41M" target="_blank" rel="noopener">Veritasium: Why It Was Almost Impossible to Make the Blue LED</a>.
+        </figcaption>
+      </figure>
+
+      <aside class="intro-history-note">
+        <div>
+          <p class="section-kicker">A lesson written in failure</p>
+          <h3>The de Havilland Comet</h3>
+          <p>
+            Fatal accidents involving the early Comet jetliner showed how repeated
+            cabin pressurization created cyclic stresses. Local stress
+            concentrations around openings and fastener holes allowed fatigue
+            cracks to grow until the fuselage failed. Reconstructing the wreckage
+            confirmed pressure-cabin fatigue as the cause and helped reshape
+            aircraft testing and structural design.
+          </p>
+        </div>
+        <a class="button secondary" href="https://www.rafmuseum.org.uk/research/archive-exhibitions/comet-the-worlds-first-jet-airliner/comet-failure" target="_blank" rel="noopener">Read the RAF Museum history</a>
+      </aside>
+    </article>
+
+    <article class="lesson-card">
+      <p class="section-kicker">A materials success and a lifecycle challenge</p>
+      <h2>Plastics changed modern life. What should change next?</h2>
+      <p>
+        Plastics are a diverse family of polymers, not a single material. Their
+        low density, tunable stiffness and toughness, chemical resistance,
+        electrical insulation, barrier properties, and easy shaping make them
+        valuable in healthcare, clean-water systems, food protection, buildings,
+        transport, and electronics. The same durability and low cost become
+        liabilities in a high-volume system dominated by short-lived products.
+      </p>
+
+      <div class="intro-plastics-grid">
+        <section>
+          <h3>Why they matter</h3>
+          <ul>
+            <li>lightweight parts can reduce transport mass</li>
+            <li>sterile and corrosion-resistant medical products improve safety</li>
+            <li>barriers protect food, water, wiring, and buildings</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Why the system is unsustainable</h3>
+          <ul>
+            <li>many products are used briefly but persist for decades</li>
+            <li>mixed polymers and additives complicate safe recycling</li>
+            <li>production, incineration, and leakage create climate and environmental burdens</li>
+          </ul>
+        </section>
+        <section>
+          <h3>What better design asks</h3>
+          <ul>
+            <li>is the material necessary for this function?</li>
+            <li>can the product last longer, be repaired, or be reused?</li>
+            <li>can composition, collection, and recovery form a safer loop?</li>
+          </ul>
+        </section>
+      </div>
+
+      <figure class="intro-plastic-data">
+        <div class="intro-plastic-data-heading">
+          <div>
+            <p class="section-kicker">Global plastic waste, 2019</p>
+            <h3>Where did 353 million tonnes go?</h3>
+          </div>
+          <strong>Only 9% was ultimately recycled</strong>
+        </div>
+
+        <div class="intro-plastic-stack" role="img" aria-label="Of 353 million tonnes of global plastic waste in 2019, 9 percent was ultimately recycled, 19 percent was incinerated, almost 50 percent went to sanitary landfill, and 22 percent was mismanaged, including uncontrolled dumping, open burning, or environmental leakage">
+          <span class="intro-plastic-recycled" aria-hidden="true">9%</span>
+          <span class="intro-plastic-incinerated" aria-hidden="true">19%</span>
+          <span class="intro-plastic-landfill" aria-hidden="true">&asymp;50%</span>
+          <span class="intro-plastic-mismanaged" aria-hidden="true">22%</span>
+        </div>
+
+        <ul class="intro-plastic-legend">
+          <li><span class="intro-plastic-swatch intro-plastic-recycled" aria-hidden="true"></span><strong>9%</strong> ultimately recycled</li>
+          <li><span class="intro-plastic-swatch intro-plastic-incinerated" aria-hidden="true"></span><strong>19%</strong> incinerated</li>
+          <li><span class="intro-plastic-swatch intro-plastic-landfill" aria-hidden="true"></span><strong>almost 50%</strong> sanitary landfill</li>
+          <li><span class="intro-plastic-swatch intro-plastic-mismanaged" aria-hidden="true"></span><strong>22%</strong> mismanaged</li>
+        </ul>
+
+        <figcaption class="intro-source-note">
+          These are OECD modelled estimates for 2019, not a live counter. The
+          22% mismanaged category includes uncontrolled dumping, open burning,
+          and environmental leakage; it does not mean that 22% entered the ocean.
+          <a href="https://www.oecd.org/en/publications/2022/02/global-plastics-outlook_a653d1c9.html" target="_blank" rel="noopener">Read the OECD Global Plastics Outlook <span aria-hidden="true">&rarr;</span></a>
+        </figcaption>
+      </figure>
+
+      <ol class="intro-circular-path" aria-label="Four directions for more sustainable plastics design">
+        <li><strong>Avoid</strong><span>unnecessary short-lived uses</span></li>
+        <li><strong>Extend</strong><span>durability, repair, and reuse</span></li>
+        <li><strong>Simplify</strong><span>materials and additives for recovery</span></li>
+        <li><strong>Recover</strong><span>collect, sort, and use recycled feedstock</span></li>
+      </ol>
+
+      <p>
+        The materials-science question is not simply “plastic or no plastic.” A
+        substitute is not automatically better. Engineers must compare function,
+        mass, manufacturing energy, number of reuse cycles, safety, transport,
+        and end-of-life across the whole lifecycle.
       </p>
     </article>
 
     <div class="lesson-columns">
       <article class="lesson-card">
-        <h2>A simple example</h2>
+        <h2>A processing example</h2>
         <p>
           Cooling a metal quickly or slowly can create different phases and
           grain sizes. Those structural changes alter hardness, strength, and
@@ -75,6 +487,21 @@
         </ul>
       </article>
     </div>
+
+    <article class="lesson-card intro-conclusion">
+      <p class="section-kicker">The central idea</p>
+      <h2>Materials science connects atoms to society</h2>
+      <p>
+        To understand a material, ask not only <em>what is it made from?</em>, but
+        also <em>how are its atoms arranged, how was that structure created, and
+        how will it behave in service?</em> A responsible design also asks how much
+        energy and material it consumes, how long it lasts, and what happens at
+        the end of its life. The modules in this learning lab use interactive
+        experiments and visualizations to make those connections visible&mdash;from
+        atomic bonding and crystal structure to deformation, fracture,
+        sustainability, and engineering performance.
+      </p>
+    </article>
 
     <article class="lesson-card lesson-next">
       <div>
