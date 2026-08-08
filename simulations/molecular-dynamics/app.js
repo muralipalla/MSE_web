@@ -1,12 +1,8 @@
 const PARTICLE_COUNT = 100;
 const LATTICE_COLUMNS = 10;
 const LATTICE_ROWS = 10;
-const REFERENCE_NUMBER_DENSITY = 0.8;
-const LATTICE_SPACING = Math.sqrt(2 / (Math.sqrt(3) * REFERENCE_NUMBER_DENSITY));
-const BOX = {
-  x: LATTICE_COLUMNS * LATTICE_SPACING,
-  y: LATTICE_ROWS * Math.sqrt(3) * 0.5 * LATTICE_SPACING
-};
+const DEFAULT_LJ_DENSITY = 0.93;
+const BOX = { x: 0, y: 0 };
 const THERMAL_DEGREES_OF_FREEDOM = 2 * PARTICLE_COUNT - 2;
 const POW_TWO_ONE_SIXTH = Math.pow(2, 1 / 6);
 const CUTOFF_RATIO = 2.5;
@@ -16,6 +12,8 @@ const RANDOM_MINIMUM_DISTANCE_FACTOR = 0.92;
 const OVERLAP_STOP_RATIO = 0.72;
 const HISTORY_INTERVAL = 10;
 const HISTORY_LIMIT = 2000;
+const EQUILIBRATION_STEPS = 1200;
+const THERMOSTAT_RELAXATION_TIME = 0.12;
 const STEPS_PER_FRAME = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 5;
 
 const COLORS = {
@@ -38,6 +36,8 @@ const elements = {
   timestepSlider: document.querySelector("#timestep-slider"),
   timestepValue: document.querySelector("#timestep-value"),
   timestepGuidance: document.querySelector("#timestep-guidance"),
+  densitySlider: document.querySelector("#density-slider"),
+  densityTarget: document.querySelector("#density-target"),
   densityValue: document.querySelector("#density-value"),
   temperatureSlider: document.querySelector("#temperature-slider"),
   temperatureTarget: document.querySelector("#temperature-target"),
@@ -45,6 +45,9 @@ const elements = {
   latticeConfig: document.querySelector("#lattice-config"),
   randomConfig: document.querySelector("#random-config"),
   initializeVelocities: document.querySelector("#initialize-velocities"),
+  equilibrateSystem: document.querySelector("#equilibrate-system"),
+  equilibrationProgress: document.querySelector("#equilibration-progress"),
+  equilibrationStatus: document.querySelector("#equilibration-status"),
   runSimulation: document.querySelector("#run-simulation"),
   singleStep: document.querySelector("#single-step"),
   resetSimulation: document.querySelector("#reset-simulation"),
@@ -70,6 +73,11 @@ const state = {
   configuration: "lattice",
   periodic: true,
   velocitiesReady: false,
+  equilibrated: false,
+  equilibrating: false,
+  equilibrationStep: 0,
+  equilibrationDt: null,
+  equilibrationDuration: 0,
   running: false,
   unstable: false,
   step: 0,
@@ -77,6 +85,8 @@ const state = {
   rMin: 1.12,
   epsilon: 1,
   dt: 0.003,
+  density: DEFAULT_LJ_DENSITY,
+  latticeSpacing: 0,
   targetTemperature: 0.75,
   potentialEnergy: 0,
   kineticEnergy: 0,
@@ -87,6 +97,7 @@ const state = {
   history: [],
   exportHistory: [],
   animationFrame: null,
+  densityChangeTimer: null,
   forceError: "",
   seed: 20260808
 };
@@ -95,6 +106,7 @@ initialize();
 
 function initialize() {
   bindEvents();
+  updateBoxGeometry();
   buildConfiguration("lattice", false);
   updateParameterLabels();
   updateBoundaryCopy();
@@ -111,33 +123,37 @@ function bindEvents() {
   elements.rMinSlider.addEventListener("input", handlePotentialChange);
   elements.epsilonSlider.addEventListener("input", handlePotentialChange);
   elements.timestepSlider.addEventListener("input", handleTimestepChange);
+  elements.densitySlider.addEventListener("input", scheduleDensityChange);
+  elements.densitySlider.addEventListener("change", handleDensityChange);
   elements.temperatureSlider.addEventListener("input", handleTemperatureChange);
   elements.pbcToggle.addEventListener("change", handleBoundaryChange);
   elements.latticeConfig.addEventListener("click", () => buildConfiguration("lattice"));
   elements.randomConfig.addEventListener("click", () => buildConfiguration("random"));
   elements.initializeVelocities.addEventListener("click", initializeRandomVelocities);
+  elements.equilibrateSystem.addEventListener("click", startEquilibration);
   elements.runSimulation.addEventListener("click", toggleRun);
   elements.singleStep.addEventListener("click", takeSingleStep);
   elements.resetSimulation.addEventListener("click", resetSimulation);
   elements.downloadResults.addEventListener("click", downloadResultsCsv);
 }
 
-function handlePotentialChange() {
+function handlePotentialChange(event) {
   stopAnimation();
+  const sizeChanged = event.currentTarget === elements.rMinSlider;
   state.rMin = Number(elements.rMinSlider.value);
   state.epsilon = Number(elements.epsilonSlider.value);
-  updateParameterLabels();
 
-  const interaction = interactionParameters();
-  if (state.configuration === "random"
-    && minimumPairDistance(state.atoms) < 0.995 * interaction.sigma) {
-    buildConfiguration("random", false);
-    setRunState("Random positions rebuilt");
-    setResultsNote("The random positions were rebuilt to remain overlap-free at the new interaction size.");
+  if (sizeChanged) {
+    updateBoxGeometry();
+    buildConfiguration(state.configuration, false);
+    updateParameterLabels();
     drawPotentialChart();
-    updateControls();
+    setRunState("Interaction size changed");
+    setResultsNote("The box and positions were rebuilt to preserve the selected LJ density. Initialize velocities and equilibrate again.");
     return;
   }
+
+  updateParameterLabels();
 
   const forcesReady = computeForces();
   if (forcesReady) updateMeasurements();
@@ -145,12 +161,12 @@ function handlePotentialChange() {
   if (!forcesReady) {
     markTrajectoryUnstable(state.forceError);
   } else if (state.velocitiesReady && !state.unstable) {
-    beginNewMeasurementSegment("The interaction changed; a fresh trajectory segment has started.");
+    invalidateEquilibration("The energy scale changed; equilibrate the system again before starting NVE.");
     setRunState("Interaction changed");
   } else if (state.unstable) {
     setResultsNote("The stopped trajectory cannot be resumed safely. Rebuild the positions and initialize velocities again.");
   } else {
-    setResultsNote("The interaction is ready. Initialize velocities to start a trajectory.");
+    setResultsNote("The interaction is ready. Initialize velocities and equilibrate before starting a trajectory.");
   }
 
   drawPotentialChart();
@@ -161,6 +177,26 @@ function handlePotentialChange() {
   updateControls();
 }
 
+function scheduleDensityChange() {
+  elements.densityTarget.textContent = Number(elements.densitySlider.value).toFixed(2);
+  if (state.densityChangeTimer) clearTimeout(state.densityChangeTimer);
+  state.densityChangeTimer = setTimeout(handleDensityChange, 120);
+}
+
+function handleDensityChange() {
+  if (state.densityChangeTimer) clearTimeout(state.densityChangeTimer);
+  state.densityChangeTimer = null;
+  const nextDensity = Number(elements.densitySlider.value);
+  if (Math.abs(nextDensity - state.density) < 1e-12) return;
+  stopAnimation();
+  state.density = nextDensity;
+  updateBoxGeometry();
+  buildConfiguration(state.configuration, false);
+  updateParameterLabels();
+  setRunState(`Density set to ${state.density.toFixed(2)}`);
+  setResultsNote("The cell and positions were rebuilt for the selected density. Initialize velocities and equilibrate again.");
+}
+
 function handleTimestepChange() {
   stopAnimation();
   state.dt = Number(elements.timestepSlider.value);
@@ -168,12 +204,15 @@ function handleTimestepChange() {
   if (state.unstable) {
     setRunState("Rebuild required");
     setResultsNote("The smaller time step will apply after you rebuild the positions and initialize velocities again.");
-  } else if (state.velocitiesReady) {
+  } else if (state.velocitiesReady && state.equilibrated) {
     beginNewMeasurementSegment("The time step changed; a fresh trajectory segment has started.");
     setRunState("Time step changed");
     renderDynamicViews();
+  } else if (state.velocitiesReady) {
+    setRunState("Time step changed");
+    setResultsNote("The new time step will be used during equilibration and the later NVE trajectory.");
   } else {
-    setResultsNote("The time step is ready. Initialize velocities to start a trajectory.");
+    setResultsNote("The time step is ready. Initialize velocities and equilibrate before starting a trajectory.");
   }
   updateControls();
 }
@@ -192,16 +231,14 @@ function handleTemperatureChange() {
   }
 
   if (!state.velocitiesReady) {
-    elements.velocityMessage.textContent = `Random velocities will be scaled to T* = ${state.targetTemperature.toFixed(2)}.`;
+    elements.velocityMessage.textContent = `Random velocities will be initialized at T* = ${state.targetTemperature.toFixed(2)}.`;
     drawTemperatureChart();
     return;
   }
 
-  rescaleVelocities(state.targetTemperature);
-  updateMeasurements();
-  beginNewMeasurementSegment(`Velocities were rescaled once to T* = ${state.targetTemperature.toFixed(2)}; a fresh NVE segment has started.`);
-  setRunState("Velocities rescaled");
-  elements.velocityMessage.textContent = `Current velocities rescaled to T* = ${state.targetTemperature.toFixed(2)}.`;
+  invalidateEquilibration(`The temperature target changed to T* = ${state.targetTemperature.toFixed(2)}; equilibrate again before starting NVE.`);
+  setRunState("Temperature target changed");
+  elements.velocityMessage.textContent = `Velocities are retained; the thermostat will approach T* = ${state.targetTemperature.toFixed(2)} during equilibration.`;
   renderDynamicViews();
 }
 
@@ -228,7 +265,7 @@ function handleBoundaryChange() {
   if (!forcesReady) {
     markTrajectoryUnstable(state.forceError);
   } else if (state.velocitiesReady && !state.unstable) {
-    beginNewMeasurementSegment(`${state.periodic ? "Periodic boundaries" : "Reflecting walls"} applied; a fresh trajectory segment has started.`);
+    invalidateEquilibration(`${state.periodic ? "Periodic boundaries" : "Reflecting walls"} applied; equilibrate again before starting NVE.`);
     setRunState(state.periodic ? "PBC applied" : "Reflecting walls applied");
   } else if (state.unstable) {
     setResultsNote("The boundary setting is ready, but the stopped trajectory must be rebuilt before it can run again.");
@@ -243,8 +280,14 @@ function handleBoundaryChange() {
 
 function buildConfiguration(type, announce = true) {
   stopAnimation();
+  updateBoxGeometry();
   state.configuration = type;
   state.unstable = false;
+  state.equilibrated = false;
+  state.equilibrating = false;
+  state.equilibrationStep = 0;
+  state.equilibrationDt = null;
+  state.equilibrationDuration = 0;
   state.step = 0;
   state.time = 0;
   state.velocitiesReady = false;
@@ -258,24 +301,26 @@ function buildConfiguration(type, announce = true) {
   computeForces();
   updateMeasurements();
   updateConfigurationButtons();
+  updateParameterLabels();
+  updateEquilibrationDisplay();
   updateControls();
   updateReadings();
   drawAtomCanvas();
   drawResultsCharts();
   updateCanvasDescriptions();
 
-  elements.velocityMessage.textContent = "Velocities are zero. Initialize them before running.";
-  setResultsNote("Initialize velocities to establish the starting energy and temperature.");
+  elements.velocityMessage.textContent = "Velocities are zero. Initialize them, then equilibrate before running.";
+  setResultsNote("Initialize velocities and complete the thermostatted preparation before starting NVE.");
   if (announce) setRunState(type === "lattice" ? "Triangular positions ready" : "Random positions ready");
 }
 
 function createTriangularLattice() {
   const atoms = [];
-  const rowSpacing = Math.sqrt(3) * 0.5 * LATTICE_SPACING;
+  const rowSpacing = Math.sqrt(3) * 0.5 * state.latticeSpacing;
   for (let row = 0; row < LATTICE_ROWS; row += 1) {
     for (let column = 0; column < LATTICE_COLUMNS; column += 1) {
       atoms.push({
-        x: (column + 0.5 + 0.5 * (row % 2)) * LATTICE_SPACING % BOX.x,
+        x: (column + 0.5 + 0.5 * (row % 2)) * state.latticeSpacing % BOX.x,
         y: (row + 0.5) * rowSpacing,
         vx: 0,
         vy: 0,
@@ -301,10 +346,10 @@ function createRandomConfiguration() {
     const candidate = {
       x: useGlobalMove
         ? margin + rng() * (BOX.x - 2 * margin)
-        : atom.x + (rng() - 0.5) * 1.5 * LATTICE_SPACING,
+        : atom.x + (rng() - 0.5) * 1.5 * state.latticeSpacing,
       y: useGlobalMove
         ? margin + rng() * (BOX.y - 2 * margin)
-        : atom.y + (rng() - 0.5) * 1.5 * LATTICE_SPACING
+        : atom.y + (rng() - 0.5) * 1.5 * state.latticeSpacing
     };
 
     if (state.periodic) {
@@ -321,6 +366,13 @@ function createRandomConfiguration() {
   }
 
   return atoms;
+}
+
+function updateBoxGeometry() {
+  const { sigma } = interactionParameters();
+  state.latticeSpacing = sigma * Math.sqrt(2 / (Math.sqrt(3) * state.density));
+  BOX.x = LATTICE_COLUMNS * state.latticeSpacing;
+  BOX.y = LATTICE_ROWS * Math.sqrt(3) * 0.5 * state.latticeSpacing;
 }
 
 function candidateIsSeparated(candidate, ignoredIndex, atoms, minimumDistance) {
@@ -385,6 +437,11 @@ function initializeRandomVelocities() {
   state.step = 0;
   state.time = 0;
   state.velocitiesReady = true;
+  state.equilibrated = false;
+  state.equilibrating = false;
+  state.equilibrationStep = 0;
+  state.equilibrationDt = null;
+  state.equilibrationDuration = 0;
   state.unstable = false;
   state.forceError = "";
   rescaleVelocities(state.targetTemperature);
@@ -393,14 +450,14 @@ function initializeRandomVelocities() {
     return;
   }
   updateMeasurements();
-  state.referenceEnergy = state.totalEnergy;
+  state.referenceEnergy = null;
   state.history = [];
   state.exportHistory = [];
-  recordHistory(true);
+  updateEquilibrationDisplay();
 
   elements.velocityMessage.textContent = `Gaussian velocities initialized at T* = ${state.temperature.toFixed(3)} with centre-of-mass motion removed.`;
   setRunState("Velocities initialized");
-  setResultsNote("The NVE trajectory is ready. Total energy should remain nearly constant for a sufficiently small time step.");
+  setResultsNote("Next, equilibrate at the selected temperature. The thermostat will switch off before the NVE measurement begins.");
   updateControls();
   renderDynamicViews();
 }
@@ -432,8 +489,93 @@ function removeCenterOfMassVelocity() {
   });
 }
 
+function startEquilibration() {
+  if (!state.velocitiesReady || state.unstable || state.equilibrating) return;
+  stopAnimation();
+  state.equilibrated = false;
+  state.equilibrating = true;
+  state.equilibrationStep = 0;
+  state.equilibrationDt = null;
+  state.equilibrationDuration = 0;
+  state.step = 0;
+  state.time = 0;
+  state.referenceEnergy = null;
+  state.history = [];
+  state.exportHistory = [];
+  updateEquilibrationDisplay();
+  setRunState(`Equilibrating at T* = ${state.targetTemperature.toFixed(2)}`);
+  setResultsNote("A weak velocity-rescaling thermostat is preparing the system; these preparation steps are not included in the NVE graphs or CSV.");
+  updateControls();
+  state.animationFrame = requestAnimationFrame(advanceEquilibration);
+}
+
+function advanceEquilibration() {
+  if (!state.equilibrating) return;
+
+  for (let index = 0; index < STEPS_PER_FRAME && state.equilibrationStep < EQUILIBRATION_STEPS; index += 1) {
+    if (!velocityVerletStep(false)) break;
+    if (!applyEquilibrationThermostat()) {
+      markTrajectoryUnstable("The thermostat encountered an invalid kinetic temperature.");
+      break;
+    }
+    state.equilibrationStep += 1;
+  }
+
+  updateEquilibrationDisplay();
+  renderDynamicViews();
+
+  if (!state.equilibrating) return;
+  if (state.equilibrationStep >= EQUILIBRATION_STEPS) {
+    completeEquilibration();
+    return;
+  }
+  state.animationFrame = requestAnimationFrame(advanceEquilibration);
+}
+
+function applyEquilibrationThermostat() {
+  removeCenterOfMassVelocity();
+  const thermalKinetic = calculateKineticEnergy();
+  if (!Number.isFinite(thermalKinetic) || thermalKinetic <= 1e-14) return false;
+  const currentTemperature = 2 * thermalKinetic / THERMAL_DEGREES_OF_FREEDOM;
+  const coupling = Math.min(1, state.dt / THERMOSTAT_RELAXATION_TIME);
+  const scaleSquared = 1 + coupling * (state.targetTemperature / currentTemperature - 1);
+  if (!Number.isFinite(scaleSquared) || scaleSquared <= 0) return false;
+  const scale = Math.sqrt(scaleSquared);
+  state.atoms.forEach((atom) => {
+    atom.vx *= scale;
+    atom.vy *= scale;
+  });
+  updateMeasurements();
+  return trajectoryIsFinite();
+}
+
+function completeEquilibration() {
+  state.equilibrating = false;
+  state.equilibrated = true;
+  state.animationFrame = null;
+  removeCenterOfMassVelocity();
+  if (!computeForces()) {
+    markTrajectoryUnstable(state.forceError);
+    return;
+  }
+  updateMeasurements();
+  state.equilibrationDt = state.dt;
+  state.equilibrationDuration = state.time;
+  state.step = 0;
+  state.time = 0;
+  state.referenceEnergy = state.totalEnergy;
+  state.history = [];
+  state.exportHistory = [];
+  recordHistory(true);
+  updateEquilibrationDisplay();
+  elements.velocityMessage.textContent = `Equilibrated for ${EQUILIBRATION_STEPS.toLocaleString()} steps at T* = ${state.targetTemperature.toFixed(2)}; the thermostat is now off.`;
+  setRunState("NVE ready");
+  setResultsNote("The production clock has reset to zero. Run or single-step the isolated NVE trajectory and monitor total-energy drift.");
+  renderDynamicViews();
+}
+
 function toggleRun() {
-  if (!state.velocitiesReady || state.unstable) return;
+  if (!state.velocitiesReady || !state.equilibrated || state.unstable) return;
   if (state.running) {
     stopAnimation();
     setRunState("Paused");
@@ -461,13 +603,13 @@ function advanceAnimation() {
 }
 
 function takeSingleStep() {
-  if (!state.velocitiesReady || state.running || state.unstable) return;
+  if (!state.velocitiesReady || !state.equilibrated || state.running || state.unstable) return;
   velocityVerletStep();
   if (!state.unstable) setRunState(`Advanced to step ${state.step.toLocaleString()}`);
   renderDynamicViews();
 }
 
-function velocityVerletStep() {
+function velocityVerletStep(recordSample = true) {
   const acceptedState = captureDynamicsState();
   const halfDt = 0.5 * state.dt;
 
@@ -483,7 +625,7 @@ function velocityVerletStep() {
     const reason = state.forceError;
     restoreDynamicsState(acceptedState);
     markTrajectoryUnstable(reason);
-    return;
+    return false;
   }
 
   state.atoms.forEach((atom) => {
@@ -498,10 +640,11 @@ function velocityVerletStep() {
   if (!trajectoryIsFinite()) {
     restoreDynamicsState(acceptedState);
     markTrajectoryUnstable("A numerical value exceeded the safe classroom range.");
-    return;
+    return false;
   }
 
-  recordHistory();
+  if (recordSample) recordHistory();
+  return true;
 }
 
 function captureDynamicsState() {
@@ -648,10 +791,12 @@ function interactionParameters() {
 
 function markTrajectoryUnstable(reason) {
   state.unstable = true;
+  state.equilibrated = false;
   stopAnimation();
   setRunState("Trajectory stopped");
   setResultsNote(`${reason} Reduce Δt* or T*, then rebuild the positions and initialize velocities again.`);
   elements.velocityMessage.textContent = "The safety check stopped the trajectory before the LJ core was modified.";
+  updateEquilibrationDisplay();
   updateControls();
 }
 
@@ -727,6 +872,22 @@ function beginNewMeasurementSegment(message) {
   setResultsNote(message);
 }
 
+function invalidateEquilibration(message) {
+  state.equilibrated = false;
+  state.equilibrating = false;
+  state.equilibrationStep = 0;
+  state.equilibrationDt = null;
+  state.equilibrationDuration = 0;
+  state.step = 0;
+  state.time = 0;
+  state.history = [];
+  state.exportHistory = [];
+  state.referenceEnergy = null;
+  elements.velocityMessage.textContent = "Velocities are retained, but the changed model must be equilibrated again before NVE.";
+  updateEquilibrationDisplay();
+  setResultsNote(message);
+}
+
 function recordHistory(force = false) {
   if (!state.velocitiesReady || (!force && state.step % HISTORY_INTERVAL !== 0)) return;
   const sample = {
@@ -751,19 +912,28 @@ function resetSimulation() {
 
 function stopAnimation() {
   state.running = false;
+  state.equilibrating = false;
   if (state.animationFrame) cancelAnimationFrame(state.animationFrame);
   state.animationFrame = null;
+  if (state.densityChangeTimer) {
+    clearTimeout(state.densityChangeTimer);
+    state.densityChangeTimer = null;
+    elements.densitySlider.value = state.density.toFixed(2);
+    elements.densityTarget.textContent = state.density.toFixed(2);
+  }
 }
 
 function updateParameterLabels() {
   const interaction = interactionParameters();
   const scaledTimestep = state.dt * Math.sqrt(interaction.bareEpsilon) / interaction.sigma;
-  const ljDensity = REFERENCE_NUMBER_DENSITY * interaction.sigma * interaction.sigma;
+  const referenceNumberDensity = PARTICLE_COUNT / (BOX.x * BOX.y);
   elements.rMinValue.textContent = state.rMin.toFixed(2);
   elements.epsilonValue.textContent = state.epsilon.toFixed(2);
   elements.timestepValue.textContent = state.dt.toFixed(4);
+  elements.densitySlider.value = state.density.toFixed(2);
+  elements.densityTarget.textContent = state.density.toFixed(2);
   elements.temperatureTarget.textContent = state.targetTemperature.toFixed(2);
-  elements.densityValue.textContent = `Nσ²/A = ${ljDensity.toFixed(3)}`;
+  elements.densityValue.textContent = `Nσ²/A = ${state.density.toFixed(2)}; Nℓ₀²/A = ${referenceNumberDensity.toFixed(3)}`;
   elements.timestepGuidance.textContent = scaledTimestep > 0.005
     ? `Scaled LJ step = ${scaledTimestep.toFixed(4)}: expect stronger drift; reduce it if the safety check stops the run.`
     : `Scaled LJ step = ${scaledTimestep.toFixed(4)}; always judge accuracy from total-energy drift.`;
@@ -785,15 +955,47 @@ function updateConfigurationButtons() {
 
 function updateBoundaryCopy() {
   elements.boundaryNote.textContent = state.periodic
-    ? "Periodic copies cross one edge and re-enter through the opposite edge."
+    ? "Centres stay in 0 ≤ x < Lx and 0 ≤ y < Ly. Each marker is drawn once; it may straddle one boundary but is never duplicated at the opposite boundary."
     : "Atoms reflect elastically from the four visible walls.";
 }
 
 function updateControls() {
-  elements.runSimulation.disabled = !state.velocitiesReady || state.unstable;
+  const modelControlsLocked = state.equilibrating;
+  elements.rMinSlider.disabled = modelControlsLocked;
+  elements.epsilonSlider.disabled = modelControlsLocked;
+  elements.timestepSlider.disabled = modelControlsLocked;
+  elements.densitySlider.disabled = modelControlsLocked;
+  elements.temperatureSlider.disabled = modelControlsLocked;
+  elements.pbcToggle.disabled = modelControlsLocked;
+  elements.latticeConfig.disabled = modelControlsLocked;
+  elements.randomConfig.disabled = modelControlsLocked;
+  elements.initializeVelocities.disabled = modelControlsLocked;
+  elements.equilibrateSystem.disabled = !state.velocitiesReady || state.equilibrated || state.equilibrating || state.unstable;
+  elements.equilibrateSystem.textContent = state.equilibrating
+    ? "Equilibrating…"
+    : state.equilibrated
+      ? "Equilibration complete"
+      : "Equilibrate at T*";
+  elements.runSimulation.disabled = !state.velocitiesReady || !state.equilibrated || state.unstable || state.equilibrating;
   elements.runSimulation.textContent = state.running ? "Pause" : "Run";
-  elements.singleStep.disabled = !state.velocitiesReady || state.running || state.unstable;
+  elements.singleStep.disabled = !state.velocitiesReady || !state.equilibrated || state.running || state.unstable || state.equilibrating;
   elements.downloadResults.disabled = state.exportHistory.length < 2;
+}
+
+function updateEquilibrationDisplay() {
+  const completed = clamp(state.equilibrationStep, 0, EQUILIBRATION_STEPS);
+  elements.equilibrationProgress.max = EQUILIBRATION_STEPS;
+  elements.equilibrationProgress.value = completed;
+  if (state.equilibrated) {
+    elements.equilibrationStatus.textContent = `Complete · ${EQUILIBRATION_STEPS.toLocaleString()} steps`;
+  } else if (state.equilibrating) {
+    const percent = Math.floor(100 * completed / EQUILIBRATION_STEPS);
+    elements.equilibrationStatus.textContent = `Equilibrating · ${percent}%`;
+  } else if (state.unstable && completed > 0) {
+    elements.equilibrationStatus.textContent = `Stopped · ${completed.toLocaleString()} of ${EQUILIBRATION_STEPS.toLocaleString()} steps`;
+  } else {
+    elements.equilibrationStatus.textContent = "Equilibration not started";
+  }
 }
 
 function updateReadings() {
@@ -820,6 +1022,7 @@ function setResultsNote(message) {
 
 function renderDynamicViews() {
   updateReadings();
+  updateEquilibrationDisplay();
   updateControls();
   drawAtomCanvas();
   drawResultsCharts();
@@ -951,30 +1154,21 @@ function drawAtomCanvas() {
     context.stroke();
   }
 
-  context.strokeStyle = state.periodic ? "#9ee9df" : COLORS.wall;
-  context.lineWidth = state.periodic ? 1.5 : 4;
-  context.setLineDash(state.periodic ? [7, 6] : []);
-  context.strokeRect(left, top, boxWidth, boxHeight);
-  context.setLineDash([]);
-
   const speedReference = Math.sqrt(Math.max(0.1, 2 * Math.max(state.targetTemperature, state.temperature)));
   state.atoms.forEach((atom) => {
     const speed = Math.hypot(atom.vx, atom.vy);
     const fraction = clamp(speed / (2.4 * speedReference), 0, 1);
     const color = speedColor(fraction);
-    const shiftsX = state.periodic ? [-BOX.x, 0, BOX.x] : [0];
-    const shiftsY = state.periodic ? [-BOX.y, 0, BOX.y] : [0];
-
-    shiftsX.forEach((shiftX) => {
-      shiftsY.forEach((shiftY) => {
-        const x = left + (atom.x + shiftX) * scale;
-        const y = top + (atom.y + shiftY) * scale;
-        if (x < left - visualRadius || x > left + boxWidth + visualRadius) return;
-        if (y < top - visualRadius || y > top + boxHeight + visualRadius) return;
-        drawAtom(context, x, y, visualRadius, color);
-      });
-    });
+    const x = left + atom.x * scale;
+    const y = top + atom.y * scale;
+    drawAtom(context, x, y, visualRadius, color);
   });
+
+  context.strokeStyle = state.periodic ? "#9ee9df" : COLORS.wall;
+  context.lineWidth = state.periodic ? 1.5 : 4;
+  context.setLineDash(state.periodic ? [7, 6] : []);
+  context.strokeRect(left, top, boxWidth, boxHeight);
+  context.setLineDash([]);
 
   context.fillStyle = "rgba(255, 255, 255, 0.8)";
   context.font = "700 12px system-ui, sans-serif";
@@ -1139,12 +1333,17 @@ function updateCanvasDescriptions() {
     : "All velocities are zero.";
   elements.atomCanvas.setAttribute(
     "aria-label",
-    `One hundred atoms in a two-dimensional ${configurationName} with ${state.periodic ? "periodic boundaries" : "reflecting walls"}. ${motion}`
+    `One hundred atoms in a two-dimensional ${configurationName} with ${state.periodic ? "periodic boundaries" : "reflecting walls"}. Each canonical atom centre is drawn once without duplicate periodic images. ${motion}`
   );
 
   if (state.history.length === 0) {
-    elements.energyChart.setAttribute("aria-label", "Energy versus time graph awaiting velocity initialization.");
-    elements.temperatureChart.setAttribute("aria-label", "Temperature versus time graph awaiting velocity initialization.");
+    const preparationState = !state.velocitiesReady
+      ? "awaiting velocity initialization"
+      : state.equilibrating
+        ? "awaiting completion of the thermostatted equilibration"
+        : "awaiting equilibration before the NVE measurement";
+    elements.energyChart.setAttribute("aria-label", `NVE energy versus time graph ${preparationState}.`);
+    elements.temperatureChart.setAttribute("aria-label", `NVE temperature versus time graph ${preparationState}.`);
     return;
   }
 
@@ -1162,6 +1361,7 @@ function updateCanvasDescriptions() {
 function downloadResultsCsv() {
   if (state.exportHistory.length < 2) return;
   const interaction = interactionParameters();
+  const referenceNumberDensity = PARTICLE_COUNT / (BOX.x * BOX.y);
   const rows = [
     ["model", "2D Lennard-Jones molecular dynamics"],
     ["units", "fixed classroom reference units: l0=E0=m=kB=1"],
@@ -1173,13 +1373,20 @@ function downloadResultsCsv() {
     ["sigma", interaction.sigma.toFixed(6)],
     ["bare_lj_epsilon", interaction.bareEpsilon.toFixed(6)],
     ["cutoff", interaction.cutoff.toFixed(6)],
-    ["box_number_density_N_l0_squared_over_A", REFERENCE_NUMBER_DENSITY.toFixed(4)],
-    ["lj_scaled_density_N_sigma_squared_over_A", (REFERENCE_NUMBER_DENSITY * interaction.sigma ** 2).toFixed(6)],
-    ["time_step_reference", state.dt.toFixed(5)],
+    ["selected_lj_scaled_density_N_sigma_squared_over_A", state.density.toFixed(4)],
+    ["box_number_density_N_l0_squared_over_A", referenceNumberDensity.toFixed(6)],
+    ["box_length_x_l0", BOX.x.toFixed(6)],
+    ["box_length_y_l0", BOX.y.toFixed(6)],
+    ["equilibration_method", "weak velocity rescaling (Berendsen-style)"],
+    ["equilibration_steps", EQUILIBRATION_STEPS],
+    ["equilibration_time_step_reference", state.equilibrationDt?.toFixed(5) ?? "not recorded"],
+    ["equilibration_duration_reference", state.equilibrationDuration.toFixed(6)],
+    ["thermostat_relaxation_time_reference", THERMOSTAT_RELAXATION_TIME.toFixed(4)],
+    ["production_time_step_reference", state.dt.toFixed(5)],
     ["temperature_definition", `2 K_peculiar / ${THERMAL_DEGREES_OF_FREEDOM}`],
     ["samples", state.exportHistory.length],
     [],
-    ["step", "time_star_reference", "kinetic_total_per_atom", "kinetic_peculiar_per_atom", "potential_per_atom", "total_per_atom", "temperature_star_reference", "temperature_initialization_target"],
+    ["step", "time_star_reference", "kinetic_total_per_atom", "kinetic_peculiar_per_atom", "potential_per_atom", "total_per_atom", "temperature_star_reference", "temperature_equilibration_target"],
     ...state.exportHistory.map((point) => [
       point.step,
       point.time.toFixed(6),

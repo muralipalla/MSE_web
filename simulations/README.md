@@ -42,8 +42,9 @@ on the home page. It uses no external runtime dependencies.
 
 - 100 atoms initialized on a triangular lattice or in a relaxed random configuration;
 - a force-shifted Lennard-Jones interaction with adjustable, exactly marked minimum and well depth;
-- velocity-Verlet integration, adjustable time step and temperature, periodic or reflecting boundaries, and Gaussian velocity initialization;
-- live atom motion plus energy-versus-time and temperature-versus-time results with CSV export; and
+- velocity-Verlet integration, adjustable time step, LJ-scaled density from 0.80 to 1.00, periodic or reflecting boundaries, and Gaussian velocity initialization;
+- a 1,200-step weak velocity-rescaling equilibration stage followed by an isolated NVE measurement;
+- a canonical-cell particle view that draws each of the 100 atoms once, plus energy-versus-time and temperature-versus-time results with CSV export; and
 - compact Python and C examples of one velocity-Verlet step.
 
 Open `molecular-dynamics/index.html` directly or through the Open MD lab button
