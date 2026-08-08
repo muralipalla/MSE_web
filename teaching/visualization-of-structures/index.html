@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An interactive Three.js atlas of representative metallic, ceramic, layered, clay, and polymer structures for materials-science teaching.">
+  <meta name="description" content="An interactive Three.js atlas of representative metallic, ceramic, carbon-nanostructure, layered, clay, and polymer structures for materials-science teaching.">
   <meta name="theme-color" content="#fdf6ec">
   <title>Visualization of Structures | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
@@ -17,7 +17,7 @@
       }
     }
   </script>
-  <script type="module" src="app.js?v=9"></script>
+  <script type="module" src="app.js?v=10"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to lesson</a>
@@ -42,12 +42,12 @@
         <p>
           A chemical formula tells us which atoms are present. A structure tells us
           where they sit, which neighbours surround them, and how the pattern repeats.
-          Explore representative structures from metals, ceramics, layered solids,
-          clays, and polymers in one interactive atlas.
+          Explore representative structures from metals, ceramics, carbon nanostructures,
+          layered solids, clays, and polymers in one interactive atlas.
         </p>
         <p class="structures-scope-note">
           This is an expandable teaching atlas, not an exhaustive catalogue of every
-          known crystal or polymer morphology.
+          known crystal, nanostructure, molecule, or polymer morphology.
         </p>
       </div>
     </header>
@@ -75,8 +75,10 @@
         </article>
       </div>
       <p class="structures-foundation-note">
-        Polymer views use a different language: connectivity, conformation, architecture,
-        and morphology. An amorphous coil or cross-linked network does not imply a repeating unit cell.
+        Lower-dimensional carbon structures also need care: graphene is a two-dimensional lattice,
+        nanotubes are rolled quasi-one-dimensional sheets, and C<sub>60</sub> is a molecule rather than
+        a repeating crystal. Polymer views use connectivity, conformation, architecture, and morphology;
+        an amorphous coil or cross-linked network does not imply a repeating unit cell.
       </p>
     </section>
 
@@ -86,6 +88,7 @@
         <label for="structure-family">Material family</label>
         <select id="structure-family" disabled>
           <option value="elemental">Elements and common lattices</option>
+          <option value="carbon">Carbon nanostructures and molecules</option>
           <option value="binary">Binary compounds</option>
           <option value="complex">Complex ceramics</option>
           <option value="layered">Layered and clay structures</option>
@@ -227,6 +230,11 @@
           <p>Simple cubic, BCC, FCC, HCP, and diamond cubic.</p>
         </article>
         <article>
+          <span class="structures-catalogue-mark structures-catalogue-mark-green" aria-hidden="true">C</span>
+          <h3>Carbon nanostructures and molecules</h3>
+          <p>Graphene, an armchair SWCNT, a three-wall MWCNT, and buckminsterfullerene C<sub>60</sub>.</p>
+        </article>
+        <article>
           <span class="structures-catalogue-mark structures-catalogue-mark-blue" aria-hidden="true">AB</span>
           <h3>Binary compounds</h3>
           <p>NaCl rock salt, CsCl, zinc-blende ZnS, and wurtzite ZnS.</p>
@@ -248,19 +256,21 @@
         </article>
       </div>
       <p class="structures-catalogue-note">
-        Crystal prototypes are labelled as crystallographic models. Clay and polymer views are
-        deliberately labelled schematic because a broad family name does not specify one unique unit cell.
+        Crystal prototypes are labelled as crystallographic models. Nanocarbon sheets and tubes are shown
+        as finite idealized fragments, C<sub>60</sub> is an isolated molecular cage, and clay and polymer views
+        are deliberately labelled schematic when a broad family name does not specify one unique unit cell.
       </p>
     </section>
 
     <section class="structures-references" aria-labelledby="references-title">
       <div>
         <p class="section-kicker">Model sources</p>
-        <h2 id="references-title">Where the crystallographic descriptions come from</h2>
+        <h2 id="references-title">Where the structure descriptions come from</h2>
       </div>
       <ul>
         <li><a href="https://aflow.org/prototype-encyclopedia/" target="_blank" rel="noopener">AFLOW Encyclopedia of Crystallographic Prototypes</a> for the elemental and ceramic prototype cells.</li>
         <li><a href="https://doi.org/10.1038/328606a0" target="_blank" rel="noopener">Calestani and Rizzoli, YBa₂Cu₃O₇ crystal structure</a> for the selected fully oxygenated YBCO phase.</li>
+        <li><a href="https://goldbook.iupac.org/terms/view/08172" target="_blank" rel="noopener">IUPAC definition of graphene</a>, <a href="https://doi.org/10.1038/354056a0" target="_blank" rel="noopener">Iijima's carbon-nanotube report</a>, and <a href="https://doi.org/10.1038/318162a0" target="_blank" rel="noopener">Kroto and co-workers' C₆₀ report</a> for the nanocarbon models.</li>
         <li><a href="https://pubs.usgs.gov/of/2001/of01-041/htmldocs/clays/kaogr.htm" target="_blank" rel="noopener">USGS clay-mineral description</a> for the kaolinite 1:1 layer concept.</li>
         <li><a href="https://iupac.org/wp-content/uploads/2022/09/Brief-Guide-to-Polymerization-Terminology-web20220815.pdf" target="_blank" rel="noopener">IUPAC polymer terminology guide</a> for the distinction between conformation and architecture.</li>
       </ul>

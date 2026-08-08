@@ -39,6 +39,9 @@ const SPECIES = {
   C: { label: "C — carbon", color: 0xe7e9ff, radius: 0.82 },
   C_A: { label: "C — A-layer viewing colour", color: 0x8fb9ff, radius: 0.82 },
   C_B: { label: "C — B-layer viewing colour", color: 0xff947d, radius: 0.82 },
+  C_Inner: { label: "C — inner nanotube wall (viewing colour)", color: 0x68d8ff, radius: 0.82 },
+  C_Middle: { label: "C — middle nanotube wall (viewing colour)", color: 0xff8a72, radius: 0.82 },
+  C_Outer: { label: "C — outer nanotube wall (viewing colour)", color: 0xffd23f, radius: 0.82 },
   Na: { label: "Na — sodium", color: 0xff5a52, radius: 0.88 },
   Cl: { label: "Cl — chlorine", color: 0x43e07b, radius: 1.12 },
   Cs: { label: "Cs — caesium", color: 0xff5a52, radius: 1.16 },
@@ -64,6 +67,7 @@ const SPECIES = {
 
 const FAMILIES = [
   { id: "elemental", label: "Elements and common lattices", models: ["simple-cubic", "bcc", "fcc", "hcp", "diamond"] },
+  { id: "carbon", label: "Carbon nanostructures and molecules", models: ["graphene", "swcnt", "mwcnt", "c60"] },
   { id: "binary", label: "Binary compounds", models: ["nacl", "cscl", "zinc-blende", "wurtzite"] },
   { id: "complex", label: "Complex ceramics", models: ["fluorite", "rutile", "corundum", "perovskite", "ybco"] },
   { id: "layered", label: "Layered and clay structures", models: ["graphite", "kaolinite", "smectite"] },
@@ -140,6 +144,81 @@ const MODELS = {
     notice: "The nearest-neighbour distance is √3a/4. The 12 FCC neighbours at a/√2 are second neighbours here and are not bonded.",
     legend: ["C"],
     builder: buildDiamond
+  },
+  graphene: {
+    family: "carbon",
+    title: "Graphene monolayer",
+    subtitle: "One sp²-bonded carbon sheet · finite honeycomb fragment",
+    kind: "Exact ideal lattice topology · finite fragment",
+    viewScale: 0.7,
+    prototype: "Graphene · 2D hexagonal lattice + 2-carbon basis",
+    system: "Two-dimensional hexagonal",
+    lattice: "2D hexagonal Bravais lattice + 2-C basis",
+    cell: "2 C per primitive cell; 96-C flake shown",
+    coordination: "Interior C: 3 neighbours at 120°",
+    notice: "The visible honeycomb is not itself a Bravais lattice: two carbon sites form the basis. Boundary atoms terminate the finite teaching fragment and are not vacancies in an infinite sheet.",
+    legend: ["C"],
+    views: {
+      a: { label: "Edge view", name: "edge" },
+      c: { label: "Sheet normal", name: "sheet-normal" }
+    },
+    builder: buildGraphene
+  },
+  swcnt: {
+    family: "carbon",
+    title: "Single-wall carbon nanotube (SWCNT)",
+    subtitle: "Armchair (8,8) tube · one rolled graphene wall",
+    kind: "Exact ideal nanotube topology · finite open fragment",
+    viewScale: 0.8,
+    prototype: "Armchair (8,8) SWCNT · ideal unrelaxed geometry",
+    system: "One-dimensional periodic nanostructure",
+    lattice: "Graphene rolled along the (8,8) chiral vector",
+    cell: "32 C per axial repeat; 192 C shown",
+    coordination: "Wall C: 3; displayed open-end C: 2",
+    notice: "The chiral indices (n,m) set tube diameter and strongly influence electronic behaviour. This finite model has open ends and omits end caps and structural relaxation.",
+    legend: ["C"],
+    views: {
+      a: { label: "Side view", name: "side" },
+      c: { label: "Down tube", name: "down the tube axis" }
+    },
+    builder: buildSwcnt
+  },
+  mwcnt: {
+    family: "carbon",
+    title: "Multi-wall carbon nanotube (MWCNT)",
+    subtitle: "Three concentric armchair walls · finite open fragment",
+    kind: "Schematic atomistic model · representative nested shells",
+    viewScale: 0.72,
+    prototype: "Concentric (5,5), (10,10), and (15,15) SWCNT walls",
+    system: "Quasi-one-dimensional nested nanotubes",
+    lattice: "Three independent rolled-graphene shells",
+    cell: "960 C across 3 open walls; 8 axial repeats per wall",
+    coordination: "Interior C: 3 neighbours within its own wall",
+    notice: "No covalent guides connect adjacent walls; the ideal wall spacing is about 0.34 nm and represents the much weaker interwall interaction. Colours distinguish walls only—all atoms are carbon, and real MWCNT wall counts and chiralities vary.",
+    legend: ["C_Inner", "C_Middle", "C_Outer"],
+    views: {
+      a: { label: "Side view", name: "side" },
+      c: { label: "Down tubes", name: "down the tube axes" }
+    },
+    builder: buildMwcnt
+  },
+  c60: {
+    family: "carbon",
+    title: "Buckminsterfullerene (C₆₀)",
+    subtitle: "Truncated-icosahedral carbon cage · 12 pentagons + 20 hexagons",
+    kind: "Exact molecular topology · idealized equal-edge geometry",
+    prototype: "C₆₀ buckminsterfullerene",
+    system: "Finite molecular cage with icosahedral symmetry",
+    lattice: "No Bravais lattice in the isolated molecule",
+    cell: "60 C atoms and 90 C–C edges",
+    coordination: "Every C: 3 neighbours",
+    notice: "Twelve pentagons provide the curvature needed to close the cage, alongside twenty hexagons. Real C₆₀ has two C–C bond lengths; the equal guide lengths here emphasize topology rather than bond order.",
+    legend: ["C"],
+    views: {
+      a: { label: "Side view", name: "side" },
+      c: { label: "Top view", name: "top" }
+    },
+    builder: buildC60
   },
   graphite: {
     family: "layered",
@@ -590,9 +669,9 @@ function updateText(definition) {
   elements.factCell.textContent = definition.cell;
   elements.factCoordination.textContent = definition.coordination;
   elements.notice.textContent = definition.notice;
-  const schematic = definition.kind.startsWith("Schematic");
-  elements.viewA.textContent = schematic ? "Side view" : "Along a";
-  elements.viewC.textContent = schematic ? "Top view" : "Along c";
+  const views = getViewOptions(definition);
+  elements.viewA.textContent = views.a.label;
+  elements.viewC.textContent = views.c.label;
   elements.legend.replaceChildren();
 
   definition.legend.forEach((key) => {
@@ -614,6 +693,20 @@ function updateText(definition) {
   );
 }
 
+function getViewOptions(definition) {
+  if (definition.views) return definition.views;
+  if (definition.kind.startsWith("Schematic")) {
+    return {
+      a: { label: "Side view", name: "side" },
+      c: { label: "Top view", name: "top" }
+    };
+  }
+  return {
+    a: { label: "Along a", name: "along the a direction" },
+    c: { label: "Along c", name: "along the c direction" }
+  };
+}
+
 function buildThreeModel(data) {
   const root = new THREE.Group();
   const atomGroup = new THREE.Group();
@@ -625,7 +718,7 @@ function buildThreeModel(data) {
   const sphereGeometry = new THREE.SphereGeometry(data.atomRadius || 0.17, 22, 16);
   const materials = new Map();
 
-  data.atoms.forEach((atom) => {
+  const materialForAtom = (atom) => {
     const style = SPECIES[atom.style || atom.element] || SPECIES.Segment;
     const materialKey = `${atom.style || atom.element}:${atom.opacity ?? 1}`;
     if (!materials.has(materialKey)) {
@@ -639,26 +732,70 @@ function buildThreeModel(data) {
         opacity: atom.opacity ?? 1
       }));
     }
-    const mesh = new THREE.Mesh(sphereGeometry, materials.get(materialKey));
-    mesh.position.fromArray(atom.position);
-    const radiusScale = (style.radius || 1) * (atom.radius || 1);
-    mesh.scale.setScalar(radiusScale);
-    atomGroup.add(mesh);
-  });
+    return { material: materials.get(materialKey), style, materialKey };
+  };
 
-  const linkMaterial = new THREE.MeshStandardMaterial({
-    color: 0xd4dcff,
-    emissive: 0x263067,
-    emissiveIntensity: 0.18,
-    transparent: true,
-    opacity: 0.66,
-    roughness: 0.5
-  });
-  data.links.forEach((link) => {
-    const a = new THREE.Vector3().fromArray(data.atoms[link[0]].position);
-    const b = new THREE.Vector3().fromArray(data.atoms[link[1]].position);
-    guides.add(makeCylinder(a, b, data.linkRadius || 0.035, linkMaterial));
-  });
+  if (data.instancedAtoms) {
+    const instanceGroups = new Map();
+    data.atoms.forEach((atom) => {
+      const descriptor = materialForAtom(atom);
+      if (!instanceGroups.has(descriptor.materialKey)) {
+        instanceGroups.set(descriptor.materialKey, { descriptor, atoms: [] });
+      }
+      instanceGroups.get(descriptor.materialKey).atoms.push(atom);
+    });
+    const transform = new THREE.Object3D();
+    instanceGroups.forEach(({ descriptor, atoms }) => {
+      const mesh = new THREE.InstancedMesh(sphereGeometry, descriptor.material, atoms.length);
+      atoms.forEach((atom, index) => {
+        transform.position.fromArray(atom.position);
+        const radiusScale = (descriptor.style.radius || 1) * (atom.radius || 1);
+        transform.scale.setScalar(radiusScale);
+        transform.updateMatrix();
+        mesh.setMatrixAt(index, transform.matrix);
+      });
+      mesh.instanceMatrix.needsUpdate = true;
+      atomGroup.add(mesh);
+    });
+  } else {
+    data.atoms.forEach((atom) => {
+      const descriptor = materialForAtom(atom);
+      const mesh = new THREE.Mesh(sphereGeometry, descriptor.material);
+      mesh.position.fromArray(atom.position);
+      const radiusScale = (descriptor.style.radius || 1) * (atom.radius || 1);
+      mesh.scale.setScalar(radiusScale);
+      atomGroup.add(mesh);
+    });
+  }
+
+  if (data.lineLinks) {
+    const positions = [];
+    data.links.forEach(([first, second]) => {
+      positions.push(...data.atoms[first].position, ...data.atoms[second].position);
+    });
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    const material = new THREE.LineBasicMaterial({
+      color: 0x9eafea,
+      transparent: true,
+      opacity: 0.82
+    });
+    guides.add(new THREE.LineSegments(geometry, material));
+  } else {
+    const linkMaterial = new THREE.MeshStandardMaterial({
+      color: 0xd4dcff,
+      emissive: 0x263067,
+      emissiveIntensity: 0.18,
+      transparent: true,
+      opacity: 0.66,
+      roughness: 0.5
+    });
+    data.links.forEach((link) => {
+      const a = new THREE.Vector3().fromArray(data.atoms[link[0]].position);
+      const b = new THREE.Vector3().fromArray(data.atoms[link[1]].position);
+      guides.add(makeCylinder(a, b, data.linkRadius || 0.035, linkMaterial));
+    });
+  }
 
   if (data.extraLinks) {
     data.extraLinks.forEach((link) => {
@@ -742,10 +879,9 @@ function setView(view, announce) {
   render();
 
   if (announce) {
-    const schematic = MODELS[currentModelId].kind.startsWith("Schematic");
-    const names = schematic
-      ? { isometric: "isometric", a: "side", c: "top" }
-      : { isometric: "isometric", a: "along the a direction", c: "along the c direction" };
+    const definition = MODELS[currentModelId];
+    const views = getViewOptions(definition);
+    const names = { isometric: "isometric", a: views.a.name, c: views.c.name };
     elements.status.textContent = `${MODELS[currentModelId].title}: ${names[view]} view.`;
   }
 }
@@ -929,6 +1065,216 @@ function buildDiamond() {
     atomRadius: 0.17,
     linkRadius: 0.042
   });
+}
+
+function buildGraphene() {
+  const atoms = [];
+  const links = new Set();
+  const bondLength = 0.92;
+  const shells = 4;
+  const radius = shells - 1;
+
+  for (let q = -radius; q <= radius; q += 1) {
+    const rMinimum = Math.max(-radius, -q - radius);
+    const rMaximum = Math.min(radius, -q + radius);
+    for (let r = rMinimum; r <= rMaximum; r += 1) {
+      const center = [
+        Math.sqrt(3) * bondLength * (q + r / 2),
+        1.5 * bondLength * r,
+        0
+      ];
+      const ring = [];
+      for (let corner = 0; corner < 6; corner += 1) {
+        const angle = Math.PI / 6 + corner * Math.PI / 3;
+        ring.push(findOrAddAtom(atoms, "C", [
+          center[0] + bondLength * Math.cos(angle),
+          center[1] + bondLength * Math.sin(angle),
+          0
+        ], 1e-6));
+      }
+      for (let corner = 0; corner < 6; corner += 1) {
+        const first = ring[corner];
+        const second = ring[(corner + 1) % 6];
+        links.add(`${Math.min(first, second)},${Math.max(first, second)}`);
+      }
+    }
+  }
+
+  const a1 = [Math.sqrt(3) * bondLength, 0, 0];
+  const a2 = [Math.sqrt(3) * bondLength / 2, 1.5 * bondLength, 0];
+  const origin = [0, 0, 0];
+  const farCorner = a1.map((value, index) => value + a2[index]);
+
+  return {
+    atoms,
+    links: [...links].map((key) => key.split(",").map(Number)),
+    cellSegments: [
+      [origin, a1],
+      [origin, a2],
+      [a1, farCorner],
+      [a2, farCorner]
+    ],
+    planes: [],
+    atomRadius: 0.15,
+    linkRadius: 0.034,
+    hasCell: true
+  };
+}
+
+function buildSwcnt() {
+  const tube = buildArmchairNanotube(8, 6, { bondLength: 0.92, style: "C" });
+  return {
+    atoms: tube.atoms,
+    links: tube.links,
+    cellSegments: [],
+    planes: [],
+    atomRadius: 0.135,
+    linkRadius: 0.027,
+    hasCell: false
+  };
+}
+
+function buildMwcnt() {
+  const atoms = [];
+  const links = [];
+  const walls = [
+    { n: 5, style: "C_Inner" },
+    { n: 10, style: "C_Middle" },
+    { n: 15, style: "C_Outer" }
+  ];
+
+  walls.forEach((wall) => {
+    const tube = buildArmchairNanotube(wall.n, 8, {
+      bondLength: 0.92,
+      style: wall.style
+    });
+    const offset = atoms.length;
+    atoms.push(...tube.atoms);
+    tube.links.forEach(([first, second]) => links.push([first + offset, second + offset]));
+  });
+
+  return {
+    atoms,
+    links,
+    cellSegments: [],
+    planes: [],
+    atomRadius: 0.12,
+    linkRadius: 0.022,
+    instancedAtoms: true,
+    lineLinks: true,
+    hasCell: false
+  };
+}
+
+function buildArmchairNanotube(n, repeats, options = {}) {
+  const bondLength = options.bondLength || 0.92;
+  const style = options.style || "C";
+  const a1 = [Math.sqrt(3) * bondLength, 0];
+  const a2 = [Math.sqrt(3) * bondLength / 2, 1.5 * bondLength];
+  const basis = [[0, 0], [0, bondLength]];
+  const chiral = [n * (a1[0] + a2[0]), n * (a1[1] + a2[1])];
+  const translation = [a1[0] - a2[0], a1[1] - a2[1]];
+  const chiralSquared = chiral[0] ** 2 + chiral[1] ** 2;
+  const translationSquared = translation[0] ** 2 + translation[1] ** 2;
+  const circumference = Math.sqrt(chiralSquared);
+  const translationLength = Math.sqrt(translationSquared);
+  const sites = new Map();
+  const searchLimit = n + repeats + 4;
+
+  for (let i = -searchLimit; i <= searchLimit; i += 1) {
+    for (let j = -searchLimit; j <= searchLimit; j += 1) {
+      basis.forEach((basisSite) => {
+        const x = i * a1[0] + j * a2[0] + basisSite[0];
+        const y = i * a1[1] + j * a2[1] + basisSite[1];
+        let around = (x * chiral[0] + y * chiral[1]) / chiralSquared;
+        let along = (x * translation[0] + y * translation[1]) / translationSquared;
+        around = wrap01(around);
+        if (around > 1 - 1e-7) around = 0;
+        if (Math.abs(along) < 1e-7) along = 0;
+        if (along < 0 || along >= repeats - 1e-7) return;
+        const key = `${around.toFixed(7)}:${along.toFixed(7)}`;
+        if (!sites.has(key)) sites.set(key, { around, along });
+      });
+    }
+  }
+
+  const orderedSites = [...sites.values()].sort((first, second) =>
+    first.along - second.along || first.around - second.around
+  );
+  const tubeRadius = circumference / (2 * Math.PI);
+  const atoms = orderedSites.map((site) => {
+    const angle = 2 * Math.PI * site.around;
+    return makeAtom("C", [
+      tubeRadius * Math.cos(angle),
+      tubeRadius * Math.sin(angle),
+      site.along * translationLength
+    ], { style });
+  });
+  const links = [];
+
+  for (let first = 0; first < orderedSites.length; first += 1) {
+    for (let second = first + 1; second < orderedSites.length; second += 1) {
+      let aroundDifference = orderedSites[first].around - orderedSites[second].around;
+      aroundDifference -= Math.round(aroundDifference);
+      const axialDifference = (orderedSites[first].along - orderedSites[second].along) * translationLength;
+      const unrolledDistance = Math.hypot(aroundDifference * circumference, axialDifference);
+      if (Math.abs(unrolledDistance - bondLength) <= bondLength * 0.04) {
+        links.push([first, second]);
+      }
+    }
+  }
+
+  const expectedAtomCount = 4 * n * repeats;
+  if (atoms.length !== expectedAtomCount) {
+    throw new Error(`Armchair nanotube generated ${atoms.length} atoms; expected ${expectedAtomCount}.`);
+  }
+
+  return { atoms, links, tubeRadius, translationLength };
+}
+
+function buildC60() {
+  const goldenRatio = (1 + Math.sqrt(5)) / 2;
+  const coordinateSeeds = [
+    [0, 1, 3 * goldenRatio],
+    [1, 2 + goldenRatio, 2 * goldenRatio],
+    [goldenRatio, 2, 2 * goldenRatio + 1]
+  ];
+  const vertices = new Map();
+  const scale = 0.46;
+
+  coordinateSeeds.forEach(([x, y, z]) => {
+    const cyclicPermutations = [[x, y, z], [y, z, x], [z, x, y]];
+    cyclicPermutations.forEach((permutation) => {
+      const xSigns = permutation[0] === 0 ? [1] : [-1, 1];
+      const ySigns = permutation[1] === 0 ? [1] : [-1, 1];
+      const zSigns = permutation[2] === 0 ? [1] : [-1, 1];
+      xSigns.forEach((xSign) => ySigns.forEach((ySign) => zSigns.forEach((zSign) => {
+        const position = [
+          xSign * permutation[0] * scale,
+          ySign * permutation[1] * scale,
+          zSign * permutation[2] * scale
+        ];
+        vertices.set(position.map((value) => value.toFixed(7)).join(","), position);
+      })));
+    });
+  });
+
+  const atoms = [...vertices.values()].map((position) => makeAtom("C", position));
+  const edgeLength = 2 * scale;
+  const links = connectByRule(atoms, distanceRule(edgeLength, 1e-5));
+  if (atoms.length !== 60 || links.length !== 90) {
+    throw new Error(`C60 generated ${atoms.length} atoms and ${links.length} links; expected 60 and 90.`);
+  }
+
+  return {
+    atoms,
+    links,
+    cellSegments: [],
+    planes: [],
+    atomRadius: 0.15,
+    linkRadius: 0.035,
+    hasCell: false
+  };
 }
 
 function buildGraphite() {
