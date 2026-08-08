@@ -687,8 +687,68 @@ details p {
 .lesson-map li:nth-of-type(3) { background: #fff0eb; }
 .lesson-map li:nth-of-type(4) { background: #f1ebdb; }
 
+.intro-processing-case {
+  margin-top: 1.3rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+  border-left: 4px solid var(--blue);
+  background: linear-gradient(135deg, var(--blue-light), #f8f6fc);
+}
+
+.intro-processing-case h3 {
+  margin: 0 0 0.8rem;
+  color: var(--navy);
+}
+
+.intro-processing-routes {
+  display: grid;
+  gap: 0.45rem;
+  padding: 0;
+  margin: 0 0 0.9rem;
+  list-style: none;
+}
+
+.intro-processing-routes li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.7rem;
+  padding: 0.55rem 0.7rem;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.intro-processing-routes strong {
+  flex: 0 1 14rem;
+}
+
+.intro-processing-routes span {
+  flex: 1 1 16rem;
+  color: var(--ink-soft);
+}
+
+.intro-processing-chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.65rem;
+  margin: 1rem 0 0;
+  color: var(--navy);
+}
+
+.intro-processing-chain span {
+  color: var(--coral);
+  font-weight: 850;
+}
+
 .lesson-card > .section-kicker {
   margin-bottom: 0.55rem;
+}
+
+.intro-philosophy-tagline {
+  max-width: 50rem;
+  margin: 0.45rem 0 1.15rem;
+  padding-left: 0.9rem;
+  border-left: 4px solid var(--coral);
+  color: var(--navy);
+  font-weight: 750;
 }
 
 .intro-five-figure {
