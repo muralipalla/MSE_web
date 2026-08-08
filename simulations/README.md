@@ -37,3 +37,14 @@ the home page. It uses no external runtime dependencies.
 
 Open `xrd-experiment/index.html` directly or through the XRD experiment button
 on the home page. It uses no external runtime dependencies.
+
+`molecular-dynamics/` contains a standalone two-dimensional Lennard-Jones lab with:
+
+- 100 atoms initialized on a triangular lattice or in a relaxed random configuration;
+- a force-shifted Lennard-Jones interaction with adjustable, exactly marked minimum and well depth;
+- velocity-Verlet integration, adjustable time step and temperature, periodic or reflecting boundaries, and Gaussian velocity initialization;
+- live atom motion plus energy-versus-time and temperature-versus-time results with CSV export; and
+- compact Python and C examples of one velocity-Verlet step.
+
+Open `molecular-dynamics/index.html` directly or through the Open MD lab button
+on the home page. It uses no external runtime dependencies.

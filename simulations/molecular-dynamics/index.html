@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore a 100-atom, two-dimensional Lennard-Jones molecular-dynamics simulation using the velocity-Verlet algorithm.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Molecular Dynamics Lab | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=2">
+  <script src="../../js/main.js" defer></script>
+  <script src="app.js?v=2" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#md-lab">Skip to molecular-dynamics lab</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Simulation navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="md-shell" id="md-lab">
+    <header class="simulation-intro">
+      <div>
+        <p class="eyebrow">Interactive simulation 04</p>
+        <h1>Molecular Dynamics Lab</h1>
+        <p class="method-title">100 atoms &middot; 2D Lennard&ndash;Jones model</p>
+      </div>
+      <div class="intro-copy">
+        <p>
+          Choose an atomic arrangement, assign thermal velocities, and watch
+          velocity&ndash;Verlet advance positions and momenta one time step at a time.
+        </p>
+        <p class="accuracy-note">
+          Starred values use fixed classroom reference units
+          (&ell;<sub>0</sub>, E<sub>0</sub>, m = 1, and k<sub>B</sub> = 1).
+          This is an illustrative NVE simulation, not a specific material.
+        </p>
+      </div>
+    </header>
+
+    <section class="lab-panel interaction-panel" aria-labelledby="interaction-title">
+      <div class="panel-heading">
+        <div class="heading-copy">
+          <div class="step-number" aria-hidden="true">1</div>
+          <div>
+            <p class="panel-kicker">Pair interaction</p>
+            <h2 id="interaction-title">Shape the force-shifted Lennard&ndash;Jones potential</h2>
+          </div>
+        </div>
+        <p class="equation" aria-label="The bare Lennard-Jones term equals four epsilon L J times sigma over r to the twelfth minus sigma over r to the sixth">
+          U<sub>LJ</sub>(r) = 4&epsilon;<sub>LJ</sub>[(&sigma;/r)<sup>12</sup> &minus; (&sigma;/r)<sup>6</sup>]
+        </p>
+      </div>
+
+      <div class="interaction-grid">
+        <div class="parameter-controls">
+          <label class="slider-field" for="rmin-slider">
+            <span><b>Potential minimum, r<sub>min</sub>*</b><output id="rmin-value" for="rmin-slider">1.12</output></span>
+            <input id="rmin-slider" type="range" min="0.90" max="1.20" step="0.01" value="1.12">
+            <small>Sets the actual minimum after the smooth cutoff correction.</small>
+          </label>
+
+          <label class="slider-field" for="epsilon-slider">
+            <span><b>Energy-well depth, &epsilon;*</b><output id="epsilon-value" for="epsilon-slider">1.00</output></span>
+            <input id="epsilon-slider" type="range" min="0.25" max="2.00" step="0.05" value="1.00">
+            <small>Sets the actual energy minimum, U<sub>min</sub>* = &minus;&epsilon;*.</small>
+          </label>
+
+          <label class="slider-field" for="timestep-slider">
+            <span><b>Time step, &Delta;t*</b><output id="timestep-value" for="timestep-slider">0.0030</output></span>
+            <input id="timestep-slider" type="range" min="0.001" max="0.008" step="0.0005" value="0.003">
+            <small id="timestep-guidance">Scaled LJ step = 0.0031; always judge accuracy from total-energy drift.</small>
+          </label>
+
+          <dl class="model-facts">
+            <div><dt>Cutoff</dt><dd>2.5&sigma;, shifted force</dd></div>
+            <div><dt>Current LJ density</dt><dd id="density-value">N&sigma;&sup2;/A = 0.80</dd></div>
+            <div><dt>Integrator</dt><dd>Velocity&ndash;Verlet</dd></div>
+          </dl>
+        </div>
+
+        <div class="chart-block potential-block">
+          <h3>Force-shifted Lennard&ndash;Jones potential</h3>
+          <div class="canvas-frame potential-frame">
+            <canvas id="lj-chart" role="img" aria-label="Force-shifted Lennard-Jones pair potential with a minimum at 1.12 and depth minus 1.00 in classroom reference units.">
+              Lennard-Jones potential graph.
+            </canvas>
+          </div>
+          <p class="chart-note" id="potential-note">Minimum: r<sub>min</sub>* = 1.12, U<sub>min</sub>* = &minus;1.00. Both force and potential reach zero at the cutoff.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lab-panel simulation-panel" aria-labelledby="simulation-title">
+      <div class="panel-heading simulation-heading">
+        <div class="heading-copy">
+          <div class="step-number" aria-hidden="true">2</div>
+          <div>
+            <p class="panel-kicker">Atomic system</p>
+            <h2 id="simulation-title">Choose positions, initialize velocities, and run</h2>
+          </div>
+        </div>
+        <div class="run-status" role="status" aria-live="polite" aria-atomic="true">
+          <span>State</span><strong id="run-state">Positions ready</strong>
+        </div>
+      </div>
+
+      <div class="simulation-workbench">
+        <div class="atom-view">
+          <div class="canvas-frame atom-frame">
+            <canvas id="atom-canvas" role="img" aria-label="One hundred stationary atoms arranged on a two-dimensional triangular lattice.">
+              Two-dimensional molecular-dynamics particle view.
+            </canvas>
+          </div>
+          <div class="speed-key" aria-label="Atom colour indicates speed">
+            <span>Slower</span><i aria-hidden="true"></i><span>Faster</span>
+          </div>
+          <p class="chart-note" id="boundary-note">Periodic copies cross one edge and re-enter through the opposite edge.</p>
+        </div>
+
+        <div class="runtime-controls">
+          <fieldset class="choice-fieldset">
+            <legend>Initial positions</legend>
+            <div class="choice-buttons" aria-label="Atomic configuration">
+              <button class="choice-button is-selected" id="lattice-config" type="button" aria-pressed="true">Triangular lattice</button>
+              <button class="choice-button" id="random-config" type="button" aria-pressed="false">Random configuration</button>
+            </div>
+            <small>The random option creates a disordered, overlap-free arrangement. Changing either configuration clears previous results.</small>
+          </fieldset>
+
+          <label class="slider-field temperature-field" for="temperature-slider">
+            <span><b>Velocity temperature, T*</b><output id="temperature-target" for="temperature-slider">0.75</output></span>
+            <input id="temperature-slider" type="range" min="0.10" max="2.00" step="0.05" value="0.75">
+            <small>Changing T* rescales existing velocities once; the subsequent NVE temperature fluctuates freely.</small>
+          </label>
+
+          <label class="pbc-control" for="pbc-toggle">
+            <input id="pbc-toggle" type="checkbox" checked>
+            <span><b>Periodic boundary conditions (PBC)</b><small>Turn off to use reflecting walls.</small></span>
+          </label>
+
+          <div class="velocity-action">
+            <button class="button primary" id="initialize-velocities" type="button">Initialize random velocities</button>
+            <p id="velocity-message">Velocities are zero. Initialize them before running.</p>
+          </div>
+
+          <div class="run-actions" aria-label="Molecular-dynamics controls">
+            <button class="button secondary" id="run-simulation" type="button" disabled>Run</button>
+            <button class="button secondary" id="single-step" type="button" disabled>Single step</button>
+            <button class="text-button" id="reset-simulation" type="button">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <dl class="live-readings" aria-label="Live molecular-dynamics readings">
+        <div><dt>Atoms</dt><dd>100</dd></div>
+        <div><dt>Step</dt><dd id="step-value">0</dd></div>
+        <div><dt>Time, t*</dt><dd id="time-value">0.000</dd></div>
+        <div><dt>Temperature, T*</dt><dd id="temperature-value">0.000</dd></div>
+        <div><dt>Total energy / atom</dt><dd id="energy-value">&mdash;</dd></div>
+        <div><dt>Energy drift</dt><dd id="drift-value">&mdash;</dd></div>
+      </dl>
+    </section>
+
+    <section class="lab-panel results-panel" aria-labelledby="results-title">
+      <div class="panel-heading results-heading">
+        <div class="heading-copy">
+          <div class="step-number" aria-hidden="true">3</div>
+          <div>
+            <p class="panel-kicker">Simulation results</p>
+            <h2 id="results-title">Follow energy and temperature</h2>
+          </div>
+        </div>
+        <button class="button secondary compact-button" id="download-results" type="button" disabled>Download results CSV</button>
+      </div>
+
+      <div class="results-grid">
+        <div class="chart-block">
+          <h3>Energy versus time</h3>
+          <div class="series-key" aria-label="Energy graph legend">
+            <span><i class="kinetic-key" aria-hidden="true"></i>Total kinetic / atom</span>
+            <span><i class="potential-key" aria-hidden="true"></i>Potential / atom</span>
+            <span><i class="total-key" aria-hidden="true"></i>Total / atom</span>
+          </div>
+          <div class="canvas-frame result-frame">
+            <canvas id="energy-chart" role="img" aria-label="Energy versus time graph awaiting velocity initialization.">Energy versus time graph.</canvas>
+          </div>
+        </div>
+
+        <div class="chart-block">
+          <h3>Temperature versus time</h3>
+          <div class="series-key" aria-label="Temperature graph legend">
+            <span><i class="temperature-key" aria-hidden="true"></i>Instantaneous T*</span>
+            <span><i class="target-key" aria-hidden="true"></i>Initialization target</span>
+          </div>
+          <div class="canvas-frame result-frame">
+            <canvas id="temperature-chart" role="img" aria-label="Temperature versus time graph awaiting velocity initialization.">Temperature versus time graph.</canvas>
+          </div>
+        </div>
+      </div>
+      <p class="results-note" id="results-note">Initialize velocities to establish the starting energy and temperature.</p>
+    </section>
+
+    <section class="lab-panel code-panel" aria-labelledby="code-title">
+      <div class="panel-heading">
+        <div class="heading-copy">
+          <div class="step-number" aria-hidden="true">4</div>
+          <div>
+            <p class="panel-kicker">Inside one MD step</p>
+            <h2 id="code-title">Velocity&ndash;Verlet in Python and C</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-grid">
+        <article class="code-example" aria-labelledby="python-code-title">
+          <div class="code-heading"><span aria-hidden="true">PY</span><h3 id="python-code-title">Python</h3></div>
+          <pre><code>def velocity_verlet(r, v, f, dt, box):
+    v += 0.5 * dt * f       # half kick, m = 1
+    r += dt * v             # drift
+    r %= box                # periodic wrap
+    f, potential = forces(r, box)
+    v += 0.5 * dt * f       # second half kick
+    return r, v, f, potential</code></pre>
+        </article>
+
+        <article class="code-example" aria-labelledby="c-code-title">
+          <div class="code-heading"><span aria-hidden="true">C</span><h3 id="c-code-title">C</h3></div>
+          <pre><code>void velocity_verlet(Atom a[], int n, double dt) {
+  for (int i = 0; i &lt; n; ++i) {
+    a[i].vx += 0.5 * dt * a[i].fx; /* half kick */
+    a[i].vy += 0.5 * dt * a[i].fy;
+    a[i].x += dt * a[i].vx;        /* drift */
+    a[i].y += dt * a[i].vy;
+    wrap_pbc(&amp;a[i].x, &amp;a[i].y);
+  }
+  compute_forces(a, n);
+  for (int i = 0; i &lt; n; ++i) {
+    a[i].vx += 0.5 * dt * a[i].fx;
+    a[i].vy += 0.5 * dt * a[i].fy;
+  }
+}</code></pre>
+        </article>
+      </div>
+
+      <div class="algorithm-flow" aria-label="Velocity-Verlet sequence">
+        <span>half kick</span><b aria-hidden="true">&rarr;</b><span>drift</span><b aria-hidden="true">&rarr;</b><span>apply boundaries</span><b aria-hidden="true">&rarr;</b><span>new forces</span><b aria-hidden="true">&rarr;</b><span>half kick</span>
+      </div>
+    </section>
+
+    <section class="lab-panel reference-panel" aria-labelledby="reference-title">
+      <div class="panel-heading">
+        <div class="step-number reference-number" aria-hidden="true">i</div>
+        <div><p class="panel-kicker">Model notes</p><h2 id="reference-title">Reduced units and numerical choices</h2></div>
+      </div>
+      <p>
+        The direct pair loop evaluates 4,950 unique pairs for 100 atoms. Forces and
+        energy use the same force-shifted potential at a 2.5&sigma; cutoff, so both
+        reach zero continuously. The sliders specify the actual minimum and well depth;
+        the underlying &sigma; and bare LJ energy scale are adjusted internally to keep
+        that marked minimum exact.
+      </p>
+      <p>
+        The fixed box has N&ell;<sub>0</sub><sup>2</sup>/A = 0.80, while the displayed
+        N&sigma;<sup>2</sup>/A updates when the potential minimum changes. Temperature
+        uses velocities relative to the instantaneous centre-of-mass velocity (198
+        thermal degrees of freedom), while total energy retains all kinetic energy.
+        Changing a model setting starts a fresh plotted and exported trajectory segment.
+      </p>
+      <ul>
+        <li><a href="https://docs.lammps.org/pair_lj.html">LAMMPS Lennard&ndash;Jones potential documentation</a></li>
+        <li><a href="https://docs.lammps.org/units.html">LAMMPS reduced-unit and time-step conventions</a></li>
+        <li><a href="https://docs.lammps.org/compute_temp.html">LAMMPS kinetic-temperature definition</a></li>
+        <li><a href="https://manual.gromacs.org/documentation/2021.7/reference-manual/algorithms/molecular-dynamics.html">GROMACS molecular-dynamics integration notes</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Illustrative Lennard&ndash;Jones molecular dynamics &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
