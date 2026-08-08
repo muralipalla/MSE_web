@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Calculate theoretical tensile and shear strength from ideal atomic bonding models and explain why real materials are weaker.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Atomic Bonding and Ideal Strength Quiz | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js" defer></script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#quiz">Skip to the quiz</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Quiz navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#practice">&larr; Back to Section 4</a>
+    </nav>
+  </header>
+
+  <main class="article-shell quiz-shell" id="quiz">
+    <header class="lesson-intro quiz-intro">
+      <p class="eyebrow">Check your understanding</p>
+      <h1>Atomic bonding and ideal strength</h1>
+      <p>Use the fixed model data below, calculate on paper, and enter your results. Numerical answers within 2% are accepted.</p>
+    </header>
+
+    <section class="model-given" aria-labelledby="given-title">
+      <div>
+        <p class="section-kicker">Given data</p>
+        <h2 id="given-title">Two idealized models</h2>
+      </div>
+      <div class="given-grid">
+        <article>
+          <h3>Tensile bond model</h3>
+          <p>U(x) = 4&epsilon;[(&sigma;/x)<sup>12</sup> &minus; (&sigma;/x)<sup>6</sup>]</p>
+          <dl><div><dt>&epsilon;</dt><dd>1.00 eV</dd></div><div><dt>&sigma;</dt><dd>1.00 &Aring;</dd></div><div><dt>&rho;<sub>b</sub></dt><dd>1/x<sub>0</sub><sup>2</sup></dd></div></dl>
+        </article>
+        <article>
+          <h3>Frenkel shear model</h3>
+          <p>&tau;<sub>th</sub> = Gb/(2&pi;h)</p>
+          <dl><div><dt>G</dt><dd>80.0 GPa</dd></div><div><dt>b</dt><dd>0.250 nm</dd></div><div><dt>h</dt><dd>0.250 nm</dd></div></dl>
+        </article>
+      </div>
+    </section>
+
+    <form class="quiz-form" id="atomic-quiz-form" novalidate>
+      <section class="lesson-card quiz-part" aria-labelledby="tensile-questions-title">
+        <p class="section-kicker">Part A &middot; Calculate</p>
+        <h2 id="tensile-questions-title">Theoretical cohesive strength</h2>
+        <ol class="numeric-questions" type="a">
+          <li>
+            <label for="answer-x0">Equilibrium separation, x<sub>0</sub></label>
+            <span class="answer-entry">
+              <input id="answer-x0" type="number" inputmode="decimal" step="any" aria-describedby="answer-x0-status">
+              <span>&Aring;</span><small class="answer-status" id="answer-x0-status"></small>
+            </span>
+          </li>
+          <li>
+            <label for="answer-xm">Separation at maximum tensile force, x<sub>m</sub></label>
+            <span class="answer-entry">
+              <input id="answer-xm" type="number" inputmode="decimal" step="any" aria-describedby="answer-xm-status">
+              <span>&Aring;</span><small class="answer-status" id="answer-xm-status"></small>
+            </span>
+          </li>
+          <li>
+            <label for="answer-fmax">Maximum per-bond holding force, F<sub>max</sub></label>
+            <span class="answer-entry">
+              <input id="answer-fmax" type="number" inputmode="decimal" step="any" aria-describedby="answer-fmax-status">
+              <span>eV/&Aring;</span><small class="answer-status" id="answer-fmax-status"></small>
+            </span>
+          </li>
+          <li>
+            <label for="answer-k">Bond stiffness at equilibrium, k</label>
+            <span class="answer-entry">
+              <input id="answer-k" type="number" inputmode="decimal" step="any" aria-describedby="answer-k-status">
+              <span>eV/&Aring;<sup>2</sup></span><small class="answer-status" id="answer-k-status"></small>
+            </span>
+          </li>
+          <li>
+            <label for="answer-modulus">Ideal elastic modulus, Y</label>
+            <span class="answer-entry">
+              <input id="answer-modulus" type="number" inputmode="decimal" step="any" aria-describedby="answer-modulus-status">
+              <span>eV/&Aring;<sup>3</sup></span><small class="answer-status" id="answer-modulus-status"></small>
+            </span>
+          </li>
+          <li>
+            <label for="answer-cohesive">Theoretical cohesive strength, &sigma;<sub>max</sub></label>
+            <span class="answer-entry">
+              <input id="answer-cohesive" type="number" inputmode="decimal" step="any" aria-describedby="answer-cohesive-status">
+              <span>GPa</span><small class="answer-status" id="answer-cohesive-status"></small>
+            </span>
+          </li>
+          <li>
+            <label for="answer-surface">Energy of one newly created surface, &gamma;</label>
+            <span class="answer-entry">
+              <input id="answer-surface" type="number" inputmode="decimal" step="any" aria-describedby="answer-surface-status">
+              <span>J/m<sup>2</sup></span><small class="answer-status" id="answer-surface-status"></small>
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="lesson-card quiz-part" aria-labelledby="shear-question-title">
+        <p class="section-kicker">Part B &middot; Apply</p>
+        <h2 id="shear-question-title">Theoretical shear strength</h2>
+        <p>For the Frenkel model above, calculate &tau;<sub>th</sub> = Gb/(2&pi;h).</p>
+        <div class="single-answer">
+          <label for="answer-shear">Theoretical shear strength, &tau;<sub>th</sub></label>
+          <span class="answer-entry">
+            <input id="answer-shear" type="number" inputmode="decimal" step="any" aria-describedby="answer-shear-status">
+            <span>GPa</span><small class="answer-status" id="answer-shear-status"></small>
+          </span>
+        </div>
+      </section>
+
+      <fieldset class="lesson-card conceptual-question" id="concept-question">
+        <legend>Part C &middot; Why is real strength lower?</legend>
+        <p>Choose the best explanation.</p>
+        <label><input type="radio" name="real-strength" value="collective"> Real crystals always break every bond across a plane simultaneously.</label>
+        <label><input type="radio" name="real-strength" value="defects"> Dislocations permit localized slip, while cracks and interfaces concentrate stress and nucleate damage.</label>
+        <label><input type="radio" name="real-strength" value="no-bonds"> Atoms in real materials do not form interatomic bonds.</label>
+        <label><input type="radio" name="real-strength" value="zero-modulus"> The elastic modulus of a real material is zero.</label>
+        <p class="concept-status" id="concept-status"></p>
+      </fieldset>
+
+      <div class="quiz-actions">
+        <button class="button primary" type="submit">Check all answers</button>
+        <button class="button secondary" id="clear-quiz" type="button">Clear answers</button>
+      </div>
+      <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+    </form>
+
+    <details class="lesson-card worked-solution">
+      <summary>Show the worked results</summary>
+      <ol type="a">
+        <li>x<sub>0</sub> = 2<sup>1/6</sup>&sigma; = <strong id="solution-x0">1.122 &Aring;</strong>.</li>
+        <li>x<sub>m</sub> = [156/42]<sup>1/6</sup>&sigma; = <strong id="solution-xm">1.244 &Aring;</strong>.</li>
+        <li>F<sub>max</sub> = <strong id="solution-fmax">2.396 eV/&Aring;</strong>.</li>
+        <li>k = U&Prime;(x<sub>0</sub>) = <strong id="solution-k">57.146 eV/&Aring;<sup>2</sup></strong>.</li>
+        <li>Y = &rho;<sub>b</sub>kx<sub>0</sub> = <strong id="solution-modulus">50.912 eV/&Aring;<sup>3</sup></strong>.</li>
+        <li>&sigma;<sub>max</sub> = &rho;<sub>b</sub>F<sub>max</sub> = <strong id="solution-cohesive">304.7 GPa</strong>.</li>
+        <li>&gamma; = &rho;<sub>b</sub>&epsilon;/2 = <strong id="solution-surface">6.36 J/m<sup>2</sup></strong>.</li>
+        <li>&tau;<sub>th</sub> = 80/(2&pi;) = <strong id="solution-shear">12.73 GPa</strong> because b = h.</li>
+      </ol>
+      <p>Real materials usually deform or fracture through localized defects. The ideal models assume homogeneous motion in a perfect crystal.</p>
+    </details>
+
+    <article class="lesson-card quiz-next">
+      <div>
+        <p class="section-kicker">Review the concepts</p>
+        <h2>Return to the interactive lesson</h2>
+        <p>Move the tensile and shear sliders again and connect each maximum to its atomic mechanism.</p>
+      </div>
+      <a class="button primary" href="../../teaching/atomic-bonding/index.html">Open lesson</a>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Atomic bonding quiz &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

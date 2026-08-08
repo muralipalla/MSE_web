@@ -537,8 +537,15 @@ summary:focus-visible {
 .practice-grid,
 .lesson-columns {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+}
+
+.practice-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.lesson-columns {
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .question-card,

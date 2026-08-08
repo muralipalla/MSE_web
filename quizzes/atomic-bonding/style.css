@@ -1,0 +1,239 @@
+.quiz-shell {
+  width: min(calc(100% - 2rem), 64rem);
+}
+
+.quiz-intro h1 {
+  max-width: 58rem;
+  font-size: clamp(2.7rem, 7vw, 5.2rem);
+}
+
+.model-given {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.3fr) minmax(0, 0.7fr);
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 1px solid rgba(56, 102, 148, 0.22);
+  border-radius: 1.5rem;
+  background: var(--blue-light);
+}
+
+.model-given h2,
+.model-given h3,
+.model-given p {
+  margin-top: 0;
+}
+
+.given-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.given-grid article {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.given-grid dl {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+}
+
+.given-grid dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.given-grid dd {
+  margin: 0;
+  font-weight: 850;
+}
+
+.quiz-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.quiz-form .lesson-card,
+.worked-solution {
+  margin-bottom: 0;
+}
+
+.quiz-part h2 {
+  margin-top: 0;
+}
+
+.numeric-questions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  padding-left: 1.5rem;
+}
+
+.numeric-questions li,
+.single-answer {
+  padding: 0.9rem;
+  border-radius: 0.9rem;
+  background: var(--lavender-light);
+}
+
+.numeric-questions label,
+.single-answer label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 850;
+}
+
+.answer-entry {
+  display: grid;
+  grid-template-columns: minmax(7rem, 1fr) auto;
+  gap: 0.35rem 0.55rem;
+  align-items: center;
+}
+
+.answer-entry input {
+  width: 100%;
+  min-height: 2.85rem;
+  padding: 0.55rem 0.65rem;
+  border: 2px solid rgba(46, 42, 116, 0.25);
+  border-radius: 0.65rem;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+}
+
+.answer-entry input:focus-visible,
+.quiz-form button:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.answer-entry input.is-correct {
+  border-style: double;
+  border-color: #2f7f63;
+}
+
+.answer-entry input.is-incorrect {
+  border-style: dashed;
+  border-color: var(--coral);
+}
+
+.answer-status {
+  min-height: 1.35rem;
+  grid-column: 1 / -1;
+  font-weight: 850;
+}
+
+.answer-status.is-correct { color: #226348; }
+.answer-status.is-incorrect { color: #a72d18; }
+
+.conceptual-question {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.conceptual-question legend {
+  padding: 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.conceptual-question > p {
+  margin: 0;
+}
+
+.conceptual-question label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.8rem;
+  border-radius: 0.8rem;
+  background: var(--lavender-light);
+  cursor: pointer;
+}
+
+.conceptual-question input {
+  margin-top: 0.3rem;
+  accent-color: var(--coral);
+}
+
+.concept-status {
+  min-height: 1.4rem;
+  font-weight: 850;
+}
+
+.concept-status.is-correct { color: #226348; }
+.concept-status.is-incorrect { color: #a72d18; }
+
+.quiz-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  justify-content: center;
+}
+
+.quiz-feedback {
+  min-height: 2rem;
+  margin: 0;
+  text-align: center;
+  font-weight: 900;
+}
+
+.worked-solution {
+  margin-top: 1rem;
+}
+
+.worked-solution ol {
+  padding-left: 1.4rem;
+}
+
+.worked-solution li + li {
+  margin-top: 0.45rem;
+}
+
+.quiz-next {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  background: var(--blue-light);
+}
+
+.quiz-next h2,
+.quiz-next p {
+  margin-top: 0;
+}
+
+.quiz-next .button {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 720px) {
+  .model-given,
+  .given-grid,
+  .numeric-questions {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-next {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .quiz-shell {
+    width: min(calc(100% - 1rem), 64rem);
+  }
+
+  .quiz-actions .button {
+    width: 100%;
+  }
+}

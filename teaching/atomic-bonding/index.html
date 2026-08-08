@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore how interatomic separation and ideal plane slip determine the theoretical tensile and shear strength of a perfect crystal.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Atomic Bond and Theoretical Cohesive Strength of the Material | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=2">
+  <script src="../../js/main.js" defer></script>
+  <script type="module" src="app.js?v=2"></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the atomic bonding lesson</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="article-shell bonding-shell" id="lesson">
+    <header class="lesson-intro bonding-intro">
+      <p class="eyebrow">Teaching page 02</p>
+      <h1>Atomic Bond and Theoretical Cohesive Strength of the Material</h1>
+      <div class="opening-question">
+        <span aria-hidden="true">?</span>
+        <p>How to estimate the maximum strength of the material?</p>
+      </div>
+    </header>
+
+    <section class="concept-route" aria-label="Lesson route">
+      <span>Stretch bonds</span><b aria-hidden="true">&rarr;</b>
+      <span>Find peak traction</span><b aria-hidden="true">&rarr;</b>
+      <span>Slide atomic planes</span><b aria-hidden="true">&rarr;</b>
+      <span>Compare with real strength</span>
+    </section>
+
+    <aside class="convention-note" aria-labelledby="convention-title">
+      <div>
+        <p class="section-kicker">Model convention</p>
+        <h2 id="convention-title">Start from one consistent bond law</h2>
+      </div>
+      <div>
+        <p>
+          The supplied graph has a well depth of 1 eV, so this lesson uses the
+          normalized Mie form
+          <span class="inline-equation" aria-label="U of x equals C epsilon times sigma over x to m minus sigma over x to n">
+            U(x) = C&epsilon;[(&sigma;/x)<sup>m</sup> &minus; (&sigma;/x)<sup>n</sup>].
+          </span>
+          For the default 12&ndash;6 potential, <var>C</var> = 4 and the minimum is exactly &minus;&epsilon;.
+        </p>
+        <p>
+          The tensile model below converts a single-bond holding force into an
+          <strong>interplanar traction</strong> using the tutorial assumption
+          &rho;<sub>b</sub> = 1/x<sub>0</sub><sup>2</sup>. The model is deliberately ideal:
+          every bond is identical and the crystal contains no defects.
+        </p>
+      </div>
+    </aside>
+
+    <section class="lesson-card bond-explorer" aria-labelledby="tensile-title">
+      <div class="module-heading">
+        <div>
+          <p class="section-kicker">Part 1 &middot; Theoretical tensile strength</p>
+          <h2 id="tensile-title">Pull two atomic planes apart</h2>
+        </div>
+        <button class="small-action" id="reset-tensile" type="button">Reset tensile model</button>
+      </div>
+      <p class="explorer-intro">
+        The slider applies and holds an opening displacement. The two groups of
+        atoms move apart, the separation energy rises, and the traction first
+        climbs to a maximum and then falls as the bond softens. Select
+        <strong>Release tensile load</strong> to remove the holding force and let
+        the ideal bond relax toward its energy minimum.
+      </p>
+
+      <div class="explorer-layout">
+        <div class="visual-stack">
+          <div class="tensile-visual-row">
+            <figure class="atomic-figure">
+              <svg id="tensile-stage" viewBox="0 0 680 310" role="img" aria-labelledby="tensile-stage-title tensile-stage-description">
+                <title id="tensile-stage-title">Two atomic planes being separated</title>
+                <desc id="tensile-stage-description">Two groups of atoms are separated by the selected distance and connected by interfacial bonds.</desc>
+                <defs>
+                  <radialGradient id="left-atom-gradient" cx="35%" cy="30%">
+                    <stop offset="0" stop-color="#ffffff"></stop>
+                    <stop offset="0.28" stop-color="#a9c8e1"></stop>
+                    <stop offset="1" stop-color="#386694"></stop>
+                  </radialGradient>
+                  <radialGradient id="right-atom-gradient" cx="35%" cy="30%">
+                    <stop offset="0" stop-color="#ffffff"></stop>
+                    <stop offset="0.28" stop-color="#ffc0a8"></stop>
+                    <stop offset="1" stop-color="#c93b1f"></stop>
+                  </radialGradient>
+                  <marker id="traction-arrow" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto-start-reverse">
+                    <path d="M0,0 L9,4.5 L0,9 Z" fill="currentColor"></path>
+                  </marker>
+                </defs>
+                <rect class="atom-stage-backdrop" x="1" y="1" width="678" height="308" rx="22"></rect>
+                <g id="tensile-bonds" aria-hidden="true"></g>
+                <g id="left-atom-group" aria-hidden="true"></g>
+                <g id="right-atom-group" aria-hidden="true"></g>
+                <g class="traction-arrows" aria-hidden="true">
+                  <line id="left-traction-arrow" x1="104" y1="154" x2="44" y2="154" marker-end="url(#traction-arrow)"></line>
+                  <line id="right-traction-arrow" x1="576" y1="154" x2="636" y2="154" marker-end="url(#traction-arrow)"></line>
+                </g>
+                <g class="distance-bracket" aria-hidden="true">
+                  <line id="separation-bracket" x1="292" y1="272" x2="388" y2="272"></line>
+                  <line id="separation-left-tick" x1="292" y1="263" x2="292" y2="281"></line>
+                  <line id="separation-right-tick" x1="388" y1="263" x2="388" y2="281"></line>
+                  <text id="tensile-distance-label" x="340" y="300" text-anchor="middle">&delta; = 0.000 &Aring;</text>
+                </g>
+              </svg>
+              <figcaption>Groups represent adjoining atomic planes; the individual circles are schematic.</figcaption>
+            </figure>
+
+            <div class="traction-gauge" id="tensile-gauge" role="img" aria-label="Interplanar cohesive traction scale from zero to 304.7 gigapascals. The pointer is at zero.">
+              <p>Cohesive traction (GPa)</p>
+              <div class="gauge-layout" aria-hidden="true">
+                <div class="gauge-labels">
+                  <span id="tensile-scale-max">304.7</span>
+                  <span id="tensile-scale-75">228.6</span>
+                  <span id="tensile-scale-50">152.4</span>
+                  <span id="tensile-scale-25">76.2</span>
+                  <span id="tensile-scale-zero">0.0</span>
+                </div>
+                <div class="gauge-track">
+                  <div class="gauge-zone peak-zone"></div>
+                  <div class="gauge-tick-marks"><i></i><i></i><i></i><i></i><i></i></div>
+                  <div class="gauge-fill" id="tensile-gauge-fill"></div>
+                  <div class="gauge-needle" id="tensile-gauge-needle"></div>
+                </div>
+              </div>
+              <output id="tensile-gauge-value">0.0 GPa</output>
+              <small id="tensile-gauge-ratio">Peak &sigma;<sub>max</sub> = 304.7 GPa</small>
+            </div>
+          </div>
+
+          <div class="chart-header">
+            <div>
+              <h3>Energy of separation and cohesive traction</h3>
+              <p>Click the graph or move the slider to inspect the opening path.</p>
+            </div>
+            <div class="chart-legend" aria-label="Tensile plot legend">
+              <span><i class="energy-key" aria-hidden="true"></i>Separation energy W(&delta;)</span>
+              <span><i class="force-key" aria-hidden="true"></i>Cohesive traction &sigma;(&delta;)</span>
+            </div>
+          </div>
+          <div class="chart-wrap" id="tensile-chart-wrap">
+            <svg id="tensile-chart" role="img" aria-labelledby="tensile-chart-title tensile-chart-description"></svg>
+          </div>
+          <p class="chart-insight"><strong>Key connection:</strong> the area under the traction&ndash;separation curve is the work needed to split the crystal, W<sub>sep</sub>.</p>
+          <p class="visually-hidden" id="tensile-chart-live-summary"></p>
+        </div>
+
+        <aside class="model-controls" aria-label="Tensile model controls">
+          <div class="control-field">
+            <label for="energy-scale">Well depth, &epsilon;</label>
+            <output id="energy-scale-value" for="energy-scale">1.00 eV</output>
+            <input id="energy-scale" type="range" min="0.25" max="2" value="1" step="0.05">
+          </div>
+          <div class="control-field">
+            <label for="length-scale">Length scale, &sigma;</label>
+            <output id="length-scale-value" for="length-scale">1.00 &Aring;</output>
+            <input id="length-scale" type="range" min="0.75" max="2" value="1" step="0.05">
+          </div>
+          <div class="control-field separation-control">
+            <label for="separation">Opening displacement, &delta; = x &minus; x<sub>0</sub></label>
+            <output id="separation-value" for="separation">0.000 &Aring;</output>
+            <input id="separation" type="range" min="0" max="0.878" value="0" step="0.001" aria-describedby="tensile-release-help">
+            <small id="tensile-release-help">The slider holds the selected opening. Releasing the load produces a schematic damped return to the equilibrium energy minimum.</small>
+            <button class="release-action" id="release-tensile" type="button">Release tensile load</button>
+          </div>
+
+          <details class="advanced-controls">
+            <summary>Explore the potential exponents</summary>
+            <div class="control-field">
+              <label for="repulsive-exponent">Repulsive exponent, m</label>
+              <output id="repulsive-exponent-value" for="repulsive-exponent">12</output>
+              <input id="repulsive-exponent" type="range" min="9" max="18" value="12" step="1">
+            </div>
+            <div class="control-field">
+              <label for="attractive-exponent">Attractive exponent, n</label>
+              <output id="attractive-exponent-value" for="attractive-exponent">6</output>
+              <input id="attractive-exponent" type="range" min="3" max="8" value="6" step="1">
+            </div>
+            <p>A normalization factor C(m,n) keeps the well depth equal to &epsilon;.</p>
+          </details>
+
+          <div class="selected-readings" aria-labelledby="tensile-readings-title">
+            <h3 id="tensile-readings-title">At the selected opening</h3>
+            <dl>
+              <div><dt>Actual plane spacing</dt><dd id="selected-actual-spacing">1.122 &Aring;</dd></div>
+              <div><dt>Energy of separation</dt><dd id="selected-separation-energy">0.00 J/m<sup>2</sup></dd></div>
+              <div><dt>Per-bond cohesive force</dt><dd id="selected-force">0.000 eV/&Aring;</dd></div>
+              <div><dt>Interplanar traction</dt><dd id="selected-traction">0.0 GPa</dd></div>
+              <div><dt>Response</dt><dd id="selected-region">At equilibrium</dd></div>
+            </dl>
+          </div>
+          <p class="motion-status" id="tensile-motion-status" role="status" aria-live="polite">Equilibrium energy minimum: &delta; = 0. Move the slider to hold an opening, then release the load.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="lesson-card" aria-labelledby="derivation-title">
+      <p class="section-kicker">Read the curve</p>
+      <h2 id="derivation-title">From one bond to maximum tensile strength</h2>
+      <div class="derivation-grid">
+        <article class="derivation-step">
+          <span aria-hidden="true">01</span>
+          <div>
+            <h3>Find equilibrium</h3>
+            <p>At the energy minimum, the holding force is zero: dU/dx = 0.</p>
+            <p class="display-equation">x<sub>0</sub> = <strong id="equilibrium-result">1.122 &Aring;</strong></p>
+          </div>
+        </article>
+        <article class="derivation-step">
+          <span aria-hidden="true">02</span>
+          <div>
+            <h3>Locate the force maximum</h3>
+            <p>The tensile branch peaks where the curvature changes sign: d<sup>2</sup>U/dx<sup>2</sup> = 0.</p>
+            <p class="display-equation">x<sub>m</sub> = <strong id="force-location-result">1.244 &Aring;</strong></p>
+          </div>
+        </article>
+        <article class="derivation-step">
+          <span aria-hidden="true">03</span>
+          <div>
+            <h3>Obtain bond strength</h3>
+            <p>The peak external holding force is the strength of one ideal bond.</p>
+            <p class="display-equation">F<sub>max</sub> = <strong id="strength-result">2.396 eV/&Aring;</strong></p>
+          </div>
+        </article>
+        <article class="derivation-step">
+          <span aria-hidden="true">04</span>
+          <div>
+            <h3>Convert force to traction</h3>
+            <p>Multiply by the number of bonds crossing a unit area.</p>
+            <p class="display-equation">&sigma;<sub>max</sub> = &rho;<sub>b</sub>F<sub>max</sub> = <strong id="cohesive-si-result">304.7 GPa</strong></p>
+          </div>
+        </article>
+      </div>
+      <p class="sign-note">
+        dU/dx is the external holding force. The physical force exerted by the
+        opposite plane has the reverse sign: F<sub>internal</sub> = &minus;dU/dx.
+      </p>
+    </section>
+
+    <section class="lesson-card" aria-labelledby="properties-title">
+      <p class="section-kicker">Ideal-bond estimates</p>
+      <h2 id="properties-title">What the pair potential predicts</h2>
+      <p>
+        With one aligned bond crossing an area x<sub>0</sub><sup>2</sup>, the bond density is
+        &rho;<sub>b</sub> = 1/x<sub>0</sub><sup>2</sup>. This simple geometry lets the atomic
+        energy curve predict an ideal elastic modulus, cohesive strength, and cleavage energy.
+      </p>
+      <div class="results-table-wrap">
+        <table class="results-table">
+          <caption>Current ideal-bond estimates</caption>
+          <thead>
+            <tr><th scope="col">Quantity</th><th scope="col">Relation</th><th scope="col">Atomic units</th><th scope="col">SI value</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Bond stiffness, k</th><td>U&Prime;(x<sub>0</sub>)</td><td id="stiffness-result">57.146 eV/&Aring;<sup>2</sup></td><td>&mdash;</td></tr>
+            <tr><th scope="row">Bond density, &rho;<sub>b</sub></th><td>1/x<sub>0</sub><sup>2</sup></td><td id="bond-density-result">0.7937 &Aring;<sup>&minus;2</sup></td><td>&mdash;</td></tr>
+            <tr><th scope="row">Elastic modulus, Y</th><td>&rho;<sub>b</sub>kx<sub>0</sub></td><td id="modulus-result">50.912 eV/&Aring;<sup>3</sup></td><td id="modulus-si-result">8157 GPa</td></tr>
+            <tr><th scope="row">Cohesive strength, &sigma;<sub>max</sub></th><td>&rho;<sub>b</sub>F<sub>max</sub></td><td id="cohesive-result">1.902 eV/&Aring;<sup>3</sup></td><td id="cohesive-si-table-result">304.7 GPa</td></tr>
+            <tr><th scope="row">Work of separation, W<sub>sep</sub></th><td>&rho;<sub>b</sub>&epsilon;</td><td id="separation-work-result">0.7937 eV/&Aring;<sup>2</sup></td><td id="separation-work-si-result">12.72 J/m<sup>2</sup></td></tr>
+            <tr><th scope="row">One-surface energy, &gamma;</th><td>W<sub>sep</sub>/2</td><td id="surface-result">0.3969 eV/&Aring;<sup>2</sup></td><td id="surface-si-result">6.36 J/m<sup>2</sup></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="lesson-card shear-explorer" aria-labelledby="shear-title">
+      <div class="module-heading">
+        <div>
+          <p class="section-kicker">Part 2 &middot; Theoretical shear strength</p>
+          <h2 id="shear-title">Slide one perfect atomic plane over another</h2>
+        </div>
+        <button class="small-action" id="reset-shear" type="button">Reset shear model</button>
+      </div>
+      <p class="explorer-intro">
+        In the Frenkel model, two halves of the same defect-free crystal slide
+        coherently across a slip plane. The slider holds the displacement. Select
+        <strong>Release shear load</strong> and the moving half relaxes to the
+        nearest equivalent energy minimum. The on-top arrangement at u/b = 0.5
+        is the unstable barrier between the minima at u/b = 0 and 1.
+      </p>
+
+      <div class="explorer-layout shear-layout">
+        <div class="visual-stack">
+          <div class="tensile-visual-row">
+            <figure class="atomic-figure">
+              <svg id="shear-stage" viewBox="0 0 680 310" role="img" aria-labelledby="shear-stage-title shear-stage-description">
+                <title id="shear-stage-title">One periodic crystal sheared across a slip plane</title>
+                <desc id="shear-stage-description">The upper half of one triangular lattice is displaced laterally relative to its fixed lower half.</desc>
+                <defs>
+                  <clipPath id="shear-cell-clip"><rect x="28" y="34" width="624" height="236" rx="18"></rect></clipPath>
+                  <radialGradient id="shear-atom-gradient" cx="35%" cy="30%">
+                    <stop offset="0" stop-color="#ffffff"></stop>
+                    <stop offset="0.28" stop-color="#c9c0ee"></stop>
+                    <stop offset="1" stop-color="#6757a8"></stop>
+                  </radialGradient>
+                  <pattern id="upper-plane-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                    <path d="M0 10 L10 0" stroke="#6757a8" stroke-width="2" opacity="0.18"></path>
+                  </pattern>
+                  <marker id="shear-arrow" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto-start-reverse">
+                    <path d="M0,0 L9,4.5 L0,9 Z" fill="currentColor"></path>
+                  </marker>
+                </defs>
+                <rect class="atom-stage-backdrop" x="1" y="1" width="678" height="308" rx="22"></rect>
+                <g clip-path="url(#shear-cell-clip)">
+                  <rect class="upper-plane-field" x="28" y="34" width="624" height="121"></rect>
+                  <line class="slip-plane" x1="28" y1="155" x2="652" y2="155"></line>
+                  <g id="upper-atom-group" aria-hidden="true"></g>
+                  <g id="lower-atom-group" aria-hidden="true"></g>
+                </g>
+                <g class="shear-arrows" aria-hidden="true">
+                  <line id="upper-shear-arrow" x1="282" y1="26" x2="398" y2="26" marker-end="url(#shear-arrow)"></line>
+                  <line x1="218" y1="284" x2="102" y2="284" marker-end="url(#shear-arrow)"></line>
+                </g>
+                <text id="shear-displacement-label" class="stage-label" x="340" y="20" text-anchor="middle">u/b = 0.000</text>
+                <text id="shear-registry-label" class="stage-label" x="470" y="294" text-anchor="middle">Equivalent stable registry</text>
+              </svg>
+              <figcaption>All atoms belong to one continuous triangular lattice; the shaded upper half moves periodically, so u/b = 1 is equivalent to u/b = 0. The drawing is schematic and not to scale.</figcaption>
+            </figure>
+
+            <div class="traction-gauge signed" id="shear-gauge" role="img" aria-label="Signed shear traction scale from negative 12.73 to positive 12.73 gigapascals. The pointer is at zero.">
+              <p>Shear traction (GPa)</p>
+              <div class="signed-gauge-layout" aria-hidden="true">
+                <div class="signed-gauge-labels">
+                  <span id="shear-scale-max">+12.73</span>
+                  <span id="shear-scale-half">+6.37</span>
+                  <span id="shear-scale-zero">0.00</span>
+                  <span id="shear-scale-negative-half">&minus;6.37</span>
+                  <span id="shear-scale-min">&minus;12.73</span>
+                </div>
+                <div class="signed-gauge-track">
+                  <div class="gauge-tick-marks"><i></i><i></i><i></i><i></i><i></i></div>
+                  <div class="signed-gauge-zero"></div>
+                  <div class="signed-gauge-fill" id="shear-gauge-fill"></div>
+                  <div class="signed-gauge-needle" id="shear-gauge-needle"></div>
+                </div>
+              </div>
+              <output id="shear-gauge-value">0.00 GPa</output>
+              <small id="shear-gauge-ratio">Peak |&tau;<sub>th</sub>| = 12.73 GPa</small>
+            </div>
+          </div>
+
+          <div class="chart-header">
+            <div>
+              <h3>Periodic shear energy and holding traction</h3>
+              <p>One complete lattice translation returns an equivalent atomic arrangement.</p>
+            </div>
+            <div class="chart-legend" aria-label="Shear plot legend">
+              <span><i class="shear-energy-key" aria-hidden="true"></i>Shear energy &Gamma;(u)</span>
+              <span><i class="shear-force-key" aria-hidden="true"></i>Holding traction &tau;(u)</span>
+            </div>
+          </div>
+          <div class="chart-wrap" id="shear-chart-wrap">
+            <svg id="shear-chart" role="img" aria-labelledby="shear-chart-title shear-chart-description"></svg>
+          </div>
+          <p class="visually-hidden" id="shear-chart-live-summary"></p>
+        </div>
+
+        <aside class="model-controls" aria-label="Theoretical shear controls">
+          <div class="control-field">
+            <label for="shear-modulus">Shear modulus, G</label>
+            <output id="shear-modulus-value" for="shear-modulus">80 GPa</output>
+            <input id="shear-modulus" type="range" min="20" max="160" value="80" step="5">
+          </div>
+          <div class="control-field">
+            <label for="burgers-vector">Repeat translation, b</label>
+            <output id="burgers-vector-value" for="burgers-vector">0.250 nm</output>
+            <input id="burgers-vector" type="range" min="0.15" max="0.40" value="0.25" step="0.005">
+          </div>
+          <div class="control-field">
+            <label for="plane-spacing">Plane spacing, h</label>
+            <output id="plane-spacing-value" for="plane-spacing">0.250 nm</output>
+            <input id="plane-spacing" type="range" min="0.15" max="0.40" value="0.25" step="0.005">
+          </div>
+          <div class="control-field separation-control">
+            <label for="shear-displacement">Plane displacement, u/b</label>
+            <output id="shear-displacement-value" for="shear-displacement">0.000</output>
+            <input id="shear-displacement" type="range" min="0" max="1" value="0" step="0.005" aria-describedby="shear-release-help">
+            <small id="shear-release-help">The slider holds the displacement. Releasing the load relaxes toward u/b = 0 below the barrier or u/b = 1 above it.</small>
+            <button class="release-action" id="release-shear" type="button">Release shear load</button>
+          </div>
+
+          <div class="selected-readings" aria-labelledby="shear-readings-title">
+            <h3 id="shear-readings-title">At the selected displacement</h3>
+            <dl>
+              <div><dt>Holding traction</dt><dd id="selected-shear-traction">0.00 GPa</dd></div>
+              <div><dt>Shear energy</dt><dd id="selected-shear-energy">0.000 J/m<sup>2</sup></dd></div>
+              <div><dt>Theoretical maximum</dt><dd id="shear-maximum-result">12.73 GPa</dd></div>
+              <div><dt>Registry state</dt><dd id="selected-registry">Equivalent stable registry</dd></div>
+            </dl>
+          </div>
+          <p class="motion-status" id="shear-motion-status" role="status" aria-live="polite">Stable energy minimum: u/b = 0. Move the slider to hold a displacement, then release the load.</p>
+
+          <div class="formula-note">
+            <p>&tau;<sub>th</sub> = Gb/(2&pi;h)</p>
+            <p>If b &asymp; h, then &tau;<sub>th</sub> &asymp; G/(2&pi;).</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="ideal-real-section" aria-labelledby="real-strength-title">
+      <div class="final-question">
+        <p class="section-kicker">The important question</p>
+        <h2 id="real-strength-title">Why do real materials have far inferior strength than perfect crystals?</h2>
+        <p>The ideal calculations require every bond across a plane to resist together. Real crystals have easier, highly localized routes for deformation and fracture.</p>
+      </div>
+
+      <div class="ideal-real-visual" aria-label="Comparison of homogeneous motion in a perfect crystal and localized motion around a dislocation in a real crystal">
+        <article>
+          <span class="comparison-label">Perfect crystal</span>
+          <div class="mini-lattice perfect-lattice" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <p>Every atom would cross the energy barrier coherently.</p>
+        </article>
+        <div class="strength-drop" aria-hidden="true"><strong>&darr;</strong><span>far less applied stress</span></div>
+        <article>
+          <span class="comparison-label">Real crystal</span>
+          <div class="mini-lattice defect-lattice" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <b></b>
+          </div>
+          <p>A dislocation advances the registry locally, a few bonds at a time.</p>
+        </article>
+      </div>
+
+      <details class="concept-reveal">
+        <summary>Reveal the mechanisms that lower real strength</summary>
+        <div class="mechanism-grid">
+          <article><strong>Dislocations</strong><p>Glide moves a small core region instead of shearing an entire plane at once.</p></article>
+          <article><strong>Cracks and notches</strong><p>Stress concentrates at a sharp tip, so local bonds see far more stress than the nominal value.</p></article>
+          <article><strong>Interfaces and surfaces</strong><p>Grain boundaries and free surfaces supply easier sites for slip, damage, and crack nucleation.</p></article>
+          <article><strong>Thermal activation</strong><p>Atomic fluctuations help defects cross barriers before the ideal athermal stress is reached.</p></article>
+        </div>
+        <p class="strengthening-note">
+          Defects do not always weaken a material: solutes, precipitates, grain
+          boundaries, and other dislocations can obstruct glide and raise the yield
+          strength. Near-perfect nanoscale crystals can approach ideal strength.
+        </p>
+      </details>
+    </section>
+
+    <section class="lesson-card quiz-cta" aria-labelledby="quiz-cta-title">
+      <div>
+        <p class="section-kicker">Section 4 practice</p>
+        <h2 id="quiz-cta-title">Now calculate the ideal strengths yourself</h2>
+        <p>Use the separate quiz to calculate equilibrium distance, bond strength, cohesive strength, surface energy, and theoretical shear strength.</p>
+      </div>
+      <a class="button primary" href="../../quizzes/atomic-bonding/index.html">Open atomic bonding quiz</a>
+    </section>
+
+    <article class="lesson-card lesson-next">
+      <div>
+        <p class="section-kicker">Next module</p>
+        <h2>Crystal structures</h2>
+        <p>Connect bonding and equilibrium spacing to ordered atomic arrangements.</p>
+      </div>
+      <span class="card-label planned">Planned</span>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Atomic bond and theoretical strength &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

@@ -18,9 +18,14 @@ framework, package installation, or build command.
     |-- python/                    Python and Bokeh source programs
     |-- README.md                  This guide
 
-The first example teaching page is:
+Current teaching pages are:
 
     teaching/introduction.html
+    teaching/atomic-bonding/index.html
+
+Current quiz pages are:
+
+    quizzes/atomic-bonding/index.html
 
 ## Add a teaching page
 
