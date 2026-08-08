@@ -418,14 +418,14 @@ function bindControls() {
 function resetModel(announce = true) {
   fccGroup.visible = true;
   atomGroup.visible = true;
-  bctGroup.visible = true;
-  bctHighlightGroup.visible = true;
-  axesGroup.visible = true;
+  bctGroup.visible = false;
+  bctHighlightGroup.visible = false;
+  axesGroup.visible = false;
   elements.showFccFrames.checked = true;
   elements.showAtoms.checked = true;
-  elements.showBct.checked = true;
-  elements.showBctHighlights.checked = true;
-  elements.showAxes.checked = true;
+  elements.showBct.checked = false;
+  elements.showBctHighlights.checked = false;
+  elements.showAxes.checked = false;
   elements.autoRotate.checked = false;
   controls.autoRotate = false;
   elements.fccOpacity.value = "12";
@@ -437,7 +437,7 @@ function resetModel(announce = true) {
   setView(new THREE.Vector3(5.4, 4.3, 6.6));
   setDownloadMessage("");
   updateSummary();
-  if (announce) elements.summary.textContent = "Model reset. Showing both FCC cells and the alternative BCT cell.";
+  if (announce) elements.summary.textContent = "Model reset. Showing the two FCC conventional cells and FCC lattice points.";
 }
 
 function setView(position) {
