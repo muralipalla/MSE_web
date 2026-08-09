@@ -7,7 +7,7 @@ framework, package installation, or build command.
 ## Structure
 
     MSE_web/
-    |-- index.html                 Home page with five sections
+    |-- index.html                 Home page and section navigation
     |-- css/style.css              Shared colours and layout
     |-- js/main.js                 Small optional browser helpers
     |-- assets/images/             Images used by pages
