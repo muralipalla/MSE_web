@@ -530,6 +530,17 @@ summary:focus-visible {
   margin-top: 0;
 }
 
+.lab-card-actions .button.secondary {
+  border-color: var(--navy);
+  background: white;
+  color: var(--navy);
+}
+
+.lab-card-actions .button.secondary:hover {
+  background: var(--navy);
+  color: white;
+}
+
 /* 6. Practice section and footer */
 .practice-grid {
   display: grid;
