@@ -1,0 +1,1044 @@
+.defects-shell {
+  --defects-green: #1f735e;
+  --defects-gold: #d99a00;
+  --defects-gold-light: #fff1bf;
+  width: min(calc(100% - 2rem), 88rem);
+  margin: 0 auto;
+  padding: clamp(3rem, 7vw, 5.5rem) 0;
+}
+
+.defects-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: end;
+  margin-bottom: 2rem;
+}
+
+.defects-intro h1 {
+  max-width: 52rem;
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 0.94;
+  letter-spacing: -0.055em;
+}
+
+.defects-intro-copy p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+.defects-intro-copy .defects-intro-note {
+  margin-top: 0.9rem;
+  padding-left: 0.9rem;
+  border-left: 3px solid var(--coral);
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.defects-map,
+.defects-point-section,
+.defects-void-section,
+.defects-ionic-section,
+.defects-dislocation-section,
+.defects-grain-section,
+.defects-astm-section,
+.defects-conclusion,
+.defects-lesson-nav {
+  margin-top: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 1.6rem;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.defects-map,
+.defects-point-section,
+.defects-void-section,
+.defects-ionic-section,
+.defects-dislocation-section,
+.defects-grain-section,
+.defects-astm-section,
+.defects-conclusion {
+  padding: clamp(1.25rem, 3.2vw, 2rem);
+}
+
+.defects-section-heading {
+  max-width: 66rem;
+}
+
+.defects-section-heading h2,
+.defects-conclusion h2 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3.5vw, 2.45rem);
+  line-height: 1.15;
+}
+
+.defects-section-heading > p:last-child {
+  margin: 0.55rem 0 0;
+  color: var(--ink-soft);
+}
+
+.defects-map-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+}
+
+.defects-map-grid article {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--lavender);
+  border-radius: 1rem;
+  background: var(--paper);
+}
+
+.defects-map-grid article > span {
+  display: inline-grid;
+  min-width: 2.5rem;
+  min-height: 2.1rem;
+  place-items: center;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.6rem;
+  background: var(--navy);
+  color: white;
+  font-weight: 900;
+}
+
+.defects-map-grid h3 {
+  margin: 0.75rem 0 0;
+  font-size: 1.08rem;
+}
+
+.defects-map-grid p {
+  margin: 0.35rem 0 0;
+  color: var(--ink-soft);
+}
+
+.defects-point-layout,
+.defects-ionic-layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.72fr) minmax(20rem, 1.55fr) minmax(15rem, 0.78fr);
+  gap: 1rem;
+  align-items: stretch;
+  margin-top: 1.25rem;
+}
+
+.defects-control-card,
+.defects-point-figure,
+.defects-live-facts,
+.defects-ionic-figure,
+.defects-ionic-metrics,
+.defects-grain-controls,
+.defects-grain-figure,
+.defects-astm-controls,
+.defects-astm-figure,
+.defects-astm-results {
+  min-width: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--paper);
+}
+
+.defects-control-card,
+.defects-void-picker,
+.defects-void-picker fieldset,
+.defects-camera-controls,
+.defects-void-facts fieldset {
+  min-width: 0;
+}
+
+.defects-control-card legend,
+.defects-void-picker legend,
+.defects-camera-controls legend,
+.defects-void-facts legend {
+  padding: 0 0.35rem;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.defects-choice-buttons {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.defects-choice-buttons button,
+.defects-void-button-grid button,
+.defects-camera-controls button,
+.defects-astm-controls button {
+  min-height: 2.75rem;
+  border: 1px solid rgba(46, 42, 116, 0.23);
+  border-radius: 0.75rem;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.defects-choice-buttons button:hover:not(:disabled),
+.defects-void-button-grid button:hover:not(:disabled),
+.defects-camera-controls button:hover:not(:disabled),
+.defects-astm-controls button:hover:not(:disabled) {
+  border-color: var(--lavender);
+  background: var(--lavender-light);
+}
+
+.defects-choice-buttons button[aria-pressed="true"],
+.defects-void-button-grid button[aria-pressed="true"] {
+  border-color: var(--navy);
+  background: var(--navy);
+  color: white;
+}
+
+.defects-choice-buttons button:focus-visible,
+.defects-void-button-grid button:focus-visible,
+.defects-camera-controls button:focus-visible,
+.defects-camera-controls input:focus-visible,
+.defects-astm-controls button:focus-visible,
+.defects-astm-controls input:focus-visible,
+.defects-void-facts input:focus-visible,
+.defects-grain-controls input:focus-visible,
+.defects-astm-controls select:focus-visible,
+.defects-lesson-nav a:focus-visible,
+.defects-dislocation-link a:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.defects-choice-buttons button:disabled,
+.defects-void-button-grid button:disabled,
+.defects-camera-controls button:disabled,
+.defects-camera-controls input:disabled,
+.defects-void-facts input:disabled,
+.defects-astm-controls button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.defects-control-help {
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.defects-section-heading .defects-void-scope {
+  margin: 0.75rem 0 0;
+  padding: 0.65rem 0.8rem;
+  border-left: 3px solid var(--lavender);
+  border-radius: 0 0.65rem 0.65rem 0;
+  background: var(--lavender-light);
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.defects-point-figure,
+.defects-ionic-figure,
+.defects-grain-figure,
+.defects-astm-figure {
+  display: flex;
+  flex-direction: column;
+}
+
+.defects-point-figure svg,
+.defects-ionic-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  flex: 1 1 auto;
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, #f8f7fc, var(--blue-light));
+}
+
+.defects-point-figure figcaption,
+.defects-ionic-figure figcaption,
+.defects-grain-figure figcaption,
+.defects-astm-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.defects-point-figure figcaption strong,
+.defects-point-figure figcaption span {
+  display: block;
+}
+
+.defects-point-figure figcaption span {
+  margin-top: 0.2rem;
+}
+
+.defects-live-facts,
+.defects-ionic-metrics,
+.defects-astm-results,
+.defects-grain-controls dl {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+}
+
+.defects-live-facts div,
+.defects-ionic-metrics div,
+.defects-astm-results div,
+.defects-grain-controls dl div {
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.defects-live-facts div:last-child,
+.defects-ionic-metrics div:last-child,
+.defects-astm-results div:last-child,
+.defects-grain-controls dl div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.defects-live-facts dt,
+.defects-ionic-metrics dt,
+.defects-astm-results dt,
+.defects-grain-controls dt,
+.defects-void-facts dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.defects-live-facts dd,
+.defects-ionic-metrics dd,
+.defects-astm-results dd,
+.defects-grain-controls dd,
+.defects-void-facts dd {
+  margin: 0.15rem 0 0;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.defects-void-explorer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(19rem, 23rem);
+  grid-template-areas:
+    "viewer picker"
+    "viewer facts";
+  gap: 1rem;
+  align-items: start;
+  margin-top: 1.25rem;
+}
+
+.defects-void-picker,
+.defects-void-viewer,
+.defects-void-facts {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: var(--paper);
+}
+
+.defects-void-picker {
+  grid-area: picker;
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.defects-void-picker fieldset {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+}
+
+.defects-void-button-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.defects-void-site-buttons {
+  grid-template-columns: 1fr;
+}
+
+.defects-void-button-grid button {
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+  line-height: 1.25;
+}
+
+.defects-astm-controls input,
+.defects-astm-controls select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(46, 42, 116, 0.23);
+  border-radius: 0.7rem;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+}
+
+.defects-void-viewer {
+  grid-area: viewer;
+  position: sticky;
+  top: 1rem;
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+}
+
+.defects-void-viewer > header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.defects-void-viewer h3 {
+  margin: 0;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+}
+
+.defects-viewer-atom-size {
+  display: grid;
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  background: var(--lavender-light);
+}
+
+.defects-panel-kicker {
+  margin: 0 0 0.15rem;
+  color: var(--lavender);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.defects-void-ratio {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid rgba(217, 154, 0, 0.45);
+  border-radius: 999px;
+  background: var(--defects-gold-light);
+  color: var(--navy);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.defects-viewer-frame {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 1rem;
+  background:
+    radial-gradient(circle at 48% 43%, rgba(103, 87, 168, 0.5), transparent 30%),
+    linear-gradient(145deg, #172d52, #0c1d38);
+}
+
+#void-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y pinch-zoom;
+}
+
+.defects-viewer-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 0.55rem;
+  padding: 1rem;
+  color: white;
+  text-align: center;
+}
+
+.defects-viewer-fallback[hidden] {
+  display: none;
+}
+
+.defects-viewer-fallback svg {
+  width: min(54%, 18rem);
+  height: auto;
+  color: #b8c9ec;
+}
+
+.defects-viewer-fallback strong {
+  font-size: 1.05rem;
+}
+
+.defects-viewer-fallback span {
+  max-width: 32rem;
+  color: #e7edf8;
+  font-size: 0.9rem;
+}
+
+.defects-camera-controls {
+  margin: 0.85rem 0 0;
+  padding: 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+}
+
+.defects-camera-controls > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.defects-camera-controls label {
+  display: flex;
+  min-width: 0;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 800;
+}
+
+.defects-camera-controls input,
+.defects-void-facts input {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0;
+  accent-color: var(--coral);
+}
+
+.defects-camera-controls button {
+  min-width: 7.5rem;
+  padding: 0.45rem 0.7rem;
+}
+
+.defects-void-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  margin-top: 0.85rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.defects-void-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.defects-void-legend i {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 2px solid var(--navy);
+  border-radius: 50%;
+}
+
+.defects-host-swatch { background: #8fb6d7; }
+.defects-void-swatch { background: #ffd23f; }
+.defects-void-legend .defects-selected-swatch {
+  border: 3px double white;
+  outline: 2px solid var(--coral);
+  background: #f06b4f;
+}
+.defects-void-legend .defects-ghost-swatch {
+  border-style: dashed;
+  background: #8fb6d7;
+  opacity: 0.55;
+}
+
+.defects-viewer-help {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.defects-void-facts {
+  grid-area: facts;
+  padding: 1rem;
+}
+
+.defects-void-facts fieldset {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0 0 1rem;
+  padding: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+}
+
+.defects-void-facts label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 750;
+}
+
+.defects-viewer-atom-size .defects-atom-size-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.defects-atom-size-label output {
+  color: var(--coral);
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+
+#void-atom-size {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--coral);
+}
+
+.defects-viewer-atom-size small {
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.defects-void-facts dl {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.defects-void-facts dl div {
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.defects-void-note {
+  margin: 1rem 0 0;
+  padding: 0.75rem;
+  border-left: 3px solid var(--defects-green);
+  background: rgba(39, 143, 114, 0.08);
+  color: var(--ink-soft);
+}
+
+.defects-status {
+  min-height: 1.6em;
+  margin: 0.7rem 0 0;
+  color: var(--defects-green);
+  font-weight: 800;
+}
+
+.defects-module-status {
+  min-height: 1.5em;
+  margin: 0.8rem 0 0;
+  color: var(--defects-green);
+  font-weight: 800;
+}
+
+.defects-grain-controls .defects-module-status {
+  margin-top: 0.8rem;
+}
+
+.defects-ionic-figure svg {
+  min-height: 19rem;
+}
+
+.defects-grain-layout,
+.defects-astm-layout {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.68fr) minmax(24rem, 1.45fr);
+  gap: 1rem;
+  align-items: start;
+  margin-top: 1.25rem;
+}
+
+.defects-grain-controls label,
+.defects-astm-controls label {
+  display: block;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.defects-grain-controls output {
+  color: var(--coral);
+  font-variant-numeric: tabular-nums;
+}
+
+.defects-grain-controls input[type="range"] {
+  width: 100%;
+  margin: 0.8rem 0 1rem;
+  accent-color: var(--coral);
+}
+
+.defects-grain-controls dl {
+  margin: 0;
+}
+
+.defects-grain-controls > p {
+  margin: 1rem 0 0;
+  color: var(--ink-soft);
+}
+
+.defects-grain-controls .defects-compact-equation {
+  margin: -0.25rem 0 0.9rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.65rem;
+  background: var(--blue-light);
+  color: var(--navy);
+  font-weight: 750;
+}
+
+.defects-grain-figure canvas,
+.defects-astm-figure canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  background: #f8f7fc;
+}
+
+.defects-dislocation-explorer {
+  margin-top: 1.25rem;
+}
+
+.defects-dislocation-section .viewer-heading h3,
+.defects-dislocation-section .control-block h3,
+.defects-dislocation-section .relationship-note h3 {
+  margin: 0;
+  line-height: 1.15;
+}
+
+.defects-dislocation-section .viewer-heading h3 {
+  font-size: 1.45rem;
+}
+
+.defects-dislocation-section .control-block h3,
+.defects-dislocation-section .relationship-note h3 {
+  font-size: 1.08rem;
+}
+
+.defects-dislocation-note {
+  margin: 1rem 0 0;
+  color: var(--ink-soft);
+}
+
+.defects-dislocation-note a {
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.defects-astm-layout {
+  grid-template-columns: minmax(15rem, 0.62fr) minmax(23rem, 1.25fr) minmax(15rem, 0.65fr);
+}
+
+.defects-astm-equation {
+  display: block;
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.9rem;
+  border-left: 3px solid var(--defects-green);
+  background: rgba(39, 143, 114, 0.08);
+  color: var(--ink-soft);
+}
+
+.defects-astm-equation > span {
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.defects-astm-controls {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.defects-astm-fixed {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 0.35rem !important;
+  padding: 0.7rem 0.8rem;
+  border-left: 3px solid var(--coral);
+  background: var(--blue-light);
+  color: var(--ink) !important;
+}
+
+.defects-astm-fixed span {
+  font-weight: 800;
+}
+
+.defects-astm-fixed strong {
+  color: var(--coral);
+  font-size: 1.25rem;
+}
+
+.defects-astm-controls > p {
+  margin: 0.65rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.defects-astm-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  margin-top: 0.55rem;
+}
+
+.defects-astm-actions button {
+  width: 100%;
+}
+
+.defects-astm-actions #astm-measure {
+  border-color: var(--navy);
+  background: var(--paper);
+  color: var(--navy);
+}
+
+.defects-astm-actions #astm-measure:hover:not(:disabled) {
+  background: var(--navy);
+  color: #fff;
+}
+
+.defects-astm-actions #astm-measure[aria-pressed="true"] {
+  border-color: var(--coral);
+  background: var(--coral);
+  color: #fff;
+}
+
+.defects-astm-actions #astm-measure[aria-pressed="true"]:hover:not(:disabled) {
+  border-color: var(--navy);
+  background: var(--navy);
+}
+
+.defects-astm-controls label:not(:first-child) {
+  margin-top: 0.45rem;
+}
+
+.defects-astm-controls label span {
+  color: var(--muted);
+  font-weight: 650;
+}
+
+.defects-standard-note {
+  margin: 1rem 0 0;
+  padding: 0.85rem 1rem;
+  border-left: 3px solid var(--lavender);
+  background: var(--lavender-light);
+  color: var(--ink-soft);
+}
+
+.defects-standard-note a {
+  color: var(--navy);
+  font-weight: 800;
+}
+
+.defects-conclusion {
+  display: grid;
+  grid-template-columns: minmax(17rem, 0.8fr) minmax(20rem, 1.2fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.defects-conclusion ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.defects-conclusion li + li {
+  margin-top: 0.55rem;
+}
+
+.defects-lesson-nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+}
+
+.defects-lesson-nav a {
+  display: grid;
+  gap: 0.2rem;
+  padding: 1.15rem 1.25rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.defects-lesson-nav a + a {
+  border-left: 1px solid var(--line);
+  text-align: right;
+}
+
+.defects-lesson-nav a:hover {
+  background: var(--lavender-light);
+}
+
+.defects-lesson-nav span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 72rem) {
+  .defects-map-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .defects-point-layout,
+  .defects-ionic-layout {
+    grid-template-columns: minmax(14rem, 0.72fr) minmax(22rem, 1.28fr);
+  }
+
+  .defects-live-facts,
+  .defects-ionic-metrics {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .defects-ionic-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .defects-live-facts div,
+  .defects-ionic-metrics div {
+    padding: 0 0.7rem 0 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+  }
+
+  .defects-live-facts div:last-child,
+  .defects-ionic-metrics div:last-child {
+    border-right: 0;
+  }
+
+  .defects-astm-layout {
+    grid-template-columns: minmax(15rem, 0.7fr) minmax(23rem, 1.3fr);
+  }
+
+  .defects-astm-results {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 62rem) {
+  .defects-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-void-explorer {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "picker"
+      "viewer"
+      "facts";
+  }
+
+  .defects-void-viewer {
+    position: static;
+  }
+
+  .defects-void-site-buttons {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .defects-grain-layout,
+  .defects-astm-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-astm-results {
+    grid-column: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 48rem) {
+  .defects-point-layout,
+  .defects-ionic-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-live-facts,
+  .defects-ionic-metrics {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .defects-live-facts div,
+  .defects-ionic-metrics div {
+    padding: 0 0 0.65rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .defects-live-facts div:last-child,
+  .defects-ionic-metrics div:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .defects-conclusion {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 40rem) {
+  .defects-shell {
+    width: min(calc(100% - 1rem), 88rem);
+  }
+
+  .defects-map-grid,
+  .defects-astm-results,
+  .defects-lesson-nav {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-viewer-frame {
+    aspect-ratio: 1;
+  }
+
+  .defects-viewer-fallback svg {
+    display: none;
+  }
+
+  .defects-void-site-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-astm-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-lesson-nav a + a {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+    text-align: left;
+  }
+}
+
+@media (max-width: 30rem) {
+  .defects-camera-controls > div {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-camera-controls button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .defects-choice-buttons button,
+  .defects-void-button-grid button,
+  .defects-camera-controls button,
+  .defects-lesson-nav a {
+    transition: none;
+  }
+}

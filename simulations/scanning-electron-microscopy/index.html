@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore how a scanning electron microscope focuses an electron beam and generates SE1, SE2, backscattered electrons, X-rays, Auger electrons, cathodoluminescence, and specimen current.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Scanning Electron Microscopy | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=3">
+  <script src="../../js/main.js" defer></script>
+  <script src="app.js?v=3" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#sem-lab">Skip to SEM signal explorer</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Simulation navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="sem-shell" id="sem-lab">
+    <header class="sem-intro">
+      <div>
+        <p class="eyebrow">Interactive simulation 05</p>
+        <h1>Scanning Electron Microscopy</h1>
+        <p class="method-title">From a focused primary beam to measurable signals</p>
+      </div>
+      <div class="intro-copy">
+        <p>
+          Follow primary electrons through the column, then isolate the major
+          signals generated when the focused probe interacts with a bulk specimen.
+        </p>
+        <p class="accuracy-note">
+          The paths and interaction volume are qualitative. Their dimensions and
+          relative yields depend on landing energy, composition, density, surface
+          geometry, specimen tilt, and detector arrangement.
+        </p>
+      </div>
+    </header>
+
+    <section class="sem-panel signal-explorer" aria-labelledby="explorer-title">
+      <div class="panel-heading">
+        <div class="heading-copy">
+          <div class="step-number" aria-hidden="true">1</div>
+          <div>
+            <p class="panel-kicker">Beam&ndash;specimen interaction</p>
+            <h2 id="explorer-title">Inspect one signal at a time</h2>
+          </div>
+        </div>
+        <button class="button secondary replay-button" id="replay-electrons" type="button">Replay electron paths</button>
+      </div>
+
+      <div class="sem-workbench">
+        <aside class="signal-controls" aria-labelledby="signal-controls-title">
+          <h3 id="signal-controls-title">Signal overlay</h3>
+          <p id="signal-control-note">
+            SE1 and SE2 are conceptual source contributions to the detected secondary-electron signal;
+            an ordinary detector does not cleanly separate them.
+          </p>
+          <div class="signal-button-grid" role="group" aria-label="Choose the SEM interaction signal shown in the diagram" aria-describedby="signal-control-note">
+            <button type="button" data-sem-signal="se1" aria-pressed="true" aria-controls="sem-diagram sem-signal-details">SE1</button>
+            <button type="button" data-sem-signal="se2" aria-pressed="false" aria-controls="sem-diagram sem-signal-details">SE2</button>
+            <button type="button" data-sem-signal="bse" aria-pressed="false" aria-controls="sem-diagram sem-signal-details">BSE</button>
+            <button type="button" data-sem-signal="xray" aria-pressed="false" aria-controls="sem-diagram sem-signal-details">X-rays</button>
+            <button type="button" data-sem-signal="auger" aria-pressed="false" aria-controls="sem-diagram sem-signal-details">Auger</button>
+            <button type="button" data-sem-signal="cl" aria-pressed="false" aria-controls="sem-diagram sem-signal-details">Cathodoluminescence</button>
+            <button type="button" data-sem-signal="current" aria-pressed="false" aria-controls="sem-diagram sem-signal-details">Specimen current</button>
+          </div>
+
+          <div class="selected-signal" id="sem-signal-details" aria-labelledby="selected-signal-title">
+            <p class="panel-kicker">Selected view</p>
+            <h3 id="selected-signal-title">SE1 &mdash; direct secondary-electron contribution</h3>
+            <p id="selected-signal-description">SE1 is excited directly by the incident primary electrons. Only electrons generated close enough to the surface can escape efficiently.</p>
+            <dl>
+              <div><dt>Energy</dt><dd id="selected-signal-energy">Conventionally below 50 eV</dd></div>
+              <div><dt>Origin</dt><dd id="selected-signal-origin">A shallow region close to the primary-beam impact point</dd></div>
+              <div><dt>Typical information</dt><dd id="selected-signal-information">Fine surface morphology and local surface-angle contrast</dd></div>
+              <div><dt>Readout</dt><dd id="selected-signal-detector">Representative Everhart&ndash;Thornley or in-lens SE detector</dd></div>
+            </dl>
+          </div>
+        </aside>
+
+        <figure class="sem-figure" id="sem-figure">
+          <svg id="sem-diagram" viewBox="0 0 480 700" role="img" aria-labelledby="sem-diagram-title sem-diagram-desc">
+            <title id="sem-diagram-title">Scanning electron microscope column and bulk-specimen interaction signals</title>
+            <desc id="sem-diagram-desc">The primary beam reaches the specimen and shallow SE1 electrons leave close to the impact point toward a side secondary-electron detector.</desc>
+            <defs>
+              <linearGradient id="sem-chamber-gradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fbfaff" />
+                <stop offset="0.58" stop-color="#eef4fa" />
+                <stop offset="1" stop-color="#fff4ec" />
+              </linearGradient>
+              <linearGradient id="sem-specimen-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dae9f5" />
+                <stop offset="0.48" stop-color="#c4d5e8" />
+                <stop offset="1" stop-color="#b9abd9" />
+              </linearGradient>
+              <radialGradient id="sem-volume-gradient" cx="50%" cy="36%" r="70%">
+                <stop offset="0" stop-color="#ffcf80" stop-opacity="0.56" />
+                <stop offset="0.58" stop-color="#f07c52" stop-opacity="0.32" />
+                <stop offset="1" stop-color="#9f4d99" stop-opacity="0.08" />
+              </radialGradient>
+              <filter id="sem-soft-shadow" x="-30%" y="-30%" width="160%" height="170%">
+                <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#18375f" flood-opacity="0.16" />
+              </filter>
+              <marker id="arrow-primary" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M0 0 L8 4 L0 8 Z" class="arrow-primary" />
+              </marker>
+              <marker id="arrow-se1" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" class="arrow-se1" /></marker>
+              <marker id="arrow-se2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" class="arrow-se2" /></marker>
+              <marker id="arrow-bse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" class="arrow-bse" /></marker>
+              <marker id="arrow-auger" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" class="arrow-auger" /></marker>
+              <marker id="arrow-current" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" class="arrow-current" /></marker>
+              <clipPath id="specimen-clip"><rect x="100" y="407" width="280" height="263" /></clipPath>
+            </defs>
+
+            <rect x="10" y="10" width="460" height="680" rx="28" class="sem-chamber" />
+
+            <g class="sem-column" aria-label="Electron column">
+              <rect x="205" y="28" width="70" height="42" rx="12" class="electron-source" filter="url(#sem-soft-shadow)" />
+              <g class="component-callout">
+                <path d="M156 49 H197" aria-hidden="true" />
+                <text x="28" y="55" class="sem-small-label">Electron source</text>
+              </g>
+              <path d="M240 70 V391" class="column-axis" />
+              <path d="M198 86 H224 M256 86 H282" class="anode-plates" />
+              <g class="component-callout">
+                <path d="M116 95 H190" aria-hidden="true" />
+                <text x="28" y="86" class="sem-small-label">
+                  <tspan x="28">Accelerating</tspan>
+                  <tspan x="28" dy="20">anode</tspan>
+                </text>
+              </g>
+
+              <g aria-label="Condenser lens">
+                <rect x="184" y="118" width="32" height="50" rx="14" class="sem-lens" />
+                <rect x="264" y="118" width="32" height="50" rx="14" class="sem-lens" />
+                <g class="component-callout">
+                  <path d="M158 142 H176" aria-hidden="true" />
+                  <text x="28" y="148" class="sem-small-label">Condenser lens</text>
+                </g>
+              </g>
+              <rect x="222" y="188" width="36" height="8" rx="4" class="sem-aperture" />
+              <g class="component-callout">
+                <path d="M119 192 H214" aria-hidden="true" />
+                <text x="28" y="198" class="sem-small-label">Aperture</text>
+              </g>
+
+              <g aria-label="Scanning coils">
+                <path d="M194 231 q23 -20 46 0 q23 20 46 0" class="scan-coil" />
+                <path d="M194 249 q23 -20 46 0 q23 20 46 0" class="scan-coil" />
+                <g class="component-callout">
+                  <path d="M126 240 H186" aria-hidden="true" />
+                  <text x="28" y="246" class="sem-small-label">Scan coils</text>
+                </g>
+              </g>
+
+              <g aria-label="Objective lens">
+                <rect x="172" y="286" width="44" height="58" rx="16" class="sem-lens objective-lens" />
+                <rect x="264" y="286" width="44" height="58" rx="16" class="sem-lens objective-lens" />
+                <g class="component-callout">
+                  <path d="M316 315 H310" aria-hidden="true" />
+                  <text x="324" y="304" class="sem-small-label">Objective lens</text>
+                </g>
+              </g>
+
+              <path id="beam-track-left" d="M220 69 C220 132 226 236 240 404" class="beam-guide" marker-end="url(#arrow-primary)" />
+              <path id="beam-track-centre" d="M240 69 C240 150 240 270 240 404" class="beam-guide" marker-end="url(#arrow-primary)" />
+              <path id="beam-track-right" d="M260 69 C260 132 254 236 240 404" class="beam-guide" marker-end="url(#arrow-primary)" />
+              <text x="326" y="105" class="energy-tag primary-energy">
+                <tspan x="326">Primary e<tspan baseline-shift="super" font-size="70%">&minus;</tspan></tspan>
+                <tspan x="326" dy="21">E<tspan baseline-shift="sub" font-size="70%">0</tspan> = 15 keV</tspan>
+              </text>
+            </g>
+
+            <g class="sem-detector et-detector is-active" data-detector="se1 se2" aria-label="Representative Everhart-Thornley secondary-electron detector">
+              <path d="M28 289 L91 309 L77 350 L17 329 Z" />
+              <text x="24" y="279" class="sem-label">SE detector</text>
+            </g>
+            <g class="sem-detector bse-detector" data-detector="bse" aria-label="Representative annular backscattered-electron detector">
+              <path d="M190 353 H226 L222 374 H186 Z M254 353 H290 L294 374 H258 Z" />
+              <g class="detector-callout">
+                <path d="M298 363 H316" aria-hidden="true" />
+                <text x="324" y="342" class="sem-small-label">
+                  <tspan x="324">Annular BSE</tspan>
+                  <tspan x="324" dy="20">detector</tspan>
+                </text>
+              </g>
+            </g>
+            <g class="sem-detector eds-detector" data-detector="xray" aria-label="Representative energy-dispersive X-ray detector">
+              <path d="M411 431 l46 18 l-13 39 l-48 -18 Z" />
+              <text x="396" y="421" class="sem-label">EDS</text>
+            </g>
+            <g class="sem-detector auger-detector" data-detector="auger" aria-label="Representative Auger-electron energy analyser">
+              <path d="M17 405 l64 -12 l9 35 l-65 13 Z" />
+              <text x="20" y="468" class="sem-small-label">
+                <tspan x="20">Auger</tspan>
+                <tspan x="20" dy="20">analyser</tspan>
+              </text>
+            </g>
+            <g class="sem-detector cl-detector" data-detector="cl" aria-label="Representative cathodoluminescence optical collector">
+              <path d="M415 527 q35 16 42 53 q-31 11 -54 -8 q22 -16 12 -45 Z" />
+              <text x="395" y="603" class="sem-small-label">CL optics</text>
+            </g>
+
+            <path d="M100 413 Q145 392 190 407 Q230 420 270 405 Q320 390 380 409 L380 670 H100 Z" fill="url(#sem-specimen-gradient)" class="sem-specimen" />
+            <text x="122" y="640" transform="rotate(-90 122 640)" class="specimen-label">Bulk specimen</text>
+            <circle cx="240" cy="405" r="7" class="beam-landing" />
+
+            <g clip-path="url(#specimen-clip)" aria-label="Statistical electron-scattering volume">
+              <path d="M240 407 C220 429 184 466 178 526 C172 594 203 645 240 669 C277 645 308 594 302 526 C296 466 260 429 240 407 Z" fill="url(#sem-volume-gradient)" class="interaction-volume" />
+              <path id="scatter-track-1" d="M240 408 L222 438 L257 471 L205 510 L278 548 L219 590 L247 646" class="scatter-track" />
+              <path id="scatter-track-2" d="M240 408 L262 442 L228 479 L288 519 L214 552 L276 604 L238 657" class="scatter-track" />
+              <path id="scatter-track-3" d="M240 408 L235 453 L274 489 L220 531 L290 570 L250 626" class="scatter-track" />
+              <path d="M205 414 Q240 401 275 414" class="surface-escape-layer" />
+            </g>
+            <text x="240" y="692" text-anchor="middle" class="sem-small-label interaction-note">Schematic statistical scattering volume &middot; not a hard boundary</text>
+
+            <g class="signal-path signal-se1" data-sem-group="se1" aria-label="SE1 paths">
+              <path d="M234 405 Q167 355 79 326" marker-end="url(#arrow-se1)" />
+              <path d="M246 406 Q165 375 80 335" marker-end="url(#arrow-se1)" />
+              <circle cx="234" cy="405" r="5" />
+              <text x="324" y="170" class="signal-tag">SE1 &lt; 50 eV</text>
+            </g>
+
+            <g class="signal-path signal-se2" data-sem-group="se2" aria-label="SE2 path preceded by a backscattered-electron path" hidden>
+              <path d="M241 410 C289 449 340 465 376 411" class="se2-precursor" />
+              <path d="M376 411 C340 378 292 383 244 384 C178 385 118 356 79 326" marker-end="url(#arrow-se2)" />
+              <circle cx="376" cy="411" r="5" />
+              <text x="324" y="170" class="signal-tag">SE2 &lt; 50 eV</text>
+            </g>
+
+            <g class="signal-path signal-bse" data-sem-group="bse" aria-label="Backscattered-electron paths" hidden>
+              <path d="M226 543 C181 499 184 433 211 371" marker-end="url(#arrow-bse)" />
+              <path d="M260 571 C316 511 303 433 272 371" marker-end="url(#arrow-bse)" />
+              <path d="M241 494 C280 460 277 409 261 372" marker-end="url(#arrow-bse)" />
+              <text x="324" y="170" class="signal-tag">
+                <tspan x="324">BSE energy</tspan>
+                <tspan x="324" dy="20">50 eV &lt; E &le; E<tspan baseline-shift="sub">0</tspan></tspan>
+              </text>
+            </g>
+
+            <g class="signal-path signal-xray" data-sem-group="xray" aria-label="Characteristic and continuum X-ray paths" hidden>
+              <path d="M259 500 C322 482 355 448 413 455" class="characteristic-xray" />
+              <path d="M227 557 C305 545 351 490 411 467" class="continuum-xray" />
+              <path d="M268 603 C341 568 365 501 415 474" class="characteristic-xray" />
+            </g>
+
+            <g class="signal-path signal-auger" data-sem-group="auger" aria-label="Surface-localized Auger-electron path" hidden>
+              <path d="M226 408 Q145 384 82 411" marker-end="url(#arrow-auger)" />
+              <circle cx="226" cy="408" r="5" />
+            </g>
+
+            <g class="signal-path signal-cl" data-sem-group="cl" aria-label="Cathodoluminescence photon paths" hidden>
+              <path d="M276 548 q18 -17 36 0 t36 0 t36 0 t30 0" class="cl-wave" />
+              <path d="M250 593 q18 -17 36 0 t36 0 t36 0 t45 0" class="cl-wave" />
+            </g>
+
+            <g class="signal-path signal-current" data-sem-group="current" aria-label="Absorbed specimen-current path" hidden>
+              <path d="M240 525 V646" marker-end="url(#arrow-current)" />
+              <path d="M240 646 V658 H209" class="current-wire" />
+              <circle cx="191" cy="658" r="18" class="current-meter" />
+              <text x="191" y="665" text-anchor="middle" class="meter-label">A</text>
+              <path d="M173 658 H132 M132 650 V666 M122 654 H142 M126 660 H138 M130 666 H134" class="current-wire" />
+            </g>
+
+            <circle class="moving-electron" data-motion-path="beam-track-left" data-delay="0" r="5" />
+            <circle class="moving-electron" data-motion-path="beam-track-centre" data-delay="650" r="5" />
+            <circle class="moving-electron" data-motion-path="beam-track-right" data-delay="1300" r="5" />
+            <circle class="moving-electron scattered-electron" data-motion-path="scatter-track-1" data-delay="1850" r="4.5" />
+            <circle class="moving-electron scattered-electron" data-motion-path="scatter-track-2" data-delay="2350" r="4.5" />
+          </svg>
+          <figcaption id="sem-figure-caption">
+            SE1 originates close to the primary trajectory and escapes from the top few nanometres of many materials.
+          </figcaption>
+        </figure>
+      </div>
+      <p class="sem-status" id="sem-status" role="status" aria-live="polite">SE1 selected. Low-energy secondary electrons are shown leaving close to the primary impact point.</p>
+    </section>
+
+    <section class="sem-panel interpretation-panel" aria-labelledby="interpretation-title">
+      <div class="panel-heading">
+        <div class="heading-copy">
+          <div class="step-number secondary-number" aria-hidden="true">2</div>
+          <div>
+            <p class="panel-kicker">Interpretation safeguards</p>
+            <h2 id="interpretation-title">Read the diagram as a signal map</h2>
+          </div>
+        </div>
+      </div>
+      <div class="interpretation-grid">
+        <article>
+          <h3>Secondary-electron origins</h3>
+          <p>SE1 is generated directly by the primary beam near the impact point. SE2 is generated when a returning BSE excites a secondary electron at a laterally displaced surface location, broadening the effective source.</p>
+        </article>
+        <article>
+          <h3>Energy is not one number</h3>
+          <p>SE is conventionally below 50 eV. BSE has a broad distribution from above that boundary toward E<sub>0</sub>; it should not be treated as a single fixed-energy beam.</p>
+        </article>
+        <article>
+          <h3>Atomic relaxation</h3>
+          <p>Characteristic X-ray emission and Auger-electron emission are competing relaxation routes after an inner-shell vacancy. They are not compulsory paired products of one event.</p>
+        </article>
+        <article>
+          <h3>What is outside this bulk view?</h3>
+          <p>SE3 can arise when BSE strikes chamber hardware. Transmitted electrons require a thin electron-transparent specimen, while EBSD uses an angle-resolved subset of BSE.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sem-panel virtual-lab-panel" aria-labelledby="virtual-lab-title">
+      <div>
+        <p class="panel-kicker">Continue with an instrument simulator</p>
+        <h2 id="virtual-lab-title">Operate a virtual SEM</h2>
+        <p>Use the external MyScope activity to practise evacuation, high voltage, working distance, focus, magnification, contrast, and SE/BSE detector selection.</p>
+      </div>
+      <a class="button primary" href="https://myscope-explore.org.au/virtualSEM_explore.html" target="_blank" rel="noopener">Open MyScope virtual SEM <span aria-hidden="true">&nearr;</span></a>
+    </section>
+
+    <p class="sem-disclaimer">
+      This local explorer is a qualitative teaching model, not a Monte Carlo calculation or a detector-yield prediction. The external simulator opens in a new tab and is best used on a desktop or laptop.
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Scanning electron microscopy signal explorer &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

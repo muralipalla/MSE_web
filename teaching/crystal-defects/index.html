@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore crystal defects, interstitial voids, dislocations, grain boundaries, and ASTM grain size through interactive materials-science models.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Crystal Defects | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../visualizations/dislocations/style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=11">
+  <script src="../../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js?v=15"></script>
+  <script type="module" src="../../visualizations/dislocations/app.js?v=5"></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to lesson</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="defects-shell" id="lesson">
+    <header class="defects-intro">
+      <div>
+        <p class="eyebrow">Teaching page 04</p>
+        <h1>Crystal Defects</h1>
+      </div>
+      <div class="defects-intro-copy">
+        <p>
+          A perfect lattice is a useful reference, but real materials contain departures
+          from perfect order. Those departures enable diffusion, control ionic transport,
+          impede dislocations, and divide a solid into grains.
+        </p>
+        <p class="defects-intro-note">
+          Defects are not simply mistakes: engineers create, remove, and arrange them to
+          tune properties.
+        </p>
+      </div>
+    </header>
+
+    <section class="defects-map" aria-labelledby="defect-map-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">A hierarchy of imperfect order</p>
+        <h2 id="defect-map-title">Classify a defect by its dimensional extent</h2>
+      </div>
+      <div class="defects-map-grid">
+        <article><span aria-hidden="true">0D</span><h3>Point</h3><p>Vacancies, solutes, and interstitials disturb a few atomic sites.</p></article>
+        <article><span aria-hidden="true">1D</span><h3>Line</h3><p>Dislocations carry lattice slip through a crystal.</p></article>
+        <article><span aria-hidden="true">2D</span><h3>Planar</h3><p>Grain boundaries, twins, stacking faults, and surfaces interrupt order across an area.</p></article>
+        <article><span aria-hidden="true">3D</span><h3>Volume</h3><p>Pores, inclusions, and second-phase particles occupy a finite volume.</p></article>
+      </div>
+    </section>
+
+    <section class="defects-point-section" aria-labelledby="point-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">Disturb one site</p>
+        <h2 id="point-title">Point defects change local chemistry and strain</h2>
+        <p>Select one idealized defect. The exaggerated drawing shows one defect for clarity, not an equilibrium concentration.</p>
+      </div>
+
+      <div class="defects-point-layout">
+        <fieldset class="defects-control-card">
+          <legend>Atomic-layer model</legend>
+          <div class="defects-choice-buttons" id="point-defect-buttons">
+            <button type="button" data-point-defect="perfect" aria-pressed="true">Perfect</button>
+            <button type="button" data-point-defect="vacancy" aria-pressed="false">Vacancy</button>
+            <button type="button" data-point-defect="substitutional" aria-pressed="false">Substitutional</button>
+            <button type="button" data-point-defect="interstitial" aria-pressed="false">Interstitial</button>
+          </div>
+          <p class="defects-control-help">Every circle represents an atom; displayed sizes are schematic. A smaller interstitial can fit a triangular gap, while same-size self-interstitials often relax into split, dumbbell, or crowdion configurations.</p>
+        </fieldset>
+
+        <figure class="defects-point-figure">
+          <svg id="point-defect-svg" viewBox="0 0 620 330" role="img" aria-labelledby="point-svg-title point-svg-desc">
+            <title id="point-svg-title">Perfect atomic layer</title>
+            <desc id="point-svg-desc">A regular two-dimensional atomic layer with no highlighted defect.</desc>
+            <g id="point-lattice"></g>
+          </svg>
+          <figcaption>
+            <strong id="point-defect-name">Perfect reference lattice</strong>
+            <span id="point-defect-description">Every displayed lattice site is occupied by a host atom.</span>
+          </figcaption>
+        </figure>
+
+        <dl class="defects-live-facts" aria-label="Selected point-defect facts">
+          <div><dt>Site occupancy</dt><dd id="point-occupancy">One host atom per site</dd></div>
+          <div><dt>Local effect</dt><dd id="point-strain">Periodic neighbourhood</dd></div>
+          <div><dt>Why it matters</dt><dd id="point-property">Reference for comparison</dd></div>
+        </dl>
+      </div>
+      <p class="defects-module-status" id="point-status" role="status" aria-live="polite">Perfect reference lattice selected.</p>
+    </section>
+
+    <section class="defects-void-section" aria-labelledby="void-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">Find the space between atoms</p>
+        <h2 id="void-title">Interstitial voids in FCC, BCC, and HCP cells</h2>
+        <p>
+          Display the complete conventional cell, adjust the host-atom size, then reveal every visible image of one
+          void type. A geometric void becomes an interstitial defect only when an atom occupies it.
+        </p>
+        <p class="defects-void-scope">The HCP view uses the familiar three-primitive-cell hexagonal teaching prism with six effective atoms and ideal c/a = &radic;(8/3).</p>
+      </div>
+
+      <div class="defects-void-explorer">
+        <div class="defects-void-picker" aria-label="Interstitial-site controls">
+          <fieldset>
+            <legend>1. Crystal structure</legend>
+            <div class="defects-void-button-grid" id="void-lattice-buttons">
+              <button type="button" data-void-lattice="fcc" aria-pressed="true">FCC</button>
+              <button type="button" data-void-lattice="bcc" aria-pressed="false">BCC</button>
+              <button type="button" data-void-lattice="hcp" aria-pressed="false">HCP</button>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>2. Sites to display</legend>
+            <div class="defects-void-button-grid defects-void-site-buttons" id="void-site-buttons">
+              <button type="button" data-void-mode="host" aria-pressed="true">Host atoms only</button>
+              <button type="button" data-void-mode="octahedral" aria-pressed="false">All octahedral voids</button>
+              <button type="button" data-void-mode="tetrahedral" aria-pressed="false">All tetrahedral voids</button>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="defects-void-viewer">
+          <header>
+            <div>
+              <p class="defects-panel-kicker" id="void-kind">Complete conventional cell</p>
+              <h3 id="void-model-title">FCC host atoms</h3>
+            </div>
+            <span class="defects-void-ratio" id="void-ratio-badge">4 effective atoms</span>
+          </header>
+
+          <div class="defects-viewer-atom-size">
+            <label class="defects-atom-size-label" for="void-atom-size"><span>Host atom size</span><output id="void-atom-size-output" for="void-atom-size">100%</output></label>
+            <input id="void-atom-size" type="range" min="60" max="200" step="5" value="100" disabled aria-describedby="void-atom-size-help" aria-valuetext="100% of default display size">
+            <small id="void-atom-size-help">Display size only; the unit-cell geometry and void radius ratios do not change.</small>
+          </div>
+
+          <div class="defects-viewer-frame" id="void-viewer-frame" role="group" aria-labelledby="void-model-title">
+            <canvas id="void-canvas" aria-hidden="true"></canvas>
+            <div class="defects-viewer-fallback" id="void-fallback" role="status">
+              <svg viewBox="0 0 320 230" role="img" aria-labelledby="void-fallback-title void-fallback-desc">
+                <title id="void-fallback-title">Crystal unit cell</title>
+                <desc id="void-fallback-desc">A wireframe unit cell containing complete host-atom markers.</desc>
+                <g fill="none" stroke="currentColor" stroke-width="3" opacity="0.72">
+                  <path d="M48 64 171 31 274 78 149 114Z M48 64v105l101 50 125-39V78 M149 114v105 M48 169l123-36 103 47 M171 31v102"/>
+                </g>
+                <g fill="currentColor">
+                  <circle cx="48" cy="64" r="10"/><circle cx="171" cy="31" r="10"/><circle cx="274" cy="78" r="10"/><circle cx="149" cy="114" r="10"/>
+                  <circle cx="48" cy="169" r="10"/><circle cx="149" cy="219" r="10"/><circle cx="274" cy="180" r="10"/><circle cx="171" cy="133" r="10"/>
+                </g>
+              </svg>
+              <strong>Preparing the complete unit cell&hellip;</strong>
+              <span>The lattice buttons and exact site counts remain usable if WebGL is unavailable.</span>
+            </div>
+          </div>
+
+          <fieldset class="defects-camera-controls">
+            <legend>View</legend>
+            <div>
+              <label><input id="void-orthographic" type="checkbox" disabled> Orthographic projection</label>
+              <button id="void-reset" type="button" disabled>Reset view</button>
+            </div>
+          </fieldset>
+
+          <div class="defects-void-legend" aria-label="Void model legend">
+            <span><i class="defects-host-swatch" aria-hidden="true"></i>Host atom</span>
+            <span><i class="defects-void-swatch" aria-hidden="true"></i>Void-centre marker</span>
+            <span><i class="defects-selected-swatch" aria-hidden="true"></i>Selected cage centre</span>
+            <span><i class="defects-ghost-swatch" aria-hidden="true"></i>Periodic host image</span>
+          </div>
+          <p class="defects-viewer-help">
+            Mouse: drag to rotate and use the wheel to zoom. Touch: drag sideways to rotate;
+            vertical movement and pinch remain available for the page. Atom and marker sizes are schematic.
+          </p>
+        </div>
+
+        <aside class="defects-void-facts" aria-label="Selected interstitial-site facts">
+          <fieldset>
+            <legend>Display</legend>
+            <label><input id="show-void-polyhedron" type="checkbox" disabled> One translucent coordination polyhedron</label>
+          </fieldset>
+          <dl>
+            <div><dt>Host display</dt><dd id="void-host-count">14 visible images &rarr; 4 effective atoms</dd></div>
+            <div><dt>Void display</dt><dd id="void-site-count">Not shown</dd></div>
+            <div><dt>Sites per host</dt><dd id="void-count">&mdash;</dd></div>
+            <div><dt>Representative site</dt><dd id="void-coordinate">&mdash;</dd></div>
+            <div><dt>Coordination cage</dt><dd id="void-cage">&mdash;</dd></div>
+            <div><dt>Rigid-sphere clearance</dt><dd id="void-radius">&mdash;</dd></div>
+          </dl>
+          <p class="defects-void-note" id="void-note">Boundary atoms are displayed as complete spheres; the effective count applies the usual sharing fractions.</p>
+          <p id="void-status" class="defects-status" role="status" aria-live="polite">Preparing the 3D model.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="defects-ionic-section" aria-labelledby="ionic-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">Preserve composition and charge</p>
+        <h2 id="ionic-title">Schottky and Frenkel disorder in an ionic crystal</h2>
+        <p>The schematic uses a monovalent AB lattice. Real defect populations depend on crystal chemistry, charge state, temperature, and environment.</p>
+      </div>
+
+      <div class="defects-ionic-layout">
+        <fieldset class="defects-control-card">
+          <legend>Ionic disorder</legend>
+          <div class="defects-choice-buttons" id="ionic-defect-buttons">
+            <button type="button" data-ionic-defect="perfect" aria-pressed="true">Perfect AB</button>
+            <button type="button" data-ionic-defect="schottky" aria-pressed="false">Schottky pair</button>
+            <button type="button" data-ionic-defect="frenkel" aria-pressed="false">Frenkel pair</button>
+          </div>
+        </fieldset>
+
+        <figure class="defects-ionic-figure">
+          <svg id="ionic-defect-svg" viewBox="0 0 650 340" role="img" aria-labelledby="ionic-svg-title ionic-svg-desc">
+            <title id="ionic-svg-title">Perfect AB ionic lattice</title>
+            <desc id="ionic-svg-desc">An alternating lattice of positive and negative ions.</desc>
+            <defs><marker id="ionic-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z"/></marker></defs>
+            <g id="ionic-lattice"></g>
+          </svg>
+          <figcaption id="ionic-caption">Perfect reference: equal numbers of A<sup>+</sup> and B<sup>&minus;</sup> occupy their normal sites.</figcaption>
+        </figure>
+
+        <dl class="defects-ionic-metrics" aria-label="Ionic defect bookkeeping">
+          <div><dt>Vacancies</dt><dd id="ionic-vacancies">0</dd></div>
+          <div><dt>Interstitial ions</dt><dd id="ionic-interstitials">0</dd></div>
+          <div><dt>Net effective charge</dt><dd id="ionic-charge">0</dd></div>
+          <div><dt>Density trend</dt><dd id="ionic-density">Reference</dd></div>
+        </dl>
+      </div>
+      <p class="defects-module-status" id="ionic-status" role="status" aria-live="polite">Perfect AB reference selected.</p>
+    </section>
+
+    <section class="defects-dislocation-section" id="dislocations" aria-labelledby="dislocation-section-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">Follow a line defect</p>
+        <h2 id="dislocation-section-title">Edge and screw dislocations in three dimensions</h2>
+        <p>
+          An edge dislocation is the line where an extra half-plane terminates; for a pure edge dislocation <i>b</i> &perp; &xi;.
+          A screw dislocation has a helicoidal displacement field; for a pure screw dislocation <i>b</i> &parallel; &xi;.
+          Most real dislocation lines have mixed character.
+        </p>
+      </div>
+
+      <div class="explorer-layout defects-dislocation-explorer" id="dislocation-explorer">
+        <section class="viewer-panel" aria-labelledby="viewer-title">
+          <div class="viewer-heading">
+            <div>
+              <p class="panel-kicker">Simple-cubic teaching model</p>
+              <h3 id="viewer-title">Edge dislocation</h3>
+            </div>
+            <div class="viewer-heading-controls">
+              <div class="viewer-mode-picker">
+                <span>Type</span>
+                <div class="mode-buttons" role="group" aria-label="Choose a dislocation type">
+                  <button class="mode-button is-active" id="edge-mode" type="button" aria-pressed="true" disabled>Edge</button>
+                  <button class="mode-button" id="screw-mode" type="button" aria-pressed="false" disabled>Screw</button>
+                </div>
+              </div>
+              <label class="view-control" for="view-orientation">
+                <span>View</span>
+                <select id="view-orientation" disabled>
+                  <option value="isometric">Isometric</option>
+                  <option value="along-line">Along dislocation line</option>
+                  <option value="side">Perpendicular to line</option>
+                  <option value="custom" hidden>Custom</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <p class="control-note viewer-mode-description" id="mode-description">
+            An extra half-plane ends at the core. Rows above it are compressed, while the region below is stretched.
+          </p>
+
+          <div class="viewer-frame" id="viewer-frame" data-mode="edge">
+            <canvas
+              id="dislocation-canvas"
+              aria-hidden="true"
+              aria-label="Interactive atomic lattice showing an edge dislocation, its extra half-plane, dislocation line, Burgers circuit, and Burgers vector."
+            >
+              Your browser does not support the canvas element.
+            </canvas>
+            <div class="viewer-fallback" id="viewer-fallback" role="status">
+              Preparing the interactive dislocation model. The surrounding lesson text remains available if WebGL cannot start.
+            </div>
+            <div class="viewer-legend" aria-label="Graphic legend" hidden>
+              <span><i class="atom-key" aria-hidden="true"></i>Atoms</span>
+              <span id="defect-legend-item"><i class="defect-key" aria-hidden="true"></i><b id="defect-legend">Extra half-plane</b></span>
+              <span id="circuit-legend-item"><i class="circuit-key" aria-hidden="true"></i>Mapped circuit</span>
+              <span id="burgers-legend-item"><i class="burgers-key" aria-hidden="true"></i><b>b</b></span>
+              <span><i class="line-key" aria-hidden="true"></i><b>&xi;</b></span>
+            </div>
+          </div>
+
+          <p class="viewer-help">Mouse: drag to rotate and use the wheel to zoom. Touch: drag sideways to rotate; use the view menu for precise orientations.</p>
+          <p class="selection-summary" id="selection-summary" aria-live="polite">
+            For an edge dislocation, the Burgers vector <i>b</i> is perpendicular to the dislocation line &xi;.
+          </p>
+        </section>
+
+        <aside class="controls-panel" aria-label="Dislocation controls">
+          <section class="control-block" aria-labelledby="display-title">
+            <p class="control-kicker">Layers</p>
+            <h3 id="display-title">What to show</h3>
+            <label class="toggle-control" for="show-circuit">
+              <input id="show-circuit" type="checkbox" checked disabled>
+              <span><strong>Mapped circuit and b</strong><small>See the closure failure in a perfect reference lattice.</small></span>
+            </label>
+            <label class="toggle-control" for="show-defect-surface">
+              <input id="show-defect-surface" type="checkbox" checked disabled>
+              <span><strong id="surface-control-label">Highlight extra half-plane</strong><small id="surface-control-note">Colour the inserted atomic plane.</small></span>
+            </label>
+            <label class="toggle-control" for="show-bonds">
+              <input id="show-bonds" type="checkbox" checked disabled>
+              <span><strong>Atomic connections</strong><small>Follow how neighbouring rows distort.</small></span>
+            </label>
+          </section>
+
+          <section class="relationship-note" aria-labelledby="relationship-title">
+            <p class="control-kicker">Key relationship</p>
+            <h3 id="relationship-title">Burgers vector vs. line</h3>
+            <p class="relationship-symbol" id="relationship-symbol"><i>b</i> &perp; <i>&xi;</i></p>
+            <p class="relationship-indices" id="relationship-indices"><i>b</i> = a[100] &middot; &xi; = [001]</p>
+            <p id="relationship-explanation">The edge-dislocation line runs along the end of the extra half-plane, while b points across that plane.</p>
+          </section>
+        </aside>
+      </div>
+
+      <p class="defects-dislocation-note">
+        This is an interactive geometric model, not a time-resolved simulation of dislocation motion.
+        <a href="../../visualizations/dislocations/index.html">Open the model on its own page</a>.
+      </p>
+    </section>
+
+    <section class="defects-grain-section" aria-labelledby="grain-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">Rotate neighbouring crystals</p>
+        <h2 id="grain-title">A grain boundary is an interface between orientations</h2>
+        <p>A real boundary has five macroscopic crystallographic degrees of freedom. This unrelaxed 2D projection isolates one symmetric tilt angle.</p>
+      </div>
+
+      <div class="defects-grain-layout">
+        <div class="defects-grain-controls">
+          <label for="grain-angle">Misorientation angle, <output id="grain-angle-output" for="grain-angle">8&deg;</output></label>
+          <input id="grain-angle" type="range" min="0" max="30" step="1" value="8">
+          <p class="defects-compact-equation">Low-angle model: D/b = 1/[2 sin(&theta;/2)]</p>
+          <dl>
+            <div><dt>Classification</dt><dd id="grain-class">Low-angle tilt boundary</dd></div>
+            <div><dt>Ideal dislocation spacing</dt><dd id="grain-spacing">D/b &asymp; 7.17</dd></div>
+          </dl>
+          <p id="grain-explanation">At small angles, an ideal tilt boundary can be approximated as a spaced array of edge dislocations.</p>
+          <p class="defects-module-status" id="grain-status" role="status" aria-live="polite">Misorientation is 8 degrees; low-angle tilt boundary.</p>
+        </div>
+        <figure class="defects-grain-figure">
+          <canvas id="grain-canvas" width="760" height="440" role="img" aria-label="Two grains separated by an eight degree symmetric tilt boundary"></canvas>
+          <figcaption>Same phase and species on both sides; only the lattice orientation changes. The approximately 15&deg; low/high-angle division is a teaching convention.</figcaption>
+        </figure>
+      </div>
+
+    </section>
+
+    <section class="defects-astm-section" aria-labelledby="astm-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">Measure a planar section</p>
+        <h2 id="astm-title">ASTM grain size: larger G means finer grains</h2>
+        <p>
+          ASTM E112 includes comparison, planimetric, and intercept procedures. Generate a synthetic grain field whose full rectangle repeats periodically at a fixed 100&times;,
+          then place a one-inch image line to count its boundary crossings. This remains an educational estimate, not a standards-conformance report.
+        </p>
+      </div>
+
+      <p class="defects-astm-equation">
+        <strong>Reference definition:</strong> N<sub>100</sub> = 2<sup>G&minus;1</sup> grains/in&sup2; at 100&times;.
+        <span><strong>Intercept estimate:</strong> l&#772; = L<sub>image</sub>/(M P<sub>T</sub>), then G = &minus;6.643856 log<sub>10</sub>(l&#772;<sub>mm</sub>) &minus; 3.288.</span>
+      </p>
+
+      <div class="defects-astm-layout">
+        <div class="defects-astm-controls">
+          <p class="defects-astm-fixed"><span>Magnification</span><strong>100&times;</strong></p>
+          <label for="astm-grain-count">Target generator density (sites/in&sup2; at 100&times;)</label>
+          <select id="astm-grain-count">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="16">16</option>
+            <option value="32">32</option>
+            <option value="64">64</option>
+            <option value="128" selected>128</option>
+          </select>
+          <div class="defects-astm-actions">
+            <button id="astm-new-field" type="button">Generate new distribution</button>
+            <button id="astm-measure" type="button" aria-pressed="false" aria-controls="astm-canvas">1-inch measurement line</button>
+          </div>
+        </div>
+
+        <figure class="defects-astm-figure">
+          <canvas id="astm-canvas" width="700" height="430" role="img" aria-label="Periodic 2 square inch synthetic grain field at 100 times magnification. A target density of 128 sites per square inch gives 256 base generator dots. A centred dashed square marks 1 square inch; no measurement line is present."></canvas>
+          <figcaption id="astm-figure-caption">The full rectangle is a <strong>2.00 in&sup2; periodic repeat box</strong>. A target of <strong>128 sites/in&sup2;</strong> gives 256 base generator dots. The dashed square is the visible 1 in&sup2; reference, not a grain boundary. Toggle <strong>1-inch measurement line</strong> to measure.</figcaption>
+        </figure>
+
+        <dl class="defects-astm-results" aria-label="Estimated grain-size results">
+          <div><dt>Image test-line length</dt><dd id="astm-image-length">Not placed</dd></div>
+          <div><dt>Detected crossings, P<sub>T</sub></dt><dd id="astm-intersections">Not measured</dd></div>
+          <div><dt>Specimen test length</dt><dd id="astm-specimen-length">&mdash;</dd></div>
+          <div><dt>Mean lineal intercept</dt><dd id="astm-intercept">&mdash;</dd></div>
+          <div><dt>Estimated ASTM number</dt><dd id="astm-number">&mdash;</dd></div>
+          <div><dt>N<sub>100</sub> by definition</dt><dd id="astm-reference-density">&mdash;</dd></div>
+        </dl>
+      </div>
+
+      <p class="defects-module-status" id="astm-status" role="status" aria-live="polite">A periodic 2.00 in&sup2; field with 256 generator dots is ready at 100&times;. Toggle the one-inch line when you are ready to measure.</p>
+
+      <p class="defects-standard-note">
+        The current standard is <a href="https://store.astm.org/standards/e112" target="_blank" rel="noopener">ASTM E112-25, Standard Test Methods for Determining Average Grain Size</a>.
+        The licensed standard governs specimen preparation, field selection, counting, statistics, and reporting.
+      </p>
+    </section>
+
+    <section class="defects-conclusion" aria-labelledby="conclusion-title">
+      <div>
+        <p class="section-kicker">From imperfection to performance</p>
+        <h2 id="conclusion-title">What should you carry forward?</h2>
+      </div>
+      <ul>
+        <li>Vacancies and interstitials enable diffusion but also distort the surrounding lattice.</li>
+        <li>Void size is geometric; actual site occupancy is controlled by chemistry and energy.</li>
+        <li>Ionic defect reactions must respect site balance, composition, and charge neutrality.</li>
+        <li>Edge and screw dislocations differ in the relationship between the Burgers vector and the dislocation line.</li>
+        <li>Grain boundaries can accelerate diffusion and obstruct dislocation motion; grain size therefore changes strength and transport.</li>
+      </ul>
+    </section>
+
+    <nav class="defects-lesson-nav" aria-label="Teaching module sequence">
+      <a href="../visualization-of-structures/index.html"><span>Previous module</span><strong>&larr; Visualization of Structures</strong></a>
+      <a href="../../index.html#topics"><span>Continue exploring</span><strong>All core modules &rarr;</strong></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Crystal defects &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

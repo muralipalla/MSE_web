@@ -23,6 +23,7 @@ Current teaching pages are:
     teaching/introduction.html
     teaching/atomic-bonding/index.html
     teaching/visualization-of-structures/index.html
+    teaching/crystal-defects/index.html
 
 Current quiz pages are:
 

@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Dislocations in 3D | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=4">
   <script src="../../js/main.js" defer></script>
   <script type="importmap">
     {
@@ -17,7 +17,7 @@
       }
     }
   </script>
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=5"></script>
 </head>
 <body>
   <a class="skip-link" href="#dislocation-explorer">Skip to dislocation visualization</a>
@@ -58,29 +58,42 @@
             <p class="panel-kicker">Simple-cubic teaching model</p>
             <h2 id="viewer-title">Edge dislocation</h2>
           </div>
-          <label class="view-control" for="view-orientation">
-            <span>View</span>
-            <select id="view-orientation">
-              <option value="isometric">Isometric</option>
-              <option value="along-line">Along dislocation line</option>
-              <option value="side">Perpendicular to line</option>
-              <option value="custom" hidden>Custom</option>
-            </select>
-          </label>
+          <div class="viewer-heading-controls">
+            <div class="viewer-mode-picker">
+              <span>Type</span>
+              <div class="mode-buttons" role="group" aria-label="Choose a dislocation type">
+                <button class="mode-button is-active" id="edge-mode" type="button" aria-pressed="true" disabled>Edge</button>
+                <button class="mode-button" id="screw-mode" type="button" aria-pressed="false" disabled>Screw</button>
+              </div>
+            </div>
+            <label class="view-control" for="view-orientation">
+              <span>View</span>
+              <select id="view-orientation" disabled>
+                <option value="isometric">Isometric</option>
+                <option value="along-line">Along dislocation line</option>
+                <option value="side">Perpendicular to line</option>
+                <option value="custom" hidden>Custom</option>
+              </select>
+            </label>
+          </div>
         </div>
+
+        <p class="control-note viewer-mode-description" id="mode-description">
+          An extra half-plane ends at the core. Rows above it are compressed, while the region below is stretched.
+        </p>
 
         <div class="viewer-frame" id="viewer-frame" data-mode="edge">
           <canvas
             id="dislocation-canvas"
-            role="img"
+            aria-hidden="true"
             aria-label="Interactive atomic lattice showing an edge dislocation, its extra half-plane, dislocation line, Burgers circuit, and Burgers vector. Drag to rotate, scroll to zoom, and right-drag to pan."
           >
             Your browser does not support the canvas element.
           </canvas>
-          <div class="viewer-fallback" id="viewer-fallback" role="alert" hidden>
-            The 3D view could not start. Try a current browser with WebGL enabled.
+          <div class="viewer-fallback" id="viewer-fallback" role="status">
+            Preparing the interactive model. If it does not appear, try a current browser with WebGL enabled.
           </div>
-          <div class="viewer-legend" aria-label="Graphic legend">
+          <div class="viewer-legend" aria-label="Graphic legend" hidden>
             <span><i class="atom-key" aria-hidden="true"></i>Atoms</span>
             <span id="defect-legend-item"><i class="defect-key" aria-hidden="true"></i><b id="defect-legend">Extra half-plane</b></span>
             <span id="circuit-legend-item"><i class="circuit-key" aria-hidden="true"></i>Mapped circuit</span>
@@ -89,45 +102,32 @@
           </div>
         </div>
 
-        <p class="viewer-help">Drag to rotate &middot; Scroll or pinch to zoom &middot; Right-drag to pan</p>
+        <p class="viewer-help">Mouse: drag to rotate and use the wheel to zoom. Touch: drag sideways to rotate; use the view menu for precise orientations.</p>
         <p class="selection-summary" id="selection-summary" aria-live="polite">
           For an edge dislocation, the Burgers vector b is perpendicular to the dislocation line &xi;.
         </p>
       </section>
 
       <aside class="controls-panel" aria-label="Dislocation controls">
-        <section class="control-block" aria-labelledby="type-title">
-          <p class="control-kicker">Compare defects</p>
-          <h2 id="type-title">Dislocation type</h2>
-          <div class="mode-buttons" role="group" aria-label="Choose a dislocation type">
-            <button class="mode-button is-active" id="edge-mode" type="button" aria-pressed="true">Edge</button>
-            <button class="mode-button" id="screw-mode" type="button" aria-pressed="false">Screw</button>
-          </div>
-          <p class="control-note" id="mode-description">
-            An extra half-plane ends at the core. Rows above it are compressed,
-            while the region below is stretched.
-          </p>
-        </section>
-
         <section class="control-block" aria-labelledby="display-title">
           <p class="control-kicker">Layers</p>
           <h2 id="display-title">What to show</h2>
           <label class="toggle-control" for="show-circuit">
-            <input id="show-circuit" type="checkbox" checked>
+            <input id="show-circuit" type="checkbox" checked disabled>
             <span>
               <strong>Mapped circuit and b</strong>
               <small>See the closure failure in a perfect reference lattice.</small>
             </span>
           </label>
           <label class="toggle-control" for="show-defect-surface">
-            <input id="show-defect-surface" type="checkbox" checked>
+            <input id="show-defect-surface" type="checkbox" checked disabled>
             <span>
               <strong id="surface-control-label">Highlight extra half-plane</strong>
               <small id="surface-control-note">Color the inserted atomic plane.</small>
             </span>
           </label>
           <label class="toggle-control" for="show-bonds">
-            <input id="show-bonds" type="checkbox" checked>
+            <input id="show-bonds" type="checkbox" checked disabled>
             <span>
               <strong>Atomic connections</strong>
               <small>Follow how neighboring rows distort.</small>

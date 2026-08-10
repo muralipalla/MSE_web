@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+let THREE;
+let OrbitControls;
 
 const LATTICE_SPACING = 0.72;
 const BURGERS_MAGNITUDE = LATTICE_SPACING;
@@ -18,6 +18,7 @@ const elements = {
   frame: document.querySelector("#viewer-frame"),
   canvas: document.querySelector("#dislocation-canvas"),
   fallback: document.querySelector("#viewer-fallback"),
+  legend: document.querySelector(".viewer-legend"),
   viewerTitle: document.querySelector("#viewer-title"),
   viewOrientation: document.querySelector("#view-orientation"),
   defectLegend: document.querySelector("#defect-legend"),
@@ -51,21 +52,29 @@ let renderer;
 let controls;
 let defectGroup;
 let resizeObserver;
+let rendererReady = false;
+let contextLost = false;
+let restoreTimer;
 
 start();
 
-function start() {
-  bindControls();
+async function start() {
+  setExplorerControls(false);
 
   try {
+    THREE = await import("three");
+    ({ OrbitControls } = await import("three/addons/controls/OrbitControls.js"));
     createScene();
+    rendererReady = true;
+    bindControls();
     rebuildModel();
     updateInterface();
     resizeRenderer();
-    animate();
+    showViewer();
+    renderScene();
   } catch (error) {
     console.error(error);
-    showFallback();
+    showFallback("The interactive 3D model is unavailable. Use the Edge/Screw explanation and Burgers-vector relationship to continue.");
   }
 }
 
@@ -75,7 +84,7 @@ function createScene() {
     antialias: true,
     alpha: true
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -86,8 +95,8 @@ function createScene() {
   camera.position.set(5.8, 4.5, 6.6);
 
   controls = new OrbitControls(camera, elements.canvas);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.075;
+  elements.canvas.style.touchAction = "pan-y pinch-zoom";
+  controls.enableDamping = false;
   controls.minDistance = 4.6;
   controls.maxDistance = 12;
   controls.target.set(0, 0.05, 0);
@@ -95,6 +104,7 @@ function createScene() {
   controls.addEventListener("start", () => {
     elements.viewOrientation.value = "custom";
   });
+  controls.addEventListener("change", renderScene);
 
   scene.add(new THREE.HemisphereLight(0xd9edff, 0x171536, 2.25));
 
@@ -106,13 +116,28 @@ function createScene() {
   fillLight.position.set(-6, 1, -5);
   scene.add(fillLight);
 
-  elements.canvas.addEventListener("webglcontextlost", (event) => {
-    event.preventDefault();
-    showFallback();
-  });
+  elements.canvas.addEventListener("webglcontextlost", handleContextLost);
+  elements.canvas.addEventListener("webglcontextrestored", handleContextRestored);
 
-  resizeObserver = new ResizeObserver(resizeRenderer);
-  resizeObserver.observe(elements.frame);
+  if (typeof ResizeObserver === "function") {
+    resizeObserver = new ResizeObserver(resizeRenderer);
+    resizeObserver.observe(elements.frame);
+  } else {
+    window.addEventListener("resize", resizeRenderer);
+  }
+}
+
+function setExplorerControls(enabled) {
+  [
+    elements.viewOrientation,
+    elements.edgeMode,
+    elements.screwMode,
+    elements.showCircuit,
+    elements.showDefectSurface,
+    elements.showBonds
+  ].forEach(control => {
+    if (control) control.disabled = !enabled;
+  });
 }
 
 function bindControls() {
@@ -151,10 +176,11 @@ function setMode(mode) {
 }
 
 function rebuildModel() {
-  if (!scene) return;
+  if (!rendererReady || !scene) return;
   disposeObject(defectGroup);
   defectGroup = state.mode === "edge" ? createEdgeModel() : createScrewModel();
   scene.add(defectGroup);
+  renderScene();
 }
 
 function createEdgeModel() {
@@ -805,7 +831,7 @@ function setViewOrientation(orientation) {
 }
 
 function resizeRenderer() {
-  if (!renderer || !camera) return;
+  if (!rendererReady || contextLost || !renderer || !camera) return;
   const width = elements.frame.clientWidth;
   const height = elements.frame.clientHeight;
   if (width < 1 || height < 1) return;
@@ -813,18 +839,67 @@ function resizeRenderer() {
   renderer.setSize(width, height, false);
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
+  renderScene();
 }
 
-function animate() {
-  requestAnimationFrame(animate);
-  if (!renderer || !scene || !camera || !controls) return;
-  controls.update();
+function renderScene() {
+  if (!rendererReady || contextLost || !renderer || !scene || !camera) return;
   renderer.render(scene, camera);
 }
 
-function showFallback() {
+function handleContextLost(event) {
+  event.preventDefault();
+  contextLost = true;
+  rendererReady = false;
+  showFallback("The 3D context was interrupted. The viewer is trying to restore it; reload the page if the model does not return.");
+  window.clearTimeout(restoreTimer);
+  restoreTimer = window.setTimeout(() => {
+    if (contextLost) {
+      elements.fallback.textContent = "The 3D context could not be restored automatically. Reload the page to try the interactive model again.";
+    }
+  }, 4000);
+}
+
+function handleContextRestored() {
+  if (!contextLost || !renderer || !scene || !camera) return;
+  window.clearTimeout(restoreTimer);
+
+  try {
+    contextLost = false;
+    rendererReady = true;
+    rebuildModel();
+    updateInterface();
+    resizeRenderer();
+    showViewer();
+    renderScene();
+  } catch (error) {
+    console.error("Unable to restore the dislocation viewer.", error);
+    contextLost = true;
+    rendererReady = false;
+    showFallback("The 3D context could not be restored automatically. Reload the page to try the interactive model again.");
+  }
+}
+
+function showViewer() {
+  elements.fallback.hidden = true;
+  elements.legend.hidden = false;
+  elements.canvas.hidden = false;
+  elements.canvas.setAttribute("role", "img");
+  elements.canvas.setAttribute("aria-hidden", "false");
+  if (controls) controls.enabled = true;
+  setExplorerControls(true);
+}
+
+function showFallback(message) {
+  rendererReady = false;
+  elements.fallback.textContent = message;
   elements.fallback.hidden = false;
+  elements.legend.hidden = true;
   elements.canvas.hidden = true;
+  elements.canvas.setAttribute("aria-hidden", "true");
+  elements.canvas.removeAttribute("role");
+  if (controls) controls.enabled = false;
+  setExplorerControls(false);
 }
 
 function disposeObject(object) {

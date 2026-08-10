@@ -21,6 +21,9 @@ Current module:
     |-- style.css     Module-only responsive layout
     |-- app.js        Three.js atomic models and Burgers circuits
 
+The dislocation viewer is also embedded in `teaching/crystal-defects/` so the
+line-defect model appears in the core lesson while the standalone URL remains usable.
+
     fcc-bct-cell/
     |-- index.html    FCC and alternative BCT cell explanation and controls
     |-- style.css     Site-matched responsive viewer layout

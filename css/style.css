@@ -441,12 +441,6 @@ summary:focus-visible {
   box-shadow: var(--shadow);
 }
 
-.content-card strong {
-  display: inline-block;
-  margin-top: 1.2rem;
-  color: var(--coral);
-}
-
 .card-label {
   display: inline-flex;
   padding: 0.35rem 0.65rem;

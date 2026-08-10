@@ -49,3 +49,14 @@ on the home page. It uses no external runtime dependencies.
 
 Open `molecular-dynamics/index.html` directly or through the Open MD lab button
 on the home page. It uses no external runtime dependencies.
+
+`scanning-electron-microscopy/` contains a standalone illustrative SEM signal explorer with:
+
+- a schematic electron column with condenser and objective lenses, scan coils, and a focused primary beam;
+- a pear-shaped statistical interaction-volume graphic with finite electron-path animation;
+- selectable SE1, SE2, BSE, characteristic/continuum X-ray, Auger, cathodoluminescence, and specimen-current views;
+- energy, origin, detector, and information annotations for every signal; and
+- a link to the external MyScope virtual SEM experiment for further practice.
+
+Open `scanning-electron-microscopy/index.html` directly or through the SEM
+experiment button on the home page. It uses no external runtime dependencies.
