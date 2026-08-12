@@ -1,0 +1,1312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A standalone Three.js prototype for visualizing tetrahedral and octahedral interstitial voids in FCC and BCC cubic unit cells.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Interstitial Voids in Cubic Unit Cells</title>
+  <style>
+    :root {
+      --cream: #fdf6ec;
+      --paper: #ffffff;
+      --ink: #17324f;
+      --ink-soft: #4e6477;
+      --navy: #102943;
+      --navy-light: #1b4269;
+      --coral: #c93b1f;
+      --coral-dark: #982d1b;
+      --blue: #2687c6;
+      --blue-light: #e5f3fb;
+      --yellow: #ffd23f;
+      --green: #1f735e;
+      --lavender: #efecff;
+      --border: #d8e0e8;
+      --shadow: 0 18px 46px rgba(16, 41, 67, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      color-scheme: light;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 8% 4%, rgba(239, 236, 255, 0.95), transparent 27rem),
+        var(--cream);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      min-height: 2.75rem;
+      border: 2px solid var(--navy);
+      border-radius: 0.8rem;
+      background: var(--paper);
+      color: var(--navy);
+      cursor: pointer;
+      font-weight: 750;
+      padding: 0.66rem 0.9rem;
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--navy);
+      color: var(--paper);
+    }
+
+    button[aria-pressed="true"] {
+      border-color: var(--coral);
+      background: var(--coral);
+      color: var(--paper);
+    }
+
+    button:disabled,
+    input:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--coral);
+      outline-offset: 3px;
+    }
+
+    .prototype-shell {
+      width: min(74rem, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 2rem 0 3rem;
+    }
+
+    .prototype-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+      gap: 2rem;
+      align-items: end;
+      margin-bottom: 1.5rem;
+    }
+
+    .eyebrow {
+      margin: 0 0 0.45rem;
+      color: var(--coral-dark);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 18ch;
+      margin-bottom: 0;
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      line-height: 1.03;
+      letter-spacing: -0.035em;
+    }
+
+    .prototype-header-copy {
+      margin-bottom: 0.2rem;
+      color: var(--ink-soft);
+    }
+
+    .prototype-header-copy p:last-child {
+      margin-bottom: 0;
+    }
+
+    .scope-note {
+      border-left: 4px solid var(--coral);
+      padding-left: 0.85rem;
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    .prototype-controls {
+      display: grid;
+      grid-template-columns: minmax(13rem, 0.65fr) minmax(22rem, 1.35fr) minmax(15rem, 0.75fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    fieldset {
+      min-width: 0;
+      margin: 0;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.85rem;
+    }
+
+    legend {
+      padding: 0 0.35rem;
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+
+    .void-buttons {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .display-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      min-height: 2.75rem;
+      padding: 0.55rem 0.2rem;
+      font-weight: 700;
+    }
+
+    .display-toggle input {
+      flex: 0 0 auto;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-top: 0.15rem;
+      accent-color: var(--coral);
+    }
+
+    .control-note {
+      margin: 0.45rem 0 0;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    .prototype-explorer {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(18rem, 0.75fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .viewer-panel,
+    .facts-panel {
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .viewer-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+      padding: 1rem 1.1rem 0.85rem;
+    }
+
+    .viewer-heading h2 {
+      margin-bottom: 0.15rem;
+      font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+      line-height: 1.2;
+    }
+
+    .viewer-heading p {
+      margin-bottom: 0;
+      color: var(--ink-soft);
+    }
+
+    .prototype-badge {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: var(--blue-light);
+      color: var(--navy);
+      font-size: 0.78rem;
+      font-weight: 850;
+      padding: 0.38rem 0.65rem;
+    }
+
+    .viewer-frame {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      min-height: 20rem;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 48% 42%, rgba(91, 125, 190, 0.52), transparent 34%),
+        linear-gradient(145deg, #1a3760, #091a2d 72%);
+    }
+
+    #void-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .viewer-fallback {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-content: center;
+      gap: 0.7rem;
+      padding: 1.2rem;
+      text-align: center;
+      color: #f5f9ff;
+    }
+
+    .viewer-fallback[hidden] {
+      display: none;
+    }
+
+    .viewer-fallback svg {
+      width: min(15rem, 70%);
+      margin: 0 auto;
+    }
+
+    .viewer-fallback span {
+      max-width: 34rem;
+      color: #d7e4f3;
+    }
+
+    .viewer-fallback.is-error svg {
+      display: none;
+    }
+
+    .camera-controls {
+      border: 0;
+      border-top: 1px solid var(--border);
+      border-radius: 0;
+      background: var(--paper);
+      padding: 0.85rem 1rem 1rem;
+    }
+
+    .camera-controls .button-row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .camera-controls button {
+      min-width: 0;
+      padding-inline: 0.45rem;
+      font-size: 0.88rem;
+    }
+
+    .viewer-footer {
+      display: grid;
+      gap: 0.65rem;
+      padding: 0.8rem 1rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+    }
+
+    .legend li {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .legend-mark {
+      display: inline-block;
+      width: 0.9rem;
+      height: 0.9rem;
+      border: 2px solid var(--navy);
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .legend-mark.void {
+      width: 0.68rem;
+      height: 0.68rem;
+      background: var(--yellow);
+    }
+
+    .legend-mark.selected {
+      border: 3px double var(--paper);
+      outline: 2px solid var(--coral);
+      background: var(--coral);
+    }
+
+    .legend-mark.ghost {
+      border-style: dashed;
+      opacity: 0.45;
+    }
+
+    .viewer-help {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+    }
+
+    .facts-panel {
+      padding: 1rem;
+    }
+
+    .facts-panel h2 {
+      margin-bottom: 0.8rem;
+      font-size: 1.3rem;
+    }
+
+    .facts-panel dl {
+      display: grid;
+      gap: 0;
+      margin: 0;
+    }
+
+    .facts-panel dl div {
+      display: grid;
+      grid-template-columns: minmax(7rem, 0.8fr) minmax(0, 1.2fr);
+      gap: 0.8rem;
+      padding: 0.72rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .facts-panel dt {
+      color: var(--ink-soft);
+      font-weight: 700;
+    }
+
+    .facts-panel dd {
+      margin: 0;
+      font-weight: 800;
+    }
+
+    .facts-note,
+    .prototype-status {
+      border-radius: 0.85rem;
+      padding: 0.8rem 0.9rem;
+    }
+
+    .facts-note {
+      margin: 0.9rem 0 0;
+      background: var(--lavender);
+    }
+
+    .prototype-status {
+      margin: 0.75rem 0 0;
+      background: #e7f5ef;
+      color: var(--green);
+      font-weight: 750;
+    }
+
+    .prototype-footnote {
+      margin: 1rem 0 0;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 64rem) {
+      .prototype-header,
+      .prototype-explorer {
+        grid-template-columns: 1fr;
+      }
+
+      .prototype-controls {
+        grid-template-columns: 1fr 1.4fr;
+      }
+
+      .prototype-controls fieldset:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .facts-panel {
+        box-shadow: none;
+      }
+    }
+
+    @media (max-width: 43rem) {
+      .prototype-shell {
+        width: min(100% - 1rem, 74rem);
+        padding-top: 1rem;
+      }
+
+      .prototype-header,
+      .prototype-controls {
+        grid-template-columns: 1fr;
+        gap: 0.8rem;
+      }
+
+      .prototype-controls fieldset:last-child {
+        grid-column: auto;
+      }
+
+      .void-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .viewer-heading {
+        display: grid;
+      }
+
+      .prototype-badge {
+        justify-self: start;
+      }
+
+      .viewer-frame {
+        min-height: 0;
+        aspect-ratio: 1;
+      }
+
+      .camera-controls .button-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #reset-view {
+        grid-column: 1 / -1;
+      }
+
+      .facts-panel dl div {
+        grid-template-columns: 1fr;
+        gap: 0.15rem;
+      }
+    }
+  </style>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main class="prototype-shell">
+    <header class="prototype-header">
+      <div>
+        <p class="eyebrow">Standalone teaching prototype</p>
+        <h1>Interstitial Voids in Cubic Unit Cells</h1>
+      </div>
+      <div class="prototype-header-copy">
+        <p>Display a complete conventional FCC or BCC cell, then reveal every visible image of one interstitial-site type.</p>
+        <p class="scope-note">HCP is intentionally excluded here because it requires a hexagonal—not cubic—unit cell.</p>
+      </div>
+    </header>
+
+    <section class="prototype-controls" aria-label="Void-model controls">
+      <fieldset>
+        <legend>1. Cubic lattice</legend>
+        <div class="button-row" id="lattice-buttons">
+          <button type="button" data-lattice="fcc" aria-pressed="true">FCC</button>
+          <button type="button" data-lattice="bcc" aria-pressed="false">BCC</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>2. Sites to display</legend>
+        <div class="button-row void-buttons" id="void-buttons">
+          <button type="button" data-void-mode="host" aria-pressed="true">Host atoms only</button>
+          <button type="button" data-void-mode="octahedral" aria-pressed="false">All octahedral voids</button>
+          <button type="button" data-void-mode="tetrahedral" aria-pressed="false">All tetrahedral voids</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>3. Coordination cage</legend>
+        <label class="display-toggle" for="show-polyhedron">
+          <input id="show-polyhedron" type="checkbox" disabled>
+          <span>Show one translucent coordination polyhedron</span>
+        </label>
+        <p class="control-note">The highlighted cage surrounds one representative void. Faint atoms outside the cube are periodic images.</p>
+      </fieldset>
+    </section>
+
+    <section class="prototype-explorer">
+      <div class="viewer-panel">
+        <header class="viewer-heading">
+          <div>
+            <p class="eyebrow" id="model-kind">Complete conventional cell</p>
+            <h2 id="model-title">FCC host atoms</h2>
+            <p id="model-subtitle">All corner and face-centre atom images are shown as complete spheres.</p>
+          </div>
+          <span class="prototype-badge" id="model-badge">4 effective atoms</span>
+        </header>
+
+        <div class="viewer-frame" id="viewer-frame" role="group" aria-labelledby="model-title">
+          <canvas id="void-canvas" aria-hidden="true"></canvas>
+          <div class="viewer-fallback" id="viewer-fallback" role="status">
+            <svg viewBox="0 0 300 220" role="img" aria-labelledby="fallback-title fallback-desc">
+              <title id="fallback-title">Cubic unit cell illustration</title>
+              <desc id="fallback-desc">A wireframe cube containing full corner and face-centred atom markers.</desc>
+              <g fill="none" stroke="currentColor" stroke-width="4" opacity="0.85">
+                <path d="M48 64 166 31 254 79 134 114Z M48 64v103l86 45 120-36V79 M134 114v98 M48 167l118-35 88 44 M166 31v101"/>
+              </g>
+              <g fill="#75c9f5" stroke="#102943" stroke-width="3">
+                <circle cx="48" cy="64" r="10"/><circle cx="166" cy="31" r="10"/><circle cx="254" cy="79" r="10"/><circle cx="134" cy="114" r="10"/>
+                <circle cx="48" cy="167" r="10"/><circle cx="134" cy="212" r="10"/><circle cx="254" cy="176" r="10"/><circle cx="166" cy="132" r="10"/>
+                <circle cx="107" cy="48" r="9"/><circle cx="210" cy="105" r="9"/><circle cx="91" cy="140" r="9"/>
+              </g>
+            </svg>
+            <strong id="fallback-heading">Preparing the three-dimensional cell&hellip;</strong>
+            <span id="fallback-copy">The controls and exact site counts remain available if Three.js or WebGL cannot load.</span>
+          </div>
+        </div>
+
+        <fieldset class="camera-controls">
+          <legend>View</legend>
+          <div class="button-row">
+            <button type="button" data-projection="perspective" aria-pressed="true" disabled>Perspective</button>
+            <button type="button" data-projection="orthographic" aria-pressed="false" disabled>Orthographic</button>
+            <button type="button" id="reset-view" disabled>Reset</button>
+          </div>
+        </fieldset>
+
+        <footer class="viewer-footer">
+          <ul class="legend" aria-label="Model legend">
+            <li><i class="legend-mark" aria-hidden="true"></i>Host atom</li>
+            <li><i class="legend-mark void" aria-hidden="true"></i>Void-centre marker</li>
+            <li><i class="legend-mark selected" aria-hidden="true"></i>Selected cage centre</li>
+            <li><i class="legend-mark ghost" aria-hidden="true"></i>Periodic host image</li>
+          </ul>
+          <p class="viewer-help">Mouse: drag to rotate and use the wheel to zoom. Touch: drag sideways to rotate; vertical movement and pinch remain available to the page. Marker and atom sizes are schematic.</p>
+        </footer>
+      </div>
+
+      <aside class="facts-panel" aria-labelledby="facts-title">
+        <p class="eyebrow">Current model</p>
+        <h2 id="facts-title">What is being counted?</h2>
+        <dl>
+          <div><dt>Host display</dt><dd id="fact-host">14 visible images &rarr; 4 effective atoms</dd></div>
+          <div><dt>Void display</dt><dd id="fact-void">Not shown</dd></div>
+          <div><dt>Sites per host</dt><dd id="fact-sites-per-host">&mdash;</dd></div>
+          <div><dt>Representative site</dt><dd id="fact-coordinate">&mdash;</dd></div>
+          <div><dt>Coordination cage</dt><dd id="fact-coordination">&mdash;</dd></div>
+          <div><dt>Rigid-sphere clearance</dt><dd id="fact-ratio">&mdash;</dd></div>
+        </dl>
+        <p class="facts-note" id="facts-note">Boundary atoms are shared with neighbouring cells. They are displayed as whole spheres, while the effective count uses the usual corner and face sharing fractions.</p>
+        <p class="prototype-status" id="prototype-status" role="status" aria-live="polite">Preparing the interactive cell.</p>
+      </aside>
+    </section>
+
+    <p class="prototype-footnote">A void marker locates empty space; it is not an atom. The site becomes an interstitial defect only when an additional atom occupies it. Radius ratios shown here are unrelaxed hard-sphere clearances, not universal site-preference rules.</p>
+  </main>
+
+  <script type="module">
+    const CELL_SIZE = 5.2;
+    const EPSILON = 1e-8;
+
+    const elements = {
+      canvas: document.getElementById("void-canvas"),
+      frame: document.getElementById("viewer-frame"),
+      fallback: document.getElementById("viewer-fallback"),
+      fallbackHeading: document.getElementById("fallback-heading"),
+      fallbackCopy: document.getElementById("fallback-copy"),
+      latticeButtons: [...document.querySelectorAll("[data-lattice]")],
+      voidButtons: [...document.querySelectorAll("[data-void-mode]")],
+      polyhedron: document.getElementById("show-polyhedron"),
+      projectionButtons: [...document.querySelectorAll("[data-projection]")],
+      resetView: document.getElementById("reset-view"),
+      modelKind: document.getElementById("model-kind"),
+      modelTitle: document.getElementById("model-title"),
+      modelSubtitle: document.getElementById("model-subtitle"),
+      modelBadge: document.getElementById("model-badge"),
+      factHost: document.getElementById("fact-host"),
+      factVoid: document.getElementById("fact-void"),
+      factSitesPerHost: document.getElementById("fact-sites-per-host"),
+      factCoordinate: document.getElementById("fact-coordinate"),
+      factCoordination: document.getElementById("fact-coordination"),
+      factRatio: document.getElementById("fact-ratio"),
+      factsNote: document.getElementById("facts-note"),
+      status: document.getElementById("prototype-status")
+    };
+
+    const requiredElements = Object.entries(elements).filter(([, value]) => !value);
+    if (requiredElements.length) {
+      throw new Error(`Missing required interface elements: ${requiredElements.map(([key]) => key).join(", ")}`);
+    }
+
+    const state = {
+      lattice: "fcc",
+      mode: "host",
+      showPolyhedron: false,
+      projection: "perspective",
+      rendererReady: false
+    };
+
+    const latticeFacts = {
+      fcc: {
+        label: "FCC",
+        longLabel: "face-centred cubic",
+        hostVisible: 14,
+        hostEffective: 4,
+        hostDescription: "All corner and face-centre atom images are shown as complete spheres.",
+        voids: {
+          octahedral: {
+            label: "octahedral",
+            visible: 13,
+            effective: 4,
+            perHost: 1,
+            coordinate: "(½, ½, ½)",
+            coordination: "6; regular octahedron",
+            ratio: "r/R = 0.414",
+            note: "The closed cube contains one body-centre marker and 12 shared edge-centre images. Together they represent four octahedral sites per conventional cell."
+          },
+          tetrahedral: {
+            label: "tetrahedral",
+            visible: 8,
+            effective: 8,
+            perHost: 2,
+            coordinate: "(¼, ¼, ¼)",
+            coordination: "4; regular tetrahedron",
+            ratio: "r/R = 0.225",
+            note: "All eight tetrahedral sites lie inside the closed FCC cell, so the visible and effective counts are both eight."
+          }
+        }
+      },
+      bcc: {
+        label: "BCC",
+        longLabel: "body-centred cubic",
+        hostVisible: 9,
+        hostEffective: 2,
+        hostDescription: "All eight corner atom images and the body-centre atom are shown as complete spheres.",
+        voids: {
+          octahedral: {
+            label: "octahedral",
+            visible: 18,
+            effective: 6,
+            perHost: 3,
+            coordinate: "(½, ½, 0)",
+            coordination: "6; distorted square bipyramid",
+            ratio: "r/R = 0.155",
+            note: "Six face-centre and 12 edge-centre images represent six effective BCC octahedral sites. The limiting probe touches two nearer hosts; four hosts are farther away."
+          },
+          tetrahedral: {
+            label: "tetrahedral",
+            visible: 24,
+            effective: 12,
+            perHost: 6,
+            coordinate: "(½, ¼, 0)",
+            coordination: "4; distorted tetrahedron",
+            ratio: "r/R = 0.291",
+            note: "The closed cube shows 24 face images. Each is shared by two cells, giving 12 effective BCC tetrahedral sites."
+          }
+        }
+      }
+    };
+
+    let THREE;
+    let OrbitControls;
+    let renderer;
+    let scene;
+    let camera;
+    let perspectiveCamera;
+    let orthographicCamera;
+    let controls;
+    let modelGroup;
+    let resizeObserver;
+    let modelBounds;
+    let viewportAspect = 1;
+
+    function coordinateKey(coordinate) {
+      return coordinate.map((value) => value.toFixed(8)).join(",");
+    }
+
+    function uniqueCoordinates(coordinates) {
+      const unique = new Map();
+      coordinates.forEach((coordinate) => unique.set(coordinateKey(coordinate), coordinate));
+      return [...unique.values()];
+    }
+
+    function cornerCoordinates() {
+      const coordinates = [];
+      [0, 1].forEach((x) => [0, 1].forEach((y) => [0, 1].forEach((z) => coordinates.push([x, y, z]))));
+      return coordinates;
+    }
+
+    function hostCoordinates(lattice) {
+      const coordinates = cornerCoordinates();
+      if (lattice === "bcc") {
+        coordinates.push([0.5, 0.5, 0.5]);
+        return coordinates;
+      }
+
+      for (let axis = 0; axis < 3; axis += 1) {
+        [0, 1].forEach((side) => {
+          const coordinate = [0.5, 0.5, 0.5];
+          coordinate[axis] = side;
+          coordinates.push(coordinate);
+        });
+      }
+      return coordinates;
+    }
+
+    function fccOctahedralCoordinates() {
+      const coordinates = [[0.5, 0.5, 0.5]];
+      for (let middleAxis = 0; middleAxis < 3; middleAxis += 1) {
+        const otherAxes = [0, 1, 2].filter((axis) => axis !== middleAxis);
+        [0, 1].forEach((firstSide) => [0, 1].forEach((secondSide) => {
+          const coordinate = [0, 0, 0];
+          coordinate[middleAxis] = 0.5;
+          coordinate[otherAxes[0]] = firstSide;
+          coordinate[otherAxes[1]] = secondSide;
+          coordinates.push(coordinate);
+        }));
+      }
+      return uniqueCoordinates(coordinates);
+    }
+
+    function fccTetrahedralCoordinates() {
+      const coordinates = [];
+      [0.25, 0.75].forEach((x) => [0.25, 0.75].forEach((y) => [0.25, 0.75].forEach((z) => coordinates.push([x, y, z]))));
+      return coordinates;
+    }
+
+    function bccOctahedralCoordinates() {
+      const coordinates = [];
+      for (let boundaryAxis = 0; boundaryAxis < 3; boundaryAxis += 1) {
+        [0, 1].forEach((side) => {
+          const face = [0.5, 0.5, 0.5];
+          face[boundaryAxis] = side;
+          coordinates.push(face);
+        });
+      }
+      for (let middleAxis = 0; middleAxis < 3; middleAxis += 1) {
+        const otherAxes = [0, 1, 2].filter((axis) => axis !== middleAxis);
+        [0, 1].forEach((firstSide) => [0, 1].forEach((secondSide) => {
+          const edge = [0, 0, 0];
+          edge[middleAxis] = 0.5;
+          edge[otherAxes[0]] = firstSide;
+          edge[otherAxes[1]] = secondSide;
+          coordinates.push(edge);
+        }));
+      }
+      return uniqueCoordinates(coordinates);
+    }
+
+    function bccTetrahedralCoordinates() {
+      const coordinates = [];
+      for (let boundaryAxis = 0; boundaryAxis < 3; boundaryAxis += 1) {
+        [0, 1].forEach((side) => {
+          const remainingAxes = [0, 1, 2].filter((axis) => axis !== boundaryAxis);
+          remainingAxes.forEach((halfAxis) => {
+            const quarterAxis = remainingAxes.find((axis) => axis !== halfAxis);
+            [0.25, 0.75].forEach((quarter) => {
+              const coordinate = [0, 0, 0];
+              coordinate[boundaryAxis] = side;
+              coordinate[halfAxis] = 0.5;
+              coordinate[quarterAxis] = quarter;
+              coordinates.push(coordinate);
+            });
+          });
+        });
+      }
+      return uniqueCoordinates(coordinates);
+    }
+
+    function voidCoordinates(lattice, mode) {
+      if (mode === "host") return [];
+      if (lattice === "fcc" && mode === "octahedral") return fccOctahedralCoordinates();
+      if (lattice === "fcc" && mode === "tetrahedral") return fccTetrahedralCoordinates();
+      if (lattice === "bcc" && mode === "octahedral") return bccOctahedralCoordinates();
+      return bccTetrahedralCoordinates();
+    }
+
+    function representativeCoordinate(lattice, mode) {
+      if (lattice === "fcc" && mode === "octahedral") return [0.5, 0.5, 0.5];
+      if (lattice === "fcc" && mode === "tetrahedral") return [0.25, 0.25, 0.25];
+      if (lattice === "bcc" && mode === "octahedral") return [0.5, 0.5, 0];
+      return [0.5, 0.25, 0];
+    }
+
+    function cageDefinition(lattice, mode) {
+      if (lattice === "fcc" && mode === "octahedral") {
+        return {
+          vertices: [
+            [0.5, 0.5, 0], [0.5, 0.5, 1],
+            [0, 0.5, 0.5], [0.5, 0, 0.5], [1, 0.5, 0.5], [0.5, 1, 0.5]
+          ],
+          faces: bipyramidFaces(),
+          edges: bipyramidEdges()
+        };
+      }
+      if (lattice === "fcc" && mode === "tetrahedral") {
+        return {
+          vertices: [[0, 0, 0], [0, 0.5, 0.5], [0.5, 0, 0.5], [0.5, 0.5, 0]],
+          faces: tetrahedronFaces(),
+          edges: tetrahedronEdges()
+        };
+      }
+      if (lattice === "bcc" && mode === "octahedral") {
+        return {
+          vertices: [
+            [0.5, 0.5, -0.5], [0.5, 0.5, 0.5],
+            [0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]
+          ],
+          faces: bipyramidFaces(),
+          edges: bipyramidEdges()
+        };
+      }
+      return {
+        vertices: [[0, 0, 0], [1, 0, 0], [0.5, 0.5, -0.5], [0.5, 0.5, 0.5]],
+        faces: tetrahedronFaces(),
+        edges: tetrahedronEdges()
+      };
+    }
+
+    function tetrahedronFaces() {
+      return [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]];
+    }
+
+    function tetrahedronEdges() {
+      return [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]];
+    }
+
+    function bipyramidFaces() {
+      const faces = [];
+      for (let index = 0; index < 4; index += 1) {
+        const first = 2 + index;
+        const second = 2 + ((index + 1) % 4);
+        faces.push([0, first, second], [1, second, first]);
+      }
+      return faces;
+    }
+
+    function bipyramidEdges() {
+      const edges = [];
+      for (let index = 0; index < 4; index += 1) {
+        const first = 2 + index;
+        const second = 2 + ((index + 1) % 4);
+        edges.push([first, second], [0, first], [1, first]);
+      }
+      return edges;
+    }
+
+    function assertGeometryCounts() {
+      const checks = [
+        [hostCoordinates("fcc").length, 14, "FCC host images"],
+        [hostCoordinates("bcc").length, 9, "BCC host images"],
+        [fccOctahedralCoordinates().length, 13, "FCC octahedral images"],
+        [fccTetrahedralCoordinates().length, 8, "FCC tetrahedral images"],
+        [bccOctahedralCoordinates().length, 18, "BCC octahedral images"],
+        [bccTetrahedralCoordinates().length, 24, "BCC tetrahedral images"]
+      ];
+      checks.forEach(([actual, expected, label]) => {
+        if (actual !== expected) throw new Error(`${label}: expected ${expected}, generated ${actual}.`);
+      });
+
+      const cageChecks = [
+        [cageDefinition("fcc", "octahedral"), 6, 12, 8, "FCC octahedral cage"],
+        [cageDefinition("fcc", "tetrahedral"), 4, 6, 4, "FCC tetrahedral cage"],
+        [cageDefinition("bcc", "octahedral"), 6, 12, 8, "BCC octahedral cage"],
+        [cageDefinition("bcc", "tetrahedral"), 4, 6, 4, "BCC tetrahedral cage"]
+      ];
+      cageChecks.forEach(([cage, expectedVertices, expectedEdges, expectedFaces, label]) => {
+        if (cage.vertices.length !== expectedVertices || cage.edges.length !== expectedEdges || cage.faces.length !== expectedFaces) {
+          throw new Error(`${label}: invalid V/E/F topology.`);
+        }
+      });
+      const bccOctahedron = cageDefinition("bcc", "octahedral");
+      const forbiddenEdges = new Set(["0,1", "2,4", "3,5"]);
+      if (bccOctahedron.edges.some(([first, second]) => forbiddenEdges.has([first, second].sort((a, b) => a - b).join(",")))) {
+        throw new Error("BCC octahedral cage includes a pole-to-pole or equatorial-diagonal edge.");
+      }
+    }
+
+    function updatePressedStates() {
+      elements.latticeButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.lattice === state.lattice));
+      });
+      elements.voidButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.voidMode === state.mode));
+      });
+      elements.projectionButtons.forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.projection === state.projection));
+      });
+    }
+
+    function updateRendererControlState() {
+      elements.projectionButtons.forEach((button) => {
+        button.disabled = !state.rendererReady;
+      });
+      elements.resetView.disabled = !state.rendererReady;
+      elements.polyhedron.disabled = !state.rendererReady || state.mode === "host";
+      if (state.mode === "host") {
+        state.showPolyhedron = false;
+        elements.polyhedron.checked = false;
+      }
+    }
+
+    function updateText(announce = false) {
+      const lattice = latticeFacts[state.lattice];
+      const voidFacts = state.mode === "host" ? null : lattice.voids[state.mode];
+      updatePressedStates();
+      updateRendererControlState();
+
+      elements.factHost.textContent = `${lattice.hostVisible} visible images → ${lattice.hostEffective} effective atoms`;
+      elements.modelBadge.textContent = `${lattice.hostEffective} effective atoms`;
+
+      if (!voidFacts) {
+        elements.modelKind.textContent = "Complete conventional cell";
+        elements.modelTitle.textContent = `${lattice.label} host atoms`;
+        elements.modelSubtitle.textContent = lattice.hostDescription;
+        elements.factVoid.textContent = "Not shown";
+        elements.factSitesPerHost.textContent = "—";
+        elements.factCoordinate.textContent = "—";
+        elements.factCoordination.textContent = "—";
+        elements.factRatio.textContent = "—";
+        elements.factsNote.textContent = "Boundary atoms are shared with neighbouring cells. They are displayed as whole spheres, while the effective count uses the usual corner and face sharing fractions.";
+      } else {
+        elements.modelKind.textContent = `${voidFacts.label} interstitial sites`;
+        elements.modelTitle.textContent = `${lattice.label}: all ${voidFacts.label} voids`;
+        elements.modelSubtitle.textContent = `${voidFacts.visible} visible marker images are shown in the closed conventional cube.`;
+        elements.factVoid.textContent = `${voidFacts.visible} visible markers → ${voidFacts.effective} effective sites`;
+        elements.factSitesPerHost.textContent = String(voidFacts.perHost);
+        elements.factCoordinate.textContent = voidFacts.coordinate;
+        elements.factCoordination.textContent = voidFacts.coordination;
+        elements.factRatio.textContent = voidFacts.ratio;
+        elements.factsNote.textContent = voidFacts.note;
+      }
+
+      const projectionDescription = state.projection === "orthographic" ? "Orthographic projection." : "Perspective projection.";
+      const canvasDescription = voidFacts
+        ? `${lattice.label} conventional cell with ${lattice.hostVisible} host-atom images and all ${voidFacts.visible} visible ${voidFacts.label} void-marker images. ${voidFacts.effective} effective sites per cell. ${state.showPolyhedron ? `One ${voidFacts.coordination} coordination cage is shown with translucent faces.` : "The coordination cage is hidden."}`
+        : `${lattice.label} conventional cell with all ${lattice.hostVisible} host-atom images shown and no interstitial markers.`;
+      elements.canvas.setAttribute("aria-label", `${canvasDescription} ${projectionDescription}`);
+
+      if (announce) {
+        elements.status.textContent = voidFacts
+          ? `${lattice.label} ${voidFacts.label} view: ${voidFacts.visible} visible markers represent ${voidFacts.effective} effective sites.${state.showPolyhedron ? " One coordination polyhedron is shown." : ""}`
+          : `${lattice.label} host-only view selected.`;
+      }
+    }
+
+    function fractionalToScene(coordinate) {
+      return new THREE.Vector3(
+        (coordinate[0] - 0.5) * CELL_SIZE,
+        (coordinate[1] - 0.5) * CELL_SIZE,
+        (coordinate[2] - 0.5) * CELL_SIZE
+      );
+    }
+
+    function makeCellFrame() {
+      const corners = cornerCoordinates().map(fractionalToScene);
+      const cornerIndex = (x, y, z) => x * 4 + y * 2 + z;
+      const segments = [];
+      for (let axis = 0; axis < 3; axis += 1) {
+        [0, 1].forEach((first) => [0, 1].forEach((second) => {
+          const start = [0, 0, 0];
+          const end = [0, 0, 0];
+          const otherAxes = [0, 1, 2].filter((value) => value !== axis);
+          start[otherAxes[0]] = first;
+          start[otherAxes[1]] = second;
+          end[otherAxes[0]] = first;
+          end[otherAxes[1]] = second;
+          end[axis] = 1;
+          segments.push([corners[cornerIndex(...start)], corners[cornerIndex(...end)]]);
+        }));
+      }
+      const positions = [];
+      segments.forEach(([start, end]) => positions.push(...start.toArray(), ...end.toArray()));
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      const material = new THREE.LineBasicMaterial({ color: 0xe9f4ff, transparent: true, opacity: 0.78 });
+      return new THREE.LineSegments(geometry, material);
+    }
+
+    function addSphere(group, coordinate, radius, material, geometry) {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.copy(fractionalToScene(coordinate));
+      mesh.scale.setScalar(radius);
+      group.add(mesh);
+      return mesh;
+    }
+
+    function isOutsideCell(coordinate) {
+      return coordinate.some((value) => value < -EPSILON || value > 1 + EPSILON);
+    }
+
+    function buildCage(group, definition, sphereGeometry) {
+      const vertices = definition.vertices.map(fractionalToScene);
+      const facePositions = [];
+      definition.faces.forEach((face) => {
+        face.forEach((index) => facePositions.push(...vertices[index].toArray()));
+      });
+      const faceGeometry = new THREE.BufferGeometry();
+      faceGeometry.setAttribute("position", new THREE.Float32BufferAttribute(facePositions, 3));
+      faceGeometry.computeVertexNormals();
+      const faceMaterial = new THREE.MeshBasicMaterial({
+        color: 0x64f1d0,
+        transparent: true,
+        opacity: 0.17,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      group.add(new THREE.Mesh(faceGeometry, faceMaterial));
+
+      const edgePositions = [];
+      definition.edges.forEach(([startIndex, endIndex]) => {
+        edgePositions.push(...vertices[startIndex].toArray(), ...vertices[endIndex].toArray());
+      });
+      const edgeGeometry = new THREE.BufferGeometry();
+      edgeGeometry.setAttribute("position", new THREE.Float32BufferAttribute(edgePositions, 3));
+      const edgeMaterial = new THREE.LineBasicMaterial({ color: 0xbaffef, transparent: true, opacity: 0.95 });
+      group.add(new THREE.LineSegments(edgeGeometry, edgeMaterial));
+
+      const ghostMaterial = new THREE.MeshStandardMaterial({ color: 0x75c9f5, transparent: true, opacity: 0.28, depthWrite: false, roughness: 0.3 });
+      definition.vertices.forEach((coordinate) => {
+        if (isOutsideCell(coordinate)) {
+          addSphere(group, coordinate, 0.31, ghostMaterial, sphereGeometry);
+        }
+      });
+    }
+
+    function buildModel() {
+      if (!state.rendererReady) return;
+      if (modelGroup) {
+        disposeObject(modelGroup);
+        scene.remove(modelGroup);
+      }
+
+      modelGroup = new THREE.Group();
+      scene.add(modelGroup);
+      modelGroup.add(makeCellFrame());
+
+      const hostGeometry = new THREE.SphereGeometry(1, 34, 24);
+      const voidGeometry = new THREE.SphereGeometry(1, 28, 20);
+      const haloGeometry = new THREE.SphereGeometry(1, 12, 8);
+      const hostMaterial = new THREE.MeshStandardMaterial({ color: 0x75c9f5, roughness: 0.24, metalness: 0.06 });
+      const voidMaterial = new THREE.MeshStandardMaterial({ color: 0xffd23f, roughness: 0.32, metalness: 0.02 });
+      const selectedMaterial = new THREE.MeshStandardMaterial({ color: 0xf06445, roughness: 0.25, metalness: 0.02 });
+      const selectedHaloMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.9 });
+
+      hostCoordinates(state.lattice).forEach((coordinate) => {
+        addSphere(modelGroup, coordinate, 0.34, hostMaterial, hostGeometry);
+      });
+
+      if (state.mode !== "host") {
+        const selected = representativeCoordinate(state.lattice, state.mode);
+        voidCoordinates(state.lattice, state.mode).forEach((coordinate) => {
+          const isSelected = coordinateKey(coordinate) === coordinateKey(selected);
+          addSphere(modelGroup, coordinate, isSelected ? 0.19 : 0.135, isSelected ? selectedMaterial : voidMaterial, voidGeometry);
+          if (isSelected) {
+            addSphere(modelGroup, coordinate, 0.255, selectedHaloMaterial, haloGeometry);
+          }
+        });
+        if (state.showPolyhedron) {
+          buildCage(modelGroup, cageDefinition(state.lattice, state.mode), hostGeometry);
+        }
+      }
+
+      fitModel(new THREE.Vector3(1.2, 1.0, 1.3));
+      render();
+    }
+
+    function disposeObject(root) {
+      const geometries = new Set();
+      const materials = new Set();
+      root.traverse((object) => {
+        if (object.geometry) geometries.add(object.geometry);
+        if (object.material) {
+          (Array.isArray(object.material) ? object.material : [object.material]).forEach((material) => materials.add(material));
+        }
+      });
+      geometries.forEach((geometry) => geometry.dispose());
+      materials.forEach((material) => material.dispose());
+    }
+
+    function fitModel(direction) {
+      if (!modelGroup) return;
+      const box = new THREE.Box3().setFromObject(modelGroup);
+      const sphere = box.getBoundingSphere(new THREE.Sphere());
+      modelBounds = { center: sphere.center.clone(), radius: Math.max(sphere.radius, 1) };
+      setCameraDirection(direction, true);
+    }
+
+    function setCameraDirection(direction, fit = false) {
+      if (!state.rendererReady || !modelBounds) return;
+      const normalizedDirection = direction.clone().normalize();
+      let fitDistance;
+
+      camera.up.set(0, 1, 0);
+      if (camera.isPerspectiveCamera) {
+        const verticalTangent = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+        const limitingTangent = Math.max(0.12, Math.min(verticalTangent, verticalTangent * viewportAspect));
+        fitDistance = (modelBounds.radius / limitingTangent) * 1.22;
+        if (fit) camera.zoom = 1;
+      } else {
+        fitDistance = modelBounds.radius * 4;
+        if (fit) {
+          const fitHalfHeight = (modelBounds.radius * 1.22) / Math.max(0.12, Math.min(1, viewportAspect));
+          camera.left = -fitHalfHeight * viewportAspect;
+          camera.right = fitHalfHeight * viewportAspect;
+          camera.top = fitHalfHeight;
+          camera.bottom = -fitHalfHeight;
+          camera.zoom = 1;
+        }
+      }
+
+      const currentDistance = camera.position.distanceTo(controls.target);
+      const distance = fit ? fitDistance : Math.max(fitDistance * 0.7, currentDistance);
+      controls.target.copy(modelBounds.center);
+      camera.position.copy(modelBounds.center).add(normalizedDirection.multiplyScalar(distance));
+      camera.near = Math.max(0.02, distance - modelBounds.radius * 2.2);
+      camera.far = distance + modelBounds.radius * 4.5;
+      camera.updateProjectionMatrix();
+      controls.update();
+      render();
+    }
+
+    function createOrbitControls(target = null) {
+      if (controls) controls.dispose();
+      controls = new OrbitControls(camera, elements.canvas);
+      controls.enablePan = false;
+      controls.enableZoom = true;
+      controls.enableDamping = false;
+      controls.minDistance = 4;
+      controls.maxDistance = 32;
+      controls.minZoom = 0.4;
+      controls.maxZoom = 4;
+      if (target) controls.target.copy(target);
+      controls.addEventListener("change", render);
+    }
+
+    function selectProjection(projection) {
+      if (!state.rendererReady || projection === state.projection) return;
+      const previousTarget = controls.target.clone();
+      const previousDirection = camera.position.clone().sub(previousTarget);
+      const direction = previousDirection.lengthSq() > EPSILON
+        ? previousDirection.normalize()
+        : new THREE.Vector3(1.2, 1.0, 1.3).normalize();
+
+      state.projection = projection;
+      camera = projection === "orthographic" ? orthographicCamera : perspectiveCamera;
+      createOrbitControls(previousTarget);
+      if (modelBounds) setCameraDirection(direction, true);
+      updateText(false);
+      elements.status.textContent = `${projection === "orthographic" ? "Orthographic" : "Perspective"} projection selected.`;
+    }
+
+    function resizeRenderer() {
+      if (!state.rendererReady) return;
+      const width = Math.max(1, Math.round(elements.frame.clientWidth));
+      const height = Math.max(1, Math.round(elements.frame.clientHeight));
+      renderer.setSize(width, height, false);
+      viewportAspect = width / height;
+      perspectiveCamera.aspect = viewportAspect;
+      perspectiveCamera.updateProjectionMatrix();
+      const orthographicHalfHeight = Math.max(0.001, (orthographicCamera.top - orthographicCamera.bottom) / 2);
+      orthographicCamera.left = -orthographicHalfHeight * viewportAspect;
+      orthographicCamera.right = orthographicHalfHeight * viewportAspect;
+      orthographicCamera.updateProjectionMatrix();
+      render();
+    }
+
+    function render() {
+      if (state.rendererReady) renderer.render(scene, camera);
+    }
+
+    function setRendererControls(enabled) {
+      state.rendererReady = enabled;
+      updateRendererControlState();
+    }
+
+    function showFailure(message) {
+      setRendererControls(false);
+      elements.canvas.setAttribute("aria-hidden", "true");
+      elements.canvas.removeAttribute("role");
+      elements.fallback.hidden = false;
+      elements.fallback.classList.add("is-error");
+      elements.fallbackHeading.textContent = "The 3D view is unavailable.";
+      elements.fallbackCopy.textContent = "You can still switch between FCC and BCC and inspect every exact count in the facts panel.";
+      elements.status.textContent = message;
+    }
+
+    async function initialiseRenderer() {
+      try {
+        THREE = await import("three");
+        ({ OrbitControls } = await import("three/addons/controls/OrbitControls.js"));
+        scene = new THREE.Scene();
+        perspectiveCamera = new THREE.PerspectiveCamera(38, 1, 0.02, 100);
+        orthographicCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.02, 100);
+        camera = perspectiveCamera;
+        renderer = new THREE.WebGLRenderer({ canvas: elements.canvas, antialias: true, alpha: true, powerPreference: "low-power" });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.05;
+
+        const hemisphere = new THREE.HemisphereLight(0xe8f6ff, 0x10213a, 2.1);
+        const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+        keyLight.position.set(7, 10, 8);
+        const fillLight = new THREE.DirectionalLight(0xffd9c9, 1.1);
+        fillLight.position.set(-7, -2, 5);
+        scene.add(hemisphere, keyLight, fillLight);
+
+        createOrbitControls();
+
+        elements.canvas.addEventListener("webglcontextlost", (event) => {
+          event.preventDefault();
+          showFailure("The WebGL context was lost. Reload the page to restore the three-dimensional model.");
+        });
+
+        setRendererControls(true);
+        elements.canvas.setAttribute("role", "img");
+        elements.canvas.setAttribute("aria-hidden", "false");
+        elements.fallback.hidden = true;
+        elements.fallback.classList.remove("is-error");
+
+        resizeObserver = new ResizeObserver(resizeRenderer);
+        resizeObserver.observe(elements.frame);
+        resizeRenderer();
+        buildModel();
+        updateText(false);
+        elements.status.textContent = "FCC host-only view ready. Choose a void type to reveal every site marker.";
+      } catch (error) {
+        console.error(error);
+        showFailure("The 3D library or WebGL could not be initialized. The scientific counts remain available.");
+      }
+    }
+
+    elements.latticeButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.lattice = button.dataset.lattice;
+        updateText(true);
+        buildModel();
+      });
+    });
+
+    elements.voidButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        state.mode = button.dataset.voidMode;
+        updateText(true);
+        buildModel();
+      });
+    });
+
+    elements.polyhedron.addEventListener("change", () => {
+      state.showPolyhedron = elements.polyhedron.checked;
+      updateText(true);
+      buildModel();
+    });
+
+    elements.projectionButtons.forEach((button) => {
+      button.addEventListener("click", () => selectProjection(button.dataset.projection));
+    });
+    elements.resetView.addEventListener("click", () => {
+      setCameraDirection(new THREE.Vector3(1.2, 1.0, 1.3), true);
+      elements.status.textContent = "View reset to the default angle and scale.";
+    });
+
+    assertGeometryCounts();
+    updateText(false);
+    initialiseRenderer();
+  </script>
+</body>
+</html>
