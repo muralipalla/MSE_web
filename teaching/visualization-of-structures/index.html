@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An interactive Three.js atlas of representative metallic, ceramic, carbon-nanostructure, layered, clay, and polymer structures for materials-science teaching.">
+  <meta name="description" content="An interactive Three.js atlas of representative material structures, including layer-by-layer HCP and FCC close packing.">
   <meta name="theme-color" content="#fdf6ec">
   <title>Visualization of Structures | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="close-packing.css?v=1">
   <script src="../../js/main.js" defer></script>
   <script type="importmap">
     {
@@ -18,6 +19,7 @@
     }
   </script>
   <script type="module" src="app.js?v=10"></script>
+  <script type="module" src="close-packing.js?v=1"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to lesson</a>
@@ -43,7 +45,8 @@
           A chemical formula tells us which atoms are present. A structure tells us
           where they sit, which neighbours surround them, and how the pattern repeats.
           Explore representative structures from metals, ceramics, carbon nanostructures,
-          layered solids, clays, and polymers in one interactive atlas.
+          layered solids, clays, and polymers, then build HCP and FCC one close-packed
+          layer at a time.
         </p>
         <p class="structures-scope-note">
           This is an expandable teaching atlas, not an exhaustive catalogue of every
@@ -186,6 +189,149 @@
       </aside>
     </section>
 
+    <div class="packing-module" id="close-packing">
+    <section class="packing-principle" aria-labelledby="packing-principle-title">
+      <div class="packing-section-heading">
+        <p class="section-kicker">Close packing inside the structure atlas</p>
+        <h2 id="packing-principle-title">Build A, B, and C layer registries one plane at a time</h2>
+        <p>
+          Every layer is the same triangular array of touching spheres. A, B, and C
+          identify lateral registry positions&mdash;not different chemical species. After
+          AB, returning to A produces HCP, while choosing C produces cubic close packing,
+          equivalent to monatomic FCC.
+        </p>
+      </div>
+      <div class="packing-registry-key" aria-label="Layer registry colour key">
+        <span><i class="registry-a" aria-hidden="true"></i><strong>A</strong> reference registry</span>
+        <span><i class="registry-b" aria-hidden="true"></i><strong>B</strong> first hollow set</span>
+        <span><i class="registry-c" aria-hidden="true"></i><strong>C</strong> alternate hollow set</span>
+      </div>
+    </section>
+
+    <section class="packing-lab" aria-labelledby="packing-lab-title">
+      <div class="packing-section-heading">
+        <p class="section-kicker">Layer-by-layer laboratory</p>
+        <h2 id="packing-lab-title">Compare spheres with their atomic-centre lattice</h2>
+      </div>
+
+      <div class="packing-explorer">
+        <aside class="packing-controls" aria-label="Close-packing controls">
+          <fieldset>
+            <legend>Stacking sequence</legend>
+            <div class="packing-button-grid packing-structure-buttons">
+              <button type="button" data-packing-structure="hcp" aria-pressed="true">HCP <span>ABAB&hellip;</span></button>
+              <button type="button" data-packing-structure="fcc" aria-pressed="false">FCC/CCP <span>ABCABC&hellip;</span></button>
+            </div>
+          </fieldset>
+
+          <label class="packing-range-label" for="packing-layers">
+            <span>Layers shown</span>
+            <output id="packing-layers-output" for="packing-layers">1 layer &middot; A</output>
+          </label>
+          <input id="packing-layers" type="range" min="1" max="12" step="1" value="1" aria-valuetext="1 layer, sequence A">
+
+          <fieldset>
+            <legend>Show layer registry</legend>
+            <div class="packing-button-grid packing-focus-buttons">
+              <button type="button" data-layer-focus="all" aria-pressed="true">All</button>
+              <button type="button" data-layer-focus="a" aria-pressed="false">A</button>
+              <button type="button" data-layer-focus="b" aria-pressed="false" disabled>B</button>
+              <button type="button" data-layer-focus="c" aria-pressed="false" disabled aria-describedby="packing-c-note">C</button>
+            </div>
+            <small id="packing-c-note">Only registries present in the current stack can be isolated. C occurs only in FCC/CCP.</small>
+          </fieldset>
+
+          <fieldset>
+            <legend>Representation</legend>
+            <div class="packing-button-grid packing-representation-buttons">
+              <button type="button" data-packing-representation="balls" aria-pressed="true" disabled>Balls</button>
+              <button type="button" data-packing-representation="lattice" aria-pressed="false" disabled>Lattice</button>
+            </div>
+            <small>Here, Lattice means the centre-to-centre nearest-neighbour network; it is not the Bravais lattice.</small>
+          </fieldset>
+
+          <fieldset class="packing-display-controls">
+            <legend>Display</legend>
+            <label><input id="packing-show-cell" type="checkbox" checked disabled> Unit-cell overlay</label>
+            <label><input id="packing-show-plane" type="checkbox" checked disabled> Close-packed plane</label>
+            <label><input id="packing-orthographic" type="checkbox" disabled> Orthographic projection</label>
+            <small>Use All registries. A complete HCP cell needs 3 layers; the FCC cube needs 4.</small>
+          </fieldset>
+
+          <button class="packing-reset" id="packing-reset" type="button" disabled>Reset view</button>
+        </aside>
+
+        <div class="packing-viewer">
+          <div class="packing-viewer-heading">
+            <div>
+              <p class="packing-panel-kicker" id="packing-kind">Hexagonal close-packed</p>
+              <h3 id="packing-model-title">A layer</h3>
+            </div>
+            <span id="packing-layer-count">1 layer</span>
+          </div>
+
+          <div class="packing-sequence" id="packing-sequence" aria-label="Layer sequence A">
+            <span class="is-a"><b>A</b><small>1</small></span>
+          </div>
+
+          <div class="packing-viewer-frame" id="packing-viewer-frame" role="group" aria-labelledby="packing-model-title">
+            <canvas id="packing-canvas" aria-hidden="true"></canvas>
+            <div class="packing-fallback" id="packing-fallback" role="status">
+              <svg viewBox="0 0 420 320" role="img" aria-labelledby="packing-fallback-title packing-fallback-desc">
+                <title id="packing-fallback-title">Close-packed layer schematic</title>
+                <desc id="packing-fallback-desc">One triangular close-packed layer labelled A.</desc>
+                <g fill="none" stroke="currentColor" stroke-width="2" opacity="0.25">
+                  <path d="M62 238 207 276 354 238 207 200Z"/>
+                </g>
+                <g font-family="system-ui" font-size="25" font-weight="800" text-anchor="middle">
+                  <text x="42" y="245" fill="#c93b1f">A</text>
+                </g>
+              </svg>
+              <p>Preparing the interactive close-packing model.</p>
+            </div>
+          </div>
+          <p class="packing-viewer-help">Layer changes look normal to the stacking planes. Drag to orbit; Reset returns to this view.</p>
+        </div>
+
+        <aside class="packing-facts" aria-labelledby="packing-facts-title">
+          <p class="packing-panel-kicker">Structure connection</p>
+          <h3 id="packing-facts-title">HCP from ABAB stacking</h3>
+          <dl>
+            <div><dt>Sequence</dt><dd id="packing-fact-sequence">A</dd></div>
+            <div><dt>Close-packed plane</dt><dd id="packing-fact-plane">Basal plane (0001)</dd></div>
+            <div><dt>Cell overlay</dt><dd id="packing-fact-cell">Hexagonal-prism representation (needs 3 layers)</dd></div>
+            <div><dt>Ideal coordination</dt><dd id="packing-fact-coordination">12 nearest neighbours</dd></div>
+            <div><dt>Atomic packing factor</dt><dd id="packing-fact-apf">0.740</dd></div>
+          </dl>
+          <p class="packing-fact-note" id="packing-fact-note">
+            The ideal HCP ratio is c/a = &radic;(8/3) &asymp; 1.633. The familiar prism spans three primitive cells; HCP itself uses a two-atom basis.
+          </p>
+          <p class="packing-status" id="packing-status" role="status" aria-live="polite">Preparing the close-packing model.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="packing-compare" aria-labelledby="packing-compare-title">
+      <div class="packing-section-heading">
+        <p class="section-kicker">Same local packing, different long-range order</p>
+        <h2 id="packing-compare-title">HCP and FCC share their local packing efficiency</h2>
+      </div>
+      <div class="packing-compare-grid">
+        <article>
+          <span class="packing-sequence-mark">ABAB</span>
+          <h3>Hexagonal close-packed</h3>
+          <p>The third layer returns above A. Its basal close-packed planes belong to the {0001} family.</p>
+        </article>
+        <article>
+          <span class="packing-sequence-mark">ABCABC</span>
+          <h3>Face-centred cubic</h3>
+          <p>The third layer uses C and the fourth returns to A. These close-packed layers are the {111} planes of FCC.</p>
+        </article>
+      </div>
+      <p class="packing-shared-fact"><strong>Both ideal bulk structures:</strong> coordination number 12 and APF = &pi;/(3&radic;2) &asymp; 0.740.</p>
+    </section>
+    </div>
+
     <section class="structures-misconceptions" aria-labelledby="misconceptions-title">
       <div class="structures-section-heading">
         <p class="section-kicker">Structure is more than shape</p>
@@ -273,6 +419,7 @@
         <li><a href="https://goldbook.iupac.org/terms/view/08172" target="_blank" rel="noopener">IUPAC definition of graphene</a>, <a href="https://doi.org/10.1038/354056a0" target="_blank" rel="noopener">Iijima's carbon-nanotube report</a>, and <a href="https://doi.org/10.1038/318162a0" target="_blank" rel="noopener">Kroto and co-workers' C₆₀ report</a> for the nanocarbon models.</li>
         <li><a href="https://pubs.usgs.gov/of/2001/of01-041/htmldocs/clays/kaogr.htm" target="_blank" rel="noopener">USGS clay-mineral description</a> for the kaolinite 1:1 layer concept.</li>
         <li><a href="https://iupac.org/wp-content/uploads/2022/09/Brief-Guide-to-Polymerization-Terminology-web20220815.pdf" target="_blank" rel="noopener">IUPAC polymer terminology guide</a> for the distinction between conformation and architecture.</li>
+        <li><a href="https://www.iucr.org/education/pamphlets/5/full-text" target="_blank" rel="noopener">IUCr close-packed structures teaching pamphlet</a> for A/B/C registries and the ABAB/ABCABC stacking relationship.</li>
       </ul>
     </section>
 
@@ -285,6 +432,7 @@
         <a href="../../visualizations/lattice-structure/index.html">Build a 2D lattice</a>
         <a href="../../visualizations/fcc-bct-cell/index.html">Compare FCC and BCT cells</a>
         <a href="../../visualizations/miller-indices/index.html">Plot Miller indices</a>
+        <a href="#close-packing">Build close-packed layers</a>
         <a href="../crystal-defects/index.html#dislocations">Inspect dislocations</a>
       </div>
     </section>
