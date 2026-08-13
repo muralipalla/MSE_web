@@ -28,6 +28,7 @@ Current teaching pages are:
 Current quiz pages are:
 
     quizzes/atomic-bonding/index.html
+    quizzes/miller-indices/index.html
 
 ## Add a teaching page
 

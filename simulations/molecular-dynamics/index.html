@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Molecular Dynamics Lab | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <script src="../../js/main.js" defer></script>
-  <script src="app.js?v=3" defer></script>
+  <script src="app.js?v=4" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#md-lab">Skip to molecular-dynamics lab</a>
@@ -83,7 +83,7 @@
           <label class="slider-field" for="density-slider">
             <span><b>LJ number density, &rho;*</b><output id="density-target" for="density-slider">0.93</output></span>
             <input id="density-slider" type="range" min="0.80" max="1.00" step="0.01" value="0.93">
-            <small>&rho;* = N&sigma;&sup2;/A. The 0.93 default supports a compact low-temperature solid; 0.80 can develop tensile voids. Changing density rebuilds the box and positions.</small>
+            <small>&rho;* = N&sigma;&sup2;/A. The 0.93 default supports a compact low-temperature solid; 0.80 can develop tensile voids. Changing density rebuilds the box and positions. With free surfaces, this is the initial placement density rather than a lasting confinement.</small>
           </label>
 
           <dl class="model-facts">
@@ -129,7 +129,7 @@
           <div class="speed-key" aria-label="Atom colour indicates speed">
             <span>Slower</span><i aria-hidden="true"></i><span>Faster</span>
           </div>
-          <p class="chart-note" id="boundary-note">Each atom centre is drawn once; a marker may straddle one boundary but is never duplicated at the opposite boundary.</p>
+          <p class="chart-note" id="boundary-note">Periodic: opposite edges join. Each atom centre is drawn once and is not duplicated at the opposite edge.</p>
         </div>
 
         <div class="runtime-controls">
@@ -145,13 +145,18 @@
           <label class="slider-field temperature-field" for="temperature-slider">
             <span><b>Initial kinetic temperature, T*</b><output id="temperature-target" for="temperature-slider">0.75</output></span>
             <input id="temperature-slider" type="range" min="0.10" max="2.00" step="0.05" value="0.75">
-            <small>The thermostat holds this target during preparation; after it switches off, the NVE temperature fluctuates freely.</small>
+            <small id="temperature-guidance">The thermostat holds this target during preparation; after it switches off, the NVE temperature fluctuates freely.</small>
           </label>
 
-          <label class="pbc-control" for="pbc-toggle">
-            <input id="pbc-toggle" type="checkbox" checked>
-            <span><b>Periodic boundary conditions (PBC)</b><small>Turn off to use reflecting walls.</small></span>
-          </label>
+          <fieldset class="choice-fieldset boundary-fieldset">
+            <legend>Boundary conditions</legend>
+            <div class="choice-buttons boundary-buttons" aria-label="Boundary mode">
+              <button class="choice-button is-selected" type="button" data-boundary-mode="periodic" aria-pressed="true">Periodic</button>
+              <button class="choice-button" type="button" data-boundary-mode="rigid" aria-pressed="false">Rigid walls</button>
+              <button class="choice-button" type="button" data-boundary-mode="free" aria-pressed="false">Free surfaces</button>
+            </div>
+            <small>Free surfaces add no wrapping or wall force. A cohesive liquid can round under line tension&mdash;the 2D analogue of surface tension&mdash;while sufficiently hot atoms may evaporate.</small>
+          </fieldset>
 
           <div class="velocity-action">
             <button class="button primary" id="initialize-velocities" type="button">Initialize random velocities</button>
@@ -234,26 +239,27 @@
       <div class="code-grid">
         <article class="code-example" aria-labelledby="python-code-title">
           <div class="code-heading"><span aria-hidden="true">PY</span><h3 id="python-code-title">Python</h3></div>
-          <pre><code>def velocity_verlet(r, v, f, dt, box):
+          <pre><code>def velocity_verlet(r, v, f, dt, box, boundary):
     v += 0.5 * dt * f       # half kick, m = 1
     r += dt * v             # drift
-    r %= box                # periodic wrap
-    f, potential = forces(r, box)
+    r, v = apply_boundary(r, v, box, boundary)
+    f, potential = forces(r, box, boundary)
     v += 0.5 * dt * f       # second half kick
     return r, v, f, potential</code></pre>
         </article>
 
         <article class="code-example" aria-labelledby="c-code-title">
           <div class="code-heading"><span aria-hidden="true">C</span><h3 id="c-code-title">C</h3></div>
-          <pre><code>void velocity_verlet(Atom a[], int n, double dt) {
+          <pre><code>void velocity_verlet(Atom a[], int n, double dt,
+                     Boundary boundary) {
   for (int i = 0; i &lt; n; ++i) {
     a[i].vx += 0.5 * dt * a[i].fx; /* half kick */
     a[i].vy += 0.5 * dt * a[i].fy;
     a[i].x += dt * a[i].vx;        /* drift */
     a[i].y += dt * a[i].vy;
-    wrap_pbc(&amp;a[i].x, &amp;a[i].y);
+    apply_boundary(&amp;a[i], boundary); /* wrap, reflect, or free */
   }
-  compute_forces(a, n);
+  compute_forces(a, n, boundary);
   for (int i = 0; i &lt; n; ++i) {
     a[i].vx += 0.5 * dt * a[i].fx;
     a[i].vy += 0.5 * dt * a[i].fy;
@@ -282,14 +288,24 @@
       <p>
         The density control specifies &rho;* = N&sigma;<sup>2</sup>/A. The rectangular
         cell and triangular spacing scale with &sigma; so that the selected value stays
-        fixed when the potential size changes. The default &rho;* = 0.93 is close to a
-        relaxed low-temperature triangular solid for the displayed interaction; lower
-        densities can be used to explore tensile void formation and phase separation.
+        fixed when the potential size changes. In free-surface mode this value describes
+        only the initial placement area because the atoms are not confined afterward.
+        The default &rho;* = 0.93 is close to a relaxed low-temperature triangular solid
+        for the displayed interaction; lower densities can be used to explore tensile
+        void formation and phase separation.
       </p>
       <p>
-        Temperature uses velocities relative to the instantaneous centre-of-mass
-        velocity (198 thermal degrees of freedom), while total energy retains all
-        kinetic energy. A weak velocity-rescaling thermostat prepares the system for
+        Periodic boundaries join opposite edges, rigid walls reflect atoms elastically,
+        and free surfaces apply neither wrapping nor wall reflection. Cohesion can round
+        a molten free cluster through line tension, the two-dimensional counterpart of
+        surface tension. At sufficiently high temperature atoms can evaporate, so an
+        arbitrarily hot cluster is not expected to remain circular.
+      </p>
+      <p>
+        Temperature removes centre-of-mass translation (198 thermal degrees of
+        freedom). Free-cluster preparation also removes whole-cluster rotation,
+        leaving 197 internal degrees of freedom; total energy still retains all kinetic
+        energy. A weak velocity-rescaling thermostat prepares the system for
         1,200 steps, then switches off and resets the clock before the NVE measurement.
         Changing a model setting starts a fresh plotted and exported trajectory segment.
       </p>

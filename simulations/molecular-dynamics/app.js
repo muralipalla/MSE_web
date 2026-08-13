@@ -3,7 +3,6 @@ const LATTICE_COLUMNS = 10;
 const LATTICE_ROWS = 10;
 const DEFAULT_LJ_DENSITY = 0.93;
 const BOX = { x: 0, y: 0 };
-const THERMAL_DEGREES_OF_FREEDOM = 2 * PARTICLE_COUNT - 2;
 const POW_TWO_ONE_SIXTH = Math.pow(2, 1 / 6);
 const CUTOFF_RATIO = 2.5;
 const FORCE_SHIFT_MINIMUM_RATIO = findForceShiftedMinimumRatio();
@@ -41,7 +40,8 @@ const elements = {
   densityValue: document.querySelector("#density-value"),
   temperatureSlider: document.querySelector("#temperature-slider"),
   temperatureTarget: document.querySelector("#temperature-target"),
-  pbcToggle: document.querySelector("#pbc-toggle"),
+  temperatureGuidance: document.querySelector("#temperature-guidance"),
+  boundaryButtons: [...document.querySelectorAll("[data-boundary-mode]")],
   latticeConfig: document.querySelector("#lattice-config"),
   randomConfig: document.querySelector("#random-config"),
   initializeVelocities: document.querySelector("#initialize-velocities"),
@@ -71,7 +71,7 @@ const elements = {
 const state = {
   atoms: [],
   configuration: "lattice",
-  periodic: true,
+  boundaryMode: "periodic",
   velocitiesReady: false,
   equilibrated: false,
   equilibrating: false,
@@ -109,6 +109,7 @@ function initialize() {
   updateBoxGeometry();
   buildConfiguration("lattice", false);
   updateParameterLabels();
+  updateBoundaryButtons();
   updateBoundaryCopy();
   updateControls();
   updateReadings();
@@ -126,7 +127,9 @@ function bindEvents() {
   elements.densitySlider.addEventListener("input", scheduleDensityChange);
   elements.densitySlider.addEventListener("change", handleDensityChange);
   elements.temperatureSlider.addEventListener("input", handleTemperatureChange);
-  elements.pbcToggle.addEventListener("change", handleBoundaryChange);
+  elements.boundaryButtons.forEach((button) => {
+    button.addEventListener("click", () => handleBoundaryChange(button.dataset.boundaryMode));
+  });
   elements.latticeConfig.addEventListener("click", () => buildConfiguration("lattice"));
   elements.randomConfig.addEventListener("click", () => buildConfiguration("random"));
   elements.initializeVelocities.addEventListener("click", initializeRandomVelocities);
@@ -242,33 +245,54 @@ function handleTemperatureChange() {
   renderDynamicViews();
 }
 
-function handleBoundaryChange() {
+function handleBoundaryChange(nextMode) {
+  if (!["periodic", "rigid", "free"].includes(nextMode) || nextMode === state.boundaryMode) return;
   stopAnimation();
-  state.periodic = elements.pbcToggle.checked;
+  const previousMode = state.boundaryMode;
+  state.boundaryMode = nextMode;
+  updateBoundaryButtons();
+
+  if (previousMode === "periodic" && nextMode !== "periodic") {
+    const configurationName = state.configuration === "random" ? "Random" : "Triangular";
+    buildConfiguration(state.configuration, false);
+    updateBoundaryCopy();
+    updateParameterLabels();
+    setRunState(`${configurationName} positions ready for ${boundaryModeLabel(nextMode)}`);
+    setResultsNote("The finite patch was rebuilt because a periodic cell and a free or wall-bounded sample have different edge neighbours. Initialize velocities and equilibrate again.");
+    return;
+  }
+
   applyAllBoundaries();
 
-  if (state.periodic
+  if (nextMode !== "free"
     && minimumPairDistance(state.atoms) < 0.995 * interactionParameters().sigma) {
     const configurationName = state.configuration === "random" ? "Random" : "Triangular";
     buildConfiguration(state.configuration, false);
     updateBoundaryCopy();
-    setRunState(`${configurationName} positions rebuilt for PBC`);
-    setResultsNote("The positions were rebuilt because opposite edges become neighbours under PBC.");
+    updateParameterLabels();
+    setRunState(`${configurationName} positions rebuilt for ${boundaryModeLabel(nextMode)}`);
+    setResultsNote(nextMode === "periodic"
+      ? "The positions were rebuilt because opposite edges become neighbours under periodic boundaries."
+      : "The positions were rebuilt because reflecting escaped atoms into the rigid box created an overlap.");
     return;
   }
 
-  if (state.velocitiesReady && state.periodic) removeCenterOfMassVelocity();
+  if (state.velocitiesReady) removeBulkMotion();
   const forcesReady = computeForces();
   if (forcesReady) updateMeasurements();
   updateBoundaryCopy();
+  updateParameterLabels();
 
   if (!forcesReady) {
     markTrajectoryUnstable(state.forceError);
   } else if (state.velocitiesReady && !state.unstable) {
-    invalidateEquilibration(`${state.periodic ? "Periodic boundaries" : "Reflecting walls"} applied; equilibrate again before starting NVE.`);
-    setRunState(state.periodic ? "PBC applied" : "Reflecting walls applied");
+    invalidateEquilibration(`${boundaryModeLabel(nextMode)} applied; equilibrate again before starting NVE.`);
+    setRunState(`${boundaryModeLabel(nextMode)} applied`);
   } else if (state.unstable) {
     setResultsNote("The boundary setting is ready, but the stopped trajectory must be rebuilt before it can run again.");
+  } else {
+    setRunState(`${boundaryModeLabel(nextMode)} applied`);
+    setResultsNote(`${boundaryModeLabel(nextMode)} are ready. Initialize velocities and equilibrate before starting a trajectory.`);
   }
 
   drawAtomCanvas();
@@ -301,6 +325,7 @@ function buildConfiguration(type, announce = true) {
   computeForces();
   updateMeasurements();
   updateConfigurationButtons();
+  updateBoundaryButtons();
   updateParameterLabels();
   updateEquilibrationDisplay();
   updateControls();
@@ -319,8 +344,11 @@ function createTriangularLattice() {
   const rowSpacing = Math.sqrt(3) * 0.5 * state.latticeSpacing;
   for (let row = 0; row < LATTICE_ROWS; row += 1) {
     for (let column = 0; column < LATTICE_COLUMNS; column += 1) {
+      const rawX = (column + 0.5 + 0.5 * (row % 2)) * state.latticeSpacing;
       atoms.push({
-        x: (column + 0.5 + 0.5 * (row % 2)) * state.latticeSpacing % BOX.x,
+        x: isPeriodicBoundary()
+          ? positiveModulo(rawX, BOX.x)
+          : rawX - 0.25 * state.latticeSpacing,
         y: (row + 0.5) * rowSpacing,
         vx: 0,
         vy: 0,
@@ -336,7 +364,7 @@ function createRandomConfiguration() {
   const rng = mulberry32(state.seed += 97);
   const atoms = createTriangularLattice();
   const minimumDistance = RANDOM_MINIMUM_DISTANCE_FACTOR * state.rMin;
-  const margin = state.periodic ? 0 : 0.12 * minimumDistance;
+  const margin = isPeriodicBoundary() ? 0 : 0.12 * minimumDistance;
   const attempts = 40000;
 
   for (let attempt = 0; attempt < attempts; attempt += 1) {
@@ -352,7 +380,7 @@ function createRandomConfiguration() {
         : atom.y + (rng() - 0.5) * 1.5 * state.latticeSpacing
     };
 
-    if (state.periodic) {
+    if (isPeriodicBoundary()) {
       candidate.x = positiveModulo(candidate.x, BOX.x);
       candidate.y = positiveModulo(candidate.y, BOX.y);
     } else {
@@ -381,7 +409,7 @@ function candidateIsSeparated(candidate, ignoredIndex, atoms, minimumDistance) {
     if (index === ignoredIndex) continue;
     let dx = candidate.x - atoms[index].x;
     let dy = candidate.y - atoms[index].y;
-    if (state.periodic) {
+    if (isPeriodicBoundary()) {
       dx -= BOX.x * Math.round(dx / BOX.x);
       dy -= BOX.y * Math.round(dy / BOX.y);
     }
@@ -397,7 +425,7 @@ function minimumPairDistance(atoms) {
     for (let second = first + 1; second < atoms.length; second += 1) {
       let dx = atoms[first].x - atoms[second].x;
       let dy = atoms[first].y - atoms[second].y;
-      if (state.periodic) {
+      if (isPeriodicBoundary()) {
         dx -= BOX.x * Math.round(dx / BOX.x);
         dy -= BOX.y * Math.round(dy / BOX.y);
       }
@@ -463,10 +491,10 @@ function initializeRandomVelocities() {
 }
 
 function rescaleVelocities(targetTemperature) {
-  removeCenterOfMassVelocity();
-  let kinetic = calculateKineticEnergy();
+  removeBulkMotion();
+  const kinetic = calculateThermalKineticEnergy();
   if (kinetic <= 1e-14) return;
-  const currentTemperature = 2 * kinetic / THERMAL_DEGREES_OF_FREEDOM;
+  const currentTemperature = 2 * kinetic / thermalDegreesOfFreedom();
   const scale = Math.sqrt(targetTemperature / currentTemperature);
   state.atoms.forEach((atom) => {
     atom.vx *= scale;
@@ -486,6 +514,30 @@ function removeCenterOfMassVelocity() {
   state.atoms.forEach((atom) => {
     atom.vx -= meanX;
     atom.vy -= meanY;
+  });
+}
+
+function removeBulkMotion() {
+  removeCenterOfMassVelocity();
+  if (state.boundaryMode !== "free") return;
+
+  const center = centerOfMassPosition();
+  let angularMomentum = 0;
+  let momentOfInertia = 0;
+  state.atoms.forEach((atom) => {
+    const rx = atom.x - center.x;
+    const ry = atom.y - center.y;
+    angularMomentum += rx * atom.vy - ry * atom.vx;
+    momentOfInertia += rx * rx + ry * ry;
+  });
+  if (momentOfInertia <= 1e-14) return;
+
+  const angularVelocity = angularMomentum / momentOfInertia;
+  state.atoms.forEach((atom) => {
+    const rx = atom.x - center.x;
+    const ry = atom.y - center.y;
+    atom.vx += angularVelocity * ry;
+    atom.vy -= angularVelocity * rx;
   });
 }
 
@@ -533,10 +585,10 @@ function advanceEquilibration() {
 }
 
 function applyEquilibrationThermostat() {
-  removeCenterOfMassVelocity();
-  const thermalKinetic = calculateKineticEnergy();
+  removeBulkMotion();
+  const thermalKinetic = calculateThermalKineticEnergy();
   if (!Number.isFinite(thermalKinetic) || thermalKinetic <= 1e-14) return false;
-  const currentTemperature = 2 * thermalKinetic / THERMAL_DEGREES_OF_FREEDOM;
+  const currentTemperature = 2 * thermalKinetic / thermalDegreesOfFreedom();
   const coupling = Math.min(1, state.dt / THERMOSTAT_RELAXATION_TIME);
   const scaleSquared = 1 + coupling * (state.targetTemperature / currentTemperature - 1);
   if (!Number.isFinite(scaleSquared) || scaleSquared <= 0) return false;
@@ -553,7 +605,7 @@ function completeEquilibration() {
   state.equilibrating = false;
   state.equilibrated = true;
   state.animationFrame = null;
-  removeCenterOfMassVelocity();
+  removeBulkMotion();
   if (!computeForces()) {
     markTrajectoryUnstable(state.forceError);
     return;
@@ -710,7 +762,7 @@ function computeForces() {
       let dx = atomA.x - atomB.x;
       let dy = atomA.y - atomB.y;
 
-      if (state.periodic) {
+      if (isPeriodicBoundary()) {
         dx -= BOX.x * Math.round(dx / BOX.x);
         dy -= BOX.y * Math.round(dy / BOX.y);
       }
@@ -801,11 +853,13 @@ function markTrajectoryUnstable(reason) {
 }
 
 function applyBoundary(atom) {
-  if (state.periodic) {
+  if (isPeriodicBoundary()) {
     atom.x = positiveModulo(atom.x, BOX.x);
     atom.y = positiveModulo(atom.y, BOX.y);
     return;
   }
+
+  if (state.boundaryMode === "free") return;
 
   reflectCoordinate(atom, "x", "vx", BOX.x);
   reflectCoordinate(atom, "y", "vy", BOX.y);
@@ -832,7 +886,7 @@ function updateMeasurements() {
   state.kineticEnergy = calculateKineticEnergy();
   state.thermalKineticEnergy = calculateThermalKineticEnergy();
   state.temperature = state.velocitiesReady
-    ? 2 * state.thermalKineticEnergy / THERMAL_DEGREES_OF_FREEDOM
+    ? 2 * state.thermalKineticEnergy / thermalDegreesOfFreedom()
     : 0;
   state.totalEnergy = state.kineticEnergy + state.potentialEnergy;
 }
@@ -843,17 +897,47 @@ function calculateKineticEnergy() {
 
 function calculateThermalKineticEnergy() {
   if (state.atoms.length === 0) return 0;
-  const centerVelocity = state.atoms.reduce(
-    (sum, atom) => ({ x: sum.x + atom.vx, y: sum.y + atom.vy }),
-    { x: 0, y: 0 }
-  );
+  const center = centerOfMassPosition();
+  const centerVelocity = state.atoms.reduce((sum, atom) => ({
+    x: sum.x + atom.vx,
+    y: sum.y + atom.vy
+  }), { x: 0, y: 0 });
   centerVelocity.x /= state.atoms.length;
   centerVelocity.y /= state.atoms.length;
+
+  let angularVelocity = 0;
+  if (state.boundaryMode === "free") {
+    let angularMomentum = 0;
+    let momentOfInertia = 0;
+    state.atoms.forEach((atom) => {
+      const rx = atom.x - center.x;
+      const ry = atom.y - center.y;
+      angularMomentum += rx * (atom.vy - centerVelocity.y) - ry * (atom.vx - centerVelocity.x);
+      momentOfInertia += rx * rx + ry * ry;
+    });
+    if (momentOfInertia > 1e-14) angularVelocity = angularMomentum / momentOfInertia;
+  }
+
   return state.atoms.reduce((sum, atom) => {
-    const vx = atom.vx - centerVelocity.x;
-    const vy = atom.vy - centerVelocity.y;
+    const rx = atom.x - center.x;
+    const ry = atom.y - center.y;
+    const vx = atom.vx - centerVelocity.x + angularVelocity * ry;
+    const vy = atom.vy - centerVelocity.y - angularVelocity * rx;
     return sum + 0.5 * (vx * vx + vy * vy);
   }, 0);
+}
+
+function thermalDegreesOfFreedom() {
+  return 2 * PARTICLE_COUNT - (state.boundaryMode === "free" ? 3 : 2);
+}
+
+function centerOfMassPosition() {
+  if (state.atoms.length === 0) return { x: 0.5 * BOX.x, y: 0.5 * BOX.y };
+  const sum = state.atoms.reduce((center, atom) => ({
+    x: center.x + atom.x,
+    y: center.y + atom.y
+  }), { x: 0, y: 0 });
+  return { x: sum.x / state.atoms.length, y: sum.y / state.atoms.length };
 }
 
 function trajectoryIsFinite() {
@@ -933,7 +1017,12 @@ function updateParameterLabels() {
   elements.densitySlider.value = state.density.toFixed(2);
   elements.densityTarget.textContent = state.density.toFixed(2);
   elements.temperatureTarget.textContent = state.targetTemperature.toFixed(2);
-  elements.densityValue.textContent = `Nσ²/A = ${state.density.toFixed(2)}; Nℓ₀²/A = ${referenceNumberDensity.toFixed(3)}`;
+  const temperatureToCohesion = state.targetTemperature / Math.max(1e-12, state.epsilon);
+  elements.temperatureGuidance.textContent = state.boundaryMode === "free"
+    ? `Current T*/ε* = ${temperatureToCohesion.toFixed(2)}. For a mobile but cohesive droplet, try about 0.30–0.40; much higher ratios may evaporate.`
+    : "The thermostat holds this target during preparation; after it switches off, the NVE temperature fluctuates freely.";
+  const densityPrefix = state.boundaryMode === "free" ? "Initial " : "";
+  elements.densityValue.textContent = `${densityPrefix}Nσ²/A = ${state.density.toFixed(2)}; Nℓ₀²/A = ${referenceNumberDensity.toFixed(3)}`;
   elements.timestepGuidance.textContent = scaledTimestep > 0.005
     ? `Scaled LJ step = ${scaledTimestep.toFixed(4)}: expect stronger drift; reduce it if the safety check stops the run.`
     : `Scaled LJ step = ${scaledTimestep.toFixed(4)}; always judge accuracy from total-energy drift.`;
@@ -953,10 +1042,22 @@ function updateConfigurationButtons() {
   elements.randomConfig.setAttribute("aria-pressed", String(!latticeSelected));
 }
 
+function updateBoundaryButtons() {
+  elements.boundaryButtons.forEach((button) => {
+    const selected = button.dataset.boundaryMode === state.boundaryMode;
+    button.classList.toggle("is-selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+}
+
 function updateBoundaryCopy() {
-  elements.boundaryNote.textContent = state.periodic
-    ? "Centres stay in 0 ≤ x < Lx and 0 ≤ y < Ly. Each marker is drawn once; it may straddle one boundary but is never duplicated at the opposite boundary."
-    : "Atoms reflect elastically from the four visible walls.";
+  if (state.boundaryMode === "periodic") {
+    elements.boundaryNote.textContent = "Periodic: opposite edges join. Each atom centre is drawn once and is not duplicated at the opposite edge.";
+  } else if (state.boundaryMode === "rigid") {
+    elements.boundaryNote.textContent = "Rigid walls: atoms reflect elastically from the four visible walls.";
+  } else {
+    elements.boundaryNote.textContent = "Free surfaces: no wall or wrapping force is applied. The view follows the centre of mass; the faint rectangle is only an initial-size reference.";
+  }
 }
 
 function updateControls() {
@@ -966,7 +1067,9 @@ function updateControls() {
   elements.timestepSlider.disabled = modelControlsLocked;
   elements.densitySlider.disabled = modelControlsLocked;
   elements.temperatureSlider.disabled = modelControlsLocked;
-  elements.pbcToggle.disabled = modelControlsLocked;
+  elements.boundaryButtons.forEach((button) => {
+    button.disabled = modelControlsLocked;
+  });
   elements.latticeConfig.disabled = modelControlsLocked;
   elements.randomConfig.disabled = modelControlsLocked;
   elements.initializeVelocities.disabled = modelControlsLocked;
@@ -1129,29 +1232,40 @@ function drawAtomCanvas() {
   context.fillRect(0, 0, width, height);
 
   const padding = width < 430 ? 22 : 30;
-  const scale = Math.min((width - 2 * padding) / BOX.x, (height - 2 * padding) / BOX.y);
+  const freeSurface = state.boundaryMode === "free";
+  const vacuumMargin = freeSurface ? 0.14 * Math.max(BOX.x, BOX.y) : 0;
+  const scale = Math.min(
+    (width - 2 * padding) / (BOX.x + 2 * vacuumMargin),
+    (height - 2 * padding) / (BOX.y + 2 * vacuumMargin)
+  );
   const boxWidth = BOX.x * scale;
   const boxHeight = BOX.y * scale;
   const left = (width - boxWidth) / 2;
   const top = (height - boxHeight) / 2;
   const visualRadiusUnits = 0.14;
   const visualRadius = Math.max(3.2, visualRadiusUnits * scale);
+  const center = freeSurface ? centerOfMassPosition() : { x: 0.5 * BOX.x, y: 0.5 * BOX.y };
+  const viewShift = freeSurface
+    ? { x: 0.5 * BOX.x - center.x, y: 0.5 * BOX.y - center.y }
+    : { x: 0, y: 0 };
 
-  context.strokeStyle = "rgba(255, 255, 255, 0.08)";
-  context.lineWidth = 1;
-  for (let column = 1; column < 5; column += 1) {
-    const x = left + boxWidth * column / 5;
-    context.beginPath();
-    context.moveTo(x, top);
-    context.lineTo(x, top + boxHeight);
-    context.stroke();
-  }
-  for (let row = 1; row < 5; row += 1) {
-    const y = top + boxHeight * row / 5;
-    context.beginPath();
-    context.moveTo(left, y);
-    context.lineTo(left + boxWidth, y);
-    context.stroke();
+  if (!freeSurface) {
+    context.strokeStyle = "rgba(255, 255, 255, 0.08)";
+    context.lineWidth = 1;
+    for (let column = 1; column < 5; column += 1) {
+      const x = left + boxWidth * column / 5;
+      context.beginPath();
+      context.moveTo(x, top);
+      context.lineTo(x, top + boxHeight);
+      context.stroke();
+    }
+    for (let row = 1; row < 5; row += 1) {
+      const y = top + boxHeight * row / 5;
+      context.beginPath();
+      context.moveTo(left, y);
+      context.lineTo(left + boxWidth, y);
+      context.stroke();
+    }
   }
 
   const speedReference = Math.sqrt(Math.max(0.1, 2 * Math.max(state.targetTemperature, state.temperature)));
@@ -1159,21 +1273,25 @@ function drawAtomCanvas() {
     const speed = Math.hypot(atom.vx, atom.vy);
     const fraction = clamp(speed / (2.4 * speedReference), 0, 1);
     const color = speedColor(fraction);
-    const x = left + atom.x * scale;
-    const y = top + atom.y * scale;
+    const x = left + (atom.x + viewShift.x) * scale;
+    const y = top + (atom.y + viewShift.y) * scale;
     drawAtom(context, x, y, visualRadius, color);
   });
 
-  context.strokeStyle = state.periodic ? "#9ee9df" : COLORS.wall;
-  context.lineWidth = state.periodic ? 1.5 : 4;
-  context.setLineDash(state.periodic ? [7, 6] : []);
+  context.strokeStyle = state.boundaryMode === "periodic"
+    ? "#9ee9df"
+    : freeSurface
+      ? "rgba(255, 255, 255, 0.24)"
+      : COLORS.wall;
+  context.lineWidth = state.boundaryMode === "rigid" ? 4 : freeSurface ? 1 : 1.5;
+  context.setLineDash(state.boundaryMode === "rigid" ? [] : freeSurface ? [3, 7] : [7, 6]);
   context.strokeRect(left, top, boxWidth, boxHeight);
   context.setLineDash([]);
 
   context.fillStyle = "rgba(255, 255, 255, 0.8)";
   context.font = "700 12px system-ui, sans-serif";
   context.textAlign = "left";
-  context.fillText(state.periodic ? "PBC" : "Reflecting walls", left + 8, top + 17);
+  context.fillText(state.boundaryMode === "periodic" ? "PBC" : boundaryModeLabel(), left + 8, top + 17);
   context.textAlign = "right";
   context.fillText(`${PARTICLE_COUNT} atoms`, left + boxWidth - 8, top + 17);
 }
@@ -1328,12 +1446,17 @@ function drawCartesianGrid(context, plot, xMin, xMax, yMin, yMax, options) {
 
 function updateCanvasDescriptions() {
   const configurationName = state.configuration === "lattice" ? "triangular lattice" : "random configuration";
+  const boundaryDescription = state.boundaryMode === "periodic"
+    ? "periodic boundaries, with each canonical atom centre drawn once and no duplicate periodic images"
+    : state.boundaryMode === "rigid"
+      ? "rigid reflecting walls"
+      : "true free surfaces with no wall or wrapping force; the view follows the centre of mass and the faint rectangle is only an initial-size reference";
   const motion = state.velocitiesReady
     ? `The instantaneous T star is ${state.temperature.toFixed(3)} at step ${state.step}.`
     : "All velocities are zero.";
   elements.atomCanvas.setAttribute(
     "aria-label",
-    `One hundred atoms in a two-dimensional ${configurationName} with ${state.periodic ? "periodic boundaries" : "reflecting walls"}. Each canonical atom centre is drawn once without duplicate periodic images. ${motion}`
+    `One hundred atoms in a two-dimensional ${configurationName} with ${boundaryDescription}. ${motion}`
   );
 
   if (state.history.length === 0) {
@@ -1367,13 +1490,14 @@ function downloadResultsCsv() {
     ["units", "fixed classroom reference units: l0=E0=m=kB=1"],
     ["atoms", PARTICLE_COUNT],
     ["configuration", state.configuration],
-    ["boundary", state.periodic ? "periodic" : "reflecting"],
+    ["boundary", state.boundaryMode === "rigid" ? "rigid_walls" : state.boundaryMode === "free" ? "free_surfaces" : "periodic"],
     ["force_shifted_r_min", state.rMin.toFixed(4)],
     ["force_shifted_well_depth", state.epsilon.toFixed(4)],
     ["sigma", interaction.sigma.toFixed(6)],
     ["bare_lj_epsilon", interaction.bareEpsilon.toFixed(6)],
     ["cutoff", interaction.cutoff.toFixed(6)],
     ["selected_lj_scaled_density_N_sigma_squared_over_A", state.density.toFixed(4)],
+    ["density_role", state.boundaryMode === "free" ? "initial placement density; no confining box" : "simulation-box density"],
     ["box_number_density_N_l0_squared_over_A", referenceNumberDensity.toFixed(6)],
     ["box_length_x_l0", BOX.x.toFixed(6)],
     ["box_length_y_l0", BOX.y.toFixed(6)],
@@ -1383,10 +1507,10 @@ function downloadResultsCsv() {
     ["equilibration_duration_reference", state.equilibrationDuration.toFixed(6)],
     ["thermostat_relaxation_time_reference", THERMOSTAT_RELAXATION_TIME.toFixed(4)],
     ["production_time_step_reference", state.dt.toFixed(5)],
-    ["temperature_definition", `2 K_peculiar / ${THERMAL_DEGREES_OF_FREEDOM}`],
+    ["temperature_definition", `2 K_internal / ${thermalDegreesOfFreedom()} degrees of freedom`],
     ["samples", state.exportHistory.length],
     [],
-    ["step", "time_star_reference", "kinetic_total_per_atom", "kinetic_peculiar_per_atom", "potential_per_atom", "total_per_atom", "temperature_star_reference", "temperature_equilibration_target"],
+    ["step", "time_star_reference", "kinetic_total_per_atom", "kinetic_internal_per_atom", "potential_per_atom", "total_per_atom", "temperature_star_reference", "temperature_equilibration_target"],
     ...state.exportHistory.map((point) => [
       point.step,
       point.time.toFixed(6),
@@ -1492,6 +1616,16 @@ function mulberry32(seed) {
 
 function positiveModulo(value, modulus) {
   return ((value % modulus) + modulus) % modulus;
+}
+
+function isPeriodicBoundary() {
+  return state.boundaryMode === "periodic";
+}
+
+function boundaryModeLabel(mode = state.boundaryMode) {
+  if (mode === "rigid") return "Rigid walls";
+  if (mode === "free") return "Free surfaces";
+  return "Periodic boundaries";
 }
 
 function mapLinear(value, domainMin, domainMax, rangeMin, rangeMax) {

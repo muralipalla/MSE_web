@@ -152,7 +152,6 @@
 
 .slider-field small,
 .choice-fieldset small,
-.pbc-control small,
 .chart-note,
 .results-note,
 .reference-panel,
@@ -321,6 +320,10 @@
   gap: 0.45rem;
 }
 
+.boundary-buttons {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .choice-button {
   min-height: 2.8rem;
   padding: 0.55rem 0.65rem;
@@ -334,7 +337,7 @@
   cursor: pointer;
 }
 
-.choice-button:hover,
+.choice-button:hover:not(:disabled),
 .choice-button.is-selected {
   background: var(--lavender-light);
   color: var(--ink);
@@ -348,33 +351,6 @@
 .choice-fieldset small {
   display: block;
   margin-top: 0.4rem;
-}
-
-.pbc-control {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.7rem;
-  padding: 0.8rem;
-  border-radius: 0.8rem;
-  background: var(--blue-light);
-  cursor: pointer;
-}
-
-.pbc-control input {
-  width: 1.15rem;
-  height: 1.15rem;
-  margin-top: 0.15rem;
-  accent-color: var(--ink);
-}
-
-.pbc-control span,
-.pbc-control small {
-  display: block;
-}
-
-.pbc-control b {
-  color: var(--ink);
-  font-size: 0.86rem;
 }
 
 .velocity-action {
@@ -444,7 +420,6 @@
 
 .slider-field input:focus-visible,
 .choice-button:focus-visible,
-.pbc-control input:focus-visible,
 .button:focus-visible,
 .text-button:focus-visible {
   outline: 3px solid var(--coral);

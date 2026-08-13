@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Practice Miller indices, Miller-Bravais notation, and planar-density calculations for FCC, BCC, and HCP crystals with interactive Three.js figures.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Miller Indices and Planar Density Quiz | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#quiz">Skip to the quiz</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Quiz navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#practice">&larr; Back to practice</a>
+    </nav>
+  </header>
+
+  <main class="miller-quiz-shell" id="quiz">
+    <header class="miller-quiz-intro">
+      <div>
+        <p class="eyebrow">Crystallography quiz</p>
+        <h1>Indices, planes, and planar density</h1>
+      </div>
+      <p>
+        Read intercepts, convert Miller&ndash;Bravais notation, and count atom centres on
+        FCC, BCC, and HCP planes. Numerical answers within 1.5% are accepted.
+      </p>
+    </header>
+
+    <section class="quiz-conventions" aria-labelledby="conventions-title">
+      <div>
+        <p class="section-kicker">Conventions</p>
+        <h2 id="conventions-title">Use these definitions throughout</h2>
+      </div>
+      <ul>
+        <li>Cubic questions use the conventional cell parameter <i>a</i>.</li>
+        <li>HCP uses basal parameter <i>a</i>, height <i>c</i>, and a two-atom basis.</li>
+        <li>Planar density is the number of atom <strong>centres</strong> in the shown two-dimensional repeat area.</li>
+        <li>For four-index hexagonal planes, <i>h</i> + <i>k</i> + <i>i</i> = 0.</li>
+      </ul>
+    </section>
+
+    <div class="quiz-workspace">
+      <aside class="crystal-viewer" aria-labelledby="figure-title">
+        <div class="viewer-heading">
+          <div>
+            <p class="section-kicker">Interactive figure</p>
+            <h2 id="figure-title">FCC (111)</h2>
+          </div>
+          <label for="figure-select">
+            <span>Figure</span>
+            <select id="figure-select">
+              <optgroup label="Miller indices">
+                <option value="cubic-102">Cubic (102)</option>
+                <option value="cubic-1m20">Cubic (1 -2 0)</option>
+                <option value="cubic-221">Cubic (221)</option>
+              </optgroup>
+              <optgroup label="Miller-Bravais indices">
+                <option value="hcp-2m1m10">HCP (2 -1 -1 0)</option>
+                <option value="hcp-1010">HCP (10-10)</option>
+                <option value="hcp-1011">HCP (10-11)</option>
+                <option value="hcp-direction">HCP [2 -1 -1 3]</option>
+              </optgroup>
+              <optgroup label="FCC planar density">
+                <option value="fcc-100">FCC (100)</option>
+                <option value="fcc-110">FCC (110)</option>
+                <option value="fcc-111" selected>FCC (111)</option>
+              </optgroup>
+              <optgroup label="BCC planar density">
+                <option value="bcc-100">BCC (100)</option>
+                <option value="bcc-110">BCC (110)</option>
+                <option value="bcc-111">BCC (111)</option>
+              </optgroup>
+              <optgroup label="HCP planar density">
+                <option value="hcp-0001">HCP (0001)</option>
+                <option value="hcp-10m10">HCP (10-10)</option>
+                <option value="hcp-11m20">HCP (11-20)</option>
+              </optgroup>
+            </select>
+          </label>
+        </div>
+
+        <div class="viewer-frame" id="viewer-frame">
+          <canvas id="crystal-canvas" role="img" aria-label="Interactive FCC unit cell showing the (111) plane and atom centres in that plane. Drag to orbit and scroll or pinch to zoom.">
+            Your browser does not support the canvas element.
+          </canvas>
+          <div class="viewer-fallback" id="viewer-fallback" role="alert" hidden>
+            The 3D figure is unavailable. The questions and worked solutions remain usable.
+          </div>
+          <div class="viewer-legend" aria-label="Figure legend">
+            <span><i class="legend-host" aria-hidden="true"></i>Other centres</span>
+            <span><i class="legend-plane-atom" aria-hidden="true"></i>Centres in plane</span>
+            <span><i class="legend-plane" aria-hidden="true"></i>Plane / counting patch</span>
+          </div>
+        </div>
+
+        <div class="viewer-actions">
+          <button class="button secondary" id="normal-view" type="button" disabled>View normal to plane</button>
+          <button class="button secondary" id="reset-view" type="button" disabled>Reset view</button>
+        </div>
+        <p class="viewer-help">Drag to orbit &middot; Scroll or pinch to zoom</p>
+        <p class="figure-summary" id="figure-summary">FCC (111): a triangular counting patch through corner and face-centred atom sites.</p>
+        <p class="viewer-status" id="viewer-status" role="status" aria-live="polite"></p>
+      </aside>
+
+      <form class="miller-quiz-form" id="miller-quiz-form" novalidate>
+        <section class="quiz-part" aria-labelledby="miller-title">
+          <p class="section-kicker">Part A</p>
+          <h2 id="miller-title">Miller indices in cubic crystals</h2>
+
+          <article class="quiz-question" data-question="q1">
+            <div class="question-heading"><h3>1. Intercepts to indices</h3><button type="button" class="figure-button" data-figure="cubic-102">View 3D</button></div>
+            <p>A plane intercepts <i>x</i> at <i>a</i>, is parallel to <i>y</i>, and intercepts <i>z</i> at <i>a</i>/2. What are its Miller indices?</p>
+            <fieldset class="answer-options" aria-describedby="q1-status">
+              <legend class="visually-hidden">Choose the Miller indices</legend>
+              <label><input type="radio" name="q1" value="102"> (102)</label>
+              <label><input type="radio" name="q1" value="201"> (201)</label>
+              <label><input type="radio" name="q1" value="120"> (120)</label>
+            </fieldset>
+            <p class="answer-status" id="q1-status"></p>
+            <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q1">Show solution</button>
+            <div class="solution-panel" id="solution-q1" hidden><p>Normalize the intercepts as (1, &infin;, 1/2), take reciprocals, and clear fractions: <strong>(102)</strong>.</p></div>
+          </article>
+
+          <article class="quiz-question" data-question="q2">
+            <div class="question-heading"><h3>2. Negative intercept</h3><button type="button" class="figure-button" data-figure="cubic-1m20">View 3D</button></div>
+            <p>A plane intercepts <i>x</i> at <i>a</i>, <i>y</i> at &minus;<i>a</i>/2, and is parallel to <i>z</i>. Choose its indices.</p>
+            <fieldset class="answer-options" aria-describedby="q2-status">
+              <legend class="visually-hidden">Choose the Miller indices</legend>
+              <label><input type="radio" name="q2" value="1m20"> (1<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</label>
+              <label><input type="radio" name="q2" value="m120"> (<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>20)</label>
+              <label><input type="radio" name="q2" value="120"> (120)</label>
+            </fieldset>
+            <p class="answer-status" id="q2-status"></p>
+            <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q2">Show solution</button>
+            <div class="solution-panel" id="solution-q2" hidden><p>The reciprocal intercepts are 1, &minus;2, and 0, so the plane is <strong>(1<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</strong>.</p></div>
+          </article>
+
+          <article class="quiz-question" data-question="q3">
+            <div class="question-heading"><h3>3. Cubic plane spacing</h3><button type="button" class="figure-button" data-figure="cubic-221">View 3D</button></div>
+            <p>For a cubic crystal, calculate <i>d</i><sub>221</sub>/<i>a</i>.</p>
+            <label class="numeric-answer" for="q3-answer"><span>Your answer</span><input id="q3-answer" type="number" inputmode="decimal" step="any" aria-describedby="q3-status"><span>dimensionless</span></label>
+            <p class="answer-status" id="q3-status"></p>
+            <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q3">Show solution</button>
+            <div class="solution-panel" id="solution-q3" hidden><p><i>d</i><sub>hkl</sub> = <i>a</i>/&radic;(<i>h</i><sup>2</sup>+<i>k</i><sup>2</sup>+<i>l</i><sup>2</sup>), so <i>d</i><sub>221</sub>/<i>a</i> = 1/&radic;9 = <strong>0.3333</strong>.</p></div>
+          </article>
+        </section>
+
+        <section class="quiz-part" aria-labelledby="bravais-title">
+          <p class="section-kicker">Part B</p>
+          <h2 id="bravais-title">Miller&ndash;Bravais notation</h2>
+
+          <article class="quiz-question" data-question="q4">
+            <div class="question-heading"><h3>4. Complete the plane indices</h3><button type="button" class="figure-button" data-figure="hcp-2m1m10">View 3D</button></div>
+            <p>Complete the missing index in (2 <span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span> ? 0).</p>
+            <label class="numeric-answer" for="q4-answer"><span>Missing index <i>i</i></span><input id="q4-answer" type="number" inputmode="numeric" step="1" aria-describedby="q4-status"><span>integer</span></label>
+            <p class="answer-status" id="q4-status"></p>
+            <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q4">Show solution</button>
+            <div class="solution-panel" id="solution-q4" hidden><p>For a four-index hexagonal plane, <i>i</i> = &minus;(<i>h</i>+<i>k</i>) = &minus;(2&minus;1) = <strong>&minus;1</strong>. The plane is (2 <span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span> <span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span> 0).</p></div>
+          </article>
+
+          <article class="quiz-question" data-question="q5">
+            <div class="question-heading"><h3>5. Convert a hexagonal plane</h3><button type="button" class="figure-button" data-figure="hcp-1011">View 3D</button></div>
+            <p>Convert the three-index hexagonal plane (101) to four-index Miller&ndash;Bravais notation.</p>
+            <fieldset class="answer-options" aria-describedby="q5-status">
+              <legend class="visually-hidden">Choose the four-index plane</legend>
+              <label><input type="radio" name="q5" value="10m11"> (10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>1)</label>
+              <label><input type="radio" name="q5" value="11m20"> (11<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</label>
+              <label><input type="radio" name="q5" value="2m1m13"> (2<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span><span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>3)</label>
+            </fieldset>
+            <p class="answer-status" id="q5-status"></p>
+            <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q5">Show solution</button>
+            <div class="solution-panel" id="solution-q5" hidden><p>For planes, (H K L) &rarr; (H K &minus;H&minus;K L). Thus (101) becomes <strong>(10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>1)</strong>.</p></div>
+          </article>
+
+          <article class="quiz-question" data-question="q6">
+            <div class="question-heading"><h3>6. Convert a hexagonal direction</h3><button type="button" class="figure-button" data-figure="hcp-direction">View 3D</button></div>
+            <p>Convert the three-index direction [101] to the smallest integer four-index direction.</p>
+            <fieldset class="answer-options" aria-describedby="q6-status">
+              <legend class="visually-hidden">Choose the four-index direction</legend>
+              <label><input type="radio" name="q6" value="2m1m13"> [2<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span><span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>3]</label>
+              <label><input type="radio" name="q6" value="10m11"> [10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>1]</label>
+              <label><input type="radio" name="q6" value="11m20"> [11<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0]</label>
+            </fieldset>
+            <p class="answer-status" id="q6-status"></p>
+            <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q6">Show solution</button>
+            <div class="solution-panel" id="solution-q6" hidden><p>Direction conversion gives [2/3, &minus;1/3, &minus;1/3, 1]. Multiply by 3 to obtain <strong>[2<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span><span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>3]</strong>. Plane and direction conversions are different.</p></div>
+          </article>
+        </section>
+
+        <section class="quiz-part" aria-labelledby="density-title">
+          <p class="section-kicker">Part C</p>
+          <h2 id="density-title">Planar density</h2>
+          <p class="part-given">Use <strong><i>a</i> = 0.400 nm</strong> for FCC and BCC. For HCP use <strong><i>a</i> = 0.300 nm</strong> and <strong><i>c</i> = 0.490 nm</strong>. Give answers in atoms nm<sup>&minus;2</sup>.</p>
+
+          <div class="density-grid">
+            <article class="quiz-question compact-question" data-question="q7">
+              <div class="question-heading"><h3>7. FCC (100)</h3><button type="button" class="figure-button" data-figure="fcc-100">View 3D</button></div>
+              <label class="numeric-answer" for="q7-answer"><span>Planar density</span><input id="q7-answer" type="number" inputmode="decimal" step="any" aria-describedby="q7-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q7-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q7">Show solution</button>
+              <div class="solution-panel" id="solution-q7" hidden><p>Area = <i>a</i><sup>2</sup>. Four corners contribute 1 atom and the face centre contributes 1: <strong>2/<i>a</i><sup>2</sup> = 12.500</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q8">
+              <div class="question-heading"><h3>8. FCC (110)</h3><button type="button" class="figure-button" data-figure="fcc-110">View 3D</button></div>
+              <label class="numeric-answer" for="q8-answer"><span>Planar density</span><input id="q8-answer" type="number" inputmode="decimal" step="any" aria-describedby="q8-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q8-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q8">Show solution</button>
+              <div class="solution-panel" id="solution-q8" hidden><p>Area = &radic;2<i>a</i><sup>2</sup>. Four corners and two edge-centred atoms contribute 2 effective atoms: <strong>&radic;2/<i>a</i><sup>2</sup> = 8.839</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q9">
+              <div class="question-heading"><h3>9. FCC (111)</h3><button type="button" class="figure-button" data-figure="fcc-111">View 3D</button></div>
+              <label class="numeric-answer" for="q9-answer"><span>Planar density</span><input id="q9-answer" type="number" inputmode="decimal" step="any" aria-describedby="q9-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q9-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q9">Show solution</button>
+              <div class="solution-panel" id="solution-q9" hidden><p>The triangular patch has area &radic;3<i>a</i><sup>2</sup>/2. Three vertices contribute 1/2 atom and three edge centres contribute 3/2, so <strong>4/(&radic;3<i>a</i><sup>2</sup>) = 14.434</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q10">
+              <div class="question-heading"><h3>10. BCC (100)</h3><button type="button" class="figure-button" data-figure="bcc-100">View 3D</button></div>
+              <label class="numeric-answer" for="q10-answer"><span>Planar density</span><input id="q10-answer" type="number" inputmode="decimal" step="any" aria-describedby="q10-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q10-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q10">Show solution</button>
+              <div class="solution-panel" id="solution-q10" hidden><p>The square contains four corner quarters = 1 effective atom. Therefore <strong>1/<i>a</i><sup>2</sup> = 6.250</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q11">
+              <div class="question-heading"><h3>11. BCC (110)</h3><button type="button" class="figure-button" data-figure="bcc-110">View 3D</button></div>
+              <label class="numeric-answer" for="q11-answer"><span>Planar density</span><input id="q11-answer" type="number" inputmode="decimal" step="any" aria-describedby="q11-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q11-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q11">Show solution</button>
+              <div class="solution-panel" id="solution-q11" hidden><p>Area = &radic;2<i>a</i><sup>2</sup>. Corner fractions contribute 1 atom and the body centre contributes 1: <strong>&radic;2/<i>a</i><sup>2</sup> = 8.839</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q12">
+              <div class="question-heading"><h3>12. BCC (111)</h3><button type="button" class="figure-button" data-figure="bcc-111">View 3D</button></div>
+              <label class="numeric-answer" for="q12-answer"><span>Planar density</span><input id="q12-answer" type="number" inputmode="decimal" step="any" aria-describedby="q12-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q12-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q12">Show solution</button>
+              <div class="solution-panel" id="solution-q12" hidden><p>The triangular patch area is &radic;3<i>a</i><sup>2</sup>/2; three vertex sixths total 1/2 atom. Thus <strong>1/(&radic;3<i>a</i><sup>2</sup>) = 3.608</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q13">
+              <div class="question-heading"><h3>13. HCP (0001)</h3><button type="button" class="figure-button" data-figure="hcp-0001">View 3D</button></div>
+              <label class="numeric-answer" for="q13-answer"><span>Planar density</span><input id="q13-answer" type="number" inputmode="decimal" step="any" aria-describedby="q13-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q13-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q13">Show solution</button>
+              <div class="solution-panel" id="solution-q13" hidden><p>A primitive basal rhombus has area &radic;3<i>a</i><sup>2</sup>/2 and one atom: <strong>2/(&radic;3<i>a</i><sup>2</sup>) = 12.830</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q14">
+              <div class="question-heading"><h3>14. HCP (10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>0)</h3><button type="button" class="figure-button" data-figure="hcp-10m10">View 3D</button></div>
+              <label class="numeric-answer" for="q14-answer"><span>Planar density</span><input id="q14-answer" type="number" inputmode="decimal" step="any" aria-describedby="q14-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q14-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q14">Show solution</button>
+              <div class="solution-panel" id="solution-q14" hidden><p>The shown prism repeat rectangle has area <i>ac</i> and one effective atom: <strong>1/(<i>ac</i>) = 6.803</strong>.</p></div>
+            </article>
+
+            <article class="quiz-question compact-question" data-question="q15">
+              <div class="question-heading"><h3>15. HCP (11<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</h3><button type="button" class="figure-button" data-figure="hcp-11m20">View 3D</button></div>
+              <label class="numeric-answer" for="q15-answer"><span>Planar density</span><input id="q15-answer" type="number" inputmode="decimal" step="any" aria-describedby="q15-status"><span>atoms nm<sup>&minus;2</sup></span></label>
+              <p class="answer-status" id="q15-status"></p>
+              <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q15">Show solution</button>
+              <div class="solution-panel" id="solution-q15" hidden><p>The repeat rectangle has area &radic;3<i>ac</i> and contains 2 effective atoms: <strong>2/(&radic;3<i>ac</i>) = 7.855</strong>.</p></div>
+            </article>
+          </div>
+        </section>
+
+        <div class="quiz-actions">
+          <button class="button primary" type="submit">Check all answers</button>
+          <button class="button secondary" id="clear-quiz" type="button">Clear answers</button>
+        </div>
+        <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <article class="quiz-next">
+      <div>
+        <p class="section-kicker">Explore freely</p>
+        <h2>Plot your own cubic plane</h2>
+        <p>Use the Miller indices explorer to enter any cubic direction or plane and rotate the cell.</p>
+      </div>
+      <a class="button primary" href="../../visualizations/miller-indices/index.html">Open Miller explorer</a>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Crystallography quiz &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
