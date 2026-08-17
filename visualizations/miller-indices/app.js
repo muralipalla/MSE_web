@@ -461,7 +461,7 @@ function setCrystalSystem(system) {
     ? "Show symmetry-equivalent family {h k i l}"
     : "Show symmetry-equivalent family {h k l}";
   elements.directionNote.innerHTML = isHexagonal
-    ? "Enter <b>u</b>, <b>v</b>, and <b>w</b>. The read-only <b>t = −(u + v)</b>. Conversion uses <b>U = u − t</b>, <b>V = v − t</b>, and <b>W = w</b>; the plotted vector is <b>U·a₁ + V·a₂ + W·c</b>."
+    ? "Enter <b>u</b>, <b>v</b>, and <b>w</b>. The read-only <b>t = −(u + v)</b>. Conversion uses <b>U = 2u + v</b>, <b>V = u + 2v</b>, and <b>W = w</b>, followed by common-factor reduction. The plotted vector is <b>U·a₁ + V·a₂ + W·c</b>."
     : "The three integers give relative steps along the <b>a</b>, <b>b</b>, and <b>c</b> axes.";
   elements.planeNote.innerHTML = isHexagonal
     ? "Enter <b>h</b>, <b>k</b>, and <b>l</b>. The read-only <b>i = −(h + k)</b>. The converted three-index plane is <b>(H K L) = (h k l)</b>."
@@ -472,17 +472,19 @@ function setCrystalSystem(system) {
     : "The normal to plane (h k l) is parallel to direction [h k l] in a cubic crystal.";
 
   if (isHexagonal) {
-    state.direction = [1, 0, -1, 0];
+    state.direction = [2, -1, -1, 0];
     state.plane = [1, 0, -1, 0];
     setInputValues(elements.directionInputs, state.direction);
     setInputValues(elements.planeInputs, state.plane);
     updateCalculatedHexIndices();
     setPresetOptions(elements.directionPreset, [
       ["", "Choose an example"],
-      ["1,0,-1,0", "[1 0 1̄ 0] a₁ direction"],
-      ["0,1,-1,0", "[0 1 1̄ 0] a₂ direction"],
-      ["0,0,0,1", "[0 0 0 1] c-axis direction"],
-      ["1,0,-1,1", "[1 0 1̄ 1] a₁ + c direction"]
+      ["2,-1,-1,0", "[2 1̄ 1̄ 0] a₁ direction → [1 0 0]"],
+      ["-1,2,-1,0", "[1̄ 2 1̄ 0] a₂ direction → [0 1 0]"],
+      ["1,1,-2,0", "[1 1 2̄ 0] basal diagonal → [1 1 0]"],
+      ["0,0,0,1", "[0 0 0 1] c-axis direction → [0 0 1]"],
+      ["2,-1,-1,3", "[2 1̄ 1̄ 3] pyramidal direction → [1 0 1]"],
+      ["1,1,-2,3", "[1 1 2̄ 3] pyramidal direction → [1 1 1]"]
     ]);
     setPresetOptions(elements.planePreset, [
       ["", "Choose an example"],
@@ -575,8 +577,8 @@ function updateCalculatedHexIndices() {
   }
 }
 
-function convertHexDirectionToThree([u, v, t, w], reduce = true) {
-  const converted = [u - t, v - t, w];
+function convertHexDirectionToThree([u, v, _t, w], reduce = true) {
+  const converted = [2 * u + v, u + 2 * v, w];
   return reduce ? reduceDirection(converted) : converted;
 }
 
