@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Plot crystallographic directions and Miller planes inside an interactive cubic unit cell.">
+  <meta name="description" content="Plot crystallographic directions and Miller planes inside interactive cubic and hexagonal unit cells.">
   <meta name="theme-color" content="#fdf6ec">
   <title>Miller Indices Explorer | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=13">
   <script src="../../js/main.js" defer></script>
   <script type="importmap">
     {
@@ -17,7 +17,7 @@
       }
     }
   </script>
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=13"></script>
 </head>
 <body>
   <a class="skip-link" href="#miller-explorer">Skip to Miller indices explorer</a>
@@ -41,11 +41,12 @@
     <header class="miller-intro">
       <div>
         <p class="eyebrow">Interactive visualization 02</p>
-        <h1>Explore directions and planes in a cubic crystal</h1>
+        <h1>Explore directions and planes in crystal unit cells</h1>
       </div>
       <p>
         Enter integer indices, then rotate the unit cell to see how a direction
-        <strong>[uvw]</strong> and a plane <strong>(hkl)</strong> occupy three-dimensional space.
+        <strong>[uvw]</strong> and a plane <strong>(hkl)</strong> occupy three-dimensional space. Switch to
+        hexagonal mode to use four-index Miller&ndash;Bravais notation.
       </p>
     </header>
 
@@ -53,18 +54,23 @@
       <section class="viewer-panel" aria-labelledby="viewer-title">
         <div class="viewer-heading">
           <div>
-            <p class="panel-kicker">Cubic unit cell</p>
+            <p class="panel-kicker" id="cell-kicker">Cubic unit cell</p>
             <h2 id="viewer-title">Crystallographic view</h2>
           </div>
           <div class="viewer-tools">
+            <label class="view-control" for="crystal-system">
+              <span>Cell</span>
+              <select id="crystal-system">
+                <option value="cubic">Cubic</option>
+                <option value="hexagonal">Hexagonal</option>
+              </select>
+            </label>
             <label class="view-control" for="view-orientation">
               <span>View</span>
               <select id="view-orientation">
-                <option value="isometric">Isometric</option>
-                <option value="a">Along a</option>
-                <option value="b">Along b</option>
-                <option value="c">Along c</option>
-                <option value="custom" hidden>Custom</option>
+                <option value="orthographic">Orthographic</option>
+                <option value="perspective" selected>Perspective</option>
+                <option value="reset">Reset</option>
               </select>
             </label>
             <button class="small-button" id="download-png" type="button">Download PNG</button>
@@ -104,17 +110,29 @@
               <h2 id="direction-title">Plot [u v w]</h2>
             </div>
           </div>
-          <p class="control-note">The three integers give relative steps along the <b>a</b>, <b>b</b>, and <b>c</b> axes.</p>
+          <p class="control-note" id="direction-note">The three integers give relative steps along the <b>a</b>, <b>b</b>, and <b>c</b> axes.</p>
 
           <form id="direction-form">
             <div class="index-fields" aria-label="Direction indices">
               <label for="direction-u"><span>u</span><input id="direction-u" name="u" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
               <label for="direction-v"><span>v</span><input id="direction-v" name="v" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
+              <label class="hex-index calculated-index" for="direction-t" hidden><span>t</span><input id="direction-t" name="t" type="number" min="-18" max="18" step="1" value="-2" readonly aria-describedby="direction-note"></label>
               <label for="direction-w"><span>w</span><input id="direction-w" name="w" type="number" min="-9" max="9" step="1" value="0" inputmode="decimal" required></label>
             </div>
+            <p class="conversion-output hex-conversion" id="direction-conversion" hidden></p>
             <div class="control-actions">
               <button class="button primary compact-button" type="submit">Plot direction</button>
               <button class="small-button" id="clear-direction" type="button">Hide</button>
+            </div>
+            <div class="display-options" aria-label="Direction display options">
+              <label class="family-toggle" for="show-direction-family">
+                <input id="show-direction-family" type="checkbox">
+                <span id="direction-family-label">Show symmetry-equivalent family &lang;u v w&rang;</span>
+              </label>
+              <label class="family-toggle" for="show-parallel-directions">
+                <input id="show-parallel-directions" type="checkbox">
+                <span>Show translated parallel vectors</span>
+              </label>
             </div>
           </form>
 
@@ -124,7 +142,7 @@
             <option value="1,0,0">[1 0 0] cube edge</option>
             <option value="1,1,0">[1 1 0] face diagonal</option>
             <option value="1,1,1">[1 1 1] body diagonal</option>
-            <option value="1,-1,0">[1 −1 0] negative index</option>
+            <option value="1,-1,0">[1 1̄ 0] negative index</option>
           </select>
           <p class="control-message" id="direction-message" role="status"></p>
         </section>
@@ -137,17 +155,29 @@
               <h2 id="plane-title">Plot (h k l)</h2>
             </div>
           </div>
-          <p class="control-note">A zero index means the plane is parallel to that axis. A negative index places its intercept on the negative axis.</p>
+          <p class="control-note" id="plane-note">A zero index means the plane is parallel to that axis. A negative index places its intercept on the negative axis.</p>
 
           <form id="plane-form">
             <div class="index-fields" aria-label="Plane indices">
               <label for="plane-h"><span>h</span><input id="plane-h" name="h" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
               <label for="plane-k"><span>k</span><input id="plane-k" name="k" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
+              <label class="hex-index calculated-index" for="plane-i" hidden><span>i</span><input id="plane-i" name="i" type="number" min="-18" max="18" step="1" value="-2" readonly aria-describedby="plane-note"></label>
               <label for="plane-l"><span>l</span><input id="plane-l" name="l" type="number" min="-9" max="9" step="1" value="1" inputmode="decimal" required></label>
             </div>
+            <p class="conversion-output hex-conversion" id="plane-conversion" hidden></p>
             <div class="control-actions">
               <button class="button primary compact-button" type="submit">Plot plane</button>
               <button class="small-button" id="clear-plane" type="button">Hide</button>
+            </div>
+            <div class="display-options" aria-label="Plane display options">
+              <label class="family-toggle" for="show-plane-family">
+                <input id="show-plane-family" type="checkbox">
+                <span id="plane-family-label">Show symmetry-equivalent family {h k l}</span>
+              </label>
+              <label class="family-toggle" for="show-parallel-planes">
+                <input id="show-parallel-planes" type="checkbox">
+                <span>Show parallel plane members</span>
+              </label>
             </div>
           </form>
 
@@ -157,14 +187,15 @@
             <option value="1,0,0">(1 0 0) cube face</option>
             <option value="1,1,0">(1 1 0) diagonal plane</option>
             <option value="1,1,1">(1 1 1) triangular plane</option>
-            <option value="1,-1,0">(1 −1 0) negative index</option>
+            <option value="1,-1,0">(1 1̄ 0) negative index</option>
           </select>
           <p class="control-message" id="plane-message" role="status"></p>
         </section>
 
-        <section class="concept-note" aria-labelledby="cubic-note-title">
-          <h2 id="cubic-note-title">Cubic-crystal shortcut</h2>
-          <p>The normal to plane (h k l) is parallel to direction [h k l] in a cubic crystal.</p>
+        <section class="concept-note" aria-labelledby="crystal-note-title">
+          <h2 id="crystal-note-title">Cubic-crystal shortcut</h2>
+          <p id="crystal-note">The normal to plane (h k l) is parallel to direction [h k l] in a cubic crystal.</p>
+          <p class="notation-note"><strong>Notation:</strong> a negative index is conventionally written with an overbar, for example [1 <span class="overbar">1</span> 0], not [1 &minus;1 0].</p>
         </section>
       </aside>
     </div>

@@ -15,6 +15,24 @@ const CUBE_EDGES = [
   [5, 7], [6, 7]
 ];
 
+const HEX_RADIUS = 0.62;
+const HEX_HEIGHT = 1.15;
+const HEX_CENTER = new THREE.Vector3(0.5, HEX_HEIGHT / 2, 0.5);
+const HEX_VERTICES = Array.from({ length: 12 }, (_, index) => {
+  const ringIndex = index % 6;
+  const angle = ringIndex * Math.PI / 3;
+  return [
+    0.5 + HEX_RADIUS * Math.cos(angle),
+    index < 6 ? 0 : HEX_HEIGHT,
+    0.5 + HEX_RADIUS * Math.sin(angle)
+  ];
+});
+const HEX_EDGES = [
+  ...Array.from({ length: 6 }, (_, index) => [index, (index + 1) % 6]),
+  ...Array.from({ length: 6 }, (_, index) => [index + 6, ((index + 1) % 6) + 6]),
+  ...Array.from({ length: 6 }, (_, index) => [index, index + 6])
+];
+
 const EPSILON = 1e-7;
 const DIRECTION_COLOR = 0xff7258;
 const PLANE_COLOR = 0x46dfcd;
@@ -23,6 +41,8 @@ const elements = {
   frame: document.querySelector("#viewer-frame"),
   canvas: document.querySelector("#miller-canvas"),
   fallback: document.querySelector("#viewer-fallback"),
+  crystalSystem: document.querySelector("#crystal-system"),
+  cellKicker: document.querySelector("#cell-kicker"),
   viewOrientation: document.querySelector("#view-orientation"),
   downloadPng: document.querySelector("#download-png"),
   downloadMessage: document.querySelector("#download-message"),
@@ -31,27 +51,48 @@ const elements = {
   directionInputs: [
     document.querySelector("#direction-u"),
     document.querySelector("#direction-v"),
+    document.querySelector("#direction-t"),
     document.querySelector("#direction-w")
   ],
+  directionTitle: document.querySelector("#direction-title"),
+  directionNote: document.querySelector("#direction-note"),
+  directionConversion: document.querySelector("#direction-conversion"),
   directionPreset: document.querySelector("#direction-preset"),
   directionMessage: document.querySelector("#direction-message"),
   clearDirection: document.querySelector("#clear-direction"),
+  showDirectionFamily: document.querySelector("#show-direction-family"),
+  directionFamilyLabel: document.querySelector("#direction-family-label"),
+  showParallelDirections: document.querySelector("#show-parallel-directions"),
   planeForm: document.querySelector("#plane-form"),
   planeInputs: [
     document.querySelector("#plane-h"),
     document.querySelector("#plane-k"),
+    document.querySelector("#plane-i"),
     document.querySelector("#plane-l")
   ],
+  planeTitle: document.querySelector("#plane-title"),
+  planeNote: document.querySelector("#plane-note"),
+  planeConversion: document.querySelector("#plane-conversion"),
   planePreset: document.querySelector("#plane-preset"),
   planeMessage: document.querySelector("#plane-message"),
-  clearPlane: document.querySelector("#clear-plane")
+  clearPlane: document.querySelector("#clear-plane"),
+  showPlaneFamily: document.querySelector("#show-plane-family"),
+  planeFamilyLabel: document.querySelector("#plane-family-label"),
+  showParallelPlanes: document.querySelector("#show-parallel-planes"),
+  crystalNoteTitle: document.querySelector("#crystal-note-title"),
+  crystalNote: document.querySelector("#crystal-note")
 };
 
 const state = {
+  crystalSystem: "cubic",
   direction: [1, 1, 0],
   plane: [1, 1, 1],
   directionVisible: true,
   planeVisible: true,
+  showDirectionFamily: false,
+  showParallelDirections: false,
+  showPlaneFamily: false,
+  showParallelPlanes: false,
   planeOffset: 1
 };
 
@@ -59,6 +100,7 @@ let scene;
 let camera;
 let renderer;
 let controls;
+let unitCellGraphic;
 let directionGraphic;
 let planeGraphic;
 let resizeObserver;
@@ -92,20 +134,10 @@ function initializeScene() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  camera = createPerspectiveCamera(1);
   resetCamera();
 
-  controls = new OrbitControls(camera, elements.canvas);
-  controls.target.set(0.5, 0.5, 0.5);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.07;
-  controls.minDistance = 1.8;
-  controls.maxDistance = 7;
-  controls.enablePan = true;
-  controls.addEventListener("start", () => {
-    elements.viewOrientation.value = "custom";
-  });
-  controls.update();
+  controls = createOrbitControls(camera, new THREE.Vector3(0.5, 0.5, 0.5));
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x1a255f, 2.2));
 
@@ -117,7 +149,8 @@ function initializeScene() {
   fillLight.position.set(-3, 1, -2);
   scene.add(fillLight);
 
-  scene.add(createUnitCell());
+  unitCellGraphic = createUnitCell();
+  scene.add(unitCellGraphic);
 
   resizeObserver = new ResizeObserver(resizeRenderer);
   resizeObserver.observe(elements.frame);
@@ -131,6 +164,10 @@ function initializeScene() {
 }
 
 function createUnitCell() {
+  return state.crystalSystem === "hexagonal" ? createHexagonalUnitCell() : createCubicUnitCell();
+}
+
+function createCubicUnitCell() {
   const group = new THREE.Group();
   group.name = "Cubic unit cell";
 
@@ -185,8 +222,66 @@ function createUnitCell() {
   return group;
 }
 
-function addAxis(group, direction, color, label, labelPosition) {
-  const arrow = new THREE.ArrowHelper(direction, new THREE.Vector3(0, 0, 0), 1.18, color, 0.08, 0.045);
+function createHexagonalUnitCell() {
+  const group = new THREE.Group();
+  group.name = "Hexagonal unit cell";
+
+  const fill = new THREE.Mesh(
+    new THREE.CylinderGeometry(HEX_RADIUS, HEX_RADIUS, HEX_HEIGHT, 6),
+    new THREE.MeshPhongMaterial({
+      color: 0x8e96d9,
+      transparent: true,
+      opacity: 0.055,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    })
+  );
+  fill.position.copy(HEX_CENTER);
+  fill.rotation.y = Math.PI / 2;
+  fill.userData.printRole = "cell-fill";
+  group.add(fill);
+
+  const edgePoints = [];
+  HEX_EDGES.forEach(([start, end]) => {
+    edgePoints.push(new THREE.Vector3(...HEX_VERTICES[start]), new THREE.Vector3(...HEX_VERTICES[end]));
+  });
+  const edges = new THREE.LineSegments(
+    new THREE.BufferGeometry().setFromPoints(edgePoints),
+    new THREE.LineBasicMaterial({ color: 0xf3f1ff, transparent: true, opacity: 0.92 })
+  );
+  edges.renderOrder = 5;
+  edges.userData.printRole = "cell-edges";
+  group.add(edges);
+
+  const atomGeometry = new THREE.SphereGeometry(0.05, 22, 16);
+  const atomMaterial = new THREE.MeshStandardMaterial({
+    color: 0xdad6ff,
+    roughness: 0.28,
+    metalness: 0.08,
+    emissive: 0x29255f,
+    emissiveIntensity: 0.18
+  });
+  HEX_VERTICES.forEach((point) => {
+    const atom = new THREE.Mesh(atomGeometry, atomMaterial);
+    atom.position.set(...point);
+    atom.userData.printRole = "corner-atom";
+    group.add(atom);
+  });
+
+  const origin = new THREE.Vector3(0.5, 0, 0.5);
+  addAxis(group, new THREE.Vector3(1, 0, 0), 0xff9a85, "a₁", [1.25, 0, 0.5], origin, 0.68);
+  addAxis(group, new THREE.Vector3(-0.5, 0, Math.sqrt(3) / 2), 0x8dd7ff, "a₂", [0.12, 0, 1.16], origin, 0.68);
+  addAxis(group, new THREE.Vector3(-0.5, 0, -Math.sqrt(3) / 2), 0xd9a7ff, "a₃", [-0.02, -0.1, -0.4], origin, 0.68);
+  addAxis(group, new THREE.Vector3(0, 1, 0), 0xb9f09e, "c", [0.5, 1.35, 0.5], origin, 1.25);
+
+  const originLabel = makeLabelSprite("O", "#ffffff", "rgba(18, 23, 67, 0.78)");
+  originLabel.position.set(0.42, -0.08, 0.42);
+  group.add(originLabel);
+  return group;
+}
+
+function addAxis(group, direction, color, label, labelPosition, origin = new THREE.Vector3(0, 0, 0), length = 1.18) {
+  const arrow = new THREE.ArrowHelper(direction.clone().normalize(), origin, length, color, 0.08, 0.045);
   arrow.traverse((part) => {
     if (part.material) part.userData.printRole = `axis-${label}`;
   });
@@ -198,12 +293,25 @@ function addAxis(group, direction, color, label, labelPosition) {
 }
 
 function bindControls() {
+  [elements.directionInputs[0], elements.directionInputs[1], elements.directionInputs[3], elements.planeInputs[0], elements.planeInputs[1], elements.planeInputs[3]].forEach((input) => {
+    input.addEventListener("input", updateCalculatedHexIndices);
+  });
+
+  elements.crystalSystem.addEventListener("change", () => {
+    setCrystalSystem(elements.crystalSystem.value);
+  });
+
   elements.directionForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const indices = readIndices(elements.directionInputs, elements.directionMessage, "direction");
+    if (state.crystalSystem === "hexagonal") updateCalculatedHexIndices();
+    const indices = readIndices(activeDirectionInputs(), elements.directionMessage, "direction");
     if (!indices) return;
+    if (state.crystalSystem === "hexagonal" && indices[0] + indices[1] + indices[2] !== 0) {
+      setMessage(elements.directionMessage, "Hexagonal direction indices must satisfy u + v + t = 0.", true);
+      return;
+    }
     if (indices.every((value) => value === 0)) {
-      setMessage(elements.directionMessage, "[0 0 0] does not define a direction.", true);
+      setMessage(elements.directionMessage, `${formatIndices(indices, "[")} does not define a direction.`, true);
       return;
     }
 
@@ -215,17 +323,22 @@ function bindControls() {
     if (!indices.every((value, index) => value === reduced[index])) {
       setMessage(elements.directionMessage, `Plotted the equivalent reduced direction ${formatIndices(reduced, "[")} for the entered ${formatIndices(indices, "[")}.`);
     } else {
-      setMessage(elements.directionMessage, "");
+      updateDirectionMessage();
     }
     updateSummary();
   });
 
   elements.planeForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const indices = readIndices(elements.planeInputs, elements.planeMessage, "plane");
+    if (state.crystalSystem === "hexagonal") updateCalculatedHexIndices();
+    const indices = readIndices(activePlaneInputs(), elements.planeMessage, "plane");
     if (!indices) return;
+    if (state.crystalSystem === "hexagonal" && indices[2] !== -(indices[0] + indices[1])) {
+      setMessage(elements.planeMessage, "For Miller–Bravais planes, i must equal −(h + k).", true);
+      return;
+    }
     if (indices.every((value) => value === 0)) {
-      setMessage(elements.planeMessage, "(0 0 0) does not define a plane.", true);
+      setMessage(elements.planeMessage, `${formatIndices(indices, "(")} does not define a plane.`, true);
       return;
     }
 
@@ -237,11 +350,11 @@ function bindControls() {
   });
 
   elements.directionPreset.addEventListener("change", () => {
-    applyPreset(elements.directionPreset, elements.directionInputs, elements.directionForm);
+    applyPreset(elements.directionPreset, activeDirectionInputs(), elements.directionForm);
   });
 
   elements.planePreset.addEventListener("change", () => {
-    applyPreset(elements.planePreset, elements.planeInputs, elements.planeForm);
+    applyPreset(elements.planePreset, activePlaneInputs(), elements.planeForm);
   });
 
   elements.clearDirection.addEventListener("click", () => {
@@ -258,31 +371,263 @@ function bindControls() {
     updateSummary();
   });
 
+  elements.showDirectionFamily.addEventListener("change", () => {
+    state.showDirectionFamily = elements.showDirectionFamily.checked;
+    state.directionVisible = true;
+    plotDirection(state.direction);
+    updateDirectionMessage();
+    updateSummary();
+  });
+
+  elements.showParallelDirections.addEventListener("change", () => {
+    state.showParallelDirections = elements.showParallelDirections.checked;
+    state.directionVisible = true;
+    plotDirection(state.direction);
+    updateDirectionMessage();
+    updateSummary();
+  });
+
+  elements.showPlaneFamily.addEventListener("change", () => {
+    state.showPlaneFamily = elements.showPlaneFamily.checked;
+    state.planeVisible = true;
+    plotPlane(state.plane);
+    updatePlaneMessage(state.plane, state.planeOffset);
+    updateSummary();
+  });
+
+  elements.showParallelPlanes.addEventListener("change", () => {
+    state.showParallelPlanes = elements.showParallelPlanes.checked;
+    state.planeVisible = true;
+    plotPlane(state.plane);
+    updatePlaneMessage(state.plane, state.planeOffset);
+    updateSummary();
+  });
+
   elements.viewOrientation.addEventListener("change", () => {
-    if (!camera || !controls || elements.viewOrientation.value === "custom") return;
-    setViewOrientation(elements.viewOrientation.value);
+    if (!camera || !controls) return;
+    const view = elements.viewOrientation.value;
+    if (view === "reset") {
+      setProjection("perspective");
+      resetCamera();
+      controls.target.copy(currentCellCenter());
+      camera.lookAt(controls.target);
+      controls.update();
+      elements.viewOrientation.value = "perspective";
+      return;
+    }
+    setProjection(view);
   });
 
   elements.downloadPng.addEventListener("click", downloadCurrentFigure);
+}
+
+function activeDirectionInputs() {
+  return state.crystalSystem === "hexagonal"
+    ? elements.directionInputs
+    : [elements.directionInputs[0], elements.directionInputs[1], elements.directionInputs[3]];
+}
+
+function activePlaneInputs() {
+  return state.crystalSystem === "hexagonal"
+    ? elements.planeInputs
+    : [elements.planeInputs[0], elements.planeInputs[1], elements.planeInputs[3]];
+}
+
+function setCrystalSystem(system) {
+  state.crystalSystem = system === "hexagonal" ? "hexagonal" : "cubic";
+  const isHexagonal = state.crystalSystem === "hexagonal";
+
+  document.querySelectorAll(".hex-index").forEach((label) => {
+    label.hidden = !isHexagonal;
+    const input = label.querySelector("input");
+    input.required = isHexagonal;
+  });
+
+  elements.directionForm.querySelector(".index-fields").classList.toggle("has-four-indices", isHexagonal);
+  elements.planeForm.querySelector(".index-fields").classList.toggle("has-four-indices", isHexagonal);
+  document.querySelectorAll(".hex-conversion").forEach((output) => { output.hidden = !isHexagonal; });
+
+  elements.cellKicker.textContent = isHexagonal ? "Hexagonal unit cell" : "Cubic unit cell";
+  elements.canvas.setAttribute(
+    "aria-label",
+    `Interactive ${state.crystalSystem} unit cell showing the selected crystallographic direction and Miller plane. Drag to rotate, scroll to zoom, and right-drag to pan.`
+  );
+  elements.directionTitle.textContent = isHexagonal ? "Plot [u v t w]" : "Plot [u v w]";
+  elements.directionFamilyLabel.textContent = isHexagonal
+    ? "Show symmetry-equivalent family ⟨u v t w⟩"
+    : "Show symmetry-equivalent family ⟨u v w⟩";
+  elements.planeTitle.textContent = isHexagonal ? "Plot (h k i l)" : "Plot (h k l)";
+  elements.planeFamilyLabel.textContent = isHexagonal
+    ? "Show symmetry-equivalent family {h k i l}"
+    : "Show symmetry-equivalent family {h k l}";
+  elements.directionNote.innerHTML = isHexagonal
+    ? "Enter <b>u</b>, <b>v</b>, and <b>w</b>. The read-only <b>t = −(u + v)</b>. Conversion uses <b>U = u − t</b>, <b>V = v − t</b>, and <b>W = w</b>; the plotted vector is <b>U·a₁ + V·a₂ + W·c</b>."
+    : "The three integers give relative steps along the <b>a</b>, <b>b</b>, and <b>c</b> axes.";
+  elements.planeNote.innerHTML = isHexagonal
+    ? "Enter <b>h</b>, <b>k</b>, and <b>l</b>. The read-only <b>i = −(h + k)</b>. The converted three-index plane is <b>(H K L) = (h k l)</b>."
+    : "A zero index means the plane is parallel to that axis. A negative index places its intercept on the negative axis.";
+  elements.crystalNoteTitle.textContent = isHexagonal ? "Hexagonal indexing" : "Cubic-crystal shortcut";
+  elements.crystalNote.textContent = isHexagonal
+    ? "Hexagonal crystals use four indices so the three equivalent basal axes are represented symmetrically."
+    : "The normal to plane (h k l) is parallel to direction [h k l] in a cubic crystal.";
+
+  if (isHexagonal) {
+    state.direction = [1, 0, -1, 0];
+    state.plane = [1, 0, -1, 0];
+    setInputValues(elements.directionInputs, state.direction);
+    setInputValues(elements.planeInputs, state.plane);
+    updateCalculatedHexIndices();
+    setPresetOptions(elements.directionPreset, [
+      ["", "Choose an example"],
+      ["1,0,-1,0", "[1 0 1̄ 0] a₁ direction"],
+      ["0,1,-1,0", "[0 1 1̄ 0] a₂ direction"],
+      ["0,0,0,1", "[0 0 0 1] c-axis direction"],
+      ["1,0,-1,1", "[1 0 1̄ 1] a₁ + c direction"]
+    ]);
+    setPresetOptions(elements.planePreset, [
+      ["", "Choose an example"],
+      ["1,0,-1,0", "(1 0 1̄ 0) prism plane"],
+      ["0,0,0,1", "(0 0 0 1) basal plane"],
+      ["1,0,-1,1", "(1 0 1̄ 1) pyramidal plane"]
+    ]);
+  } else {
+    state.direction = [1, 1, 0];
+    state.plane = [1, 1, 1];
+    setInputValues(activeDirectionInputs(), state.direction);
+    setInputValues(activePlaneInputs(), state.plane);
+    setPresetOptions(elements.directionPreset, [
+      ["", "Choose an example"], ["1,0,0", "[1 0 0] cube edge"],
+      ["1,1,0", "[1 1 0] face diagonal"], ["1,1,1", "[1 1 1] body diagonal"],
+      ["1,-1,0", "[1 1̄ 0] negative index"]
+    ]);
+    setPresetOptions(elements.planePreset, [
+      ["", "Choose an example"], ["1,0,0", "(1 0 0) cube face"],
+      ["1,1,0", "(1 1 0) diagonal plane"], ["1,1,1", "(1 1 1) triangular plane"],
+      ["1,-1,0", "(1 1̄ 0) negative index"]
+    ]);
+  }
+
+  if (scene) {
+    disposeGraphic(unitCellGraphic);
+    unitCellGraphic = createUnitCell();
+    scene.add(unitCellGraphic);
+    plotDirection(state.direction);
+    plotPlane(state.plane);
+    resetCamera();
+    controls.target.copy(isHexagonal ? HEX_CENTER : new THREE.Vector3(0.5, 0.5, 0.5));
+    controls.update();
+  }
+  state.directionVisible = true;
+  state.planeVisible = true;
+  elements.directionMessage.textContent = "";
+  elements.planeMessage.textContent = "";
+  if (state.showDirectionFamily || state.showParallelDirections) updateDirectionMessage();
+  if (state.showPlaneFamily || state.showParallelPlanes) updatePlaneMessage(state.plane, state.planeOffset);
+  updateSummary();
+}
+
+function setInputValues(inputs, values) {
+  inputs.forEach((input, index) => { input.value = values[index]; });
+}
+
+function updateCalculatedHexIndices() {
+  if (state.crystalSystem !== "hexagonal") return;
+
+  const directionHasBasalInputs = elements.directionInputs[0].value.trim() !== "" && elements.directionInputs[1].value.trim() !== "";
+  const u = Number(elements.directionInputs[0].value);
+  const v = Number(elements.directionInputs[1].value);
+  const w = Number(elements.directionInputs[3].value);
+  if (directionHasBasalInputs && [u, v].every(Number.isInteger)) {
+    elements.directionInputs[2].value = String(-(u + v));
+  } else {
+    elements.directionInputs[2].value = "";
+  }
+  const t = Number(elements.directionInputs[2].value);
+  const directionComplete = directionHasBasalInputs && elements.directionInputs[3].value.trim() !== "";
+  if (directionComplete && [u, v, t, w].every(Number.isInteger)) {
+    const fourIndex = [u, v, t, w];
+    const rawThreeIndex = convertHexDirectionToThree(fourIndex, false);
+    const reducedThreeIndex = reduceDirection(rawThreeIndex);
+    const reduction = rawThreeIndex.every((value, index) => value === reducedThreeIndex[index])
+      ? ""
+      : ` ≡ ${formatIndices(reducedThreeIndex, "[")}`;
+    elements.directionConversion.textContent = `${formatIndices(fourIndex, "[")} → three-index ${formatIndices(rawThreeIndex, "[")}${reduction}`;
+  } else {
+    elements.directionConversion.textContent = "";
+  }
+
+  const planeHasBasalInputs = elements.planeInputs[0].value.trim() !== "" && elements.planeInputs[1].value.trim() !== "";
+  const h = Number(elements.planeInputs[0].value);
+  const k = Number(elements.planeInputs[1].value);
+  const l = Number(elements.planeInputs[3].value);
+  if (planeHasBasalInputs && [h, k].every(Number.isInteger)) {
+    elements.planeInputs[2].value = String(-(h + k));
+  } else {
+    elements.planeInputs[2].value = "";
+  }
+  const i = Number(elements.planeInputs[2].value);
+  const planeComplete = planeHasBasalInputs && elements.planeInputs[3].value.trim() !== "";
+  if (planeComplete && [h, k, i, l].every(Number.isInteger)) {
+    const fourIndex = [h, k, i, l];
+    elements.planeConversion.textContent = `${formatIndices(fourIndex, "(")} → three-index ${formatIndices(convertHexPlaneToThree(fourIndex), "(")}`;
+  } else {
+    elements.planeConversion.textContent = "";
+  }
+}
+
+function convertHexDirectionToThree([u, v, t, w], reduce = true) {
+  const converted = [u - t, v - t, w];
+  return reduce ? reduceDirection(converted) : converted;
+}
+
+function convertHexPlaneToThree([h, k, _i, l]) {
+  return [h, k, l];
+}
+
+function setPresetOptions(select, options) {
+  select.replaceChildren(...options.map(([value, label]) => new Option(label, value)));
 }
 
 function plotDirection(indices) {
   if (!scene) return;
   disposeGraphic(directionGraphic);
 
-  const segment = directionSegment(indices);
-  const start = toWorld(segment.start);
-  const end = toWorld(segment.end);
-  directionGraphic = createThickArrow(start, end, DIRECTION_COLOR);
+  directionGraphic = new THREE.Group();
+  const familyIndices = state.showDirectionFamily ? getDirectionFamilyIndices(indices) : [indices];
+  familyIndices.forEach((memberIndices, index) => {
+    const segment = getDirectionWorldSegment(memberIndices);
+    const arrow = createThickArrow(segment.start, segment.end, DIRECTION_COLOR);
+    directionGraphic.add(arrow);
 
-  const label = makeLabelSprite(formatIndices(indices, "["), "#ffffff", "rgba(166, 45, 24, 0.9)");
-  const midpoint = start.clone().lerp(end, 0.55);
-  label.position.copy(midpoint.add(new THREE.Vector3(0.08, 0.1, 0.07)));
-  directionGraphic.add(label);
+    if (index === 0) {
+      const opening = state.showDirectionFamily ? "<" : "[";
+      const label = makeLabelSprite(formatIndices(indices, opening), "#ffffff", "rgba(166, 45, 24, 0.9)");
+      const midpoint = segment.start.clone().lerp(segment.end, 0.55);
+      label.position.copy(midpoint.add(new THREE.Vector3(0.08, 0.1, 0.07)));
+      directionGraphic.add(label);
+    }
+  });
+
+  if (state.showParallelDirections) {
+    getParallelDirectionSegments(indices).forEach(({ start, end }) => {
+      directionGraphic.add(createThickArrow(start, end, DIRECTION_COLOR));
+    });
+  }
 
   directionGraphic.visible = true;
-  directionGraphic.name = `Direction ${formatIndices(indices, "[")}`;
+  directionGraphic.name = state.showDirectionFamily
+    ? `Direction family ${formatIndices(indices, "<")}`
+    : `Direction ${formatIndices(indices, "[")}`;
   scene.add(directionGraphic);
+}
+
+function getDirectionWorldSegment(indices) {
+  const segment = state.crystalSystem === "hexagonal"
+    ? hexagonalDirectionSegment(indices)
+    : directionSegment(indices);
+  return state.crystalSystem === "hexagonal"
+    ? segment
+    : { start: toWorld(segment.start), end: toWorld(segment.end) };
 }
 
 function directionSegment(indices) {
@@ -291,6 +636,66 @@ function directionSegment(indices) {
   const start = indices.map((value) => (value < 0 ? 1 : 0));
   const end = start.map((value, index) => value + step[index]);
   return { start, end };
+}
+
+function hexagonalDirectionSegment(indices) {
+  const [U, V, W] = convertHexDirectionToThree(indices);
+  const a1 = new THREE.Vector3(HEX_RADIUS, 0, 0);
+  const a2 = new THREE.Vector3(-HEX_RADIUS / 2, 0, HEX_RADIUS * Math.sqrt(3) / 2);
+  const vector = new THREE.Vector3()
+    .addScaledVector(a1, U)
+    .addScaledVector(a2, V)
+    .add(new THREE.Vector3(0, W * HEX_HEIGHT, 0));
+  const maxHorizontal = Math.hypot(vector.x, vector.z);
+  const horizontalScale = maxHorizontal > EPSILON ? HEX_RADIUS / maxHorizontal : Infinity;
+  const verticalScale = Math.abs(vector.y) > EPSILON ? HEX_HEIGHT / Math.abs(vector.y) : Infinity;
+  vector.multiplyScalar(Math.min(horizontalScale, verticalScale));
+  const start = new THREE.Vector3(0.5, 0, 0.5);
+  const end = start.clone().add(vector);
+  return { start, end };
+}
+
+function getParallelDirectionSegments(indices) {
+  const primary = getDirectionWorldSegment(indices);
+  const delta = primary.end.clone().sub(primary.start).multiplyScalar(0.44);
+  const anchors = state.crystalSystem === "hexagonal" ? hexagonalVectorAnchors() : cubicVectorAnchors();
+  const candidates = anchors
+    .map((start) => ({ start, end: start.clone().add(delta) }))
+    .filter(({ start, end }) => isPointInsideCurrentCell(start) && isPointInsideCurrentCell(end))
+    .filter(({ start }) => start.distanceTo(primary.start) > 0.18);
+  const selected = [];
+  candidates.forEach((candidate) => {
+    if (selected.length < 3 && selected.every(({ start }) => start.distanceTo(candidate.start) > 0.3)) selected.push(candidate);
+  });
+  return selected;
+}
+
+function cubicVectorAnchors() {
+  const values = [0.18, 0.5, 0.82];
+  const anchors = [];
+  values.forEach((x) => values.forEach((y) => values.forEach((z) => anchors.push(new THREE.Vector3(x, y, z)))));
+  return anchors;
+}
+
+function hexagonalVectorAnchors() {
+  const anchors = [new THREE.Vector3(0.5, HEX_HEIGHT * 0.48, 0.5)];
+  [HEX_HEIGHT * 0.22, HEX_HEIGHT * 0.58].forEach((y) => {
+    for (let index = 0; index < 6; index += 1) {
+      const angle = index * Math.PI / 3;
+      anchors.push(new THREE.Vector3(0.5 + 0.27 * Math.cos(angle), y, 0.5 + 0.27 * Math.sin(angle)));
+    }
+  });
+  return anchors;
+}
+
+function isPointInsideCurrentCell(point) {
+  if (state.crystalSystem === "cubic") {
+    return point.x >= -EPSILON && point.x <= 1 + EPSILON && point.y >= -EPSILON && point.y <= 1 + EPSILON && point.z >= -EPSILON && point.z <= 1 + EPSILON;
+  }
+  if (point.y < -EPSILON || point.y > HEX_HEIGHT + EPSILON) return false;
+  const x = Math.abs(point.x - 0.5);
+  const z = Math.abs(point.z - 0.5);
+  return x <= HEX_RADIUS + EPSILON && Math.sqrt(3) * x + z <= Math.sqrt(3) * HEX_RADIUS + EPSILON;
 }
 
 function createThickArrow(start, end, color) {
@@ -334,11 +739,37 @@ function plotPlane(indices) {
   if (!scene) return;
   disposeGraphic(planeGraphic);
 
-  const clipped = chooseVisiblePlane(indices);
-  state.planeOffset = clipped.offset;
   planeGraphic = new THREE.Group();
+  const familyIndices = state.showPlaneFamily ? getPlaneFamilyIndices(indices) : [indices];
+  familyIndices.forEach((memberIndices, index) => {
+    const member = createPlaneMember(memberIndices, index === 0, familyIndices.length);
+    if (member) planeGraphic.add(member);
+  });
 
-  const worldPoints = clipped.points.map(toWorld);
+  planeGraphic.visible = true;
+  planeGraphic.name = state.showPlaneFamily
+    ? `Plane family ${formatIndices(indices, "{")}`
+    : `Plane ${formatIndices(indices, "(")}`;
+  scene.add(planeGraphic);
+}
+
+function createPlaneMember(indices, isPrimary, familySize) {
+  const member = new THREE.Group();
+  const clippings = state.showParallelPlanes
+    ? getParallelPlaneClippings(indices)
+    : [state.crystalSystem === "hexagonal" ? chooseVisibleHexagonalPlane(indices) : chooseVisiblePlane(indices)];
+  if (isPrimary) state.planeOffset = clippings[0].offset;
+  clippings.forEach((clipped, clippingIndex) => {
+    member.add(createPlaneSurface(indices, clipped, isPrimary && clippingIndex === 0, familySize, clippings.length));
+  });
+  return member;
+}
+
+function createPlaneSurface(indices, clipped, showLabel, familySize, parallelCount) {
+  const surface = new THREE.Group();
+  const worldPoints = state.crystalSystem === "hexagonal"
+    ? clipped.points.map((point) => new THREE.Vector3(...point))
+    : clipped.points.map(toWorld);
   const positions = [];
   worldPoints.forEach((point) => positions.push(point.x, point.y, point.z));
 
@@ -357,7 +788,7 @@ function plotPlane(indices) {
     new THREE.MeshPhongMaterial({
       color: PLANE_COLOR,
       transparent: true,
-      opacity: 0.42,
+      opacity: familySize > 1 || parallelCount > 1 ? 0.18 : 0.42,
       side: THREE.DoubleSide,
       depthWrite: false,
       polygonOffset: true,
@@ -368,26 +799,164 @@ function plotPlane(indices) {
   );
   fill.renderOrder = 2;
   fill.userData.printRole = "plane-fill";
-  planeGraphic.add(fill);
+  surface.add(fill);
 
   const outlineGeometry = new THREE.BufferGeometry().setFromPoints(worldPoints);
   const outline = new THREE.LineLoop(
     outlineGeometry,
-    new THREE.LineBasicMaterial({ color: 0xb8fff5, transparent: true, opacity: 0.95 })
+    new THREE.LineBasicMaterial({ color: 0xb8fff5, transparent: true, opacity: familySize > 1 || parallelCount > 1 ? 0.65 : 0.95 })
   );
   outline.renderOrder = 4;
   outline.userData.printRole = "plane-outline";
-  planeGraphic.add(outline);
+  surface.add(outline);
 
-  const centroid = worldPoints.reduce((sum, point) => sum.add(point), new THREE.Vector3()).multiplyScalar(1 / worldPoints.length);
-  const normal = toWorldVector(indices).normalize();
-  const planeLabel = makeLabelSprite(formatIndices(indices, "("), "#082f35", "rgba(184, 255, 245, 0.94)");
-  planeLabel.position.copy(centroid.addScaledVector(normal, 0.035));
-  planeGraphic.add(planeLabel);
+  if (showLabel) {
+    const centroid = worldPoints.reduce((sum, point) => sum.add(point), new THREE.Vector3()).multiplyScalar(1 / worldPoints.length);
+    const normal = state.crystalSystem === "hexagonal"
+      ? hexagonalPlaneNormal(indices)
+      : toWorldVector(indices).normalize();
+    const opening = state.showPlaneFamily ? "{" : "(";
+    const planeLabel = makeLabelSprite(formatIndices(indices, opening), "#082f35", "rgba(184, 255, 245, 0.94)");
+    planeLabel.position.copy(centroid.addScaledVector(normal, 0.035));
+    surface.add(planeLabel);
+  }
 
-  planeGraphic.visible = true;
-  planeGraphic.name = `Plane ${formatIndices(indices, "(")}`;
-  scene.add(planeGraphic);
+  return surface;
+}
+
+function getParallelPlaneClippings(indices) {
+  if (state.crystalSystem === "hexagonal") {
+    const normal = hexagonalPlaneNormal(indices);
+    const dots = HEX_VERTICES.map((point) => normal.dot(new THREE.Vector3(...point)));
+    const minimum = Math.min(...dots);
+    const maximum = Math.max(...dots);
+    const offsets = [0.5, 0.24, 0.76].map((fraction) => minimum + fraction * (maximum - minimum));
+    return offsets
+      .map((offset) => clipWorldPlaneToCell(normal, offset, HEX_VERTICES, HEX_EDGES))
+      .filter(Boolean)
+      .map((clipped) => ({ ...clipped, offset: 1 }));
+  }
+
+  const primary = chooseVisiblePlane(indices);
+  const minDot = indices.reduce((sum, value) => sum + Math.min(0, value), 0);
+  const maxDot = indices.reduce((sum, value) => sum + Math.max(0, value), 0);
+  const clippings = [primary];
+  for (let offset = Math.ceil(minDot); offset <= Math.floor(maxDot); offset += 1) {
+    if (Math.abs(offset - primary.offset) < EPSILON) continue;
+    const clipped = clipPlaneToCube(indices, offset);
+    if (clipped && clipped.area > EPSILON) clippings.push({ ...clipped, offset });
+  }
+  return clippings;
+}
+
+function getDirectionFamilyIndices(indices) {
+  return getPlaneFamilyIndices(indices);
+}
+
+function getPlaneFamilyIndices(indices) {
+  if (state.crystalSystem === "hexagonal") {
+    const [h, k, i, l] = indices;
+    const basalPermutations = uniquePermutations([h, k, i]);
+    const members = [
+      ...basalPermutations.map((values) => [...values, l]),
+      ...basalPermutations.map((values) => values.map((value) => -value).concat(-l))
+    ];
+    return uniqueIndexSets(members, indices);
+  }
+
+  const permutations = uniquePermutations(indices);
+  const members = [];
+  permutations.forEach((values) => {
+    const nonzeroPositions = values.map((value, index) => value === 0 ? null : index).filter((index) => index !== null);
+    const signCount = 2 ** nonzeroPositions.length;
+    for (let mask = 0; mask < signCount; mask += 1) {
+      const member = [...values];
+      nonzeroPositions.forEach((position, signIndex) => {
+        member[position] = Math.abs(member[position]) * ((mask >> signIndex) & 1 ? -1 : 1);
+      });
+      members.push(member);
+    }
+  });
+  return uniqueIndexSets(members, indices);
+}
+
+function uniquePermutations(values) {
+  const results = [];
+  values.forEach((first, firstIndex) => {
+    values.forEach((second, secondIndex) => {
+      values.forEach((third, thirdIndex) => {
+        if (new Set([firstIndex, secondIndex, thirdIndex]).size === 3) results.push([first, second, third]);
+      });
+    });
+  });
+  return uniqueIndexSets(results);
+}
+
+function uniqueIndexSets(members, primary = null) {
+  const unique = [];
+  const seen = new Set();
+  const add = (member) => {
+    const key = member.join(",");
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(member);
+    }
+  };
+  if (primary) add(primary);
+  members.forEach(add);
+  return unique;
+}
+
+function hexagonalPlaneNormal(indices) {
+  const [h, k, l] = convertHexPlaneToThree(indices);
+  const reciprocalA1 = new THREE.Vector3(1 / HEX_RADIUS, 0, 1 / (Math.sqrt(3) * HEX_RADIUS));
+  const reciprocalA2 = new THREE.Vector3(0, 0, 2 / (Math.sqrt(3) * HEX_RADIUS));
+  return new THREE.Vector3()
+    .addScaledVector(reciprocalA1, h)
+    .addScaledVector(reciprocalA2, k)
+    .add(new THREE.Vector3(0, l / HEX_HEIGHT, 0))
+    .normalize();
+}
+
+function chooseVisibleHexagonalPlane(indices) {
+  const normal = hexagonalPlaneNormal(indices);
+  const offset = normal.dot(HEX_CENTER);
+  const clipped = clipWorldPlaneToCell(normal, offset, HEX_VERTICES, HEX_EDGES);
+  if (!clipped) throw new Error("Unable to intersect the selected plane with the hexagonal unit cell.");
+  return { ...clipped, offset: 1 };
+}
+
+function clipWorldPlaneToCell(normal, offset, vertices, edges) {
+  const points = [];
+  edges.forEach(([startIndex, endIndex]) => {
+    const start = vertices[startIndex];
+    const end = vertices[endIndex];
+    const startValue = normal.dot(new THREE.Vector3(...start)) - offset;
+    const endValue = normal.dot(new THREE.Vector3(...end)) - offset;
+    if (Math.abs(startValue) < EPSILON) addUniquePoint(points, start);
+    if (Math.abs(endValue) < EPSILON) addUniquePoint(points, end);
+    const crosses = (startValue < -EPSILON && endValue > EPSILON) || (startValue > EPSILON && endValue < -EPSILON);
+    if (crosses) {
+      const amount = startValue / (startValue - endValue);
+      addUniquePoint(points, start.map((value, index) => value + amount * (end[index] - value)));
+    }
+  });
+  if (points.length < 3) return null;
+  const center = points.reduce((sum, point) => sum.add(new THREE.Vector3(...point)), new THREE.Vector3()).multiplyScalar(1 / points.length);
+  const helper = Math.abs(normal.x) < 0.85 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0);
+  const axisU = new THREE.Vector3().crossVectors(normal, helper).normalize();
+  const axisV = new THREE.Vector3().crossVectors(normal, axisU).normalize();
+  points.sort((first, second) => {
+    const firstRelative = new THREE.Vector3(...first).sub(center);
+    const secondRelative = new THREE.Vector3(...second).sub(center);
+    return Math.atan2(firstRelative.dot(axisV), firstRelative.dot(axisU)) - Math.atan2(secondRelative.dot(axisV), secondRelative.dot(axisU));
+  });
+  const areaVector = new THREE.Vector3();
+  points.forEach((point, index) => {
+    const next = points[(index + 1) % points.length];
+    areaVector.add(new THREE.Vector3(...point).cross(new THREE.Vector3(...next)));
+  });
+  return { points, area: Math.abs(areaVector.dot(normal)) / 2 };
 }
 
 function chooseVisiblePlane(normal) {
@@ -541,9 +1110,14 @@ function readIndices(inputs, messageElement, noun) {
   }
 
   const values = inputs.map((input) => Number(input.value));
-  const invalid = values.some((value) => !Number.isInteger(value) || value < -9 || value > 9);
+  const invalid = values.some((value, index) => {
+    const input = inputs[index];
+    const minimum = input.hasAttribute("min") ? Number(input.min) : -Infinity;
+    const maximum = input.hasAttribute("max") ? Number(input.max) : Infinity;
+    return !Number.isInteger(value) || value < minimum || value > maximum;
+  });
   if (invalid) {
-    setMessage(messageElement, `Each ${noun} index must be a whole number from −9 to 9.`, true);
+    setMessage(messageElement, `Each ${noun} index must be a whole number within the allowed range.`, true);
     return null;
   }
   return values;
@@ -564,6 +1138,27 @@ function greatestCommonDivisor(first, second) {
 }
 
 function updatePlaneMessage(indices, offset) {
+  if (state.showPlaneFamily || state.showParallelPlanes) {
+    const messages = [];
+    if (state.showPlaneFamily) messages.push(`${getPlaneFamilyIndices(indices).length} symmetry-equivalent orientations in ${formatIndices(indices, "{")}`);
+    if (state.showParallelPlanes) messages.push(`${getParallelPlaneClippings(indices).length} parallel members${state.showPlaneFamily ? " per orientation" : ""}`);
+    setMessage(elements.planeMessage, `Showing ${messages.join(" with ")}.`);
+    return;
+  }
+
+  if (state.crystalSystem === "hexagonal") {
+    const parallelAxes = indices
+      .map((value, index) => (value === 0 ? ["a₁", "a₂", "a₃", "c"][index] : null))
+      .filter(Boolean);
+    setMessage(
+      elements.planeMessage,
+      parallelAxes.length > 0
+        ? `A representative member is shown; it is parallel to the ${parallelAxes.join(" and ")} ${parallelAxes.length > 1 ? "axes" : "axis"}.`
+        : "A representative member of this hexagonal plane family is shown."
+    );
+    return;
+  }
+
   if (Math.abs(offset - 1) > EPSILON) {
     setMessage(
       elements.planeMessage,
@@ -587,6 +1182,7 @@ function applyPreset(select, inputs, form) {
   select.value.split(",").forEach((value, index) => {
     inputs[index].value = value;
   });
+  if (state.crystalSystem === "hexagonal") updateCalculatedHexIndices();
   form.requestSubmit();
 }
 
@@ -706,6 +1302,9 @@ function setPrintMaterialValues(material, role) {
     "axis-a": { color: 0xb83b2a, opacity: 1 },
     "axis-b": { color: 0x2166a5, opacity: 1 },
     "axis-c": { color: 0x2f7a43, opacity: 1 },
+    "axis-a₁": { color: 0xb83b2a, opacity: 1 },
+    "axis-a₂": { color: 0x2166a5, opacity: 1 },
+    "axis-a₃": { color: 0x7a4ca5, opacity: 1 },
     direction: { color: 0xc93b1f, emissive: 0x000000, emissiveIntensity: 0 },
     "plane-fill": { color: 0x66a9c0, opacity: 0.34, shininess: 40 },
     "plane-outline": { color: 0x246879, opacity: 1 }
@@ -722,9 +1321,15 @@ function setPrintMaterialValues(material, role) {
 }
 
 function buildDownloadFilename() {
-  const parts = ["miller-indices"];
-  if (state.directionVisible) parts.push(`dir-${fileSafeIndices(state.direction)}`);
-  if (state.planeVisible) parts.push(`plane-${fileSafeIndices(state.plane)}`);
+  const parts = ["miller-indices", state.crystalSystem];
+  if (state.directionVisible) {
+    parts.push(`${state.showDirectionFamily ? "direction-family" : "dir"}-${fileSafeIndices(state.direction)}`);
+    if (state.showParallelDirections) parts.push("parallel-directions");
+  }
+  if (state.planeVisible) {
+    parts.push(`${state.showPlaneFamily ? "plane-family" : "plane"}-${fileSafeIndices(state.plane)}`);
+    if (state.showParallelPlanes) parts.push("parallel-planes");
+  }
   return `${parts.join("-")}.png`;
 }
 
@@ -741,8 +1346,22 @@ function setDownloadMessage(text, isError = false) {
 
 function updateSummary() {
   const visibleItems = [];
-  if (state.directionVisible) visibleItems.push(`direction ${formatIndices(state.direction, "[")}`);
-  if (state.planeVisible) visibleItems.push(`plane ${formatIndices(state.plane, "(")}`);
+  if (state.directionVisible) {
+    const directionText = state.showDirectionFamily
+      ? `direction family ${formatIndices(state.direction, "<")}`
+      : state.showParallelDirections
+        ? `parallel direction vectors ${formatIndices(state.direction, "[")}`
+        : `direction ${formatIndices(state.direction, "[")}`;
+    visibleItems.push(state.showDirectionFamily && state.showParallelDirections ? `${directionText} with translated parallels` : directionText);
+  }
+  if (state.planeVisible) {
+    const planeText = state.showPlaneFamily
+      ? `plane family ${formatIndices(state.plane, "{")}`
+      : state.showParallelPlanes
+        ? `parallel plane members ${formatIndices(state.plane, "(")}`
+        : `plane ${formatIndices(state.plane, "(")}`;
+    visibleItems.push(state.showPlaneFamily && state.showParallelPlanes ? `${planeText} with parallel members` : planeText);
+  }
 
   if (visibleItems.length === 0) {
     elements.summary.textContent = "No direction or plane is currently shown.";
@@ -754,8 +1373,22 @@ function updateSummary() {
 }
 
 function formatIndices(indices, openingBracket) {
-  const closingBracket = openingBracket === "[" ? "]" : ")";
-  return `${openingBracket}${indices.map(formatNumber).join(" ")}${closingBracket}`;
+  const displayOpening = openingBracket === "<" ? "⟨" : openingBracket;
+  const closingBracket = openingBracket === "[" ? "]" : openingBracket === "{" ? "}" : openingBracket === "<" ? "⟩" : ")";
+  return `${displayOpening}${indices.map(formatIndex).join(" ")}${closingBracket}`;
+}
+
+function updateDirectionMessage() {
+  const messages = [];
+  if (state.showDirectionFamily) messages.push(`${getDirectionFamilyIndices(state.direction).length} symmetry-equivalent directions in ${formatIndices(state.direction, "<")}`);
+  if (state.showParallelDirections) messages.push(`${getParallelDirectionSegments(state.direction).length + 1} translated parallel vectors`);
+  setMessage(elements.directionMessage, messages.length ? `Showing ${messages.join(" with ")}.` : "");
+}
+
+function formatIndex(value) {
+  const rounded = Math.abs(value - Math.round(value)) < EPSILON ? Math.round(value) : Number(value.toFixed(2));
+  if (rounded >= 0) return String(rounded);
+  return `${Math.abs(rounded)}\u0305`;
 }
 
 function formatNumber(value) {
@@ -766,24 +1399,53 @@ function formatNumber(value) {
 function resetCamera() {
   camera.up.set(0, 1, 0);
   camera.position.set(3.15, 2.35, 1.85);
-  camera.lookAt(0.5, 0.5, 0.5);
+  camera.zoom = 1;
+  camera.lookAt(currentCellCenter());
+  camera.updateProjectionMatrix();
 }
 
-function setViewOrientation(orientation) {
-  const positions = {
-    isometric: [3.15, 2.35, 1.85],
-    a: [3.4, 0.5, 0.5],
-    b: [0.5, 0.5, 3.4],
-    c: [0.5, 3.4, 0.5]
-  };
-  const position = positions[orientation] || positions.isometric;
+function currentCellCenter() {
+  return state.crystalSystem === "hexagonal" ? HEX_CENTER : new THREE.Vector3(0.5, 0.5, 0.5);
+}
 
-  camera.up.set(0, 1, 0);
-  if (orientation === "c") camera.up.set(0, 0, -1);
-  camera.position.set(...position);
-  controls.target.set(0.5, 0.5, 0.5);
-  camera.lookAt(controls.target);
-  controls.update();
+function createPerspectiveCamera(aspect) {
+  return new THREE.PerspectiveCamera(38, aspect, 0.1, 100);
+}
+
+function createOrthographicCamera(aspect) {
+  const halfHeight = 1.05;
+  return new THREE.OrthographicCamera(-halfHeight * aspect, halfHeight * aspect, halfHeight, -halfHeight, 0.1, 100);
+}
+
+function createOrbitControls(controlCamera, target) {
+  const orbitControls = new OrbitControls(controlCamera, elements.canvas);
+  orbitControls.target.copy(target);
+  orbitControls.enableDamping = true;
+  orbitControls.dampingFactor = 0.07;
+  orbitControls.minDistance = 1.8;
+  orbitControls.maxDistance = 7;
+  orbitControls.minZoom = 0.55;
+  orbitControls.maxZoom = 4;
+  orbitControls.enablePan = true;
+  orbitControls.update();
+  return orbitControls;
+}
+
+function setProjection(projection) {
+  const width = Math.max(elements.frame.clientWidth, 1);
+  const height = Math.max(elements.frame.clientHeight, 1);
+  const aspect = width / height;
+  const position = camera.position.clone();
+  const up = camera.up.clone();
+  const target = controls.target.clone();
+  controls.dispose();
+
+  camera = projection === "orthographic" ? createOrthographicCamera(aspect) : createPerspectiveCamera(aspect);
+  camera.position.copy(position);
+  camera.up.copy(up);
+  camera.lookAt(target);
+  controls = createOrbitControls(camera, target);
+  resizeRenderer();
 }
 
 function resizeRenderer() {
@@ -792,7 +1454,16 @@ function resizeRenderer() {
   const height = elements.frame.clientHeight;
   if (width < 1 || height < 1) return;
   renderer.setSize(width, height, false);
-  camera.aspect = width / height;
+  const aspect = width / height;
+  if (camera.isPerspectiveCamera) {
+    camera.aspect = aspect;
+  } else if (camera.isOrthographicCamera) {
+    const halfHeight = 1.05;
+    camera.left = -halfHeight * aspect;
+    camera.right = halfHeight * aspect;
+    camera.top = halfHeight;
+    camera.bottom = -halfHeight;
+  }
   camera.updateProjectionMatrix();
 }
 

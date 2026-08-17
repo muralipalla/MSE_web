@@ -302,6 +302,14 @@
   gap: 0.55rem;
 }
 
+.index-fields.has-four-indices {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.index-fields [hidden] {
+  display: none;
+}
+
 .index-fields label {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -329,6 +337,19 @@
   text-align: center;
 }
 
+.calculated-index input {
+  background: var(--lavender-light);
+  color: var(--ink);
+  cursor: default;
+}
+
+.conversion-output {
+  margin: 0.65rem 0 0;
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
 .controls-panel select {
   padding: 0.45rem 2rem 0.45rem 0.65rem;
 }
@@ -336,6 +357,34 @@
 .control-actions {
   justify-content: flex-start;
   margin-top: 0.75rem;
+}
+
+.family-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.display-options {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.display-options .family-toggle {
+  margin-top: 0;
+}
+
+.family-toggle input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0.12rem 0 0;
+  accent-color: #167f79;
 }
 
 .compact-button {
@@ -376,6 +425,16 @@
 
 .concept-note p {
   margin: 0.55rem 0 0;
+}
+
+.notation-note {
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line);
+}
+
+.overbar {
+  text-decoration: overline;
+  text-decoration-thickness: 0.08em;
 }
 
 @media (max-width: 62rem) {
