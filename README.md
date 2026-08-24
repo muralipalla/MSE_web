@@ -24,6 +24,7 @@ Current teaching pages are:
     teaching/atomic-bonding/index.html
     teaching/visualization-of-structures/index.html
     teaching/crystal-defects/index.html
+    teaching/phase-diagrams/index.html
 
 Current quiz pages are:
 

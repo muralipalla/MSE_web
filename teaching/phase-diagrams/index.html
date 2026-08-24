@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore water, isomorphous, lead-tin eutectic, and iron-cementite phase diagrams with interactive tie lines, lever-rule calculations, microstructures, and a fraction-conversion quiz.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Phase Diagrams | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=3">
+  <script src="../../js/main.js" defer></script>
+  <script type="module" src="app.js?v=4"></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the phase-diagram lesson</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="phase-shell" id="lesson">
+    <header class="phase-intro">
+      <div>
+        <p class="eyebrow">Teaching page 05</p>
+        <h1>Phase Diagrams</h1>
+      </div>
+      <div class="phase-intro-copy">
+        <p>Read a phase diagram as a map: temperature and composition locate the state, a tie line finds the phase compositions, and the lever rule finds how much of each phase is present.</p>
+        <p class="phase-intro-note">Choose a point, name the phases, read the tie-line ends, then calculate the fractions.</p>
+      </div>
+    </header>
+
+    <nav class="phase-route" aria-label="Phase-diagram lesson sections">
+      <a href="#water"><span>01</span> Water</a>
+      <a href="#isomorphous"><span>02</span> Isomorphous</a>
+      <a href="#eutectic"><span>03</span> Pb&ndash;Sn eutectic</a>
+      <a href="#iron-carbide"><span>04</span> Fe&ndash;Fe<sub>3</sub>C</a>
+    </nav>
+
+    <section class="phase-card water-section" id="water" aria-labelledby="water-title">
+      <div class="phase-heading">
+        <div>
+          <p class="section-kicker">Section 1 &middot; One component, three phases</p>
+          <h2 id="water-title">Phase diagram of water</h2>
+        </div>
+        <p>Pressure and temperature determine whether H<sub>2</sub>O is stable as ice, liquid water, or vapour. The pressure axis is logarithmic so the triple and critical points fit on one chart.</p>
+      </div>
+
+      <div class="water-layout">
+        <figure class="diagram-panel">
+          <div class="diagram-toolbar">
+            <div>
+              <strong>Pressure&ndash;temperature map</strong>
+              <span>Select a landmark to locate it.</span>
+            </div>
+            <div class="chip-row" id="water-landmarks" role="group" aria-label="Water phase-diagram landmarks">
+              <button type="button" data-water-point="triple" aria-pressed="true">Triple point</button>
+              <button type="button" data-water-point="normal-melt" aria-pressed="false">Normal melting</button>
+              <button type="button" data-water-point="normal-boil" aria-pressed="false">Normal boiling</button>
+              <button type="button" data-water-point="critical" aria-pressed="false">Critical point</button>
+            </div>
+          </div>
+          <div class="chart-frame water-chart-frame">
+            <canvas id="water-chart" width="900" height="520" role="img" aria-label="Pressure-temperature phase diagram of water showing solid, liquid, vapour, triple point, and critical point."></canvas>
+          </div>
+          <figcaption>Schematic boundary shapes for ordinary Ice Ih; landmark values are labelled. Water is unusual because the ice&ndash;liquid boundary slopes to lower temperature as pressure rises.</figcaption>
+        </figure>
+
+        <aside class="concept-panel" aria-labelledby="water-reading-title">
+          <p class="panel-kicker">Selected landmark</p>
+          <h3 id="water-reading-title">Triple point</h3>
+          <p id="water-reading-copy">Ice, liquid water, and vapour coexist in equilibrium.</p>
+          <dl class="reading-list">
+            <div><dt>Temperature</dt><dd id="water-temperature">0.01 &deg;C</dd></div>
+            <div><dt>Pressure</dt><dd id="water-pressure">0.006116 bar</dd></div>
+            <div><dt>Phases</dt><dd id="water-phases">Ice + liquid + vapour</dd></div>
+          </dl>
+          <div class="why-note">
+            <strong>Why the negative slope?</strong>
+            <p>Ordinary ice is less dense than liquid water. Increasing pressure favours the denser liquid, so the melting temperature falls slightly.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="phase-card iso-section" id="isomorphous" aria-labelledby="iso-title">
+      <div class="phase-heading">
+        <div>
+          <p class="section-kicker">Section 2 &middot; Complete solid solubility</p>
+          <h2 id="iso-title">Isomorphous systems</h2>
+        </div>
+        <p>The liquidus begins solidification; the solidus marks the last liquid on cooling. Inside the lens-shaped two-phase field, a horizontal tie line connects the equilibrium liquid and solid compositions.</p>
+      </div>
+
+      <div class="interactive-grid">
+        <figure class="diagram-panel interactive-diagram">
+          <div class="diagram-toolbar">
+            <div>
+              <strong>Idealized A&ndash;B isomorphous system</strong>
+              <span>Click or tap the plot to move the alloy state.</span>
+            </div>
+            <button class="reset-button" id="iso-reset" type="button">Reset point</button>
+          </div>
+          <div class="chart-frame">
+            <canvas id="iso-chart" width="900" height="560" role="img" aria-label="Interactive binary isomorphous phase diagram with liquidus, solidus, tie line, and selected alloy state. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
+          </div>
+          <figcaption>Shape-preserving cubic interpolation passes through every displayed teaching anchor without overshoot. The curves are illustrative rather than assessed thermodynamic data. Drag the sliders for precise values.</figcaption>
+        </figure>
+
+        <aside class="control-panel" aria-label="Isomorphous diagram controls and results">
+          <div class="control-field">
+            <label for="iso-composition"><span>Overall composition, C<sub>0</sub></span><output id="iso-composition-value" for="iso-composition">45.0 wt% B</output></label>
+            <input id="iso-composition" type="range" min="0" max="100" step="0.1" value="45">
+          </div>
+          <div class="control-field">
+            <label for="iso-temperature"><span>Temperature</span><output id="iso-temperature-value" for="iso-temperature">1280 &deg;C</output></label>
+            <input id="iso-temperature" type="range" min="1050" max="1500" step="1" value="1280">
+          </div>
+
+          <div class="state-badge" id="iso-state-badge">Two phases</div>
+          <h3 id="iso-region">Liquid + &alpha;</h3>
+          <p id="iso-guidance">The tie line meets the liquidus at C<sub>L</sub> and the solidus at C<sub>&alpha;</sub>.</p>
+
+          <dl class="reading-list compact-readings">
+            <div><dt>Liquid composition, C<sub>L</sub></dt><dd id="iso-liquid-composition">&mdash;</dd></div>
+            <div><dt>Solid composition, C<sub>&alpha;</sub></dt><dd id="iso-solid-composition">&mdash;</dd></div>
+            <div><dt>Liquid fraction, W<sub>L</sub></dt><dd id="iso-liquid-fraction">&mdash;</dd></div>
+            <div><dt>Solid fraction, W<sub>&alpha;</sub></dt><dd id="iso-solid-fraction">&mdash;</dd></div>
+          </dl>
+
+          <div class="lever-visual" id="iso-lever-visual" aria-label="Lever rule arm lengths">
+            <span class="lever-end left">C<sub>L</sub></span>
+            <span class="lever-point" id="iso-lever-point">C<sub>0</sub></span>
+            <span class="lever-end right">C<sub>&alpha;</sub></span>
+          </div>
+
+          <details class="formula-hint" open>
+            <summary>Tie line and lever rule</summary>
+            <p>At the selected temperature, read C<sub>L</sub> and C<sub>&alpha;</sub> where the tie line meets the boundaries.</p>
+            <p class="formula">W<sub>L</sub> = (C<sub>&alpha;</sub> &minus; C<sub>0</sub>) / (C<sub>&alpha;</sub> &minus; C<sub>L</sub>)</p>
+            <p class="formula">W<sub>&alpha;</sub> = (C<sub>0</sub> &minus; C<sub>L</sub>) / (C<sub>&alpha;</sub> &minus; C<sub>L</sub>)</p>
+          </details>
+          <p class="status-line" id="iso-status" role="status" aria-live="polite">Two-phase state selected.</p>
+        </aside>
+      </div>
+
+      <section class="fraction-quiz" aria-labelledby="fraction-quiz-title">
+        <div class="quiz-copy">
+          <p class="section-kicker">Quick practice</p>
+          <h3 id="fraction-quiz-title">Convert volume and weight fractions</h3>
+          <p>Density is the bridge between the two bases. Solve for the fraction of phase A; phase B is the remainder.</p>
+          <details class="formula-hint quiz-hint">
+            <summary>Show formula hint</summary>
+            <p id="quiz-formula-volume" class="formula">From volume: w<sub>A</sub> = (V<sub>A</sub>&rho;<sub>A</sub>) / (V<sub>A</sub>&rho;<sub>A</sub> + V<sub>B</sub>&rho;<sub>B</sub>)</p>
+            <p id="quiz-formula-weight" class="formula">From weight: V<sub>A</sub> = (w<sub>A</sub>/&rho;<sub>A</sub>) / (w<sub>A</sub>/&rho;<sub>A</sub> + w<sub>B</sub>/&rho;<sub>B</sub>)</p>
+          </details>
+        </div>
+
+        <form class="quiz-card" id="fraction-quiz-form" novalidate>
+          <div class="quiz-topline">
+            <span id="quiz-direction">Volume &rarr; weight</span>
+            <span id="quiz-score">0 / 0 correct</span>
+          </div>
+          <p class="quiz-question" id="quiz-question">Phase A occupies 35.0 vol%. Given &rho;<sub>A</sub> = 8.90 g/cm<sup>3</sup> and &rho;<sub>B</sub> = 2.70 g/cm<sup>3</sup>, find the weight fraction of A.</p>
+          <label class="quiz-answer" for="quiz-answer">Fraction of phase A
+            <span><input id="quiz-answer" name="answer" type="number" min="0" max="100" step="0.1" inputmode="decimal" required><b>%</b></span>
+          </label>
+          <div class="quiz-actions">
+            <button class="primary-action" type="submit">Check answer</button>
+            <button class="secondary-action" id="quiz-new" type="button">New problem</button>
+          </div>
+          <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite">Enter your answer to the nearest 0.1%.</p>
+        </form>
+      </section>
+    </section>
+
+    <section class="phase-card eutectic-section" id="eutectic" aria-labelledby="eutectic-title">
+      <div class="phase-heading">
+        <div>
+          <p class="section-kicker">Section 3 &middot; Limited solid solubility</p>
+          <h2 id="eutectic-title">Lead&ndash;tin eutectic phase diagram</h2>
+        </div>
+        <p>At 183 &deg;C and 61.9 wt% Sn, liquid transforms isothermally into Pb-rich &alpha; and Sn-rich &beta;. The chart uses shape-preserving cubic interpolation through the displayed tabulated anchors; invariant lines remain exact and straight.</p>
+      </div>
+
+      <div class="mode-bar">
+        <div>
+          <strong>Exploration mode</strong>
+          <span id="pb-mode-help">Microstructure mode shows a matching representative micrograph when available, otherwise a schematic.</span>
+        </div>
+        <div class="segmented-control" id="pb-mode-control" role="group" aria-label="Lead-tin exploration mode">
+          <button type="button" data-pb-mode="tie" aria-pressed="false">Tie line</button>
+          <button type="button" data-pb-mode="micro" aria-pressed="true">Microstructure</button>
+        </div>
+      </div>
+
+      <div class="eutectic-grid">
+        <div class="diagram-and-controls">
+          <figure class="diagram-panel interactive-diagram">
+            <div class="diagram-toolbar">
+              <div>
+                <strong>Pb&ndash;Sn equilibrium map</strong>
+                <span>Click a region to inspect it.</span>
+              </div>
+              <span class="diagram-pill">Composition in wt% Sn</span>
+            </div>
+            <div class="chart-frame">
+              <canvas id="pb-chart" width="900" height="580" role="img" aria-label="Interactive lead-tin eutectic phase diagram with phase fields and a selected alloy state. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
+            </div>
+            <figcaption>Microstructure mode shows a generated representative micrograph when a close teaching example is available and a procedural schematic for other states.</figcaption>
+          </figure>
+
+          <div class="compact-controls" aria-label="Lead-tin selected point controls">
+            <label for="pb-composition">Composition <output id="pb-composition-value" for="pb-composition">40.0 wt% Sn</output></label>
+            <input id="pb-composition" type="range" min="0" max="100" step="0.1" value="40">
+            <label for="pb-temperature">Temperature <output id="pb-temperature-value" for="pb-temperature">150 &deg;C</output></label>
+            <input id="pb-temperature" type="range" min="20" max="350" step="1" value="150">
+          </div>
+        </div>
+
+        <aside class="inspection-panel" aria-label="Lead-tin selected point results">
+          <header>
+            <p class="panel-kicker">Selected state</p>
+            <h3 id="pb-region">&alpha; + &beta;</h3>
+            <p id="pb-summary">Two solid solutions coexist below the eutectic temperature.</p>
+          </header>
+
+          <figure class="microstructure-card">
+            <img id="pb-micrograph" class="micrograph-image" width="1536" height="1024" alt="" decoding="async" hidden>
+            <canvas id="pb-microstructure" width="520" height="347" role="img" aria-label="Schematic lead-tin microstructure for the selected point."></canvas>
+            <figcaption>
+              <span class="microstructure-kind" id="pb-micro-kind">Procedural schematic</span>
+              <span id="pb-micro-caption">Primary &alpha; plus a lamellar &alpha; + &beta; eutectic constituent.</span>
+            </figcaption>
+          </figure>
+
+          <dl class="reading-list compact-readings">
+            <div><dt>Overall composition</dt><dd id="pb-overall">40.0 wt% Sn</dd></div>
+            <div><dt id="pb-phase-a-label">C<sub>&alpha;</sub></dt><dd id="pb-phase-a">&mdash;</dd></div>
+            <div><dt id="pb-phase-b-label">C<sub>&beta;</sub></dt><dd id="pb-phase-b">&mdash;</dd></div>
+            <div><dt id="pb-fraction-a-label">W<sub>&alpha;</sub></dt><dd id="pb-fraction-a">&mdash;</dd></div>
+            <div><dt id="pb-fraction-b-label">W<sub>&beta;</sub></dt><dd id="pb-fraction-b">&mdash;</dd></div>
+          </dl>
+          <p class="status-line" id="pb-status" role="status" aria-live="polite">Selected 40.0 wt% Sn at 150 &deg;C.</p>
+        </aside>
+      </div>
+
+      <div class="reaction-strip" aria-label="Lead-tin eutectic reaction">
+        <span>Cooling through 183 &deg;C</span>
+        <strong>L<sub>61.9</sub> &rarr; &alpha;<sub>19.2</sub> + &beta;<sub>97.5</sub></strong>
+        <small>Compositions are wt% Sn at the eutectic temperature.</small>
+      </div>
+    </section>
+
+    <section class="phase-card iron-section" id="iron-carbide" aria-labelledby="iron-title">
+      <div class="phase-heading">
+        <div>
+          <p class="section-kicker">Section 4 &middot; Steels and cast irons</p>
+          <h2 id="iron-title">Iron&ndash;cementite (Fe&ndash;Fe<sub>3</sub>C) diagram</h2>
+        </div>
+        <p>This metastable Fe&ndash;Fe<sub>3</sub>C diagram uses the supplied invariant and transformation points. Click any region to identify phases, read tie-line compositions, calculate fractions, and reveal a representative micrograph or a schematic for states without one.</p>
+      </div>
+
+      <div class="iron-grid">
+        <div class="diagram-and-controls">
+          <figure class="diagram-panel interactive-diagram">
+            <div class="diagram-toolbar">
+              <div>
+                <strong>Fe&ndash;Fe<sub>3</sub>C equilibrium map</strong>
+                <span>Click a phase field or use the precision controls.</span>
+              </div>
+              <div class="chart-view-buttons" role="group" aria-label="Iron-carbide chart range">
+                <button type="button" data-iron-view="full" aria-pressed="true">Full diagram</button>
+                <button type="button" data-iron-view="steel" aria-pressed="false">Steel region</button>
+              </div>
+            </div>
+            <div class="chart-frame iron-chart-frame">
+              <canvas id="iron-chart" width="980" height="650" role="img" aria-label="Interactive iron-cementite phase diagram constructed from the supplied critical points. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
+            </div>
+            <figcaption>Curved boundaries use shape-preserving cubic interpolation through numbered and auxiliary teaching anchors; reaction isotherms remain exact and straight. Numbered dark points are supplied values, while small hollow points disclose added curve-shaping anchors. Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
+          </figure>
+
+          <div class="compact-controls" aria-label="Iron-carbide selected point controls">
+            <label for="iron-composition">Composition <output id="iron-composition-value" for="iron-composition">0.40 wt% C</output></label>
+            <input id="iron-composition" type="range" min="0" max="6.67" step="0.01" value="0.40">
+            <label for="iron-temperature">Temperature <output id="iron-temperature-value" for="iron-temperature">700 &deg;C</output></label>
+            <input id="iron-temperature" type="range" min="500" max="1600" step="1" value="700">
+          </div>
+        </div>
+
+        <aside class="inspection-panel iron-inspector" aria-label="Iron-carbide selected point results">
+          <header>
+            <p class="panel-kicker">Selected state</p>
+            <h3 id="iron-region">&alpha; + Fe<sub>3</sub>C</h3>
+            <p id="iron-summary">Ferrite and cementite are the equilibrium phases below the eutectoid temperature.</p>
+          </header>
+
+          <figure class="microstructure-card iron-micro-card">
+            <img id="iron-micrograph" class="micrograph-image" width="1536" height="1024" alt="" decoding="async" hidden>
+            <canvas id="iron-microstructure" width="520" height="347" role="img" aria-label="Schematic iron-carbide microstructure for the selected point."></canvas>
+            <figcaption>
+              <span class="microstructure-kind" id="iron-micro-kind">Procedural schematic</span>
+              <span id="iron-micro-caption">Hypoeutectoid steel: proeutectoid ferrite with pearlite.</span>
+            </figcaption>
+          </figure>
+          <div class="micrograph-presets" role="group" aria-label="Generated iron-carbon micrograph examples" aria-describedby="iron-micro-example-note">
+            <span>Generated examples</span>
+            <button type="button" data-iron-micro-example="0.40">0.40 wt% C</button>
+            <button type="button" data-iron-micro-example="0.76">0.76 wt% C</button>
+            <button type="button" data-iron-micro-example="1.20">1.20 wt% C</button>
+          </div>
+          <p class="micrograph-preset-note" id="iron-micro-example-note">Presets place the diagram point at 700 &deg;C; images represent the final slow-cooled morphology.</p>
+
+          <dl class="reading-list compact-readings">
+            <div><dt>Overall composition</dt><dd id="iron-overall">0.40 wt% C</dd></div>
+            <div><dt id="iron-phase-a-label">C<sub>&alpha;</sub></dt><dd id="iron-phase-a">&mdash;</dd></div>
+            <div><dt id="iron-phase-b-label">C<sub>Fe₃C</sub></dt><dd id="iron-phase-b">&mdash;</dd></div>
+            <div><dt id="iron-fraction-a-label">W<sub>&alpha;</sub></dt><dd id="iron-fraction-a">&mdash;</dd></div>
+            <div><dt id="iron-fraction-b-label">W<sub>Fe₃C</sub></dt><dd id="iron-fraction-b">&mdash;</dd></div>
+          </dl>
+          <div class="constituent-note">
+            <strong>Microconstituent view</strong>
+            <p id="iron-constituent">At room-temperature teaching conditions this composition is described as proeutectoid ferrite + pearlite.</p>
+          </div>
+          <p class="status-line" id="iron-status" role="status" aria-live="polite">Selected 0.40 wt% C at 700 &deg;C.</p>
+        </aside>
+      </div>
+
+      <details class="anchor-points">
+        <summary>Show the supplied construction points</summary>
+        <div class="anchor-grid">
+          <article><span>Pure Fe melting</span><strong>1538 &deg;C, 0 wt% C</strong></article>
+          <article><span>Peritectic tie line</span><strong>1493 &deg;C at 0.09, 0.16, 0.53</strong></article>
+          <article><span>&delta; &rarr; &gamma;</span><strong>1394 &deg;C, 0 wt% C</strong></article>
+          <article><span>Eutectic anchors</span><strong>1147 &deg;C at 2.14 and 4.30</strong></article>
+          <article><span>&gamma; &rarr; &alpha;</span><strong>912 &deg;C, 0 wt% C</strong></article>
+          <article><span>Eutectoid tie line</span><strong>727 &deg;C at 0.022 and 0.76</strong></article>
+        </div>
+      </details>
+
+      <div class="reaction-grid">
+        <article><span>Peritectic &middot; 1493 &deg;C</span><strong>L<sub>0.53</sub> + &delta;<sub>0.09</sub> &rarr; &gamma;<sub>0.16</sub></strong></article>
+        <article><span>Eutectic &middot; 1147 &deg;C</span><strong>L<sub>4.30</sub> &rarr; &gamma;<sub>2.14</sub> + Fe<sub>3</sub>C</strong></article>
+        <article><span>Eutectoid &middot; 727 &deg;C</span><strong>&gamma;<sub>0.76</sub> &rarr; &alpha;<sub>0.022</sub> + Fe<sub>3</sub>C</strong></article>
+      </div>
+    </section>
+
+    <section class="phase-card takeaway-section" aria-labelledby="takeaway-title">
+      <div>
+        <p class="section-kicker">A repeatable reading routine</p>
+        <h2 id="takeaway-title">Four moves solve most binary-diagram questions</h2>
+      </div>
+      <ol>
+        <li><span>01</span><div><strong>Locate</strong><p>Plot the overall composition and temperature.</p></div></li>
+        <li><span>02</span><div><strong>Name</strong><p>Identify the phase field containing the point.</p></div></li>
+        <li><span>03</span><div><strong>Connect</strong><p>Draw a horizontal tie line through a two-phase field.</p></div></li>
+        <li><span>04</span><div><strong>Balance</strong><p>Use opposite lever arms to calculate phase fractions.</p></div></li>
+      </ol>
+    </section>
+
+    <details class="data-note">
+      <summary>Data scope and references</summary>
+      <p>Charts are instructional equilibrium approximations, not design data. Shape-preserving smoothing passes through every anchor but does not create new measured data. Water landmarks follow NIST/IAPWS values. Pb&ndash;Sn anchors use the standard 61.9 wt% Sn, 183 &deg;C eutectic and 19.2/97.5 wt% Sn terminal compositions. The Fe&ndash;Fe<sub>3</sub>C construction follows the points supplied for this module and adds the stoichiometric cementite endpoint at 6.67 wt% C.</p>
+      <p>Images marked <em>AI-generated representative micrograph</em> are original synthetic teaching visuals based on metallographic descriptions. They are not measured specimens, carry no magnification or scale, and should be used to recognize qualitative morphology only. Procedural schematics remain visible where no close generated example is available.</p>
+      <p><a href="https://www.nist.gov/document/steam-manual-222pdf" target="_blank" rel="noopener">NIST water and steam reference</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular492.pdf" target="_blank" rel="noopener">NIST lead&ndash;tin solder reference</a> &middot; <a href="assets/PROMPTS.md">Image-generation prompts</a></p>
+    </details>
+
+    <nav class="phase-lesson-nav" aria-label="Teaching module sequence">
+      <a href="../crystal-defects/index.html"><span>Previous module</span><strong>&larr; Crystal Defects</strong></a>
+      <a href="../../index.html#topics"><span>Continue exploring</span><strong>All core modules &rarr;</strong></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Phase diagrams &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

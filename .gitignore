@@ -9,6 +9,9 @@ venv/
 __pycache__/
 *.pyc
 
+# Generated working files
+tmp/
+
 # Local configuration, secrets, and logs
 .env
 .env.*

@@ -8,6 +8,8 @@ const HCP_C_OVER_A = Math.sqrt(8 / 3);
 const PATCH_RADIUS = 3;
 const REGISTRY_OFFSET = [NEAREST_DISTANCE / 2, NEAREST_DISTANCE * Math.sqrt(3) / 6];
 const COLORS = { a: 0xe05a3f, b: 0x56a6d1, c: 0xe0a92f };
+const CAMERA_NEAR = 0.05;
+const CAMERA_FAR = 100;
 
 const elements = {
   structureButtons: [...document.querySelectorAll("[data-packing-structure]")],
@@ -229,8 +231,8 @@ function createScene() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
 
-  perspectiveCamera = new THREE.PerspectiveCamera(38, 1, 0.05, 100);
-  orthographicCamera = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.05, 100);
+  perspectiveCamera = new THREE.PerspectiveCamera(38, 1, CAMERA_NEAR, CAMERA_FAR);
+  orthographicCamera = new THREE.OrthographicCamera(-5, 5, 5, -5, CAMERA_NEAR, CAMERA_FAR);
   camera = perspectiveCamera;
 
   controls = new OrbitControls(camera, elements.canvas);
@@ -238,6 +240,9 @@ function createScene() {
   controls.enablePan = false;
   controls.minDistance = 3;
   controls.maxDistance = 35;
+  // Orthographic dolly changes zoom rather than camera distance.
+  controls.minZoom = 0.25;
+  controls.maxZoom = 4;
   controls.addEventListener("start", () => state.viewIsStackingNormal = false);
   controls.addEventListener("change", renderScene);
 
@@ -665,8 +670,6 @@ function fitStackingNormalCamera(aspect) {
     camera.right = halfHeight * aspect;
     camera.top = halfHeight;
     camera.bottom = -halfHeight;
-    camera.near = 0.05;
-    camera.far = 100;
     camera.zoom = 1;
     camera.position.copy(state.modelCenter).add(new THREE.Vector3(0, Math.max(6, state.viewHalfDepth * 4), 0));
   } else {
@@ -676,9 +679,11 @@ function fitStackingNormalCamera(aspect) {
     const horizontalTangent = verticalTangent * aspect;
     const distance = Math.max(paddedHalfHeight / verticalTangent, paddedHalfWidth / horizontalTangent) + state.viewHalfDepth * 1.35;
     camera.position.copy(state.modelCenter).add(new THREE.Vector3(0, distance, 0));
-    camera.near = Math.max(0.05, distance - state.viewHalfDepth * 1.6);
-    camera.far = distance + state.viewHalfDepth * 2.5 + 5;
   }
+  // OrbitControls can move across the full 3-35 distance range after fitting.
+  // Keep the whole intended zoom range inside the camera frustum.
+  camera.near = CAMERA_NEAR;
+  camera.far = CAMERA_FAR;
   camera.up.set(0, 0, -1);
   camera.updateProjectionMatrix();
   controls.object = camera;
