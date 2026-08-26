@@ -1,6 +1,3 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-
 const ROOT_TWO = Math.sqrt(2);
 const configs = {
   tetrahedral: {
@@ -60,10 +57,11 @@ let current = "tetrahedral";
 let scene;
 let camera;
 let renderer;
-let controls;
 let model;
 let innerAtom;
 let contactLines;
+let dragging = false;
+let previousPointer = { x: 0, y: 0 };
 
 function edgePairs(positions) {
   const distances = [];
@@ -156,8 +154,8 @@ function updateRadius() {
 function resetCamera() {
   const position = configs[current].camera;
   camera.position.set(...position);
-  controls.target.set(0, 0, 0);
-  controls.update();
+  camera.lookAt(0, 0, 0);
+  if (model) model.rotation.set(-0.12, 0.28, 0);
 }
 
 function selectVoid(type, scroll = false) {
@@ -200,14 +198,32 @@ function initialise() {
   rim.position.set(-5, 2, -4);
   scene.add(rim);
 
-  controls = new OrbitControls(camera, el.canvas);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.06;
-  controls.minDistance = 4.2;
-  controls.maxDistance = 14;
-  controls.enablePan = false;
   resetCamera();
   buildModel();
+
+  el.canvas.addEventListener("pointerdown", event => {
+    dragging = true;
+    previousPointer = { x: event.clientX, y: event.clientY };
+    el.canvas.setPointerCapture(event.pointerId);
+  });
+  el.canvas.addEventListener("pointermove", event => {
+    if (!dragging || !model) return;
+    model.rotation.y += (event.clientX - previousPointer.x) * 0.008;
+    model.rotation.x += (event.clientY - previousPointer.y) * 0.008;
+    previousPointer = { x: event.clientX, y: event.clientY };
+  });
+  const endDrag = event => {
+    dragging = false;
+    if (el.canvas.hasPointerCapture(event.pointerId)) el.canvas.releasePointerCapture(event.pointerId);
+  };
+  el.canvas.addEventListener("pointerup", endDrag);
+  el.canvas.addEventListener("pointercancel", endDrag);
+  el.canvas.addEventListener("wheel", event => {
+    event.preventDefault();
+    camera.position.multiplyScalar(event.deltaY > 0 ? 1.08 : 0.93);
+    camera.position.clampLength(4.2, 14);
+    camera.lookAt(0, 0, 0);
+  }, { passive: false });
 
   const resize = () => {
     const width = el.frame.clientWidth;
@@ -220,9 +236,7 @@ function initialise() {
   resize();
 
   const animate = () => {
-    controls.autoRotate = el.autoRotate.checked;
-    controls.autoRotateSpeed = 1.25;
-    controls.update();
+    if (el.autoRotate.checked && !dragging && model) model.rotation.y += 0.004;
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
   };

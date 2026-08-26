@@ -33,3 +33,4 @@ line-defect model appears in the core lesson while the standalone URL remains us
     |-- index.html    Shared tetrahedral, octahedral, and cube-centre void explorer
     |-- style.css     Site-matched sections, controls, and responsive layout
     |-- app.js        Three.js coordination cages and adjustable inner-atom radius
+    |-- three.min.js  Local Three.js runtime for direct-file and hosted use
