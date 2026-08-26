@@ -62,12 +62,20 @@ let innerAtom;
 let contactLines;
 let dragging = false;
 let previousPointer = { x: 0, y: 0 };
+let compatibilityMode = false;
+let canvasContext;
+const fallbackView = { yaw: 0.42, pitch: -0.18, zoom: 1 };
 
 function edgePairs(positions) {
   const distances = [];
   for (let i = 0; i < positions.length; i += 1) {
     for (let j = i + 1; j < positions.length; j += 1) {
-      distances.push({ i, j, d: new THREE.Vector3(...positions[i]).distanceTo(new THREE.Vector3(...positions[j])) });
+      const d = Math.hypot(
+        positions[i][0] - positions[j][0],
+        positions[i][1] - positions[j][1],
+        positions[i][2] - positions[j][2]
+      );
+      distances.push({ i, j, d });
     }
   }
   const shortest = Math.min(...distances.map(item => item.d));
@@ -152,6 +160,12 @@ function updateRadius() {
 }
 
 function resetCamera() {
+  if (compatibilityMode) {
+    fallbackView.yaw = 0.42;
+    fallbackView.pitch = -0.18;
+    fallbackView.zoom = 1;
+    return;
+  }
   const position = configs[current].camera;
   camera.position.set(...position);
   camera.lookAt(0, 0, 0);
@@ -177,9 +191,150 @@ function selectVoid(type, scroll = false) {
   el.equation.setAttribute("aria-label", `${config.title} radius derivation`);
   el.equation.innerHTML = `<span>${config.equation[0]}</span><strong>${config.equation[1]}</strong>`;
   setRadius(config.limit);
-  buildModel();
+  if (!compatibilityMode) buildModel();
   resetCamera();
   if (scroll) document.getElementById("void-explorer").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function rotatePoint([x, y, z]) {
+  const cy = Math.cos(fallbackView.yaw);
+  const sy = Math.sin(fallbackView.yaw);
+  const cx = Math.cos(fallbackView.pitch);
+  const sx = Math.sin(fallbackView.pitch);
+  const x1 = x * cy + z * sy;
+  const z1 = -x * sy + z * cy;
+  return [x1, y * cx - z1 * sx, y * sx + z1 * cx];
+}
+
+function drawFallbackSphere(point, radius, fill, stroke, alpha = 1) {
+  const width = el.canvas.clientWidth;
+  const height = el.canvas.clientHeight;
+  const base = Math.min(width, height) * 0.205 * fallbackView.zoom;
+  const [x, y, z] = rotatePoint(point);
+  const perspective = 4.5 / (4.5 + z * 0.24);
+  const px = width / 2 + x * base * perspective;
+  const py = height / 2 - y * base * perspective;
+  const pr = radius * base * perspective;
+  const gradient = canvasContext.createRadialGradient(px - pr * 0.32, py - pr * 0.38, pr * 0.08, px, py, pr);
+  gradient.addColorStop(0, "rgba(255,255,255,0.96)");
+  gradient.addColorStop(0.18, fill);
+  gradient.addColorStop(1, stroke);
+  canvasContext.globalAlpha = alpha;
+  canvasContext.beginPath();
+  canvasContext.arc(px, py, pr, 0, Math.PI * 2);
+  canvasContext.fillStyle = gradient;
+  canvasContext.fill();
+  canvasContext.strokeStyle = "rgba(9,29,53,0.65)";
+  canvasContext.lineWidth = Math.max(1.5, pr * 0.025);
+  canvasContext.stroke();
+  canvasContext.globalAlpha = 1;
+}
+
+function projectFallback(point) {
+  const width = el.canvas.clientWidth;
+  const height = el.canvas.clientHeight;
+  const base = Math.min(width, height) * 0.205 * fallbackView.zoom;
+  const rotated = rotatePoint(point);
+  const perspective = 4.5 / (4.5 + rotated[2] * 0.24);
+  return { x: width / 2 + rotated[0] * base * perspective, y: height / 2 - rotated[1] * base * perspective, z: rotated[2] };
+}
+
+function drawCanvasFallback() {
+  if (!canvasContext) return;
+  const width = el.canvas.clientWidth;
+  const height = el.canvas.clientHeight;
+  canvasContext.clearRect(0, 0, width, height);
+  const config = configs[current];
+  const projected = config.positions.map(projectFallback);
+
+  canvasContext.lineWidth = 2;
+  canvasContext.strokeStyle = "rgba(200,215,255,0.88)";
+  edgePairs(config.positions).forEach(({ i, j }) => {
+    canvasContext.beginPath();
+    canvasContext.moveTo(projected[i].x, projected[i].y);
+    canvasContext.lineTo(projected[j].x, projected[j].y);
+    canvasContext.stroke();
+  });
+
+  if (el.showContact.checked) {
+    const centre = projectFallback([0, 0, 0]);
+    canvasContext.strokeStyle = "rgba(255,211,78,0.58)";
+    projected.forEach(point => {
+      canvasContext.beginPath();
+      canvasContext.moveTo(centre.x, centre.y);
+      canvasContext.lineTo(point.x, point.y);
+      canvasContext.stroke();
+    });
+  }
+
+  const objects = config.positions.map((point, index) => ({ point, z: projected[index].z, host: true }));
+  objects.push({ point: [0, 0, 0], z: 0, host: false });
+  objects.sort((a, b) => b.z - a.z).forEach(object => {
+    if (object.host) {
+      drawFallbackSphere(object.point, 1, "rgba(98,184,232,0.88)", "rgba(21,101,145,0.92)", 0.82);
+    } else {
+      const ratio = Number(el.slider.value);
+      const limit = config.limit;
+      const colours = ratio < limit - 0.004
+        ? ["rgba(101,214,163,0.98)", "rgba(24,118,85,0.98)"]
+        : ratio <= limit + 0.004
+          ? ["rgba(255,211,78,1)", "rgba(190,116,0,1)"]
+          : ["rgba(255,114,94,1)", "rgba(172,39,34,1)"];
+      drawFallbackSphere(object.point, ratio, colours[0], colours[1]);
+    }
+  });
+}
+
+function startCanvasFallback() {
+  compatibilityMode = true;
+  canvasContext = el.canvas.getContext("2d");
+  if (!canvasContext) {
+    el.fallback.hidden = false;
+    return;
+  }
+  el.fallback.hidden = true;
+  el.downloadMessage.textContent = "Compatibility renderer active: the model remains interactive without WebGL.";
+
+  const resizeFallback = () => {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    const width = el.frame.clientWidth;
+    const height = el.frame.clientHeight;
+    el.canvas.width = Math.round(width * ratio);
+    el.canvas.height = Math.round(height * ratio);
+    canvasContext.setTransform(ratio, 0, 0, ratio, 0, 0);
+    drawCanvasFallback();
+  };
+  new ResizeObserver(resizeFallback).observe(el.frame);
+  resizeFallback();
+
+  el.canvas.addEventListener("pointerdown", event => {
+    dragging = true;
+    previousPointer = { x: event.clientX, y: event.clientY };
+    el.canvas.setPointerCapture(event.pointerId);
+  });
+  el.canvas.addEventListener("pointermove", event => {
+    if (!dragging) return;
+    fallbackView.yaw += (event.clientX - previousPointer.x) * 0.008;
+    fallbackView.pitch += (event.clientY - previousPointer.y) * 0.008;
+    previousPointer = { x: event.clientX, y: event.clientY };
+  });
+  const endFallbackDrag = event => {
+    dragging = false;
+    if (el.canvas.hasPointerCapture(event.pointerId)) el.canvas.releasePointerCapture(event.pointerId);
+  };
+  el.canvas.addEventListener("pointerup", endFallbackDrag);
+  el.canvas.addEventListener("pointercancel", endFallbackDrag);
+  el.canvas.addEventListener("wheel", event => {
+    event.preventDefault();
+    fallbackView.zoom = Math.min(1.45, Math.max(0.68, fallbackView.zoom * (event.deltaY > 0 ? 0.94 : 1.06)));
+  }, { passive: false });
+
+  const animateFallback = () => {
+    if (el.autoRotate.checked && !dragging) fallbackView.yaw += 0.004;
+    drawCanvasFallback();
+    requestAnimationFrame(animateFallback);
+  };
+  animateFallback();
 }
 
 function initialise() {
@@ -263,18 +418,27 @@ el.presets.forEach(button => button.addEventListener("click", () => {
 el.showContact.addEventListener("change", () => { if (contactLines) contactLines.visible = el.showContact.checked; });
 el.reset.addEventListener("click", resetCamera);
 el.download.addEventListener("click", () => {
-  renderer.render(scene, camera);
+  if (renderer) renderer.render(scene, camera);
+  else drawCanvasFallback();
   const link = document.createElement("a");
   link.download = `${current}-void-radius.png`;
-  link.href = renderer.domElement.toDataURL("image/png");
+  link.href = el.canvas.toDataURL("image/png");
   link.click();
   el.downloadMessage.textContent = `${configs[current].title} image downloaded.`;
 });
 
-try {
-  initialise();
+const forceCanvasRenderer = new URLSearchParams(window.location.search).get("renderer") === "canvas";
+
+if (forceCanvasRenderer) {
+  startCanvasFallback();
   selectVoid("tetrahedral");
-} catch (error) {
-  console.error("Unable to initialise the crystal-void viewer.", error);
-  el.fallback.hidden = false;
+} else {
+  try {
+    initialise();
+    selectVoid("tetrahedral");
+  } catch (error) {
+    console.warn("WebGL is unavailable; using the interactive canvas renderer.", error);
+    startCanvasFallback();
+    selectVoid("tetrahedral");
+  }
 }
