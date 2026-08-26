@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore the relationship between a real lattice, reciprocal lattice, scattering vectors, and the two-dimensional Ewald construction.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>2D Ewald Construction | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../../js/main.js" defer></script>
+  <script src="app.js?v=1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#ewald-module">Skip to Ewald construction</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="XRD module navigation">
+      <a class="brand" href="../../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../index.html">&larr; Back to XRD experiment</a>
+    </nav>
+  </header>
+
+  <main class="ewald-shell" id="ewald-module">
+    <header class="module-intro">
+      <div>
+        <p class="eyebrow">XRD concept submodule</p>
+        <h1>From real lattice to the Ewald construction</h1>
+      </div>
+      <div class="intro-copy">
+        <p>Rotate a square crystal and follow the same rotation in reciprocal space. A reflection occurs when the selected reciprocal-lattice point lies on the Ewald circle.</p>
+        <p class="convention-note">Vector convention: |<b>k</b>| = 1/&lambda; and <b>q</b> = <b>k</b><sub>f</sub> &minus; <b>k</b><sub>i</sub> = <b>G</b><sub>hk</sub>.</p>
+      </div>
+    </header>
+
+    <section class="control-panel" aria-labelledby="controls-title">
+      <div class="panel-heading">
+        <span class="step-number" aria-hidden="true">1</span>
+        <div><p class="panel-kicker">Construction controls</p><h2 id="controls-title">Choose a reflection and geometry</h2></div>
+      </div>
+
+      <div class="control-grid">
+        <label class="field-label" for="reflection-select">
+          <span>Selected planes</span>
+          <select id="reflection-select">
+            <option value="1,0">(10)</option>
+            <option value="1,1" selected>(11)</option>
+            <option value="2,0">(20)</option>
+            <option value="2,1">(21)</option>
+            <option value="2,2">(22)</option>
+            <option value="3,0">(30)</option>
+          </select>
+        </label>
+
+        <label class="range-field" for="lattice-parameter">
+          <span>Lattice parameter <output id="lattice-output" for="lattice-parameter">a = 3.60 &Aring;</output></span>
+          <input id="lattice-parameter" type="range" min="2.5" max="5.0" step="0.05" value="3.60">
+        </label>
+
+        <label class="range-field" for="wavelength">
+          <span>Wavelength <output id="wavelength-output" for="wavelength">&lambda; = 1.54 &Aring;</output></span>
+          <input id="wavelength" type="range" min="0.70" max="2.20" step="0.01" value="1.54">
+        </label>
+
+        <label class="range-field orientation-field" for="orientation">
+          <span>Crystal rotation <output id="orientation-output" for="orientation">&phi; = 0.0&deg;</output></span>
+          <input id="orientation" type="range" min="-180" max="180" step="0.2" value="0">
+        </label>
+      </div>
+
+      <div class="control-actions">
+        <button class="button primary" id="set-bragg" type="button">Set Bragg condition</button>
+        <button class="button secondary" id="reset-module" type="button">Reset</button>
+      </div>
+    </section>
+
+    <section class="construction-grid" aria-label="Linked real- and reciprocal-space diagrams">
+      <article class="diagram-panel" aria-labelledby="real-title">
+        <header class="diagram-heading">
+          <div><p class="panel-kicker">Direct space</p><h2 id="real-title">Real lattice and (hk) planes</h2></div>
+          <span class="value-chip" id="spacing-chip">d<sub>11</sub> = 2.546 &Aring;</span>
+        </header>
+        <div class="canvas-frame real-frame">
+          <canvas id="real-canvas" role="img" aria-label="Rotating two-dimensional square real lattice with the selected family of lattice planes highlighted.">Your browser does not support canvas.</canvas>
+        </div>
+        <p class="diagram-note">The reciprocal vector <b>G</b><sub>hk</sub> is normal to the (hk) planes, and its length is 1/d<sub>hk</sub>.</p>
+      </article>
+
+      <article class="diagram-panel" aria-labelledby="reciprocal-title">
+        <header class="diagram-heading">
+          <div><p class="panel-kicker">Reciprocal space</p><h2 id="reciprocal-title">Ewald circle and scattering vectors</h2></div>
+          <span class="value-chip" id="angle-chip">2&theta; = 35.2&deg;</span>
+        </header>
+        <div class="canvas-frame reciprocal-frame">
+          <canvas id="reciprocal-canvas" role="img" aria-label="Two-dimensional reciprocal lattice, Ewald circle, incident and diffracted wavevectors, and scattering vector.">Your browser does not support canvas.</canvas>
+        </div>
+        <div class="vector-legend" aria-label="Vector legend">
+          <span><i class="ki-key" aria-hidden="true"></i><b>k</b><sub>i</sub>: incident</span>
+          <span><i class="kf-key" aria-hidden="true"></i><b>k</b><sub>f</sub>: diffracted</span>
+          <span><i class="q-key" aria-hidden="true"></i><b>q</b>: momentum transfer</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="result-strip" aria-live="polite" aria-atomic="true">
+      <div><span>Selected reciprocal vector</span><strong id="g-result">|G<sub>11</sub>| = 0.393 &Aring;<sup>&minus;1</sup></strong></div>
+      <div><span>Wavevector radius</span><strong id="k-result">|k<sub>i</sub>| = |k<sub>f</sub>| = 0.649 &Aring;<sup>&minus;1</sup></strong></div>
+      <div><span>Excitation error</span><strong id="error-result">0.271 &Aring;<sup>&minus;1</sup></strong></div>
+      <p id="reflection-status">Rotate the crystal or set the Bragg condition to bring G<sub>11</sub> onto the Ewald circle.</p>
+    </section>
+
+    <section class="relationship-panel" aria-labelledby="relationship-title">
+      <div class="panel-heading">
+        <span class="step-number concept-number" aria-hidden="true">2</span>
+        <div><p class="panel-kicker">Read the construction</p><h2 id="relationship-title">One diffraction event, three relationships</h2></div>
+      </div>
+      <div class="relationship-grid">
+        <article><strong>Real &rarr; reciprocal</strong><p>A family of planes spaced by d<sub>hk</sub> maps to a reciprocal vector normal to those planes with |G<sub>hk</sub>| = 1/d<sub>hk</sub>.</p></article>
+        <article><strong>Elastic scattering</strong><p>The incident and diffracted wavevectors have the same length: |k<sub>i</sub>| = |k<sub>f</sub>| = 1/&lambda;. Their tips therefore lie on one circle.</p></article>
+        <article><strong>Diffraction condition</strong><p>When a reciprocal point touches the Ewald circle, q = k<sub>f</sub> &minus; k<sub>i</sub> equals G<sub>hk</sub>, which is equivalent to Bragg&rsquo;s law.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../index.html">Virtual XRD experiment</a></p>
+    <p>2D Ewald construction &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

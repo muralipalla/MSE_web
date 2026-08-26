@@ -38,6 +38,13 @@ the home page. It uses no external runtime dependencies.
 Open `xrd-experiment/index.html` directly or through the XRD experiment button
 on the home page. It uses no external runtime dependencies.
 
+`xrd-experiment/ewald-construction/` is a linked 2D concept submodule showing:
+
+- corresponding rotations of a square real lattice and its reciprocal lattice;
+- the inverse relationship between plane spacing and reciprocal-vector length;
+- incident, diffracted, and momentum-transfer vectors; and
+- the Ewald-circle intersection and its equivalence to the Bragg condition.
+
 `molecular-dynamics/` contains a standalone two-dimensional Lennard-Jones lab with:
 
 - 100 atoms initialized on a triangular lattice or in a relaxed random configuration;
