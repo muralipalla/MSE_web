@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare tetrahedral, octahedral, and cube-centre interstitial voids with an adjustable Three.js hard-sphere model.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Interstitial Voids | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#void-explorer">Skip to void visualization</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Visualization navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="void-shell" id="void-explorer">
+    <header class="void-intro">
+      <div>
+        <p class="eyebrow">Interactive visualization 05</p>
+        <h1>How large an atom fits in a crystal void?</h1>
+      </div>
+      <div class="intro-copy">
+        <p>Switch between three coordination cages, then change the interstitial radius to see when the central atom fits, touches, or overlaps its neighbours.</p>
+        <p class="intro-question">Assumption: the surrounding atoms are rigid spheres of radius <i>R</i>.</p>
+      </div>
+    </header>
+
+    <nav class="void-tabs" aria-label="Void type" role="tablist">
+      <button type="button" role="tab" id="tab-tetrahedral" aria-controls="panel-tetrahedral" aria-selected="true" data-void="tetrahedral">
+        <span>01</span><strong>Tetrahedral</strong><small>4 neighbours</small>
+      </button>
+      <button type="button" role="tab" id="tab-octahedral" aria-controls="panel-octahedral" aria-selected="false" tabindex="-1" data-void="octahedral">
+        <span>02</span><strong>Octahedral</strong><small>6 neighbours</small>
+      </button>
+      <button type="button" role="tab" id="tab-cubic" aria-controls="panel-cubic" aria-selected="false" tabindex="-1" data-void="cubic">
+        <span>03</span><strong>Cube centre</strong><small>8 neighbours</small>
+      </button>
+    </nav>
+
+    <div class="explorer-layout">
+      <section class="viewer-panel" aria-labelledby="viewer-title">
+        <div class="viewer-heading">
+          <div>
+            <p class="panel-kicker" id="viewer-kicker">Coordination number 4</p>
+            <h2 id="viewer-title">Tetrahedral void</h2>
+          </div>
+          <button class="small-button" id="download-png" type="button">Download PNG</button>
+        </div>
+
+        <div class="viewer-frame" id="viewer-frame">
+          <canvas id="void-canvas" role="img" aria-label="Interactive hard-sphere model of a tetrahedral void. Drag to rotate and scroll to zoom.">
+            Your browser does not support the canvas element.
+          </canvas>
+          <div class="viewer-fallback" id="viewer-fallback" role="alert" hidden>
+            The 3D model could not start. Try a current browser with WebGL enabled.
+          </div>
+          <div class="viewer-legend" aria-label="Model legend">
+            <span><i class="host-key" aria-hidden="true"></i>Host atom, <i>R</i></span>
+            <span><i class="inner-key" aria-hidden="true"></i>Inner atom, <i>r</i></span>
+            <span><i class="cage-key" aria-hidden="true"></i>Coordination cage</span>
+          </div>
+        </div>
+        <p class="viewer-help">Drag to rotate &middot; Scroll or pinch to zoom &middot; The cage edges guide the eye and are not bonds</p>
+        <p class="download-message" id="download-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <aside class="controls-panel" aria-label="Void radius controls">
+        <section class="control-block" aria-labelledby="radius-title">
+          <div class="control-heading">
+            <span aria-hidden="true">01</span>
+            <div><p>Inner atom</p><h2 id="radius-title">Adjust the radius</h2></div>
+          </div>
+          <label class="range-field" for="radius-slider">
+            <span>Radius ratio <output id="radius-output" for="radius-slider">r/R = 0.225</output></span>
+            <input id="radius-slider" type="range" min="0.05" max="0.85" step="0.001" value="0.225">
+          </label>
+          <div class="preset-buttons" aria-label="Radius presets">
+            <button class="small-button" type="button" data-preset="fit">Fits</button>
+            <button class="small-button" type="button" data-preset="touch">Touches</button>
+            <button class="small-button" type="button" data-preset="overlap">Overlaps</button>
+          </div>
+          <div class="fit-status is-touching" id="fit-status" role="status" aria-live="polite">
+            <strong>Just touching</strong>
+            <span>The inner atom is at the maximum rigid-sphere radius.</span>
+          </div>
+        </section>
+
+        <section class="control-block" aria-labelledby="geometry-title">
+          <div class="control-heading">
+            <span aria-hidden="true">02</span>
+            <div><p>Geometry</p><h2 id="geometry-title">Read the result</h2></div>
+          </div>
+          <dl class="fact-list">
+            <div><dt>Coordination</dt><dd id="fact-coordination">4</dd></div>
+            <div><dt>Centre distance</dt><dd id="fact-distance">d = &radic;6 R / 2</dd></div>
+            <div><dt>Maximum ratio</dt><dd id="fact-ratio">0.225</dd></div>
+          </dl>
+          <div class="equation-block" id="equation" aria-label="Tetrahedral void radius derivation">
+            <span>R + r = (&radic;6 / 2)R</span>
+            <strong>r/R = &radic;6 / 2 &minus; 1 = 0.225</strong>
+          </div>
+        </section>
+
+        <section class="control-block" aria-labelledby="view-title">
+          <div class="control-heading">
+            <span aria-hidden="true">03</span>
+            <div><p>Camera</p><h2 id="view-title">Control the view</h2></div>
+          </div>
+          <div class="toggle-list">
+            <label><input id="auto-rotate" type="checkbox">Auto-rotate</label>
+            <label><input id="show-contact" type="checkbox" checked>Centre-to-neighbour lines</label>
+          </div>
+          <button class="small-button reset-button" id="reset-view" type="button">Reset view</button>
+        </section>
+      </aside>
+    </div>
+
+    <section class="void-lessons" aria-labelledby="compare-title">
+      <header class="section-heading">
+        <p class="section-kicker">Three void geometries</p>
+        <h2 id="compare-title">Compare the coordination cages</h2>
+        <p>Each section uses the same host-atom radius, <i>R</i>. Select a section to load it in the shared viewer above.</p>
+      </header>
+
+      <div class="lesson-grid">
+        <article class="void-card active" id="panel-tetrahedral" role="tabpanel" aria-labelledby="tab-tetrahedral" data-card="tetrahedral">
+          <p class="card-number">01 &middot; CN 4</p>
+          <h3>Tetrahedral void</h3>
+          <p>Four touching host atoms occupy the vertices of a regular tetrahedron. The centre-to-vertex distance is &radic;6<i>R</i>/2.</p>
+          <p class="ratio-chip">r/R = 0.225</p>
+          <button class="text-button" type="button" data-load="tetrahedral">Explore tetrahedral &uarr;</button>
+        </article>
+
+        <article class="void-card" id="panel-octahedral" role="tabpanel" aria-labelledby="tab-octahedral" data-card="octahedral">
+          <p class="card-number">02 &middot; CN 6</p>
+          <h3>Octahedral void</h3>
+          <p>Six host atoms sit at the vertices of a regular octahedron. The centre-to-vertex distance is &radic;2<i>R</i>.</p>
+          <p class="ratio-chip">r/R = 0.414</p>
+          <button class="text-button" type="button" data-load="octahedral">Explore octahedral &uarr;</button>
+        </article>
+
+        <article class="void-card" id="panel-cubic" role="tabpanel" aria-labelledby="tab-cubic" data-card="cubic">
+          <p class="card-number">03 &middot; CN 8</p>
+          <h3>Cube-centre void</h3>
+          <p>Eight touching host atoms occupy the corners of a cube. Half its body diagonal gives the centre-to-corner distance, &radic;3<i>R</i>.</p>
+          <p class="ratio-chip">r/R = 0.732</p>
+          <button class="text-button" type="button" data-load="cubic">Explore cube centre &uarr;</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Interstitial voids &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
