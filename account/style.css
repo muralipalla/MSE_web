@@ -1,0 +1,93 @@
+.member-shell { width: min(calc(100% - 2rem), 76rem); margin: 0 auto; padding: clamp(3rem,7vw,5.5rem) 0; }
+.member-intro { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: clamp(2rem,6vw,5rem); align-items: end; margin-bottom: 1.25rem; }
+.member-intro h1 { max-width: 48rem; margin: 0; font-size: clamp(3rem,7vw,5.8rem); line-height: 0.96; letter-spacing: -0.055em; }
+.member-intro > p { margin: 0; color: var(--ink-soft); font-size: 1.08rem; }
+.setup-notice,
+.auth-card,
+.account-bar,
+.access-state,
+.resource-section,
+.admin-section { border: 1px solid var(--line); border-radius: 1.4rem; background: rgba(255,255,255,0.92); box-shadow: var(--shadow); }
+.setup-notice,
+.access-state { padding: clamp(1.25rem,3vw,2rem); }
+.setup-notice { border-left: 5px solid var(--coral); }
+.setup-notice h2,
+.setup-notice p,
+.access-state h2,
+.access-state p { margin-top: 0; }
+.setup-notice p:last-child,
+.access-state p:last-child { margin-bottom: 0; }
+.auth-card { display: flex; gap: 2rem; align-items: center; justify-content: space-between; padding: clamp(1.3rem,4vw,2.2rem); }
+.auth-card h2,
+.auth-card p { margin-top: 0; }
+.auth-card p:last-child { margin-bottom: 0; }
+.google-signin { display: inline-flex; flex: 0 0 auto; gap: 0.7rem; align-items: center; min-height: 3.2rem; padding: 0.65rem 1rem; border: 2px solid rgba(46,42,116,0.24); border-radius: 0.8rem; background: white; color: var(--ink); font: inherit; font-weight: 850; cursor: pointer; }
+.google-signin span { display: grid; width: 1.7rem; height: 1.7rem; place-items: center; border-radius: 50%; background: var(--blue-light); color: #3568a8; font-weight: 950; }
+.google-signin:hover { border-color: var(--blue); transform: translateY(-1px); }
+.google-signin:disabled { cursor: wait; opacity: 0.65; }
+.member-dashboard { display: grid; gap: 1rem; }
+.account-bar { display: flex; gap: 1rem; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; }
+.account-identity { display: flex; gap: 0.75rem; align-items: center; min-width: 0; }
+.account-identity img { flex: 0 0 2.8rem; width: 2.8rem; height: 2.8rem; border-radius: 50%; object-fit: cover; }
+.account-identity div { display: grid; min-width: 0; }
+.account-identity strong,
+.account-identity span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-identity span { color: var(--muted); font-size: 0.9rem; }
+.pending-state { border-left: 5px solid #c9932f; background: #fff9e9; }
+.blocked-state { border-left: 5px solid var(--coral); background: #fff3ef; }
+.resource-section,
+.admin-section { padding: clamp(1.2rem,3vw,1.8rem); }
+.compact-heading { margin-bottom: 1rem; }
+.resource-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0.8rem; }
+.resource-card { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--paper); }
+.resource-card h3 { margin: 0.15rem 0 0.55rem; font-size: 1.2rem; }
+.resource-card > p:not(.section-kicker) { color: var(--ink-soft); }
+.resource-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.9rem; }
+.empty-state { margin: 0; padding: 1rem; border-radius: 0.8rem; background: var(--lavender-light); }
+.admin-section { border-top: 5px solid var(--lavender); }
+.admin-section > header h2,
+.admin-section > header p { margin-top: 0; }
+.admin-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(17rem,0.8fr); gap: 1rem; align-items: start; }
+.admin-panel { min-width: 0; padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: var(--paper); }
+.admin-panel h3 { margin-top: 0; }
+.panel-heading { display: flex; gap: 1rem; align-items: center; justify-content: space-between; }
+.user-list { display: grid; gap: 0.55rem; }
+.user-row { display: grid; grid-template-columns: minmax(0,1fr) minmax(7.5rem,0.5fr) minmax(7.5rem,0.5fr) auto; gap: 0.55rem; align-items: center; padding: 0.7rem; border-radius: 0.75rem; background: white; }
+.user-row > div { display: grid; min-width: 0; }
+.user-row span { overflow: hidden; color: var(--muted); font-size: 0.82rem; text-overflow: ellipsis; white-space: nowrap; }
+.user-row select,
+.admin-panel input,
+.admin-panel textarea { width: 100%; min-height: 2.7rem; padding: 0.5rem 0.65rem; border: 1px solid var(--line); border-radius: 0.65rem; background: white; color: var(--ink); font: inherit; }
+.admin-panel form { display: grid; gap: 0.75rem; }
+.admin-panel form > label { display: grid; gap: 0.3rem; font-weight: 800; }
+.admin-panel fieldset { display: flex; gap: 1rem; margin: 0; padding: 0.65rem; border: 1px solid var(--line); border-radius: 0.65rem; }
+.admin-panel fieldset label { display: flex; gap: 0.4rem; align-items: center; }
+.admin-panel fieldset input { width: auto; min-height: auto; }
+.text-button { padding: 0.35rem 0.55rem; border: 0; border-radius: 0.5rem; background: var(--lavender-light); color: var(--lavender); font: inherit; font-weight: 850; cursor: pointer; }
+.text-button:disabled { cursor: default; opacity: 0.65; }
+.admin-feedback,
+.portal-status { min-height: 1.4rem; margin-bottom: 0; color: var(--ink-soft); font-weight: 800; }
+.portal-status { text-align: center; }
+.google-signin:focus-visible,
+.text-button:focus-visible,
+.account-bar button:focus-visible,
+.resource-actions a:focus-visible,
+.resource-actions button:focus-visible,
+.admin-panel input:focus-visible,
+.admin-panel textarea:focus-visible,
+.admin-panel select:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+@media (max-width: 58rem) {
+  .member-intro,
+  .admin-grid { grid-template-columns: 1fr; align-items: start; }
+  .user-row { grid-template-columns: minmax(0,1fr) minmax(7rem,0.45fr) minmax(7rem,0.45fr); }
+  .user-row .text-button { grid-column: 1 / -1; }
+}
+@media (max-width: 42rem) {
+  .auth-card,
+  .account-bar { align-items: flex-start; flex-direction: column; }
+  .resource-grid,
+  .user-row { grid-template-columns: 1fr; }
+  .google-signin,
+  .auth-card .button,
+  .account-bar .button { width: 100%; justify-content: center; }
+}

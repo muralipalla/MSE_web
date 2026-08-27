@@ -1,0 +1,56 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function profile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function activeUser() {
+      return signedIn() && profile().status == 'active';
+    }
+
+    function administrator() {
+      return activeUser() && profile().role == 'admin';
+    }
+
+    match /users/{userId} {
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.keys().hasOnly([
+          'displayName', 'email', 'photoURL', 'role', 'status', 'createdAt'
+        ])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'student'
+        && request.resource.data.status == 'pending';
+      allow read: if signedIn() && (request.auth.uid == userId || administrator());
+      allow update, delete: if administrator();
+    }
+
+    match /resources/{resourceId} {
+      allow read: if administrator() || (
+        activeUser()
+        && resource.data.published == true
+        && resource.data.allowedRoles.hasAny([profile().role])
+      );
+      allow create: if administrator()
+        && request.resource.data.keys().hasOnly([
+          'title', 'description', 'course', 'driveUrl', 'allowedRoles',
+          'published', 'createdAt', 'createdBy'
+        ])
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.driveUrl is string
+        && request.resource.data.driveUrl.matches('https://(drive|docs)\\.google\\.com/.*')
+        && request.resource.data.allowedRoles.size() > 0;
+      allow update, delete: if administrator();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

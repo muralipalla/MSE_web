@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Google account sign-in and protected course resources for the MSE Learning Lab.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Member Access | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../css/style.css?v=20260807">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../js/main.js" defer></script>
+  <script src="firebase-config.js?v=1"></script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#member-portal">Skip to member access</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Member navigation">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>ME/MF F216</strong><small>Course Companion</small></span>
+      </a>
+      <a class="back-link" href="../index.html">&larr; Back to learning lab</a>
+    </nav>
+  </header>
+
+  <main class="member-shell" id="member-portal">
+    <header class="member-intro">
+      <div>
+        <p class="eyebrow">Member access</p>
+        <h1>Protected course resources</h1>
+      </div>
+      <p>Use your Google account to request access. Your Google password is entered only on Google&rsquo;s sign-in page and is never received by this website.</p>
+    </header>
+
+    <section class="setup-notice" id="setup-notice" role="status" hidden>
+      <p class="section-kicker">Configuration required</p>
+      <h2>Member sign-in is being connected</h2>
+      <p>The portal is installed, but its Firebase project has not yet been connected.</p>
+    </section>
+
+    <section class="auth-card" id="signed-out-panel">
+      <div>
+        <p class="section-kicker">Google account</p>
+        <h2>Sign in or register</h2>
+        <p>First-time visitors are registered with a pending account. Course resources appear after approval.</p>
+      </div>
+      <button class="google-signin" id="google-signin" type="button">
+        <span aria-hidden="true">G</span>
+        Continue with Google
+      </button>
+    </section>
+
+    <section class="member-dashboard" id="member-dashboard" hidden>
+      <header class="account-bar">
+        <div class="account-identity">
+          <img id="account-photo" alt="" hidden>
+          <div><strong id="account-name"></strong><span id="account-email"></span></div>
+        </div>
+        <button class="button secondary" id="sign-out" type="button">Sign out</button>
+      </header>
+
+      <section class="access-state pending-state" id="pending-panel" hidden>
+        <p class="section-kicker">Registration received</p>
+        <h2>Approval pending</h2>
+        <p>Your Google account is registered. An instructor must approve it before protected resources are displayed.</p>
+      </section>
+
+      <section class="access-state blocked-state" id="blocked-panel" hidden>
+        <p class="section-kicker">Access unavailable</p>
+        <h2>Contact the instructor</h2>
+        <p>This account currently does not have access to protected resources.</p>
+      </section>
+
+      <section class="resource-section" id="resource-section" hidden aria-labelledby="resource-title">
+        <div class="section-heading compact-heading">
+          <div><p class="section-kicker">Your library</p><h2 id="resource-title">Course resources</h2></div>
+          <p>Google Drive checks your account permission again when you open a resource.</p>
+        </div>
+        <div class="resource-grid" id="resource-grid"></div>
+        <p class="empty-state" id="resource-empty" hidden>No resources have been assigned to this role yet.</p>
+      </section>
+
+      <section class="admin-section" id="admin-section" hidden aria-labelledby="admin-title">
+        <header>
+          <p class="section-kicker">Administrator</p>
+          <h2 id="admin-title">Access management</h2>
+          <p>Approve the website account here, then grant the same email Viewer access in the restricted Google Drive folder or its Google Group.</p>
+        </header>
+
+        <div class="admin-grid">
+          <section class="admin-panel" aria-labelledby="users-title">
+            <div class="panel-heading"><h3 id="users-title">Registered users</h3><button class="text-button" id="refresh-users" type="button">Refresh</button></div>
+            <div class="user-list" id="user-list"></div>
+          </section>
+
+          <section class="admin-panel" aria-labelledby="add-resource-title">
+            <h3 id="add-resource-title">Add a Drive resource</h3>
+            <form id="resource-form">
+              <label>Title<input id="resource-name" name="title" required></label>
+              <label>Description<textarea id="resource-description" name="description" rows="3"></textarea></label>
+              <label>Course or topic<input id="resource-course" name="course" placeholder="e.g. XRD"></label>
+              <label>Restricted Google Drive URL<input id="resource-url" name="driveUrl" type="url" inputmode="url" placeholder="https://drive.google.com/..." required></label>
+              <fieldset>
+                <legend>Allowed roles</legend>
+                <label><input type="checkbox" name="role" value="student" checked> Student</label>
+                <label><input type="checkbox" name="role" value="instructor"> Instructor</label>
+              </fieldset>
+              <button class="button primary" type="submit">Add resource</button>
+            </form>
+            <p class="admin-feedback" id="admin-feedback" role="status"></p>
+          </section>
+        </div>
+      </section>
+    </section>
+
+    <p class="portal-status" id="portal-status" role="status" aria-live="polite"></p>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../index.html">MSE Learning Lab</a></p>
+    <p>Member resources &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

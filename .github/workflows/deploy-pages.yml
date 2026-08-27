@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir _site
           cp index.html _site/
-          cp -r assets css js python quizzes simulations teaching visualizations _site/
+          cp -r account assets css js python quizzes simulations teaching visualizations _site/
           touch _site/.nojekyll
 
       - name: Upload website artifact
