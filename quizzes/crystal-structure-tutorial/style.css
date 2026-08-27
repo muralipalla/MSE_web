@@ -26,11 +26,11 @@
 .problem-card > p { color: var(--ink-soft); }
 .xrd-problem { border-left: 5px solid var(--blue); }
 
-.answer-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0.7rem; margin-top: 1rem; }
-.three-answers { grid-template-columns: repeat(3,minmax(0,1fr)); }
-.four-answers { grid-template-columns: repeat(4,minmax(0,1fr)); }
-.single-answer { grid-template-columns: minmax(14rem, 24rem); }
-.answer-grid label { display: grid; gap: 0.35rem; color: var(--ink); font-size: 0.82rem; font-weight: 800; }
+.answer-grid,
+.three-answers,
+.four-answers,
+.single-answer { display: grid; grid-template-columns: minmax(0,1fr); gap: 0.8rem; max-width: 42rem; margin-top: 1rem; }
+.answer-grid label { display: grid; gap: 0.35rem; color: var(--ink); font-size: 0.82rem; font-weight: 800; white-space: nowrap; }
 .answer-grid input,
 .answer-grid select { width: 100%; min-width: 0; min-height: 2.8rem; padding: 0.55rem 0.7rem; border: 1px solid var(--line); border-radius: 0.7rem; background: var(--paper); color: var(--ink); font: inherit; }
 .answer-grid small { color: var(--muted); font-weight: 650; }
@@ -49,6 +49,7 @@
 .support-link { margin-bottom: 0; }
 .support-link a { color: var(--blue); font-weight: 800; }
 .overbar { text-decoration: overline; }
+.math-nowrap { white-space: nowrap; }
 
 .quiz-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.7rem; padding-top: 0.4rem; }
 .quiz-feedback { min-height: 1.7rem; margin: 0; text-align: center; font-weight: 900; }
@@ -59,10 +60,6 @@
 .download-panel p:last-child { margin-bottom: 0; }
 .download-panel .button { flex: 0 0 auto; }
 
-@media (max-width: 58rem) {
-  .three-answers,
-  .four-answers { grid-template-columns: repeat(2,minmax(0,1fr)); }
-}
 @media (max-width: 44rem) {
   .tutorial-intro { grid-template-columns: 1fr; align-items: start; }
   .progress-panel { grid-template-columns: 1fr; }

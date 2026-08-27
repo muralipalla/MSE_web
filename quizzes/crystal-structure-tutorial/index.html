@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Crystal Structure Tutorial | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=2">
   <script src="../../js/main.js" defer></script>
   <script src="app.js?v=1" defer></script>
 </head>
@@ -48,18 +48,18 @@
     <form id="crystal-tutorial-form" class="problem-list" novalidate>
       <section class="problem-card" data-problem="1" aria-labelledby="problem-1-title">
         <header><span>01</span><div><p>Point defects</p><h2 id="problem-1-title">Equilibrium vacancies</h2></div></header>
-        <p>A metal has 8.47 &times; 10<sup>28</sup> atomic sites m<sup>&minus;3</sup>, vacancy formation energy Q<sub>v</sub> = 0.90 eV atom<sup>&minus;1</sup>, and T = 1000 K. Use k<sub>B</sub> = 8.617 &times; 10<sup>&minus;5</sup> eV K<sup>&minus;1</sup>.</p>
+        <p>A metal has <span class="math-nowrap">8.47 &times; 10<sup>28</sup> atomic sites m<sup>&minus;3</sup></span>, vacancy formation energy <span class="math-nowrap">Q<sub>v</sub> = 0.90 eV atom<sup>&minus;1</sup></span>, and <span class="math-nowrap">T = 1000 K</span>. Use <span class="math-nowrap">k<sub>B</sub> = 8.617 &times; 10<sup>&minus;5</sup> eV K<sup>&minus;1</sup></span>.</p>
         <div class="answer-grid three-answers">
-          <label>Vacancy fraction, N<sub>v</sub>/N<input id="q1-fraction" type="number" step="any" inputmode="decimal" placeholder="e.g. 2.9e-5"><small>dimensionless</small></label>
-          <label>Vacancies per m<sup>3</sup><input id="q1-density" type="number" step="any" inputmode="decimal" placeholder="scientific notation"><small>m<sup>&minus;3</sup></small></label>
-          <label>Vacancies in 1.00 cm<sup>3</sup><input id="q1-volume" type="number" step="any" inputmode="decimal" placeholder="scientific notation"><small>vacancies</small></label>
+          <label><span class="math-nowrap">Vacancy fraction, n/N</span><input id="q1-fraction" type="number" step="any" inputmode="decimal" placeholder="e.g. 2.9e-5"><small>dimensionless</small></label>
+          <label><span class="math-nowrap">Vacancies per m<sup>3</sup></span><input id="q1-density" type="number" step="any" inputmode="decimal" placeholder="scientific notation"><small><span class="math-nowrap">m<sup>&minus;3</sup></span></small></label>
+          <label><span class="math-nowrap">Vacancies in 1.00 cm<sup>3</sup></span><input id="q1-volume" type="number" step="any" inputmode="decimal" placeholder="scientific notation"><small>vacancies</small></label>
         </div>
         <p class="problem-status" id="problem-1-status" role="status"></p>
       </section>
 
       <section class="problem-card" data-problem="2" aria-labelledby="problem-2-title">
         <header><span>02</span><div><p>Grain-size strengthening</p><h2 id="problem-2-title">ASTM size and Hall-Petch</h2></div></header>
-        <p>A steel has ASTM grain-size number G = 8, where n = 2<sup>G&minus;1</sup> grains in<sup>&minus;2</sup> at 100&times;. Approximate grains as equal-area circles. Use &sigma;<sub>0</sub> = 70 MPa and k<sub>y</sub> = 0.74 MPa&radic;m.</p>
+        <p>A steel has ASTM grain-size number <span class="math-nowrap">G = 8</span>, where <span class="math-nowrap">n = 2<sup>G&minus;1</sup> grains in<sup>&minus;2</sup></span> at 100&times;. Approximate grains as equal-area circles. Use <span class="math-nowrap">&sigma;<sub>0</sub> = 70 MPa</span> and <span class="math-nowrap">k<sub>y</sub> = 0.74 MPa&radic;m</span>.</p>
         <div class="answer-grid">
           <label>Equivalent grain diameter<input id="q2-diameter" type="number" step="any" inputmode="decimal"><small>&micro;m</small></label>
           <label>Yield strength<input id="q2-strength" type="number" step="any" inputmode="decimal"><small>MPa</small></label>
@@ -69,7 +69,7 @@
 
       <section class="problem-card" data-problem="3" aria-labelledby="problem-3-title">
         <header><span>03</span><div><p>Interstitial geometry</p><h2 id="problem-3-title">Tetrahedral void</h2></div></header>
-        <p>Four identical host spheres of radius R touch one another and their centres form a regular tetrahedron. Find the maximum radius ratio r/R for a sphere at the tetrahedral centre.</p>
+        <p>Four identical host spheres of radius R touch one another and their centres form a regular tetrahedron. Find the maximum radius ratio <span class="math-nowrap">r/R</span> for a sphere at the tetrahedral centre.</p>
         <div class="answer-grid single-answer"><label>Maximum radius ratio<input id="q3-ratio" type="number" step="any" inputmode="decimal"><small>r/R</small></label></div>
         <p class="support-link"><a href="../../visualizations/crystal-voids/" target="_blank" rel="noopener">Explore the interactive void geometry</a></p>
         <p class="problem-status" id="problem-3-status" role="status"></p>
@@ -77,7 +77,7 @@
 
       <section class="problem-card" data-problem="4" aria-labelledby="problem-4-title">
         <header><span>04</span><div><p>Diamond cubic</p><h2 id="problem-4-title">Atomic density and packing</h2></div></header>
-        <p>Silicon has the diamond-cubic structure with lattice parameter a = 0.543 nm. Assume hard spheres touch along the nearest-neighbour bond.</p>
+        <p>Silicon has the diamond-cubic structure with lattice parameter <span class="math-nowrap">a = 0.543 nm</span>. Assume hard spheres touch along the nearest-neighbour bond.</p>
         <div class="answer-grid four-answers">
           <label>Atoms per conventional cell<input id="q4-atoms" type="number" step="1" inputmode="numeric"><small>atoms</small></label>
           <label>Atomic number density<input id="q4-density" type="number" step="any" inputmode="decimal"><small>m<sup>&minus;3</sup></small></label>
@@ -105,14 +105,14 @@
 
       <section class="problem-card" data-problem="7" aria-labelledby="problem-7-title">
         <header><span>07</span><div><p>Plane geometry</p><h2 id="problem-7-title">Interplanar spacing</h2></div></header>
-        <p>A cubic crystal has lattice parameter a = 0.3615 nm. Calculate the distance between adjacent parallel (211) planes.</p>
+        <p>A cubic crystal has lattice parameter <span class="math-nowrap">a = 0.3615 nm</span>. Calculate the distance between adjacent parallel (211) planes.</p>
         <div class="answer-grid single-answer"><label>d<sub>211</sub><input id="q7-spacing" type="number" step="any" inputmode="decimal"><small>nm</small></label></div>
         <p class="problem-status" id="problem-7-status" role="status"></p>
       </section>
 
       <section class="problem-card xrd-problem" data-problem="8" aria-labelledby="problem-8-title">
         <header><span>08</span><div><p>XRD structure determination</p><h2 id="problem-8-title">Unknown cubic metal</h2></div></header>
-        <p>With Mo K&alpha;, &lambda; = 0.7107 &Aring;, the first seven peaks occur at 2&theta; = 20.20&deg;, 28.72&deg;, 35.36&deg;, 41.06&deg;, 46.17&deg;, 50.87&deg;, and 55.28&deg;. Determine the structure, index the peaks in order, and calculate a.</p>
+        <p>With Mo K&alpha;, <span class="math-nowrap">&lambda; = 0.7107 &Aring;</span>, the first seven peaks occur at <span class="math-nowrap">2&theta; = 20.20&deg;, 28.72&deg;, 35.36&deg;, 41.06&deg;,</span> <span class="math-nowrap">46.17&deg;, 50.87&deg;, and 55.28&deg;</span>. Determine the structure, index the peaks in order, and calculate a.</p>
         <div class="answer-grid three-answers">
           <label>Crystal structure<select id="q8-structure"><option value="">Choose</option><option value="sc">SC</option><option value="bcc">BCC</option><option value="fcc">FCC</option><option value="diamond">Diamond cubic</option></select><small>Bravais/basis type</small></label>
           <label>Peak sequence<input id="q8-sequence" type="text" placeholder="110, 200, ..."><small>hkl, comma separated</small></label>
@@ -123,7 +123,7 @@
 
       <section class="problem-card xrd-problem" data-problem="9" aria-labelledby="problem-9-title">
         <header><span>09</span><div><p>XRD structure determination</p><h2 id="problem-9-title">Identify an FCC pattern</h2></div></header>
-        <p>With Cu K&alpha;, &lambda; = 1.5406 &Aring;, peaks occur at 2&theta; = 43.32&deg;, 50.45&deg;, 74.13&deg;, 89.94&deg;, 95.15&deg;, and 116.93&deg;. Determine the structure, index the peaks, and calculate a.</p>
+        <p>With Cu K&alpha;, <span class="math-nowrap">&lambda; = 1.5406 &Aring;</span>, peaks occur at <span class="math-nowrap">2&theta; = 43.32&deg;, 50.45&deg;, 74.13&deg;,</span> <span class="math-nowrap">89.94&deg;, 95.15&deg;, and 116.93&deg;</span>. Determine the structure, index the peaks, and calculate a.</p>
         <div class="answer-grid three-answers">
           <label>Crystal structure<select id="q9-structure"><option value="">Choose</option><option value="sc">SC</option><option value="bcc">BCC</option><option value="fcc">FCC</option><option value="diamond">Diamond cubic</option></select><small>Bravais/basis type</small></label>
           <label>Peak sequence<input id="q9-sequence" type="text" placeholder="111, 200, ..."><small>hkl, comma separated</small></label>
@@ -134,7 +134,7 @@
 
       <section class="problem-card xrd-problem" data-problem="10" aria-labelledby="problem-10-title">
         <header><span>10</span><div><p>XRD structure determination</p><h2 id="problem-10-title">FCC or diamond?</h2></div></header>
-        <p>With Cu K&alpha;, peaks occur at 2&theta; = 28.44&deg;, 47.30&deg;, 56.12&deg;, 69.13&deg;, 76.38&deg;, and 88.03&deg;. Identify the structure, index the peaks, calculate a, and name the absent FCC reflection that distinguishes the structure.</p>
+        <p>With Cu K&alpha;, peaks occur at <span class="math-nowrap">2&theta; = 28.44&deg;, 47.30&deg;, 56.12&deg;,</span> <span class="math-nowrap">69.13&deg;, 76.38&deg;, and 88.03&deg;</span>. Identify the structure, index the peaks, calculate a, and name the absent FCC reflection that distinguishes the structure.</p>
         <div class="answer-grid four-answers">
           <label>Crystal structure<select id="q10-structure"><option value="">Choose</option><option value="sc">SC</option><option value="bcc">BCC</option><option value="fcc">FCC</option><option value="diamond">Diamond cubic</option></select><small>Bravais/basis type</small></label>
           <label>Peak sequence<input id="q10-sequence" type="text" placeholder="111, 220, ..."><small>hkl, comma separated</small></label>
