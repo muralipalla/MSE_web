@@ -3,8 +3,6 @@
 .tutorial-intro h1 { margin: 0; font-size: clamp(2.8rem, 6vw, 5.3rem); line-height: 0.98; letter-spacing: -0.055em; }
 .intro-copy { color: var(--ink-soft); font-size: 1.04rem; }
 .intro-copy p { margin: 0; }
-.unlock-note { margin-top: 0.8rem !important; padding-left: 0.85rem; border-left: 3px solid var(--coral); color: var(--ink) !important; font-weight: 750; }
-
 .progress-panel,
 .problem-card,
 .download-panel { border: 1px solid var(--line); border-radius: 1.45rem; background: rgba(255,255,255,0.92); box-shadow: var(--shadow); }

@@ -60,6 +60,19 @@ function lockDownload() {
   pdfDownload.removeAttribute("href");
 }
 
+function allAnswersAttempted() {
+  return [...form.querySelectorAll("input, select")].every(input => input.value.trim() !== "");
+}
+
+function updateDownloadAccess() {
+  if (attempts > 0 && allAnswersAttempted()) {
+    downloadPanel.hidden = false;
+    pdfDownload.href = "Crystal_Structure_Tutorial.pdf";
+  } else {
+    lockDownload();
+  }
+}
+
 function updateProgress(correctProblems) {
   correctCount.textContent = String(correctProblems);
   progressFill.style.width = `${correctProblems * 10}%`;
@@ -72,7 +85,8 @@ function checkAll(event) {
   event.preventDefault();
   attempts += 1;
   let correctProblems = 0;
-  let firstIncorrect = null;
+  let attemptedProblems = 0;
+  let firstIncomplete = null;
 
   document.querySelectorAll(".problem-card").forEach(card => {
     const inputs = [...card.querySelectorAll("input, select")];
@@ -90,6 +104,7 @@ function checkAll(event) {
     const status = card.querySelector(".problem-status");
     card.classList.toggle("is-correct", correct);
     card.classList.toggle("is-incorrect", !correct && attempted);
+    if (attempted) attemptedProblems += 1;
     if (correct) {
       correctProblems += 1;
       status.textContent = "Correct.";
@@ -97,24 +112,21 @@ function checkAll(event) {
     } else if (!attempted) {
       status.textContent = "Complete every answer in this problem.";
       status.className = "problem-status incorrect";
-      firstIncorrect ||= card;
+      firstIncomplete ||= card;
     } else {
       status.textContent = "Check the entries marked in coral.";
       status.className = "problem-status incorrect";
-      firstIncorrect ||= card;
     }
   });
 
   updateProgress(correctProblems);
-  if (correctProblems === 10) {
-    feedback.textContent = "Excellent - all ten problems are correct. The worked-solutions PDF is now unlocked.";
-    downloadPanel.hidden = false;
-    pdfDownload.href = "Crystal_Structure_Tutorial.pdf";
+  updateDownloadAccess();
+  if (attemptedProblems === 10) {
+    feedback.textContent = `${correctProblems} of 10 problems are correct.`;
     downloadPanel.scrollIntoView({ behavior: "smooth", block: "center" });
   } else {
-    lockDownload();
-    feedback.textContent = `${correctProblems} of 10 problems are correct. Revise the remaining cards and check again.`;
-    firstIncorrect?.scrollIntoView({ behavior: "smooth", block: "center" });
+    feedback.textContent = `${attemptedProblems} of 10 problems have been attempted. Complete the remaining answers and check again.`;
+    firstIncomplete?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 }
 
@@ -138,7 +150,7 @@ clearButton.addEventListener("click", clearAll);
 form.querySelectorAll("input, select").forEach(input => input.addEventListener("input", () => {
   input.classList.remove("is-correct", "is-incorrect");
   input.closest(".problem-card").classList.remove("is-correct", "is-incorrect");
-  lockDownload();
+  updateDownloadAccess();
   updateProgress(document.querySelectorAll(".problem-card.is-correct").length);
   if (attempts) feedback.textContent = "Answer changed - check all answers again to update your result.";
 }));
