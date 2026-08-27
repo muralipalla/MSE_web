@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Miller Indices and Planar Density Quiz | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=2">
   <script src="../../js/main.js" defer></script>
   <script type="importmap">
     {
@@ -54,6 +54,7 @@
         <li>HCP uses basal parameter <i>a</i>, height <i>c</i>, and a two-atom basis.</li>
         <li>Planar density is the number of atom <strong>centres</strong> in the shown two-dimensional repeat area.</li>
         <li>For four-index hexagonal planes, <i>h</i> + <i>k</i> + <i>i</i> = 0.</li>
+        <li class="input-guidance"><strong>Input format:</strong> write a negative index as <code>bar(1)</code> for <span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>. In a numerical box, enter <code>-1</code>.</li>
       </ul>
     </section>
 
@@ -144,9 +145,9 @@
             <p>A plane intercepts <i>x</i> at <i>a</i>, <i>y</i> at &minus;<i>a</i>/2, and is parallel to <i>z</i>. Choose its indices.</p>
             <fieldset class="answer-options" aria-describedby="q2-status">
               <legend class="visually-hidden">Choose the Miller indices</legend>
-              <label><input type="radio" name="q2" value="1m20"> (1<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</label>
-              <label><input type="radio" name="q2" value="m120"> (<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>20)</label>
-              <label><input type="radio" name="q2" value="120"> (120)</label>
+              <label><input type="radio" name="q2" value="1m20"><span class="index-option">(1<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</span></label>
+              <label><input type="radio" name="q2" value="m120"><span class="index-option">(<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>20)</span></label>
+              <label><input type="radio" name="q2" value="120"><span class="index-option">(120)</span></label>
             </fieldset>
             <p class="answer-status" id="q2-status"></p>
             <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q2">Show solution</button>
@@ -181,9 +182,9 @@
             <p>Convert the three-index hexagonal plane (101) to four-index Miller&ndash;Bravais notation.</p>
             <fieldset class="answer-options" aria-describedby="q5-status">
               <legend class="visually-hidden">Choose the four-index plane</legend>
-              <label><input type="radio" name="q5" value="10m11"> (10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>1)</label>
-              <label><input type="radio" name="q5" value="11m20"> (11<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</label>
-              <label><input type="radio" name="q5" value="2m1m13"> (2<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span><span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>3)</label>
+              <label><input type="radio" name="q5" value="10m11"><span class="index-option">(10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>1)</span></label>
+              <label><input type="radio" name="q5" value="11m20"><span class="index-option">(11<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0)</span></label>
+              <label><input type="radio" name="q5" value="2m1m13"><span class="index-option">(2<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span><span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>3)</span></label>
             </fieldset>
             <p class="answer-status" id="q5-status"></p>
             <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q5">Show solution</button>
@@ -195,9 +196,9 @@
             <p>Convert the three-index direction [101] to the smallest integer four-index direction.</p>
             <fieldset class="answer-options" aria-describedby="q6-status">
               <legend class="visually-hidden">Choose the four-index direction</legend>
-              <label><input type="radio" name="q6" value="2m1m13"> [2<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span><span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>3]</label>
-              <label><input type="radio" name="q6" value="10m11"> [10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>1]</label>
-              <label><input type="radio" name="q6" value="11m20"> [11<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0]</label>
+              <label><input type="radio" name="q6" value="2m1m13"><span class="index-option">[2<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span><span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>3]</span></label>
+              <label><input type="radio" name="q6" value="10m11"><span class="index-option">[10<span class="overbar" aria-hidden="true">1</span><span class="visually-hidden">minus 1</span>1]</span></label>
+              <label><input type="radio" name="q6" value="11m20"><span class="index-option">[11<span class="overbar" aria-hidden="true">2</span><span class="visually-hidden">minus 2</span>0]</span></label>
             </fieldset>
             <p class="answer-status" id="q6-status"></p>
             <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q6">Show solution</button>
