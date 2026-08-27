@@ -7,12 +7,11 @@ folder is:
 
 ## 1. Create and connect Firebase
 
-1. Create a Firebase project in the Firebase console.
-2. Add a Web app to the project.
+1. Open the `mse-learning-lab` project in the Firebase console.
+2. The Web app configuration is already connected in `account/firebase-config.js`.
 3. In Authentication, enable the Google provider.
 4. Add `muralipalla.github.io` to Authentication > Settings > Authorized domains.
 5. Create a Firestore database in production mode.
-6. Copy the Web app configuration into `account/firebase-config.js`.
 
 The Firebase web configuration is not a secret. Do not place service-account
 JSON, private keys, OAuth client secrets, or Drive credentials in this repo.
@@ -25,12 +24,9 @@ shown in `firestore.indexes.json`.
 
 ## 3. Bootstrap the first administrator
 
-1. Visit `/account/` and sign in with the intended administrator Google account.
-2. The portal creates `users/<firebase-uid>` with `status: pending` and
-   `role: student`.
-3. In the Firestore console, change that document to `status: active` and
-   `role: admin`.
-4. Reload the member portal. The administrator interface will appear.
+1. Visit `/account/` and sign in as `bitspilanimurali@gmail.com`.
+2. The portal creates that account as an active administrator.
+3. Every other first-time Google sign-in is registered as a pending student.
 
 ## 4. Add protected resources
 

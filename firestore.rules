@@ -18,6 +18,10 @@ service cloud.firestore {
       return activeUser() && profile().role == 'admin';
     }
 
+    function bootstrapAdministrator() {
+      return request.auth.token.email == 'bitspilanimurali@gmail.com';
+    }
+
     match /users/{userId} {
       allow create: if signedIn()
         && request.auth.uid == userId
@@ -25,8 +29,14 @@ service cloud.firestore {
           'displayName', 'email', 'photoURL', 'role', 'status', 'createdAt'
         ])
         && request.resource.data.email == request.auth.token.email
-        && request.resource.data.role == 'student'
-        && request.resource.data.status == 'pending';
+        && (
+          (bootstrapAdministrator()
+            && request.resource.data.role == 'admin'
+            && request.resource.data.status == 'active')
+          || (!bootstrapAdministrator()
+            && request.resource.data.role == 'student'
+            && request.resource.data.status == 'pending')
+        );
       allow read: if signedIn() && (request.auth.uid == userId || administrator());
       allow update, delete: if administrator();
     }

@@ -47,6 +47,7 @@ const elements = {
 };
 
 const firebaseConfig = window.MSE_AUTH_CONFIG?.firebase ?? {};
+const bootstrapAdminEmail = window.MSE_AUTH_CONFIG?.bootstrapAdminEmail?.trim().toLowerCase() ?? "";
 const requiredConfig = ["apiKey", "authDomain", "projectId", "appId"];
 const configured = requiredConfig.every(key => typeof firebaseConfig[key] === "string" && firebaseConfig[key].trim());
 
@@ -127,12 +128,13 @@ async function getOrCreateProfile(user) {
   const profileRef = doc(db, "users", user.uid);
   let snapshot = await getDoc(profileRef);
   if (!snapshot.exists()) {
+    const isBootstrapAdmin = user.email?.toLowerCase() === bootstrapAdminEmail;
     await setDoc(profileRef, {
       displayName: user.displayName || "Google user",
       email: user.email,
       photoURL: user.photoURL || "",
-      role: "student",
-      status: "pending",
+      role: isBootstrapAdmin ? "admin" : "student",
+      status: isBootstrapAdmin ? "active" : "pending",
       createdAt: serverTimestamp()
     });
     snapshot = await getDoc(profileRef);
