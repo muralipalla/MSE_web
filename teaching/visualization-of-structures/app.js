@@ -9,6 +9,8 @@ const elements = {
   model: document.querySelector("#structure-model"),
   showCell: document.querySelector("#show-cell"),
   showLinks: document.querySelector("#show-links"),
+  showTetrahedra: document.querySelector("#show-tetrahedra"),
+  tetrahedraControl: document.querySelector("#tetrahedra-control"),
   viewIsometric: document.querySelector("#view-isometric"),
   viewA: document.querySelector("#view-a"),
   viewC: document.querySelector("#view-c"),
@@ -140,8 +142,9 @@ const MODELS = {
     system: "Cubic",
     lattice: "Face-centred cubic + (0,0,0)/(¼,¼,¼) basis",
     cell: "8 effective C atoms",
-    coordination: "4; tetrahedral angle 109.47°",
-    notice: "The nearest-neighbour distance is √3a/4. The 12 FCC neighbours at a/√2 are second neighbours here and are not bonded.",
+    coordination: "4 nearest neighbours; tetrahedral angle 109.47°",
+    notice: "Each C atom is bonded to four nearest neighbours at √3a/4, directed toward the corners of an ideal tetrahedron. The overlay highlights four complete coordination tetrahedra centred on interior sites from one of the two equivalent FCC sublattices; equivalent environments continue across the cell boundaries to form a three-dimensional network. The translucent faces and perimeter edges are geometric guides, not bonds—the perimeter atoms are second neighbours at a/√2.",
+    tetrahedraDescription: "Four complete coordination tetrahedra centred on the interior carbon sites are displayed. Their faces and perimeter edges are geometric guides, not carbon–carbon bonds; equivalent environments continue periodically in all three dimensions.",
     legend: ["C"],
     builder: buildDiamond
   },
@@ -472,8 +475,10 @@ let resizeObserver;
 let modelRoot;
 let cellGroup;
 let linkGroup;
+let tetrahedraGroup;
 let currentModelId = "fcc";
 let currentExtent = 5;
+let diamondTetrahedraVisible = true;
 let ready = false;
 let failureMessage = "";
 
@@ -563,6 +568,15 @@ function bindControls() {
     if (linkGroup) linkGroup.visible = elements.showLinks.checked;
     render();
   });
+  elements.showTetrahedra.addEventListener("change", () => {
+    diamondTetrahedraVisible = elements.showTetrahedra.checked;
+    if (tetrahedraGroup) tetrahedraGroup.visible = elements.showTetrahedra.checked;
+    updateCanvasLabel();
+    render();
+    elements.status.textContent = elements.showTetrahedra.checked
+      ? "Diamond cubic: four coordination tetrahedra shown. Their faces and perimeter edges are geometric guides, not bonds."
+      : "Diamond cubic: coordination tetrahedra hidden.";
+  });
 
   elements.viewIsometric.addEventListener("click", () => setView("isometric", true));
   elements.viewA.addEventListener("click", () => setView("a", true));
@@ -635,10 +649,12 @@ function showModel(id, announce = true) {
   const data = definition.builder();
   elements.canvas.dataset.atomCount = String(data.atoms.length);
   elements.canvas.dataset.guideCount = String(data.links.length + (data.extraLinks?.length || 0));
+  elements.canvas.dataset.tetrahedronCount = String(data.tetrahedra?.length || 0);
   const built = buildThreeModel(data);
   modelRoot = built.root;
   cellGroup = built.cellGroup;
   linkGroup = built.linkGroup;
+  tetrahedraGroup = built.tetrahedraGroup;
   currentExtent = built.extent;
   scene.add(modelRoot);
 
@@ -649,11 +665,20 @@ function showModel(id, announce = true) {
   elements.showLinks.disabled = data.links.length === 0;
   linkGroup.visible = elements.showLinks.checked;
 
+  const hasTetrahedra = (data.tetrahedra?.length || 0) > 0;
+  elements.tetrahedraControl.hidden = !hasTetrahedra;
+  elements.showTetrahedra.checked = hasTetrahedra && diamondTetrahedraVisible;
+  elements.showTetrahedra.disabled = !hasTetrahedra;
+  tetrahedraGroup.visible = elements.showTetrahedra.checked;
+  updateCanvasLabel(definition);
+
   setView("isometric", false);
   render();
 
   if (announce) {
-    elements.status.textContent = `${definition.title} loaded. ${definition.coordination}.`;
+    elements.status.textContent = hasTetrahedra && elements.showTetrahedra.checked
+      ? "Diamond cubic loaded. Each carbon has four nearest neighbours in tetrahedral coordination; coordination-tetrahedra guides shown."
+      : `${definition.title} loaded. ${definition.coordination}.`;
   } else {
     elements.status.textContent = `${definition.title} ready. Rotate the model or choose another structure.`;
   }
@@ -687,9 +712,29 @@ function updateText(definition) {
     elements.legend.append(item);
   });
 
+  if (definition.tetrahedraDescription) {
+    const item = document.createElement("li");
+    const swatch = document.createElement("i");
+    const label = document.createElement("span");
+    swatch.className = "structures-swatch structures-swatch-tetrahedron";
+    swatch.setAttribute("aria-hidden", "true");
+    label.textContent = "Coordination-tetrahedra guide";
+    item.append(swatch, label);
+    elements.legend.append(item);
+  }
+
+  updateCanvasLabel(definition);
+}
+
+function updateCanvasLabel(definition = MODELS[currentModelId]) {
+  const tetrahedraDescription = definition.tetrahedraDescription
+    && elements.showTetrahedra.checked
+    && !elements.tetrahedraControl.hidden
+    ? ` ${definition.tetrahedraDescription}`
+    : "";
   elements.canvas.setAttribute(
     "aria-label",
-    `Interactive three-dimensional model of ${definition.title}. ${definition.cell}. ${definition.coordination}. Use the camera buttons for keyboard-accessible views.`
+    `Interactive three-dimensional model of ${definition.title}. ${definition.cell}. ${definition.coordination}.${tetrahedraDescription} Use the camera buttons for keyboard-accessible views.`
   );
 }
 
@@ -713,7 +758,8 @@ function buildThreeModel(data) {
   const guides = new THREE.Group();
   const frame = new THREE.Group();
   const planeGroup = new THREE.Group();
-  root.add(planeGroup, guides, frame, atomGroup);
+  const tetrahedra = new THREE.Group();
+  root.add(planeGroup, tetrahedra, guides, frame, atomGroup);
 
   const sphereGeometry = new THREE.SphereGeometry(data.atomRadius || 0.17, 22, 16);
   const materials = new Map();
@@ -813,6 +859,45 @@ function buildThreeModel(data) {
     });
   }
 
+  if (data.tetrahedra?.length) {
+    const faceMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffbd52,
+      emissive: 0x7a3d08,
+      emissiveIntensity: 0.2,
+      metalness: 0,
+      roughness: 0.58,
+      flatShading: true,
+      transparent: true,
+      opacity: 0.15,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+    const edgeMaterial = new THREE.LineBasicMaterial({
+      color: 0xffd47a,
+      transparent: true,
+      opacity: 0.92
+    });
+
+    data.tetrahedra.forEach((tetrahedron) => {
+      const geometry = new THREE.BufferGeometry();
+      const positions = tetrahedron.vertices.flatMap((atomIndex) => data.atoms[atomIndex].position);
+      geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setIndex([
+        0, 2, 1,
+        0, 1, 3,
+        0, 3, 2,
+        1, 2, 3
+      ]);
+      geometry.computeVertexNormals();
+
+      const faces = new THREE.Mesh(geometry, faceMaterial);
+      faces.renderOrder = 1;
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), edgeMaterial);
+      edges.renderOrder = 2;
+      tetrahedra.add(faces, edges);
+    });
+  }
+
   if (data.cellSegments.length) {
     const points = [];
     data.cellSegments.forEach(([start, end]) => {
@@ -853,6 +938,7 @@ function buildThreeModel(data) {
     root,
     cellGroup: frame,
     linkGroup: guides,
+    tetrahedraGroup: tetrahedra,
     extent: Math.max(size.x, size.y, size.z, 2)
   };
 }
@@ -953,6 +1039,7 @@ function showFailure(message) {
   [
     elements.showCell,
     elements.showLinks,
+    elements.showTetrahedra,
     elements.viewIsometric,
     elements.viewA,
     elements.viewC,
@@ -966,13 +1053,17 @@ function showFailure(message) {
 }
 
 function disposeObject(object) {
+  const geometries = new Set();
+  const materials = new Set();
   object.traverse((child) => {
-    if (child.geometry) child.geometry.dispose();
+    if (child.geometry) geometries.add(child.geometry);
     if (child.material) {
-      const materials = Array.isArray(child.material) ? child.material : [child.material];
-      materials.forEach((material) => material.dispose());
+      const childMaterials = Array.isArray(child.material) ? child.material : [child.material];
+      childMaterials.forEach((material) => materials.add(material));
     }
   });
+  geometries.forEach((geometry) => geometry.dispose());
+  materials.forEach((material) => material.dispose());
 }
 
 function makeCylinder(start, end, radius, material) {
@@ -1054,9 +1145,10 @@ function buildHcp() {
 
 function buildDiamond() {
   const a = 3.5;
+  const vectors = [[a, 0, 0], [0, a, 0], [0, 0, a]];
   const shifted = FCC_FRACTIONAL.map((frac) => frac.map((value) => wrap01(value + 0.25)));
-  return makeBasisCell({
-    vectors: [[a, 0, 0], [0, a, 0], [0, 0, a]],
+  const data = makeBasisCell({
+    vectors,
     basis: [
       ...FCC_FRACTIONAL.map((frac) => ({ element: "C", frac })),
       ...shifted.map((frac) => ({ element: "C", frac }))
@@ -1065,6 +1157,18 @@ function buildDiamond() {
     atomRadius: 0.17,
     linkRadius: 0.042
   });
+  const tetrahedra = findCoordinationTetrahedraAt(
+    data.atoms,
+    data.links,
+    shifted.map((frac) => fractionalToCartesian(frac, vectors))
+  );
+  if (tetrahedra.length !== shifted.length) {
+    console.warn(`Diamond cubic generated ${tetrahedra.length} complete coordination tetrahedra; expected ${shifted.length}. The overlay has been disabled.`);
+    data.tetrahedra = [];
+  } else {
+    data.tetrahedra = tetrahedra;
+  }
+  return data;
 }
 
 function buildGraphene() {
@@ -2035,6 +2139,19 @@ function connectByRule(atoms, rule) {
     }
   }
   return links;
+}
+
+function findCoordinationTetrahedraAt(atoms, links, centerPositions) {
+  const neighbours = atoms.map(() => []);
+  links.forEach(([first, second]) => {
+    neighbours[first].push(second);
+    neighbours[second].push(first);
+  });
+  return centerPositions.flatMap((position) => {
+    const center = atoms.findIndex((atom) => distanceArrays(atom.position, position) < 1e-8);
+    if (center < 0 || neighbours[center].length !== 4) return [];
+    return [{ center, vertices: neighbours[center] }];
+  });
 }
 
 function connectNearestUnlike(atoms, firstElement, secondElement, neighboursPerFirst) {

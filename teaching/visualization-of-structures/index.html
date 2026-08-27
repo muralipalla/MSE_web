@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Visualization of Structures | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <link rel="stylesheet" href="close-packing.css?v=1">
   <script src="../../js/main.js" defer></script>
   <script type="importmap">
@@ -18,7 +18,7 @@
       }
     }
   </script>
-  <script type="module" src="app.js?v=10"></script>
+  <script type="module" src="app.js?v=11"></script>
   <script type="module" src="close-packing.js?v=3"></script>
 </head>
 <body>
@@ -149,7 +149,7 @@
           </div>
         </fieldset>
 
-        <ul class="structures-legend" id="species-legend" aria-label="Atom legend">
+        <ul class="structures-legend" id="species-legend" aria-label="Model legend">
           <li><i class="structures-swatch structures-swatch-a" aria-hidden="true"></i><span>Cu &mdash; copper</span></li>
         </ul>
         <p class="structures-viewer-help">
@@ -165,6 +165,10 @@
           <legend>Display</legend>
           <label><input id="show-cell" type="checkbox" checked disabled> Unit-cell frame</label>
           <label><input id="show-links" type="checkbox" checked disabled> Nearest-neighbour guides</label>
+          <label class="structures-tetrahedra-toggle" id="tetrahedra-control" hidden>
+            <input id="show-tetrahedra" type="checkbox" checked disabled>
+            Coordination tetrahedra
+          </label>
         </fieldset>
 
         <section class="structures-facts" aria-labelledby="facts-title">
