@@ -1358,8 +1358,164 @@ FE_CURVE_KEYS.forEach((key) => {
   FE[key] = sampleShapePreservingCurve(FE[`${key}Anchors`]);
 });
 FE.liquidus = [...FE.deltaLiquidus, ...FE.gammaLiquidus.slice(1), ...FE.rightLiquidus.slice(1)];
-const ironState = { composition: 0.4, temperature: 700, view: "full" };
+const IRON_MAX_ZOOM_FACTOR = 8;
+const IRON_ZOOM_HISTORY_LIMIT = 20;
+const ironState = {
+  composition: 0.4,
+  temperature: 700,
+  view: "full",
+  domain: null,
+  zoomHistory: [],
+  boxZoomActive: false
+};
 let currentIronResult = null;
+let ironBoxGesture = null;
+
+function ironBaseDomains() {
+  return {
+    xDomain: [0, ironState.view === "steel" ? 2.14 : FE.cementite],
+    yDomain: [500, 1600]
+  };
+}
+
+function cloneIronDomains(domains) {
+  return domains ? { xDomain: [...domains.xDomain], yDomain: [...domains.yDomain] } : null;
+}
+
+function centredDomain([minimum, maximum], centre, span = maximum - minimum) {
+  const boundedSpan = clamp(span, 0, maximum - minimum);
+  if (boundedSpan >= maximum - minimum - 1e-9) return [minimum, maximum];
+  const start = clamp(centre - boundedSpan / 2, minimum, maximum - boundedSpan);
+  return [start, start + boundedSpan];
+}
+
+function ironChartDomains() {
+  return cloneIronDomains(ironState.domain) || ironBaseDomains();
+}
+
+function ironZoomMetrics(domains = ironChartDomains()) {
+  const base = ironBaseDomains();
+  const xScale = (base.xDomain[1] - base.xDomain[0]) / (domains.xDomain[1] - domains.xDomain[0]);
+  const yScale = (base.yDomain[1] - base.yDomain[0]) / (domains.yDomain[1] - domains.yDomain[0]);
+  return { xScale, yScale, isBase: xScale <= 1.000001 && yScale <= 1.000001 };
+}
+
+function formatIronZoomFactor(value) {
+  const rounded = Math.round(value);
+  return Math.abs(value - rounded) < 0.05 ? `${rounded}×` : `${value.toFixed(value < 10 ? 1 : 0)}×`;
+}
+
+function ironZoomLabel(metrics = ironZoomMetrics()) {
+  if (Math.abs(metrics.xScale - metrics.yScale) / Math.max(metrics.xScale, metrics.yScale) < 0.03) {
+    return formatIronZoomFactor((metrics.xScale + metrics.yScale) / 2);
+  }
+  return `X ${formatIronZoomFactor(metrics.xScale)} · Y ${formatIronZoomFactor(metrics.yScale)}`;
+}
+
+function ironZoomPhrase(metrics = ironZoomMetrics()) {
+  if (metrics.isBase) return "1×";
+  if (Math.abs(metrics.xScale - metrics.yScale) / Math.max(metrics.xScale, metrics.yScale) < 0.03) {
+    return formatIronZoomFactor((metrics.xScale + metrics.yScale) / 2);
+  }
+  return `${formatIronZoomFactor(metrics.xScale)} horizontally and ${formatIronZoomFactor(metrics.yScale)} vertically`;
+}
+
+function constrainIronDomains(domains) {
+  const base = ironBaseDomains();
+  const constrainAxis = (selected, baseAxis) => {
+    const selectedMinimum = clamp(Math.min(...selected), baseAxis[0], baseAxis[1]);
+    const selectedMaximum = clamp(Math.max(...selected), baseAxis[0], baseAxis[1]);
+    const baseSpan = baseAxis[1] - baseAxis[0];
+    const span = clamp(selectedMaximum - selectedMinimum, baseSpan / IRON_MAX_ZOOM_FACTOR, baseSpan);
+    return centredDomain(baseAxis, (selectedMinimum + selectedMaximum) / 2, span);
+  };
+  return {
+    xDomain: constrainAxis(domains.xDomain, base.xDomain),
+    yDomain: constrainAxis(domains.yDomain, base.yDomain)
+  };
+}
+
+function ironDomainsEqual(first, second, tolerance = 1e-7) {
+  const firstValues = [...first.xDomain, ...first.yDomain];
+  const secondValues = [...second.xDomain, ...second.yDomain];
+  return firstValues.every((value, index) => Math.abs(value - secondValues[index]) <= tolerance);
+}
+
+function setIronDomains(domains, { remember = true } = {}) {
+  const current = ironChartDomains();
+  const constrained = constrainIronDomains(domains);
+  if (ironDomainsEqual(current, constrained)) return false;
+  if (remember) {
+    ironState.zoomHistory.push(cloneIronDomains(ironState.domain));
+    if (ironState.zoomHistory.length > IRON_ZOOM_HISTORY_LIMIT) ironState.zoomHistory.shift();
+  }
+  ironState.domain = ironZoomMetrics(constrained).isBase ? null : constrained;
+  return true;
+}
+
+function resetIronZoom() {
+  ironState.domain = null;
+  ironState.zoomHistory = [];
+}
+
+function restorePreviousIronZoom() {
+  const previous = cloneIronDomains(ironState.domain);
+  ironState.domain = ironState.zoomHistory.length ? ironState.zoomHistory.pop() : null;
+  return !ironDomainsEqual(previous || ironBaseDomains(), ironChartDomains());
+}
+
+function zoomIronIn() {
+  const current = ironChartDomains();
+  const base = ironBaseDomains();
+  const xCentre = between(ironState.composition, ...current.xDomain)
+    ? ironState.composition
+    : (current.xDomain[0] + current.xDomain[1]) / 2;
+  const yCentre = between(ironState.temperature, ...current.yDomain)
+    ? ironState.temperature
+    : (current.yDomain[0] + current.yDomain[1]) / 2;
+  setIronDomains({
+    xDomain: centredDomain(base.xDomain, xCentre, (current.xDomain[1] - current.xDomain[0]) / 2),
+    yDomain: centredDomain(base.yDomain, yCentre, (current.yDomain[1] - current.yDomain[0]) / 2)
+  });
+}
+
+function keepIronSelectionVisible() {
+  if (!ironState.domain) return;
+  const current = ironChartDomains();
+  const base = ironBaseDomains();
+  ironState.domain = {
+    xDomain: between(ironState.composition, ...current.xDomain)
+      ? current.xDomain
+      : centredDomain(base.xDomain, ironState.composition, current.xDomain[1] - current.xDomain[0]),
+    yDomain: between(ironState.temperature, ...current.yDomain)
+      ? current.yDomain
+      : centredDomain(base.yDomain, ironState.temperature, current.yDomain[1] - current.yDomain[0])
+  };
+}
+
+function niceTicks([minimum, maximum], targetCount = 6) {
+  const span = maximum - minimum;
+  if (!(span > 0)) return [minimum];
+  const roughStep = span / Math.max(2, targetCount);
+  const magnitude = 10 ** Math.floor(Math.log10(roughStep));
+  const residual = roughStep / magnitude;
+  const multiplier = residual <= 1 ? 1 : residual <= 2 ? 2 : residual <= 2.5 ? 2.5 : residual <= 5 ? 5 : 10;
+  const step = multiplier * magnitude;
+  const first = Math.ceil((minimum - step * 1e-8) / step) * step;
+  const ticks = [];
+  for (let value = first; value <= maximum + step * 1e-8; value += step) {
+    ticks.push(Number(value.toFixed(6)));
+  }
+  return ticks;
+}
+
+function ticksWithin(domain, values) {
+  return values.filter((value) => between(value, domain[0] - 1e-6, domain[1] + 1e-6));
+}
+
+function mergeTicks(...groups) {
+  return [...new Set(groups.flat().map((value) => Number(value.toFixed(6))))].sort((first, second) => first - second);
+}
 
 function feSingle(region, phase, summary) {
   return { region, phases: [phase], summary, single: true };
@@ -1475,20 +1631,39 @@ function classifyIron(composition, temperature) {
 
 function drawIronChart() {
   const canvas = $("#iron-chart");
-  const xMaximum = ironState.view === "steel" ? 2.14 : FE.cementite;
-  const plot = makePlot(canvas, [0, xMaximum], [500, 1600], {
+  const { xDomain, yDomain } = ironChartDomains();
+  const plot = makePlot(canvas, xDomain, yDomain, {
     margins: { left: canvas.getBoundingClientRect().width < 520 ? 54 : 68, right: canvas.getBoundingClientRect().width < 520 ? 16 : 28, top: 28, bottom: canvas.getBoundingClientRect().width < 520 ? 54 : 60 }
   });
   canvas._plot = plot;
-  const xTicks = ironState.view === "steel"
-    ? [0, 0.5, 1, 1.5, 2, 2.14]
-    : plot.compact ? [0, 1, 2, 3, 4.3, 5.5, 6.67] : [0, 1, 2, 3, 4, 5, 6, 6.67];
+  const zoomMetrics = ironZoomMetrics({ xDomain, yDomain });
+  const xTicks = zoomMetrics.xScale <= 1.000001
+    ? (ironState.view === "steel"
+        ? [0, 0.5, 1, 1.5, 2, 2.14]
+        : plot.compact ? [0, 1, 2, 3, 4.3, 5.5, 6.67] : [0, 1, 2, 3, 4, 5, 6, 6.67])
+    : niceTicks(xDomain, plot.compact ? 5 : 7);
+  const teachingYTicks = ticksWithin(yDomain, [600, 727, 912, 1147, 1394, 1493, 1600]);
+  const generatedYTicks = niceTicks(yDomain, plot.compact ? 4 : 6)
+    .filter((tick) => teachingYTicks.every((teachingTick) => Math.abs(tick - teachingTick) > (yDomain[1] - yDomain[0]) * 0.035));
+  const yTicks = zoomMetrics.yScale < 4
+    ? teachingYTicks
+    : mergeTicks(generatedYTicks, teachingYTicks);
+  canvas.dataset.zoomScale = ironZoomLabel(zoomMetrics);
+  canvas.dataset.zoomScaleX = zoomMetrics.xScale.toFixed(3);
+  canvas.dataset.zoomScaleY = zoomMetrics.yScale.toFixed(3);
+  canvas.dataset.zoomMode = zoomMetrics.isBase ? "base" : "custom";
+  canvas.dataset.xDomain = xDomain.map((value) => value.toFixed(3)).join(",");
+  canvas.dataset.yDomain = yDomain.map((value) => value.toFixed(1)).join(",");
+  canvas.setAttribute(
+    "aria-label",
+    `Interactive iron-cementite phase diagram constructed from the supplied critical points. ${ironState.view === "steel" ? "Steel-region range" : "Full-composition range"}, ${ironZoomPhrase(zoomMetrics)} zoom. Displayed composition ${xDomain[0].toFixed(2)} to ${xDomain[1].toFixed(2)} weight percent carbon and temperature ${yDomain[0].toFixed(0)} to ${yDomain[1].toFixed(0)} degrees Celsius. ${ironState.boxZoomActive ? "Box zoom is ready; drag a rectangular region or press Escape to cancel." : "Use Box zoom to drag a rectangular region, or use the zoom buttons and adjacent composition and temperature sliders for keyboard control."}`
+  );
   drawAxes(plot, {
     xTicks,
-    yTicks: [600, 727, 912, 1147, 1394, 1493, 1600],
+    yTicks,
     xLabel: "Composition (wt% C)",
     yLabel: "Temperature (°C)",
-    xFormat: (value) => value === 6.67 || value === 2.14 ? value.toFixed(2) : String(value)
+    xFormat: (value) => String(Number(value.toFixed(2)))
   });
 
   const { context, x, y, margins, plotWidth, plotHeight, compact } = plot;
@@ -1519,6 +1694,10 @@ function drawIronChart() {
   pathLine(plot, [[FE.cementite, 500], [FE.cementite, 1227]], { color: COLORS.charcoal, width: 3 });
   context.restore();
 
+  context.save();
+  context.beginPath();
+  context.rect(margins.left, margins.top, plotWidth, plotHeight);
+  context.clip();
   const auxiliaryAnchors = [];
   const seenAuxiliaryAnchors = new Set();
   FE_CURVE_KEYS.forEach((key) => FE[`${key}Anchors`].forEach(([composition, temperature]) => {
@@ -1529,7 +1708,7 @@ function drawIronChart() {
     }
   }));
   auxiliaryAnchors
-    .filter(([composition]) => composition <= xMaximum + 1e-6)
+    .filter(([composition, temperature]) => between(composition, xDomain[0] - 1e-6, xDomain[1] + 1e-6) && between(temperature, yDomain[0] - 1e-6, yDomain[1] + 1e-6))
     .forEach(([composition, temperature]) => drawPoint(plot, composition, temperature, { radius: compact ? 2 : 2.5, fill: COLORS.paper, stroke: COLORS.muted, strokeWidth: 1.2 }));
 
   context.font = `800 ${compact ? 9 : 12}px system-ui, sans-serif`;
@@ -1545,11 +1724,13 @@ function drawIronChart() {
         [1.3, 1350, "γ + L", COLORS.coral], [6.0, 1180, "L + Fe₃C", COLORS.charcoal], [0.2, 780, "α + γ", COLORS.blue],
         [2.45, 880, "γ + Fe₃C", COLORS.charcoal], [3.1, 625, "α + Fe₃C", COLORS.blue]
       ];
-  labels.forEach(([labelX, labelY, text, color]) => {
-    context.fillStyle = color;
-    context.fillText(text, x(labelX), y(labelY));
-  });
-  if (ironState.view === "full") {
+  labels
+    .filter(([labelX, labelY]) => between(labelX, xDomain[0], xDomain[1]) && between(labelY, yDomain[0], yDomain[1]))
+    .forEach(([labelX, labelY, text, color]) => {
+      context.fillStyle = color;
+      context.fillText(text, x(labelX), y(labelY));
+    });
+  if (ironState.view === "full" && between(FE.cementite, xDomain[0] - 1e-6, xDomain[1] + 1e-6) && between(930, yDomain[0], yDomain[1])) {
     context.save();
     context.translate(x(6.64), y(930));
     context.rotate(-Math.PI / 2);
@@ -1559,17 +1740,24 @@ function drawIronChart() {
     context.restore();
   }
 
-  FE.suppliedPoints.filter((point) => point.x <= xMaximum + 1e-6).forEach((point) => {
-    drawPoint(plot, point.x, point.y, { radius: compact ? 3.2 : 4, fill: COLORS.ink, strokeWidth: 1.5 });
-    context.fillStyle = COLORS.ink;
-    context.font = `800 ${compact ? 8 : 10}px system-ui, sans-serif`;
-    context.textAlign = "left";
-    context.fillText(String(point.number), x(point.x) + 6, y(point.y) - 6);
-  });
+  FE.suppliedPoints
+    .filter((point) => between(point.x, xDomain[0] - 1e-6, xDomain[1] + 1e-6) && between(point.y, yDomain[0] - 1e-6, yDomain[1] + 1e-6))
+    .forEach((point) => {
+      drawPoint(plot, point.x, point.y, { radius: compact ? 3.2 : 4, fill: COLORS.ink, strokeWidth: 1.5 });
+      context.fillStyle = COLORS.ink;
+      context.font = `800 ${compact ? 8 : 10}px system-ui, sans-serif`;
+      context.textAlign = "left";
+      context.fillText(String(point.number), x(point.x) + 6, y(point.y) - 6);
+    });
+  context.restore();
 
   currentIronResult = classifyIron(ironState.composition, ironState.temperature);
+  context.save();
+  context.beginPath();
+  context.rect(margins.left, margins.top, plotWidth, plotHeight);
+  context.clip();
   if (!currentIronResult.single && !currentIronResult.invariant) {
-    const lineRight = Math.min(currentIronResult.rightComposition, xMaximum);
+    const lineRight = Math.min(currentIronResult.rightComposition, xDomain[1]);
     context.strokeStyle = COLORS.coral;
     context.lineWidth = 2.4;
     context.setLineDash([7, 5]);
@@ -1579,13 +1767,17 @@ function drawIronChart() {
     context.stroke();
     context.setLineDash([]);
     drawPoint(plot, currentIronResult.leftComposition, ironState.temperature, { fill: COLORS.blue });
-    if (currentIronResult.rightComposition <= xMaximum) {
+    if (currentIronResult.rightComposition <= xDomain[1]) {
       drawPoint(plot, currentIronResult.rightComposition, ironState.temperature, { fill: COLORS.charcoal });
     } else {
       context.fillStyle = COLORS.charcoal;
       context.font = `800 ${compact ? 8 : 10}px system-ui, sans-serif`;
       context.textAlign = "right";
-      context.fillText("→ Fe₃C at 6.67", x(xMaximum) - 4, y(ironState.temperature) - 7);
+      context.fillText(
+        `→ ${ironPhaseSymbol(currentIronResult.rightName)} at ${currentIronResult.rightComposition.toFixed(2)} wt% C`,
+        x(xDomain[1]) - 4,
+        y(ironState.temperature) - 7
+      );
     }
   }
   if (currentIronResult.invariant) {
@@ -1594,10 +1786,11 @@ function drawIronChart() {
     context.lineWidth = 2.4;
     context.beginPath();
     context.moveTo(x(endpoints[0]), y(ironState.temperature));
-    context.lineTo(x(Math.min(endpoints.at(-1), xMaximum)), y(ironState.temperature));
+    context.lineTo(x(Math.min(endpoints.at(-1), xDomain[1])), y(ironState.temperature));
     context.stroke();
   }
   drawSelection(plot, ironState.composition, ironState.temperature);
+  context.restore();
 }
 
 function ironFinalConstituent(composition) {
@@ -1764,9 +1957,177 @@ function ironPhaseSymbol(name) {
   return phaseSymbol(name);
 }
 
-function updateIron({ announce = true } = {}) {
+function clearIronBoxGesture() {
+  const canvas = $("#iron-chart");
+  const gesture = ironBoxGesture;
+  ironBoxGesture = null;
+  $(".iron-zoom-box").hidden = true;
+  if (gesture && canvas.hasPointerCapture?.(gesture.pointerId)) canvas.releasePointerCapture(gesture.pointerId);
+}
+
+function setIronBoxZoomActive(active, { announce = true, redraw = true } = {}) {
+  ironState.boxZoomActive = active;
+  if (!active) clearIronBoxGesture();
+  const button = $("[data-iron-box-zoom]");
+  button.setAttribute("aria-pressed", String(active));
+  button.textContent = active ? "Cancel box zoom" : "Box zoom";
+  $("#iron-chart").classList.toggle("is-box-zoom", active);
+  if (redraw) drawIronChart();
+  if (announce) {
+    $("#iron-status").textContent = active
+      ? "Box zoom ready. Drag a rectangle inside the plot; press Escape to cancel."
+      : "Box zoom cancelled. Point selection is active.";
+  }
+}
+
+function updateIronZoomBox(start, current) {
+  const canvasRect = $("#iron-chart").getBoundingClientRect();
+  const frameRect = $(".iron-chart-frame").getBoundingClientRect();
+  const overlay = $(".iron-zoom-box");
+  overlay.hidden = false;
+  overlay.style.left = `${canvasRect.left - frameRect.left + Math.min(start.x, current.x)}px`;
+  overlay.style.top = `${canvasRect.top - frameRect.top + Math.min(start.y, current.y)}px`;
+  overlay.style.width = `${Math.abs(current.x - start.x)}px`;
+  overlay.style.height = `${Math.abs(current.y - start.y)}px`;
+}
+
+function installIronCanvasInteraction(canvas) {
+  const clampPointToPlot = (point, plot) => ({
+    x: clamp(point.x, plot.margins.left, plot.margins.left + plot.plotWidth),
+    y: clamp(point.y, plot.margins.top, plot.margins.top + plot.plotHeight)
+  });
+  const pointIsInPlot = (point, plot) => (
+    between(point.x, plot.margins.left, plot.margins.left + plot.plotWidth)
+    && between(point.y, plot.margins.top, plot.margins.top + plot.plotHeight)
+  );
+  const cancelGesture = (message = "Box zoom cancelled. Point selection is active.") => {
+    if (!ironBoxGesture && !ironState.boxZoomActive) return;
+    clearIronBoxGesture();
+    setIronBoxZoomActive(false, { announce: false });
+    $("#iron-status").textContent = message;
+  };
+
+  canvas.addEventListener("pointerdown", (event) => {
+    if (ironBoxGesture && ironBoxGesture.pointerId !== event.pointerId) {
+      cancelGesture("Box zoom cancelled because a second pointer was detected.");
+      return;
+    }
+    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
+    drawIronChart();
+    const plot = canvas._plot;
+    if (!plot) return;
+    const rawPoint = canvasPosition(event, canvas);
+    if (!pointIsInPlot(rawPoint, plot)) return;
+
+    if (!ironState.boxZoomActive) {
+      setIronFromChart(plot.valueX(rawPoint.x), plot.valueY(rawPoint.y));
+      return;
+    }
+
+    event.preventDefault();
+    const start = clampPointToPlot(rawPoint, plot);
+    ironBoxGesture = {
+      pointerId: event.pointerId,
+      pointerType: event.pointerType,
+      plot,
+      start,
+      current: start,
+      moved: false
+    };
+    canvas.setPointerCapture?.(event.pointerId);
+  });
+
+  canvas.addEventListener("pointermove", (event) => {
+    const gesture = ironBoxGesture;
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    gesture.current = clampPointToPlot(canvasPosition(event, canvas), gesture.plot);
+    const threshold = gesture.pointerType === "touch" ? 12 : 6;
+    gesture.moved = gesture.moved
+      || Math.hypot(gesture.current.x - gesture.start.x, gesture.current.y - gesture.start.y) >= threshold;
+    if (gesture.moved) updateIronZoomBox(gesture.start, gesture.current);
+  });
+
+  canvas.addEventListener("pointerup", (event) => {
+    const gesture = ironBoxGesture;
+    if (!gesture || gesture.pointerId !== event.pointerId) return;
+    event.preventDefault();
+    gesture.current = clampPointToPlot(canvasPosition(event, canvas), gesture.plot);
+    const width = Math.abs(gesture.current.x - gesture.start.x);
+    const height = Math.abs(gesture.current.y - gesture.start.y);
+    const { plot } = gesture;
+    const moveThreshold = gesture.pointerType === "touch" ? 12 : 6;
+    const wasMoved = gesture.moved || Math.hypot(width, height) >= moveThreshold;
+    clearIronBoxGesture();
+    setIronBoxZoomActive(false, { announce: false, redraw: false });
+
+    if (!wasMoved) {
+      setIronFromChart(plot.valueX(gesture.current.x), plot.valueY(gesture.current.y));
+      $("#iron-status").textContent += " Box zoom was not applied because no area was dragged.";
+      return;
+    }
+    if (width < 24 || height < 24) {
+      drawIronChart();
+      $("#iron-status").textContent = "Box zoom not applied. Drag a rectangle at least 24 pixels wide and high.";
+      return;
+    }
+
+    const nextDomains = {
+      xDomain: [plot.valueX(Math.min(gesture.start.x, gesture.current.x)), plot.valueX(Math.max(gesture.start.x, gesture.current.x))],
+      yDomain: [plot.valueY(Math.max(gesture.start.y, gesture.current.y)), plot.valueY(Math.min(gesture.start.y, gesture.current.y))]
+    };
+    const changed = setIronDomains(nextDomains);
+    drawIronChart();
+    updateIronZoomControls();
+    const { xDomain, yDomain } = ironChartDomains();
+    const selectionIsVisible = between(ironState.composition, ...xDomain) && between(ironState.temperature, ...yDomain);
+    $("#iron-status").textContent = changed
+      ? `Box zoom applied. Showing ${xDomain[0].toFixed(2)}–${xDomain[1].toFixed(2)} wt% C and ${yDomain[0].toFixed(0)}–${yDomain[1].toFixed(0)} °C.${selectionIsVisible ? "" : " The selected state is outside this view; click inside or use the sliders."}`
+      : "Box zoom not applied because that area matches the current view.";
+  });
+
+  canvas.addEventListener("pointercancel", () => cancelGesture());
+  canvas.addEventListener("lostpointercapture", (event) => {
+    if (ironBoxGesture?.pointerId === event.pointerId) cancelGesture();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && ironState.boxZoomActive) {
+      event.preventDefault();
+      cancelGesture();
+      $("[data-iron-box-zoom]").focus();
+    }
+  });
+  window.addEventListener("blur", () => cancelGesture());
+  window.addEventListener("resize", () => cancelGesture("Box zoom cancelled after the chart resized."));
+}
+
+function updateIronZoomControls() {
+  const metrics = ironZoomMetrics();
+  const label = ironZoomLabel(metrics);
+  const output = $("#iron-zoom-level");
+  output.value = label;
+  output.textContent = label;
+  output.setAttribute(
+    "aria-label",
+    metrics.isBase
+      ? "Current zoom level: 1 times"
+      : `Current zoom level: ${metrics.xScale.toFixed(1)} times horizontally and ${metrics.yScale.toFixed(1)} times vertically`
+  );
+  const atLimit = metrics.xScale >= IRON_MAX_ZOOM_FACTOR - 1e-6 && metrics.yScale >= IRON_MAX_ZOOM_FACTOR - 1e-6;
+  const canRestore = !metrics.isBase || ironState.zoomHistory.length > 0;
+  $$('[data-iron-zoom]').forEach((button) => {
+    const action = button.dataset.ironZoom;
+    button.disabled = action === "in"
+      ? atLimit
+      : !canRestore;
+  });
+  $("[data-iron-box-zoom]").disabled = false;
+}
+
+function updateIron({ announce = true, revealSelection = false } = {}) {
   ironState.composition = Number($("#iron-composition").value);
   ironState.temperature = Number($("#iron-temperature").value);
+  if (revealSelection) keepIronSelectionVisible();
   const result = classifyIron(ironState.composition, ironState.temperature);
   currentIronResult = result;
   $("#iron-composition-value").textContent = `${ironState.composition.toFixed(2)} wt% C`;
@@ -1805,8 +2166,13 @@ function updateIron({ announce = true } = {}) {
   }
   $("#iron-constituent").textContent = ironFinalConstituent(ironState.composition);
   drawIronChart();
+  updateIronZoomControls();
   const mediaState = drawIronMicrostructure();
-  if (announce) $("#iron-status").textContent = `${result.region} selected at ${ironState.composition.toFixed(2)} wt% C and ${ironState.temperature.toFixed(0)} °C. ${microstructureStatus(mediaState)}`;
+  if (announce) {
+    const zoomMetrics = ironZoomMetrics();
+    const zoomStatus = zoomMetrics.isBase ? "" : ` ${ironZoomPhrase(zoomMetrics)} chart zoom active.`;
+    $("#iron-status").textContent = `${result.region} selected at ${ironState.composition.toFixed(2)} wt% C and ${ironState.temperature.toFixed(0)} °C.${zoomStatus} ${microstructureStatus(mediaState)}`;
+  }
 }
 
 function setIronFromChart(composition, temperature) {
@@ -1815,26 +2181,54 @@ function setIronFromChart(composition, temperature) {
   updateIron();
 }
 
-$("#iron-composition").addEventListener("input", () => updateIron({ announce: false }));
-$("#iron-composition").addEventListener("change", () => updateIron());
-$("#iron-temperature").addEventListener("input", () => updateIron({ announce: false }));
-$("#iron-temperature").addEventListener("change", () => updateIron());
-installCanvasPicker($("#iron-chart"), drawIronChart, setIronFromChart, [0, FE.cementite], [500, 1600]);
+$("#iron-composition").addEventListener("input", () => updateIron({ announce: false, revealSelection: true }));
+$("#iron-composition").addEventListener("change", () => updateIron({ revealSelection: true }));
+$("#iron-temperature").addEventListener("input", () => updateIron({ announce: false, revealSelection: true }));
+$("#iron-temperature").addEventListener("change", () => updateIron({ revealSelection: true }));
+installIronCanvasInteraction($("#iron-chart"));
 
 $$('[data-iron-micro-example]').forEach((button) => button.addEventListener("click", () => {
   $("#iron-composition").value = button.dataset.ironMicroExample;
   $("#iron-temperature").value = "700";
-  updateIron();
+  updateIron({ revealSelection: true });
+}));
+
+$("[data-iron-box-zoom]").addEventListener("click", () => {
+  setIronBoxZoomActive(!ironState.boxZoomActive);
+});
+
+$$('[data-iron-zoom]').forEach((button) => button.addEventListener("click", () => {
+  const action = button.dataset.ironZoom;
+  const hadFocus = document.activeElement === button;
+  setIronBoxZoomActive(false, { announce: false, redraw: false });
+  if (action === "in") zoomIronIn();
+  if (action === "out") {
+    restorePreviousIronZoom();
+    keepIronSelectionVisible();
+  }
+  if (action === "reset") resetIronZoom();
+  updateIron({ announce: false });
+  if (hadFocus && button.disabled) {
+    const nextAction = ironZoomMetrics().isBase ? "in" : "out";
+    $(`[data-iron-zoom="${nextAction}"]`).focus();
+  }
+  const { xDomain, yDomain } = ironChartDomains();
+  const zoomMetrics = ironZoomMetrics({ xDomain, yDomain });
+  $("#iron-status").textContent = zoomMetrics.isBase
+    ? `${ironState.view === "steel" ? "Steel-region range" : "Full diagram"} restored at 1× zoom.`
+    : `${ironZoomPhrase(zoomMetrics)} chart zoom active. Showing ${xDomain[0].toFixed(2)}–${xDomain[1].toFixed(2)} wt% C and ${yDomain[0].toFixed(0)}–${yDomain[1].toFixed(0)} °C.`;
 }));
 
 $$("[data-iron-view]").forEach((button) => button.addEventListener("click", () => {
+  setIronBoxZoomActive(false, { announce: false, redraw: false });
   ironState.view = button.dataset.ironView;
+  resetIronZoom();
   $$("[data-iron-view]").forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
   const max = ironState.view === "steel" ? 2.14 : FE.cementite;
   $("#iron-composition").max = String(max);
   if (ironState.composition > max) $("#iron-composition").value = String(max);
   updateIron();
-  $("#iron-status").textContent = `${ironState.view === "steel" ? "Steel-region zoom" : "Full diagram"} active. Selected ${ironState.composition.toFixed(2)} wt% C.`;
+  $("#iron-status").textContent = `${ironState.view === "steel" ? "Steel-region range" : "Full diagram"} active at 1× zoom. Selected ${ironState.composition.toFixed(2)} wt% C.`;
 }));
 
 // ---------------------------------------------------------------------------

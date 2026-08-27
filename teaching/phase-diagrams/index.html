@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Phase Diagrams | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=5">
   <script src="../../js/main.js" defer></script>
-  <script type="module" src="app.js?v=4"></script>
+  <script type="module" src="app.js?v=6"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the phase-diagram lesson</a>
@@ -273,15 +273,25 @@
             <div class="diagram-toolbar">
               <div>
                 <strong>Fe&ndash;Fe<sub>3</sub>C equilibrium map</strong>
-                <span>Click a phase field or use the precision controls.</span>
+                <span id="iron-chart-help">Choose Box zoom, then drag a rectangle; Escape cancels. Click a phase field, or choose a centre with the sliders and use Zoom in/out.</span>
               </div>
-              <div class="chart-view-buttons" role="group" aria-label="Iron-carbide chart range">
-                <button type="button" data-iron-view="full" aria-pressed="true">Full diagram</button>
-                <button type="button" data-iron-view="steel" aria-pressed="false">Steel region</button>
+              <div class="chart-control-groups">
+                <div class="chart-view-buttons" role="group" aria-label="Iron-carbide chart range">
+                  <button type="button" data-iron-view="full" aria-pressed="true">Full diagram</button>
+                  <button type="button" data-iron-view="steel" aria-pressed="false">Steel region</button>
+                </div>
+                <div class="chart-view-buttons chart-zoom-buttons" role="group" aria-label="Iron-carbide chart zoom">
+                  <output id="iron-zoom-level" aria-label="Current zoom level">1&times;</output>
+                  <button type="button" data-iron-box-zoom aria-pressed="false" aria-controls="iron-chart" aria-describedby="iron-chart-help">Box zoom</button>
+                  <button type="button" data-iron-zoom="in" aria-controls="iron-chart">Zoom in</button>
+                  <button type="button" data-iron-zoom="out" aria-controls="iron-chart" disabled>Zoom out</button>
+                  <button type="button" data-iron-zoom="reset" aria-controls="iron-chart" disabled>Reset</button>
+                </div>
               </div>
             </div>
             <div class="chart-frame iron-chart-frame">
-              <canvas id="iron-chart" width="980" height="650" role="img" aria-label="Interactive iron-cementite phase diagram constructed from the supplied critical points. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
+              <canvas id="iron-chart" width="980" height="650" role="img" aria-describedby="iron-chart-help" aria-label="Interactive iron-cementite phase diagram constructed from the supplied critical points. Use Box zoom to drag a rectangular region, or use the zoom buttons and adjacent composition and temperature sliders for keyboard control."></canvas>
+              <div class="iron-zoom-box" aria-hidden="true" hidden></div>
             </div>
             <figcaption>Curved boundaries use shape-preserving cubic interpolation through numbered and auxiliary teaching anchors; reaction isotherms remain exact and straight. Numbered dark points are supplied values, while small hollow points disclose added curve-shaping anchors. Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
           </figure>

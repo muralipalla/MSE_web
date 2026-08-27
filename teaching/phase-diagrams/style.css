@@ -195,6 +195,30 @@
   gap: 0.3rem;
 }
 
+.chart-control-groups {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: end;
+}
+
+.chart-zoom-buttons {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.chart-zoom-buttons output {
+  display: inline-grid;
+  min-width: 4.6rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.5rem;
+  place-items: center;
+  border-radius: 0.65rem;
+  background: var(--lavender-light);
+  color: var(--lavender);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
 .chart-view-buttons button {
   min-height: 2.25rem;
   padding: 0.35rem 0.62rem;
@@ -212,6 +236,11 @@
   border-color: var(--ink);
   background: var(--ink);
   color: white;
+}
+
+.chart-view-buttons button:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
 }
 
 .chart-frame {
@@ -243,6 +272,24 @@
 
 .iron-chart-frame canvas {
   height: 36rem;
+  touch-action: pan-y pinch-zoom;
+}
+
+.iron-chart-frame canvas.is-box-zoom {
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
+}
+
+.iron-zoom-box {
+  position: absolute;
+  z-index: 2;
+  box-sizing: border-box;
+  border: 2px dashed var(--coral);
+  border-radius: 0.25rem;
+  background: rgba(240, 80, 48, 0.12);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85) inset;
+  pointer-events: none;
 }
 
 .diagram-panel figcaption {
@@ -1187,6 +1234,15 @@ input[type="range"] {
   }
 
   .diagram-toolbar .chip-row {
+    justify-content: flex-start;
+  }
+
+  .chart-control-groups {
+    width: 100%;
+    justify-items: start;
+  }
+
+  .chart-zoom-buttons {
     justify-content: flex-start;
   }
 
