@@ -627,6 +627,14 @@ details p {
   font-weight: 800;
 }
 
+.site-footer .site-license {
+  max-width: 72rem;
+  margin: 0.75rem auto 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
 /* 7. Independent teaching-page styles */
 .article-header {
   width: min(calc(100% - 2rem), var(--page-width));

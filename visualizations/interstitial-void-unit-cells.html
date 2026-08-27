@@ -306,6 +306,25 @@
       border-top: 1px solid var(--border);
     }
 
+    .site-legal-footer {
+      padding: 1.5rem 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--ink-soft);
+      text-align: center;
+    }
+
+    .site-legal-footer p {
+      width: min(100%, 72rem);
+      margin: 0 auto;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .site-legal-footer a {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
     .legend {
       display: flex;
       flex-wrap: wrap;
@@ -597,6 +616,10 @@
 
     <p class="prototype-footnote">A void marker locates empty space; it is not an atom. The site becomes an interstitial defect only when an additional atom occupies it. Radius ratios shown here are unrelaxed hard-sphere clearances, not universal site-preference rules.</p>
   </main>
+
+  <footer class="site-legal-footer">
+    <p>&copy; 2026 Murali Palla &middot; Original text and visual content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a>. Code is open source under the <a href="https://opensource.org/license/mit" target="_blank" rel="noopener license">MIT License</a>. Third-party materials retain their stated licenses. <a href="../licenses/">Licenses &amp; attributions</a>.</p>
+  </footer>
 
   <script type="module">
     const CELL_SIZE = 5.2;

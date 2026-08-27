@@ -1,3 +1,6 @@
+import { FE_TRACE_SOURCE } from "./fe-c-trace.js?v=1";
+import { CU_NI_TRACE_SOURCE, PB_SN_TRACE_SOURCE } from "./binary-phase-traces.js?v=1";
+
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
@@ -53,73 +56,6 @@ function interpolateX(points, y) {
   return null;
 }
 
-// Shape-preserving cubic Hermite interpolation. Every supplied anchor remains
-// exact, while monotone runs cannot overshoot between neighbouring points.
-function sampleShapePreservingCurve(points, samplesPerInterval = 18) {
-  if (points.length < 3) {
-    const samples = [];
-    for (let index = 0; index < points.length - 1; index += 1) {
-      const [x1, y1] = points[index];
-      const [x2, y2] = points[index + 1];
-      for (let step = index === 0 ? 0 : 1; step <= samplesPerInterval; step += 1) {
-        const ratio = step / samplesPerInterval;
-        samples.push([x1 + (x2 - x1) * ratio, y1 + (y2 - y1) * ratio]);
-      }
-    }
-    return samples.length ? samples : points.map((point) => [...point]);
-  }
-
-  const intervalWidths = [];
-  const secants = [];
-  for (let index = 0; index < points.length - 1; index += 1) {
-    const width = points[index + 1][0] - points[index][0];
-    intervalWidths.push(width);
-    secants.push((points[index + 1][1] - points[index][1]) / width);
-  }
-
-  const tangents = new Array(points.length).fill(0);
-  for (let index = 1; index < points.length - 1; index += 1) {
-    if (secants[index - 1] * secants[index] <= 0) {
-      tangents[index] = 0;
-    } else {
-      const previousWeight = 2 * intervalWidths[index] + intervalWidths[index - 1];
-      const nextWeight = intervalWidths[index] + 2 * intervalWidths[index - 1];
-      tangents[index] = (previousWeight + nextWeight) /
-        (previousWeight / secants[index - 1] + nextWeight / secants[index]);
-    }
-  }
-
-  const endpointTangent = (width1, width2, slope1, slope2) => {
-    let tangent = ((2 * width1 + width2) * slope1 - width1 * slope2) / (width1 + width2);
-    if (Math.sign(tangent) !== Math.sign(slope1)) tangent = 0;
-    else if (Math.sign(slope1) !== Math.sign(slope2) && Math.abs(tangent) > Math.abs(3 * slope1)) tangent = 3 * slope1;
-    return tangent;
-  };
-  tangents[0] = endpointTangent(intervalWidths[0], intervalWidths[1], secants[0], secants[1]);
-  tangents[tangents.length - 1] = endpointTangent(intervalWidths.at(-1), intervalWidths.at(-2), secants.at(-1), secants.at(-2));
-
-  const samples = [];
-  for (let index = 0; index < points.length - 1; index += 1) {
-    const [x1, y1] = points[index];
-    const [x2, y2] = points[index + 1];
-    const width = x2 - x1;
-    for (let step = index === 0 ? 0 : 1; step <= samplesPerInterval; step += 1) {
-      const t = step / samplesPerInterval;
-      const t2 = t * t;
-      const t3 = t2 * t;
-      const h00 = 2 * t3 - 3 * t2 + 1;
-      const h10 = t3 - 2 * t2 + t;
-      const h01 = -2 * t3 + 3 * t2;
-      const h11 = t3 - t2;
-      samples.push([
-        x1 + width * t,
-        h00 * y1 + h10 * width * tangents[index] + h01 * y2 + h11 * width * tangents[index + 1]
-      ]);
-    }
-  }
-  return samples;
-}
-
 function leverFractions(overall, leftComposition, rightComposition) {
   const span = rightComposition - leftComposition;
   if (Math.abs(span) < 1e-9) return { left: null, right: null, indeterminate: true };
@@ -170,8 +106,10 @@ function drawAxes(plot, options) {
   const { context, margins, plotWidth, plotHeight, x, y, compact } = plot;
   const fontSize = compact ? 10 : 11;
   context.save();
-  context.fillStyle = COLORS.paper;
-  context.fillRect(margins.left, margins.top, plotWidth, plotHeight);
+  if (options.background !== false) {
+    context.fillStyle = COLORS.paper;
+    context.fillRect(margins.left, margins.top, plotWidth, plotHeight);
+  }
   context.font = `${fontSize}px system-ui, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "top";
@@ -547,17 +485,28 @@ $$("[data-water-point]").forEach((button) => button.addEventListener("click", ()
 // ---------------------------------------------------------------------------
 // Section 2: isomorphous system
 
-const ISO_LIQUIDUS_ANCHORS = [[0, 1100], [10, 1155], [20, 1210], [30, 1260], [40, 1310], [50, 1350], [60, 1385], [70, 1415], [80, 1438], [90, 1452], [100, 1460]];
-const ISO_SOLIDUS_ANCHORS = [[0, 1100], [10, 1110], [20, 1135], [30, 1170], [40, 1215], [50, 1265], [60, 1320], [70, 1370], [80, 1410], [90, 1440], [100, 1460]];
-const ISO_LIQUIDUS = sampleShapePreservingCurve(ISO_LIQUIDUS_ANCHORS);
-const ISO_SOLIDUS = sampleShapePreservingCurve(ISO_SOLIDUS_ANCHORS);
-const isoState = { composition: 45, temperature: 1280 };
+const CU_NI_TRACE_SEGMENTS = new Map(CU_NI_TRACE_SOURCE.segments.map((segment) => [segment.id, segment]));
+const ISO_LIQUIDUS = sampleTraceSourceSegment(CU_NI_TRACE_SEGMENTS, "liquidus", 240);
+const ISO_SOLIDUS = sampleTraceSourceSegment(CU_NI_TRACE_SEGMENTS, "solidus", 240);
+const ISO_COPPER_MELTING = 1084.6;
+const ISO_NICKEL_MELTING = 1454.85;
+const isoState = { composition: 35, temperature: 1250 };
 let currentIsoResult = null;
 
 function classifyIso(composition, temperature) {
+  if (composition <= 0.05) {
+    return temperature > ISO_COPPER_MELTING
+      ? { region: "Liquid", badge: "Single phase", summary: "Pure copper is above its melting point.", fractions: { liquid: 1, solid: 0 } }
+      : { region: "α solid solution", badge: "Single phase", summary: "Pure copper is below its melting point.", fractions: { liquid: 0, solid: 1 } };
+  }
+  if (composition >= 99.95) {
+    return temperature > ISO_NICKEL_MELTING
+      ? { region: "Liquid", badge: "Single phase", summary: "Pure nickel is above its melting point.", fractions: { liquid: 1, solid: 0 } }
+      : { region: "α solid solution", badge: "Single phase", summary: "Pure nickel is below its melting point.", fractions: { liquid: 0, solid: 1 } };
+  }
   const liquidus = interpolateY(ISO_LIQUIDUS, composition);
   const solidus = interpolateY(ISO_SOLIDUS, composition);
-  const tolerance = 1.5;
+  const tolerance = 0.75;
   if (temperature > liquidus + tolerance) {
     return { region: "Liquid", badge: "Single phase", summary: "The alloy is entirely liquid.", fractions: { liquid: 1, solid: 0 } };
   }
@@ -567,7 +516,7 @@ function classifyIso(composition, temperature) {
   const liquidComposition = interpolateX(ISO_LIQUIDUS, temperature);
   const solidComposition = interpolateX(ISO_SOLIDUS, temperature);
   if (liquidComposition === null || solidComposition === null) {
-    return temperature >= 1460
+    return temperature >= ISO_NICKEL_MELTING
       ? { region: "Liquid", badge: "Single phase", summary: "The alloy is entirely liquid.", fractions: { liquid: 1, solid: 0 } }
       : { region: "α solid solution", badge: "Single phase", summary: "The alloy is entirely α solid solution.", fractions: { liquid: 0, solid: 1 } };
   }
@@ -589,8 +538,8 @@ function drawIsoChart() {
   canvas._plot = plot;
   drawAxes(plot, {
     xTicks: plot.compact ? [0, 25, 50, 75, 100] : [0, 20, 40, 60, 80, 100],
-    yTicks: [1100, 1200, 1300, 1400, 1500],
-    xLabel: "Composition (wt% B)",
+    yTicks: [1085, 1200, 1300, 1400, 1455, 1500],
+    xLabel: "Composition (wt% Ni)",
     yLabel: "Temperature (°C)"
   });
 
@@ -600,8 +549,9 @@ function drawIsoChart() {
   fillPolygon(plot, [[0, 1050], ...ISO_SOLIDUS, [100, 1050]], "rgba(56, 102, 148, 0.08)");
   pathLine(plot, ISO_LIQUIDUS, { color: COLORS.coral, width: 3 });
   pathLine(plot, ISO_SOLIDUS, { color: COLORS.blue, width: 3 });
-  ISO_LIQUIDUS_ANCHORS.forEach(([composition, temperature]) => drawPoint(plot, composition, temperature, { radius: 2.2, fill: COLORS.paper, stroke: COLORS.coral, strokeWidth: 1.4 }));
-  ISO_SOLIDUS_ANCHORS.forEach(([composition, temperature]) => drawPoint(plot, composition, temperature, { radius: 2.2, fill: COLORS.paper, stroke: COLORS.blue, strokeWidth: 1.4 }));
+  [[0, ISO_COPPER_MELTING], [100, ISO_NICKEL_MELTING]].forEach(([composition, temperature]) => {
+    drawPoint(plot, composition, temperature, { radius: 3.2, fill: COLORS.paper, stroke: COLORS.ink, strokeWidth: 1.5 });
+  });
 
   const { context, x, y, compact } = plot;
   context.font = `800 ${compact ? 11 : 14}px system-ui, sans-serif`;
@@ -611,7 +561,7 @@ function drawIsoChart() {
   context.fillStyle = COLORS.amber;
   context.fillText("L + α", x(49), y(1305));
   context.fillStyle = COLORS.blue;
-  context.fillText("α SOLID SOLUTION", x(52), y(1135));
+  context.fillText("FCC α SOLID SOLUTION", x(52), y(1135));
   drawCurveLabel(plot, "LIQUIDUS", ISO_LIQUIDUS, 25, COLORS.coral, -11);
   drawCurveLabel(plot, "SOLIDUS", ISO_SOLIDUS, 67, COLORS.blue, 13);
 
@@ -644,15 +594,15 @@ function updateIso({ announce = true } = {}) {
   isoState.temperature = Number($("#iso-temperature").value);
   const result = classifyIso(isoState.composition, isoState.temperature);
   currentIsoResult = result;
-  $("#iso-composition-value").textContent = `${isoState.composition.toFixed(1)} wt% B`;
+  $("#iso-composition-value").textContent = `${isoState.composition.toFixed(1)} wt% Ni`;
   $("#iso-temperature-value").textContent = `${isoState.temperature.toFixed(0)} °C`;
   $("#iso-state-badge").textContent = result.badge;
   $("#iso-region").textContent = result.region;
   $("#iso-guidance").textContent = result.summary;
 
   if (result.liquidComposition !== undefined) {
-    $("#iso-liquid-composition").textContent = `${result.liquidComposition.toFixed(1)} wt% B`;
-    $("#iso-solid-composition").textContent = `${result.solidComposition.toFixed(1)} wt% B`;
+    $("#iso-liquid-composition").textContent = `${result.liquidComposition.toFixed(1)} wt% Ni`;
+    $("#iso-solid-composition").textContent = `${result.solidComposition.toFixed(1)} wt% Ni`;
     $("#iso-liquid-fraction").textContent = result.fractions.indeterminate ? "Indeterminate at transition" : percent(result.fractions.liquid);
     $("#iso-solid-fraction").textContent = result.fractions.indeterminate ? "Indeterminate at transition" : percent(result.fractions.solid);
     if (result.fractions.indeterminate) $("#iso-guidance").textContent = "At a pure-component melting point, composition alone cannot determine the amounts; heat added or removed controls reaction progress.";
@@ -660,13 +610,13 @@ function updateIso({ announce = true } = {}) {
     $("#iso-lever-point").style.left = `${clamp(leverPosition, 0, 100)}%`;
   } else {
     const liquid = result.fractions.liquid === 1;
-    $("#iso-liquid-composition").textContent = liquid ? `${isoState.composition.toFixed(1)} wt% B` : "Not present";
-    $("#iso-solid-composition").textContent = liquid ? "Not present" : `${isoState.composition.toFixed(1)} wt% B`;
+    $("#iso-liquid-composition").textContent = liquid ? `${isoState.composition.toFixed(1)} wt% Ni` : "Not present";
+    $("#iso-solid-composition").textContent = liquid ? "Not present" : `${isoState.composition.toFixed(1)} wt% Ni`;
     $("#iso-liquid-fraction").textContent = percent(result.fractions.liquid);
     $("#iso-solid-fraction").textContent = percent(result.fractions.solid);
     $("#iso-lever-point").style.left = liquid ? "0%" : "100%";
   }
-  if (announce) $("#iso-status").textContent = `${result.region} at ${isoState.composition.toFixed(1)} wt% B and ${isoState.temperature.toFixed(0)} °C.`;
+  if (announce) $("#iso-status").textContent = `${result.region} at ${isoState.composition.toFixed(1)} wt% Ni and ${isoState.temperature.toFixed(0)} °C.`;
   drawIsoChart();
 }
 
@@ -681,8 +631,8 @@ $("#iso-composition").addEventListener("change", () => updateIso());
 $("#iso-temperature").addEventListener("input", () => updateIso({ announce: false }));
 $("#iso-temperature").addEventListener("change", () => updateIso());
 $("#iso-reset").addEventListener("click", () => {
-  $("#iso-composition").value = "45";
-  $("#iso-temperature").value = "1280";
+  $("#iso-composition").value = "35";
+  $("#iso-temperature").value = "1250";
   updateIso();
 });
 installCanvasPicker($("#iso-chart"), drawIsoChart, setIsoFromChart, [0, 100], [1050, 1500]);
@@ -997,18 +947,16 @@ const PB = {
   eutecticTemperature: 183,
   eutecticComposition: 61.9,
   alphaEutectic: 19.2,
-  betaEutectic: 97.5,
-  leftLiquidusAnchors: [[0, 327.5], [5, 313], [10, 300], [20, 281], [30, 257], [40, 234], [50, 216], [61.9, 183]],
-  rightLiquidusAnchors: [[61.9, 183], [70, 190], [80, 201], [90, 218], [100, 231.9]],
-  leftSolidusAnchors: [[0, 327.5], [3, 300], [7, 260], [12, 220], [19.2, 183]],
-  rightSolidusAnchors: [[97.5, 183], [98.3, 200], [99, 215], [100, 231.9]],
-  leftSolvusAnchors: [[2, 20], [4, 50], [7, 100], [11, 150], [19.2, 183]],
-  rightSolvusAnchors: [[97.5, 183], [99, 150], [99.3, 100], [99.6, 50], [99.8, 20]]
+  betaEutectic: 97.5
 };
-const PB_CURVE_KEYS = ["leftLiquidus", "rightLiquidus", "leftSolidus", "rightSolidus", "leftSolvus", "rightSolvus"];
-PB_CURVE_KEYS.forEach((key) => {
-  PB[key] = sampleShapePreservingCurve(PB[`${key}Anchors`]);
-});
+const PB_SN_TRACE_SEGMENTS = new Map(PB_SN_TRACE_SOURCE.segments.map((segment) => [segment.id, segment]));
+PB.leftLiquidus = sampleTraceSourceSegment(PB_SN_TRACE_SEGMENTS, "left-liquidus", 240);
+PB.rightLiquidus = sampleTraceSourceSegment(PB_SN_TRACE_SEGMENTS, "right-liquidus", 180);
+PB.leftSolidus = sampleTraceSourceSegment(PB_SN_TRACE_SEGMENTS, "left-solidus", 180);
+PB.rightSolidus = sampleTraceSourceSegment(PB_SN_TRACE_SEGMENTS, "right-solidus", 180);
+PB.leftSolvus = sampleTraceSourceSegment(PB_SN_TRACE_SEGMENTS, "left-solvus", 180);
+PB.rightSolvus = sampleTraceSourceSegment(PB_SN_TRACE_SEGMENTS, "right-solvus", 180);
+PB.eutectic = sampleTraceSourceSegment(PB_SN_TRACE_SEGMENTS, "eutectic", 2);
 const pbState = { composition: 40, temperature: 150, mode: "micro" };
 let currentPbResult = null;
 
@@ -1034,6 +982,16 @@ function pbTwoPhase(region, leftName, rightName, leftComposition, rightCompositi
 }
 
 function classifyPb(composition, temperature) {
+  if (composition <= 0.05) {
+    return temperature > 327.5
+      ? pbSingle("Liquid", "Liquid", "Pure lead is above its melting point.")
+      : pbSingle("α", "α", "Pure lead is below its melting point.");
+  }
+  if (composition >= 99.95) {
+    return temperature > 231.9
+      ? pbSingle("Liquid", "Liquid", "Pure tin is above its melting point.")
+      : pbSingle("β", "β", "Pure tin is below its melting point.");
+  }
   const eutecticTolerance = 0.75;
   if (Math.abs(temperature - PB.eutecticTemperature) <= eutecticTolerance && between(composition, PB.alphaEutectic, PB.betaEutectic)) {
     return {
@@ -1111,7 +1069,7 @@ function drawPbChart() {
   pathLine(plot, PB.rightSolidus, { color: COLORS.lavender, width: 2.6 });
   pathLine(plot, PB.leftSolvus, { color: COLORS.blue, width: 2.5 });
   pathLine(plot, PB.rightSolvus, { color: COLORS.lavender, width: 2.5 });
-  pathLine(plot, [[PB.alphaEutectic, 183], [PB.betaEutectic, 183]], { color: COLORS.ink, width: 2.4 });
+  pathLine(plot, PB.eutectic, { color: COLORS.ink, width: 2.4 });
 
   const { context, x, y, compact } = plot;
   context.font = `800 ${compact ? 10 : 13}px system-ui, sans-serif`;
@@ -1127,15 +1085,9 @@ function drawPbChart() {
   context.fillStyle = COLORS.amber;
   context.fillText("α + β", x(55), y(95));
 
-  const anchors = [
-    ...PB.leftLiquidusAnchors,
-    ...PB.rightLiquidusAnchors.slice(1),
-    ...PB.leftSolidusAnchors.slice(1),
-    ...PB.rightSolidusAnchors.slice(0, -1),
-    ...PB.leftSolvusAnchors,
-    ...PB.rightSolvusAnchors
-  ];
-  anchors.forEach(([composition, temperature]) => drawPoint(plot, composition, temperature, { radius: compact ? 2.2 : 2.8, fill: COLORS.ink, strokeWidth: 1 }));
+  [[0, 327.5], [PB.alphaEutectic, 183], [PB.betaEutectic, 183], [100, 231.9]].forEach(([composition, temperature]) => {
+    drawPoint(plot, composition, temperature, { radius: compact ? 2.6 : 3.2, fill: COLORS.paper, stroke: COLORS.ink, strokeWidth: 1.4 });
+  });
   drawPoint(plot, PB.eutecticComposition, PB.eutecticTemperature, { radius: 5.5, fill: COLORS.coral });
   context.font = `800 ${compact ? 9 : 11}px system-ui, sans-serif`;
   context.fillStyle = COLORS.ink;
@@ -1327,19 +1279,88 @@ $$("[data-pb-mode]").forEach((button) => button.addEventListener("click", () => 
 // ---------------------------------------------------------------------------
 // Section 4: metastable Fe-Fe₃C system
 
+const FE_TRACE_SEGMENTS = new Map(FE_TRACE_SOURCE.segments.map((segment) => [segment.id, segment]));
+
+function evaluateTraceBSpline(segment, parameter) {
+  const points = segment.points;
+  const degree = Math.min(segment.degree, points.length - 1);
+  const knots = segment.knots;
+  const start = knots[degree];
+  const end = knots[points.length];
+  const value = clamp(parameter, start, end);
+  if (value >= end) return [...points.at(-1)];
+
+  let span = degree;
+  for (let index = degree; index < points.length; index += 1) {
+    if (value >= knots[index] && value < knots[index + 1]) {
+      span = index;
+      break;
+    }
+  }
+
+  const working = Array.from({ length: degree + 1 }, (_, index) => [...points[span - degree + index]]);
+  for (let level = 1; level <= degree; level += 1) {
+    for (let index = degree; index >= level; index -= 1) {
+      const knotIndex = span - degree + index;
+      const denominator = knots[knotIndex + degree - level + 1] - knots[knotIndex];
+      const weight = denominator === 0 ? 0 : (value - knots[knotIndex]) / denominator;
+      working[index][0] = (1 - weight) * working[index - 1][0] + weight * working[index][0];
+      working[index][1] = (1 - weight) * working[index - 1][1] + weight * working[index][1];
+    }
+  }
+  return working[degree];
+}
+
+function sampleTraceSourceSegment(segmentMap, segmentId, samples = 180) {
+  const segment = segmentMap.get(segmentId);
+  if (!segment) throw new Error(`Missing B-spline trace segment: ${segmentId}`);
+  return Array.from({ length: samples + 1 }, (_, index) => evaluateTraceBSpline(segment, index / samples));
+}
+
+function remapFeTraceCoordinate(value, sourceStart, sourceEnd, targetStart, targetEnd) {
+  if (Math.abs(sourceEnd - sourceStart) < 1e-9) return targetStart;
+  const ratio = (value - sourceStart) / (sourceEnd - sourceStart);
+  return targetStart + ratio * (targetEnd - targetStart);
+}
+
+// The reference deliberately exaggerates the dilute-carbon area, so each
+// traced curve is normalized between the site's established thermodynamic
+// endpoints. This retains the supplied B-spline shape without treating the
+// schematic image's global pixel scale as scientific data.
+function sampleFeTraceCurve(segmentId, startPoint, endPoint, { reverse = false, samples = 180 } = {}) {
+  const segment = FE_TRACE_SEGMENTS.get(segmentId);
+  if (!segment) throw new Error(`Missing Fe–C trace segment: ${segmentId}`);
+  const sourceStart = segment.points[0];
+  const sourceEnd = segment.points.at(-1);
+  const sampled = Array.from({ length: samples + 1 }, (_, index) => {
+    const [rawX, rawY] = evaluateTraceBSpline(segment, index / samples);
+    return [
+      remapFeTraceCoordinate(rawX, sourceStart[0], sourceEnd[0], startPoint[0], endPoint[0]),
+      remapFeTraceCoordinate(rawY, sourceStart[1], sourceEnd[1], startPoint[1], endPoint[1])
+    ];
+  });
+  return reverse ? sampled.reverse() : sampled;
+}
+
 const FE = {
   cementite: 6.67,
-  deltaLiquidusAnchors: [[0, 1538], [0.53, 1493]],
-  deltaSolidusAnchors: [[0, 1538], [0.09, 1493]],
-  deltaGammaDeltaAnchors: [[0, 1394], [0.09, 1493]],
-  deltaGammaGammaAnchors: [[0, 1394], [0.16, 1493]],
-  gammaSolidusAnchors: [[0.16, 1493], [0.5, 1440], [1, 1365], [1.5, 1270], [2.14, 1147]],
-  gammaLiquidusAnchors: [[0.53, 1493], [1, 1435], [2, 1325], [3, 1220], [4.3, 1147]],
-  rightLiquidusAnchors: [[4.3, 1147], [5.2, 1170], [6, 1200], [6.67, 1227]],
-  a3Anchors: [[0, 912], [0.1, 870], [0.2, 830], [0.4, 775], [0.6, 742], [0.76, 727]],
-  alphaHighAnchors: [[0, 912], [0.005, 850], [0.012, 780], [0.022, 727]],
-  acmAnchors: [[0.76, 727], [1, 800], [1.3, 900], [1.6, 1000], [1.9, 1090], [2.14, 1147]],
-  alphaLowAnchors: [[0.006, 500], [0.008, 600], [0.012, 680], [0.022, 727]],
+  traceSource: FE_TRACE_SOURCE.source,
+  traceSegmentCount: FE_TRACE_SOURCE.segments.length,
+  deltaLiquidus: sampleFeTraceCurve("liquidus-a-b", [0, 1538], [0.53, 1493]),
+  deltaSolidus: sampleFeTraceCurve("delta-liquid-a-h", [0, 1538], [0.09, 1493]),
+  deltaGammaDelta: sampleFeTraceCurve("delta-h-n", [0.09, 1493], [0, 1394], { reverse: true }),
+  deltaGammaGamma: sampleFeTraceCurve("gamma-j-n", [0.16, 1493], [0, 1394], { reverse: true }),
+  gammaSolidus: sampleFeTraceCurve("solidus-j-e", [0.16, 1493], [2.14, 1147]),
+  gammaLiquidus: sampleFeTraceCurve("liquidus-b-c", [0.53, 1493], [4.3, 1147]),
+  rightLiquidus: sampleFeTraceCurve("liquidus-c-d", [4.3, 1147], [6.67, 1227]),
+  a3: sampleFeTraceCurve("a3-g-s", [0, 912], [0.76, 727]),
+  alphaHigh: sampleFeTraceCurve("alpha-g-p", [0, 912], [0.022, 727]),
+  acm: sampleFeTraceCurve("acm-s-e", [0.76, 727], [2.14, 1147]),
+  alphaLow: sampleFeTraceCurve("solvus-p-q", [0.022, 727], [0.006, 20], { reverse: true }),
+  peritectic: [[0.09, 1493], [0.16, 1493], [0.53, 1493]],
+  eutectic: [[2.14, 1147], [4.3, 1147], [6.67, 1147]],
+  eutectoid: [[0.022, 727], [0.76, 727], [6.67, 727]],
+  cementiteBoundary: [[6.67, 20], [6.67, 727], [6.67, 1147], [6.67, 1227]],
   suppliedPoints: [
     { number: 1, x: 0, y: 1538 },
     { number: 2, x: 0.09, y: 1493 },
@@ -1353,11 +1374,86 @@ const FE = {
     { number: 10, x: 0.76, y: 727 }
   ]
 };
-const FE_CURVE_KEYS = ["deltaLiquidus", "deltaSolidus", "deltaGammaDelta", "deltaGammaGamma", "gammaSolidus", "gammaLiquidus", "rightLiquidus", "a3", "alphaHigh", "acm", "alphaLow"];
-FE_CURVE_KEYS.forEach((key) => {
-  FE[key] = sampleShapePreservingCurve(FE[`${key}Anchors`]);
-});
 FE.liquidus = [...FE.deltaLiquidus, ...FE.gammaLiquidus.slice(1), ...FE.rightLiquidus.slice(1)];
+
+const FE_TRACE_CURVE_KEYS = ["deltaLiquidus", "deltaSolidus", "deltaGammaDelta", "deltaGammaGamma", "gammaSolidus", "gammaLiquidus", "rightLiquidus", "a3", "alphaHigh", "acm", "alphaLow"];
+const FE_TRACE_ENDPOINTS = [
+  ["deltaLiquidus", [0, 1538], [0.53, 1493]],
+  ["deltaSolidus", [0, 1538], [0.09, 1493]],
+  ["deltaGammaDelta", [0, 1394], [0.09, 1493]],
+  ["deltaGammaGamma", [0, 1394], [0.16, 1493]],
+  ["gammaSolidus", [0.16, 1493], [2.14, 1147]],
+  ["gammaLiquidus", [0.53, 1493], [4.3, 1147]],
+  ["rightLiquidus", [4.3, 1147], [6.67, 1227]],
+  ["a3", [0, 912], [0.76, 727]],
+  ["alphaHigh", [0, 912], [0.022, 727]],
+  ["acm", [0.76, 727], [2.14, 1147]],
+  ["alphaLow", [0.006, 20], [0.022, 727]]
+];
+const fePointsMatch = (first, second) => first.every((value, index) => Math.abs(value - second[index]) < 1e-9);
+console.assert(FE.traceSegmentCount === 15 && FE_TRACE_SEGMENTS.size === 15, "The Fe–C trace should contain 15 unique named segments.");
+console.assert(FE_TRACE_CURVE_KEYS.every((key) => FE[key].every((point) => point.every(Number.isFinite))), "Every sampled Fe–C B-spline point should be finite.");
+console.assert(FE_TRACE_ENDPOINTS.every(([key, start, end]) => fePointsMatch(FE[key][0], start) && fePointsMatch(FE[key].at(-1), end)), "Every Fe–C B-spline should meet its canonical labelled endpoints.");
+console.assert(FE_TRACE_CURVE_KEYS.every((key) => FE[key].every((point, index, points) => index === 0 || point[0] >= points[index - 1][0] - 1e-9)), "Sampled Fe–C curves should remain composition-monotone.");
+console.assert(FE.peritectic.every((point) => point[1] === 1493) && FE.eutectic.every((point) => point[1] === 1147) && FE.eutectoid.every((point) => point[1] === 727), "Fe–C invariant reaction lines should remain horizontal.");
+console.assert(FE.cementiteBoundary.every((point) => point[0] === FE.cementite), "The cementite boundary should remain vertical at 6.67 wt% C.");
+
+const FE_DOMAIN_STYLES = {
+  liquid: { region: "Liquid", fill: "#f9ddd3", label: "#8a2d18" },
+  delta: { region: "δ ferrite", fill: "#d4ece5", label: "#135748" },
+  gamma: { region: "Austenite γ", fill: "#f8e6b6", label: "#6b4700" },
+  alpha: { region: "α ferrite", fill: "#d8e8f4", label: "#254f75" },
+  deltaLiquid: { region: "δ + liquid", fill: "#e8e2d4", label: "#5b4930" },
+  deltaGamma: { region: "δ + γ", fill: "#dde7c9", label: "#42551e" },
+  gammaLiquid: { region: "γ + liquid", fill: "#f5d9c1", label: "#77410f" },
+  liquidCementite: { region: "Liquid + Fe₃C", fill: "#ead9e3", label: "#6f2f4b" },
+  alphaGamma: { region: "α + γ", fill: "#d5e9ea", label: "#205560" },
+  gammaCementite: { region: "γ + Fe₃C", fill: "#e5dcee", label: "#4b3268" },
+  alphaCementite: { region: "α + Fe₃C", fill: "#dce1ec", label: "#34445f" },
+  cementiteBoundary: { region: "Cementite", fill: COLORS.charcoal, label: "#303640", line: true }
+};
+
+// Every finite-area field shares the exact sampled boundary arrays used by
+// classification and tie-line calculations. This prevents coloured regions
+// from drifting away from the B-spline curves.
+const FE_DOMAIN_POLYGONS = {
+  liquid: [[0, 1600], [FE.cementite, 1600], ...[...FE.liquidus].reverse()],
+  deltaLiquid: [...FE.deltaLiquidus, [0.16, 1493], [0.09, 1493], ...[...FE.deltaSolidus].reverse().slice(1)],
+  delta: [...FE.deltaSolidus, ...[...FE.deltaGammaDelta].reverse().slice(1)],
+  deltaGamma: [...FE.deltaGammaDelta, [0.16, 1493], ...[...FE.deltaGammaGamma].reverse().slice(1)],
+  gammaLiquid: [...FE.gammaLiquidus, [2.14, 1147], ...[...FE.gammaSolidus].reverse().slice(1)],
+  gamma: [...FE.deltaGammaGamma, ...FE.gammaSolidus.slice(1), ...[...FE.acm].reverse().slice(1), ...[...FE.a3].reverse().slice(1)],
+  liquidCementite: [...FE.rightLiquidus, [FE.cementite, 1147]],
+  alphaGamma: [...FE.a3, [0.022, 727], ...[...FE.alphaHigh].reverse().slice(1)],
+  gammaCementite: [...FE.acm, [4.3, 1147], [FE.cementite, 1147], [FE.cementite, 727], [0.76, 727]],
+  alpha: [...FE.alphaHigh, ...[...FE.alphaLow].reverse().slice(1), [0, 20]],
+  alphaCementite: [...FE.alphaLow, [0.76, 727], [FE.cementite, 727], [FE.cementite, 20]]
+};
+
+console.assert(Object.keys(FE_DOMAIN_POLYGONS).length === 11, "The Fe–C chart should contain 11 finite-area phase fields.");
+console.assert(Object.values(FE_DOMAIN_POLYGONS).every((polygon) => polygon.length >= 3 && polygon.every((point) => point.every(Number.isFinite))), "Every Fe–C phase field polygon should be finite.");
+
+const FE_STEEL_DOMAIN_KEYS = new Set(["gamma", "alpha", "alphaGamma", "gammaCementite", "alphaCementite"]);
+
+function renderIronDomainLegend() {
+  $$('[data-iron-domain]').forEach((item) => {
+    const style = FE_DOMAIN_STYLES[item.dataset.ironDomain];
+    if (!style) return;
+    item.querySelector(".phase-domain-swatch").style.backgroundColor = style.fill;
+  });
+}
+
+function updateIronDomainLegend(result) {
+  const activeEntry = Object.entries(FE_DOMAIN_STYLES).find(([, style]) => style.region === result.region);
+  $$('[data-iron-domain]').forEach((item) => {
+    item.hidden = ironState.view === "steel" && !FE_STEEL_DOMAIN_KEYS.has(item.dataset.ironDomain);
+    const active = item.dataset.ironDomain === activeEntry?.[0];
+    item.classList.toggle("is-active", active);
+    if (active) item.setAttribute("aria-current", "true");
+    else item.removeAttribute("aria-current");
+  });
+}
+
 const IRON_MAX_ZOOM_FACTOR = 8;
 const IRON_ZOOM_HISTORY_LIMIT = 20;
 const ironState = {
@@ -1366,15 +1462,16 @@ const ironState = {
   view: "full",
   domain: null,
   zoomHistory: [],
-  boxZoomActive: false
+  interactionMode: "read"
 };
 let currentIronResult = null;
 let ironBoxGesture = null;
+const ironIsZoomMode = () => ironState.interactionMode === "zoom";
 
 function ironBaseDomains() {
   return {
     xDomain: [0, ironState.view === "steel" ? 2.14 : FE.cementite],
-    yDomain: [500, 1600]
+    yDomain: [500, ironState.view === "steel" ? 1147 : 1600]
   };
 }
 
@@ -1629,6 +1726,40 @@ function classifyIron(composition, temperature) {
   return feTwoPhase("α + Fe₃C", "α", "Fe₃C", alphaComposition, FE.cementite, composition, "Ferrite α and cementite are the equilibrium phases below the eutectoid temperature.");
 }
 
+function fePointInPolygon([pointX, pointY], polygon) {
+  let inside = false;
+  for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index, index += 1) {
+    const [x1, y1] = polygon[index];
+    const [x2, y2] = polygon[previous];
+    const crosses = (y1 > pointY) !== (y2 > pointY)
+      && pointX < ((x2 - x1) * (pointY - y1)) / (y2 - y1) + x1;
+    if (crosses) inside = !inside;
+  }
+  return inside;
+}
+
+const FE_DOMAIN_PROBES = [
+  ["liquid", [3, 1500]],
+  ["delta", [0.02, 1450]],
+  ["deltaLiquid", [0.2, 1510]],
+  ["deltaGamma", [0.08, 1450]],
+  ["gamma", [1, 1000]],
+  ["gammaLiquid", [2.5, 1250]],
+  ["liquidCementite", [6.2, 1180]],
+  ["alpha", [0.005, 700]],
+  ["alphaGamma", [0.15, 800]],
+  ["gammaCementite", [1.5, 800]],
+  ["alphaCementite", [0.4, 700]]
+];
+console.assert(FE_DOMAIN_PROBES.every(([expectedKey, point]) => {
+  const containingKeys = Object.entries(FE_DOMAIN_POLYGONS)
+    .filter(([, polygon]) => fePointInPolygon(point, polygon))
+    .map(([key]) => key);
+  return containingKeys.length === 1
+    && containingKeys[0] === expectedKey
+    && classifyIron(...point).region === FE_DOMAIN_STYLES[expectedKey].region;
+}), "Every sampled Fe–C teaching state should occupy exactly one matching coloured phase field.");
+
 function drawIronChart() {
   const canvas = $("#iron-chart");
   const { xDomain, yDomain } = ironChartDomains();
@@ -1642,7 +1773,7 @@ function drawIronChart() {
         ? [0, 0.5, 1, 1.5, 2, 2.14]
         : plot.compact ? [0, 1, 2, 3, 4.3, 5.5, 6.67] : [0, 1, 2, 3, 4, 5, 6, 6.67])
     : niceTicks(xDomain, plot.compact ? 5 : 7);
-  const teachingYTicks = ticksWithin(yDomain, [600, 727, 912, 1147, 1394, 1493, 1600]);
+  const teachingYTicks = ticksWithin(yDomain, [500, 600, 727, 912, 1147, 1394, 1493, 1600]);
   const generatedYTicks = niceTicks(yDomain, plot.compact ? 4 : 6)
     .filter((tick) => teachingYTicks.every((teachingTick) => Math.abs(tick - teachingTick) > (yDomain[1] - yDomain[0]) * 0.035));
   const yTicks = zoomMetrics.yScale < 4
@@ -1654,31 +1785,41 @@ function drawIronChart() {
   canvas.dataset.zoomMode = zoomMetrics.isBase ? "base" : "custom";
   canvas.dataset.xDomain = xDomain.map((value) => value.toFixed(3)).join(",");
   canvas.dataset.yDomain = yDomain.map((value) => value.toFixed(1)).join(",");
+  canvas.dataset.traceSource = FE.traceSource;
+  canvas.dataset.traceSegmentCount = String(FE.traceSegmentCount);
+  canvas.dataset.phaseDomainCount = String(Object.keys(FE_DOMAIN_POLYGONS).length);
+  canvas.dataset.interactionMode = ironState.interactionMode;
+  canvas.classList.toggle("is-box-zoom", ironState.interactionMode === "zoom");
   canvas.setAttribute(
     "aria-label",
-    `Interactive iron-cementite phase diagram constructed from the supplied critical points. ${ironState.view === "steel" ? "Steel-region range" : "Full-composition range"}, ${ironZoomPhrase(zoomMetrics)} zoom. Displayed composition ${xDomain[0].toFixed(2)} to ${xDomain[1].toFixed(2)} weight percent carbon and temperature ${yDomain[0].toFixed(0)} to ${yDomain[1].toFixed(0)} degrees Celsius. ${ironState.boxZoomActive ? "Box zoom is ready; drag a rectangular region or press Escape to cancel." : "Use Box zoom to drag a rectangular region, or use the zoom buttons and adjacent composition and temperature sliders for keyboard control."}`
+    `Interactive colour-coded iron-cementite phase diagram drawn from the supplied B-spline trace and normalized to the labelled critical points. ${ironState.view === "steel" ? "Steel-region range" : "Full-composition range"}, ${ironZoomPhrase(zoomMetrics)} zoom. Displayed composition ${xDomain[0].toFixed(2)} to ${xDomain[1].toFixed(2)} weight percent carbon and temperature ${yDomain[0].toFixed(0)} to ${yDomain[1].toFixed(0)} degrees Celsius. ${ironState.interactionMode === "zoom" ? "Box zoom mode is active; drag from the plot, axes, or surrounding canvas margin to enlarge the part crossing the plotted data, then Read phases mode resumes." : "Read phases mode is active; click or tap a phase field to report composition, temperature, and phases."}`
   );
-  drawAxes(plot, {
-    xTicks,
-    yTicks,
-    xLabel: "Composition (wt% C)",
-    yLabel: "Temperature (°C)",
-    xFormat: (value) => String(Number(value.toFixed(2)))
-  });
 
   const { context, x, y, margins, plotWidth, plotHeight, compact } = plot;
   context.save();
   context.beginPath();
   context.rect(margins.left, margins.top, plotWidth, plotHeight);
   context.clip();
-  fillPolygon(plot, [[0, 1600], [FE.cementite, 1600], ...[...FE.liquidus].reverse()], "rgba(240, 80, 48, 0.07)");
-  fillPolygon(plot, [[0.022, 500], [FE.cementite, 500], [FE.cementite, 727], [0.022, 727]], "rgba(56, 102, 148, 0.10)");
-  fillPolygon(plot, [[0.76, 727], [FE.cementite, 727], [FE.cementite, 1147], [2.14, 1147]], "rgba(57, 64, 75, 0.08)");
-  fillPolygon(plot, [...FE.gammaSolidus, ...[...FE.acm].reverse(), ...[...FE.a3].reverse(), ...[...FE.deltaGammaGamma]], "rgba(213, 144, 24, 0.10)");
-  fillPolygon(plot, [...FE.gammaSolidus, ...FE.gammaLiquidus.slice().reverse()], "rgba(213, 144, 24, 0.11)");
-  fillPolygon(plot, [...FE.a3, ...[...FE.alphaHigh].reverse()], "rgba(31, 115, 94, 0.10)");
-  fillPolygon(plot, [[4.3, 1147], ...FE.rightLiquidus.slice(1), [FE.cementite, 1147]], "rgba(57, 64, 75, 0.09)");
+  context.fillStyle = COLORS.paper;
+  context.fillRect(margins.left, margins.top, plotWidth, plotHeight);
+  Object.entries(FE_DOMAIN_POLYGONS).forEach(([key, polygon]) => {
+    fillPolygon(plot, polygon, FE_DOMAIN_STYLES[key].fill);
+  });
+  context.restore();
 
+  drawAxes(plot, {
+    xTicks,
+    yTicks,
+    xLabel: "Composition (wt% C)",
+    yLabel: "Temperature (°C)",
+    xFormat: (value) => String(Number(value.toFixed(2))),
+    background: false
+  });
+
+  context.save();
+  context.beginPath();
+  context.rect(margins.left, margins.top, plotWidth, plotHeight);
+  context.clip();
   pathLine(plot, FE.liquidus, { color: COLORS.coral, width: 3 });
   pathLine(plot, FE.deltaSolidus, { color: COLORS.teal, width: 2.5 });
   pathLine(plot, FE.deltaGammaDelta, { color: COLORS.teal, width: 2.5 });
@@ -1688,41 +1829,27 @@ function drawIronChart() {
   pathLine(plot, FE.alphaHigh, { color: COLORS.teal, width: 2.5 });
   pathLine(plot, FE.acm, { color: COLORS.charcoal, width: 2.8 });
   pathLine(plot, FE.alphaLow, { color: COLORS.teal, width: 2.3 });
-  pathLine(plot, [[0.09, 1493], [0.53, 1493]], { color: COLORS.ink, width: 2.3 });
-  pathLine(plot, [[2.14, 1147], [FE.cementite, 1147]], { color: COLORS.ink, width: 2.3 });
-  pathLine(plot, [[0.022, 727], [FE.cementite, 727]], { color: COLORS.ink, width: 2.3 });
-  pathLine(plot, [[FE.cementite, 500], [FE.cementite, 1227]], { color: COLORS.charcoal, width: 3 });
+  pathLine(plot, FE.peritectic, { color: COLORS.ink, width: 2.3 });
+  pathLine(plot, FE.eutectic, { color: COLORS.ink, width: 2.3 });
+  pathLine(plot, FE.eutectoid, { color: COLORS.ink, width: 2.3 });
+  pathLine(plot, FE.cementiteBoundary, { color: COLORS.charcoal, width: 3 });
   context.restore();
 
   context.save();
   context.beginPath();
   context.rect(margins.left, margins.top, plotWidth, plotHeight);
   context.clip();
-  const auxiliaryAnchors = [];
-  const seenAuxiliaryAnchors = new Set();
-  FE_CURVE_KEYS.forEach((key) => FE[`${key}Anchors`].forEach(([composition, temperature]) => {
-    const identity = `${composition}|${temperature}`;
-    if (!seenAuxiliaryAnchors.has(identity)) {
-      seenAuxiliaryAnchors.add(identity);
-      auxiliaryAnchors.push([composition, temperature]);
-    }
-  }));
-  auxiliaryAnchors
-    .filter(([composition, temperature]) => between(composition, xDomain[0] - 1e-6, xDomain[1] + 1e-6) && between(temperature, yDomain[0] - 1e-6, yDomain[1] + 1e-6))
-    .forEach(([composition, temperature]) => drawPoint(plot, composition, temperature, { radius: compact ? 2 : 2.5, fill: COLORS.paper, stroke: COLORS.muted, strokeWidth: 1.2 }));
-
   context.font = `800 ${compact ? 9 : 12}px system-ui, sans-serif`;
   context.textAlign = "center";
   const labels = ironState.view === "steel"
     ? [
-        [0.88, 1545, "LIQUID", COLORS.coral], [0.035, 1450, "δ", COLORS.teal], [0.5, 1350, "γ", COLORS.amber],
-        [1.8, 1260, "γ + L", COLORS.coral], [0.18, 805, "α + γ", COLORS.blue], [1.35, 830, "γ + Fe₃C", COLORS.charcoal],
-        [0.8, 625, "α + Fe₃C", COLORS.blue]
+        [0.82, 1030, "γ", FE_DOMAIN_STYLES.gamma.label], [0.18, 805, "α + γ", FE_DOMAIN_STYLES.alphaGamma.label], [1.35, 830, "γ + Fe₃C", FE_DOMAIN_STYLES.gammaCementite.label],
+        [0.8, 625, "α + Fe₃C", FE_DOMAIN_STYLES.alphaCementite.label]
       ]
     : [
-        [3.2, 1525, "LIQUID", COLORS.coral], [0.07, 1450, "δ + γ", COLORS.teal], [0.82, 1280, "γ", COLORS.amber],
-        [1.3, 1350, "γ + L", COLORS.coral], [6.0, 1180, "L + Fe₃C", COLORS.charcoal], [0.2, 780, "α + γ", COLORS.blue],
-        [2.45, 880, "γ + Fe₃C", COLORS.charcoal], [3.1, 625, "α + Fe₃C", COLORS.blue]
+        [3.2, 1525, "LIQUID", FE_DOMAIN_STYLES.liquid.label], [0.07, 1450, "δ + γ", FE_DOMAIN_STYLES.deltaGamma.label], [0.82, 1280, "γ", FE_DOMAIN_STYLES.gamma.label],
+        [1.3, 1350, "γ + L", FE_DOMAIN_STYLES.gammaLiquid.label], [6.0, 1180, "L + Fe₃C", FE_DOMAIN_STYLES.liquidCementite.label], [0.2, 780, "α + γ", FE_DOMAIN_STYLES.alphaGamma.label],
+        [2.45, 880, "γ + Fe₃C", FE_DOMAIN_STYLES.gammaCementite.label], [3.1, 625, "α + Fe₃C", FE_DOMAIN_STYLES.alphaCementite.label]
       ];
   labels
     .filter(([labelX, labelY]) => between(labelX, xDomain[0], xDomain[1]) && between(labelY, yDomain[0], yDomain[1]))
@@ -1744,10 +1871,15 @@ function drawIronChart() {
     .filter((point) => between(point.x, xDomain[0] - 1e-6, xDomain[1] + 1e-6) && between(point.y, yDomain[0] - 1e-6, yDomain[1] + 1e-6))
     .forEach((point) => {
       drawPoint(plot, point.x, point.y, { radius: compact ? 3.2 : 4, fill: COLORS.ink, strokeWidth: 1.5 });
+      const pointX = x(point.x);
+      const pointY = y(point.y);
+      const nearRightEdge = pointX > margins.left + plotWidth - 16;
+      const nearTopEdge = pointY < margins.top + 16;
       context.fillStyle = COLORS.ink;
       context.font = `800 ${compact ? 8 : 10}px system-ui, sans-serif`;
-      context.textAlign = "left";
-      context.fillText(String(point.number), x(point.x) + 6, y(point.y) - 6);
+      context.textAlign = nearRightEdge ? "right" : "left";
+      context.textBaseline = nearTopEdge ? "top" : "alphabetic";
+      context.fillText(String(point.number), pointX + (nearRightEdge ? -6 : 6), pointY + (nearTopEdge ? 6 : -6));
     });
   context.restore();
 
@@ -1965,18 +2097,19 @@ function clearIronBoxGesture() {
   if (gesture && canvas.hasPointerCapture?.(gesture.pointerId)) canvas.releasePointerCapture(gesture.pointerId);
 }
 
-function setIronBoxZoomActive(active, { announce = true, redraw = true } = {}) {
-  ironState.boxZoomActive = active;
-  if (!active) clearIronBoxGesture();
-  const button = $("[data-iron-box-zoom]");
-  button.setAttribute("aria-pressed", String(active));
-  button.textContent = active ? "Cancel box zoom" : "Box zoom";
-  $("#iron-chart").classList.toggle("is-box-zoom", active);
+function setIronInteractionMode(mode, { announce = true, redraw = true } = {}) {
+  if (!new Set(["zoom", "read"]).has(mode)) return;
+  clearIronBoxGesture();
+  ironState.interactionMode = mode;
+  $$('[data-iron-mode]').forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.ironMode === mode));
+  });
+  $("#iron-chart").classList.toggle("is-box-zoom", mode === "zoom");
   if (redraw) drawIronChart();
   if (announce) {
-    $("#iron-status").textContent = active
-      ? "Box zoom ready. Drag a rectangle inside the plot; press Escape to cancel."
-      : "Box zoom cancelled. Point selection is active.";
+    $("#iron-status").textContent = mode === "zoom"
+      ? "Box zoom mode active. Drag from the plot, axes, or surrounding canvas margin; only the part crossing the plotted data is enlarged."
+      : "Read phases mode active. Click or tap inside the plot to report composition, temperature, and phases.";
   }
 }
 
@@ -1992,19 +2125,45 @@ function updateIronZoomBox(start, current) {
 }
 
 function installIronCanvasInteraction(canvas) {
-  const clampPointToPlot = (point, plot) => ({
-    x: clamp(point.x, plot.margins.left, plot.margins.left + plot.plotWidth),
-    y: clamp(point.y, plot.margins.top, plot.margins.top + plot.plotHeight)
-  });
+  const clampPointToCanvas = (point) => {
+    const { width, height } = canvas.getBoundingClientRect();
+    return {
+      x: clamp(point.x, 0, width),
+      y: clamp(point.y, 0, height)
+    };
+  };
+  const clipRectangleToPlot = (start, current, plot) => {
+    const plotLeft = plot.margins.left;
+    const plotRight = plotLeft + plot.plotWidth;
+    const plotTop = plot.margins.top;
+    const plotBottom = plotTop + plot.plotHeight;
+    const rawLeft = Math.min(start.x, current.x);
+    const rawRight = Math.max(start.x, current.x);
+    const rawTop = Math.min(start.y, current.y);
+    const rawBottom = Math.max(start.y, current.y);
+    const left = clamp(rawLeft, plotLeft, plotRight);
+    const right = clamp(rawRight, plotLeft, plotRight);
+    const top = clamp(rawTop, plotTop, plotBottom);
+    const bottom = clamp(rawBottom, plotTop, plotBottom);
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: Math.max(0, right - left),
+      height: Math.max(0, bottom - top)
+    };
+  };
   const pointIsInPlot = (point, plot) => (
     between(point.x, plot.margins.left, plot.margins.left + plot.plotWidth)
     && between(point.y, plot.margins.top, plot.margins.top + plot.plotHeight)
   );
-  const cancelGesture = (message = "Box zoom cancelled. Point selection is active.") => {
-    if (!ironBoxGesture && !ironState.boxZoomActive) return;
+  const cancelGesture = (message = "Box zoom cancelled.") => {
+    if (!ironBoxGesture && !ironIsZoomMode()) return;
     clearIronBoxGesture();
-    setIronBoxZoomActive(false, { announce: false });
-    $("#iron-status").textContent = message;
+    setIronInteractionMode("read", { announce: false, redraw: false });
+    drawIronChart();
+    $("#iron-status").textContent = `${message} Read phases mode is active.`;
   };
 
   canvas.addEventListener("pointerdown", (event) => {
@@ -2017,15 +2176,15 @@ function installIronCanvasInteraction(canvas) {
     const plot = canvas._plot;
     if (!plot) return;
     const rawPoint = canvasPosition(event, canvas);
-    if (!pointIsInPlot(rawPoint, plot)) return;
 
-    if (!ironState.boxZoomActive) {
+    if (!ironIsZoomMode()) {
+      if (!pointIsInPlot(rawPoint, plot)) return;
       setIronFromChart(plot.valueX(rawPoint.x), plot.valueY(rawPoint.y));
       return;
     }
 
     event.preventDefault();
-    const start = clampPointToPlot(rawPoint, plot);
+    const start = clampPointToCanvas(rawPoint);
     ironBoxGesture = {
       pointerId: event.pointerId,
       pointerType: event.pointerType,
@@ -2037,64 +2196,73 @@ function installIronCanvasInteraction(canvas) {
     canvas.setPointerCapture?.(event.pointerId);
   });
 
-  canvas.addEventListener("pointermove", (event) => {
+  window.addEventListener("pointermove", (event) => {
     const gesture = ironBoxGesture;
     if (!gesture || gesture.pointerId !== event.pointerId) return;
     event.preventDefault();
-    gesture.current = clampPointToPlot(canvasPosition(event, canvas), gesture.plot);
+    gesture.current = clampPointToCanvas(canvasPosition(event, canvas));
     const threshold = gesture.pointerType === "touch" ? 12 : 6;
     gesture.moved = gesture.moved
       || Math.hypot(gesture.current.x - gesture.start.x, gesture.current.y - gesture.start.y) >= threshold;
     if (gesture.moved) updateIronZoomBox(gesture.start, gesture.current);
-  });
+  }, { passive: false });
 
-  canvas.addEventListener("pointerup", (event) => {
+  window.addEventListener("pointerup", (event) => {
     const gesture = ironBoxGesture;
     if (!gesture || gesture.pointerId !== event.pointerId) return;
     event.preventDefault();
-    gesture.current = clampPointToPlot(canvasPosition(event, canvas), gesture.plot);
+    gesture.current = clampPointToCanvas(canvasPosition(event, canvas));
     const width = Math.abs(gesture.current.x - gesture.start.x);
     const height = Math.abs(gesture.current.y - gesture.start.y);
     const { plot } = gesture;
+    const clippedRectangle = clipRectangleToPlot(gesture.start, gesture.current, plot);
     const moveThreshold = gesture.pointerType === "touch" ? 12 : 6;
     const wasMoved = gesture.moved || Math.hypot(width, height) >= moveThreshold;
     clearIronBoxGesture();
-    setIronBoxZoomActive(false, { announce: false, redraw: false });
 
     if (!wasMoved) {
-      setIronFromChart(plot.valueX(gesture.current.x), plot.valueY(gesture.current.y));
-      $("#iron-status").textContent += " Box zoom was not applied because no area was dragged.";
+      setIronInteractionMode("read", { announce: false, redraw: false });
+      drawIronChart();
+      $("#iron-status").textContent = "No box zoom applied. Read phases mode is active; click or tap to inspect a point.";
       return;
     }
-    if (width < 24 || height < 24) {
+    if (clippedRectangle.width === 0 || clippedRectangle.height === 0) {
+      setIronInteractionMode("read", { announce: false, redraw: false });
       drawIronChart();
-      $("#iron-status").textContent = "Box zoom not applied. Drag a rectangle at least 24 pixels wide and high.";
+      $("#iron-status").textContent = "Box zoom was not applied because the rectangle did not cross the plotted data. Read phases mode is active.";
+      return;
+    }
+    if (clippedRectangle.width < 24 || clippedRectangle.height < 24) {
+      setIronInteractionMode("read", { announce: false, redraw: false });
+      drawIronChart();
+      $("#iron-status").textContent = "Box zoom was not applied because the part inside the plotted data was too small. Read phases mode is active.";
       return;
     }
 
     const nextDomains = {
-      xDomain: [plot.valueX(Math.min(gesture.start.x, gesture.current.x)), plot.valueX(Math.max(gesture.start.x, gesture.current.x))],
-      yDomain: [plot.valueY(Math.max(gesture.start.y, gesture.current.y)), plot.valueY(Math.min(gesture.start.y, gesture.current.y))]
+      xDomain: [plot.valueX(clippedRectangle.left), plot.valueX(clippedRectangle.right)],
+      yDomain: [plot.valueY(clippedRectangle.bottom), plot.valueY(clippedRectangle.top)]
     };
     const changed = setIronDomains(nextDomains);
+    setIronInteractionMode("read", { announce: false, redraw: false });
     drawIronChart();
     updateIronZoomControls();
     const { xDomain, yDomain } = ironChartDomains();
     const selectionIsVisible = between(ironState.composition, ...xDomain) && between(ironState.temperature, ...yDomain);
     $("#iron-status").textContent = changed
-      ? `Box zoom applied. Showing ${xDomain[0].toFixed(2)}–${xDomain[1].toFixed(2)} wt% C and ${yDomain[0].toFixed(0)}–${yDomain[1].toFixed(0)} °C.${selectionIsVisible ? "" : " The selected state is outside this view; click inside or use the sliders."}`
-      : "Box zoom not applied because that area matches the current view.";
+      ? `Box zoom applied. Showing ${xDomain[0].toFixed(2)}–${xDomain[1].toFixed(2)} wt% C and ${yDomain[0].toFixed(0)}–${yDomain[1].toFixed(0)} °C.${selectionIsVisible ? "" : " The selected state is outside this view."} Read phases mode is active; click or tap the enlarged field.`
+      : "Box zoom not applied because that area matches the current view. Read phases mode is active.";
   });
 
-  canvas.addEventListener("pointercancel", () => cancelGesture());
+  window.addEventListener("pointercancel", () => cancelGesture());
   canvas.addEventListener("lostpointercapture", (event) => {
     if (ironBoxGesture?.pointerId === event.pointerId) cancelGesture();
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && ironState.boxZoomActive) {
+    if (event.key === "Escape" && ironIsZoomMode()) {
       event.preventDefault();
       cancelGesture();
-      $("[data-iron-box-zoom]").focus();
+      $('[data-iron-mode="read"]').focus();
     }
   });
   window.addEventListener("blur", () => cancelGesture());
@@ -2121,7 +2289,6 @@ function updateIronZoomControls() {
       ? atLimit
       : !canRestore;
   });
-  $("[data-iron-box-zoom]").disabled = false;
 }
 
 function updateIron({ announce = true, revealSelection = false } = {}) {
@@ -2130,6 +2297,7 @@ function updateIron({ announce = true, revealSelection = false } = {}) {
   if (revealSelection) keepIronSelectionVisible();
   const result = classifyIron(ironState.composition, ironState.temperature);
   currentIronResult = result;
+  updateIronDomainLegend(result);
   $("#iron-composition-value").textContent = `${ironState.composition.toFixed(2)} wt% C`;
   $("#iron-temperature-value").textContent = `${ironState.temperature.toFixed(0)} °C`;
   $("#iron-region").textContent = result.region;
@@ -2178,7 +2346,9 @@ function updateIron({ announce = true, revealSelection = false } = {}) {
 function setIronFromChart(composition, temperature) {
   $("#iron-composition").value = composition.toFixed(2);
   $("#iron-temperature").value = temperature.toFixed(0);
-  updateIron();
+  updateIron({ announce: false });
+  const phaseList = currentIronResult.phases.join(" + ");
+  $("#iron-status").textContent = `Read phases: ${ironState.composition.toFixed(2)} wt% C at ${ironState.temperature.toFixed(0)} °C — ${currentIronResult.region}. ${currentIronResult.phases.length === 1 ? "Phase" : "Phases"}: ${phaseList}.`;
 }
 
 $("#iron-composition").addEventListener("input", () => updateIron({ announce: false, revealSelection: true }));
@@ -2193,14 +2363,14 @@ $$('[data-iron-micro-example]').forEach((button) => button.addEventListener("cli
   updateIron({ revealSelection: true });
 }));
 
-$("[data-iron-box-zoom]").addEventListener("click", () => {
-  setIronBoxZoomActive(!ironState.boxZoomActive);
-});
+$$('[data-iron-mode]').forEach((button) => button.addEventListener("click", () => {
+  setIronInteractionMode(button.dataset.ironMode);
+}));
 
 $$('[data-iron-zoom]').forEach((button) => button.addEventListener("click", () => {
   const action = button.dataset.ironZoom;
   const hadFocus = document.activeElement === button;
-  setIronBoxZoomActive(false, { announce: false, redraw: false });
+  setIronInteractionMode("read", { announce: false, redraw: false });
   if (action === "in") zoomIronIn();
   if (action === "out") {
     restorePreviousIronZoom();
@@ -2220,15 +2390,18 @@ $$('[data-iron-zoom]').forEach((button) => button.addEventListener("click", () =
 }));
 
 $$("[data-iron-view]").forEach((button) => button.addEventListener("click", () => {
-  setIronBoxZoomActive(false, { announce: false, redraw: false });
+  setIronInteractionMode("read", { announce: false, redraw: false });
   ironState.view = button.dataset.ironView;
   resetIronZoom();
   $$("[data-iron-view]").forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
   const max = ironState.view === "steel" ? 2.14 : FE.cementite;
   $("#iron-composition").max = String(max);
   if (ironState.composition > max) $("#iron-composition").value = String(max);
+  const maxTemperature = ironState.view === "steel" ? 1147 : 1600;
+  $("#iron-temperature").max = String(maxTemperature);
+  if (ironState.temperature > maxTemperature) $("#iron-temperature").value = String(maxTemperature);
   updateIron();
-  $("#iron-status").textContent = `${ironState.view === "steel" ? "Steel-region range" : "Full diagram"} active at 1× zoom. Selected ${ironState.composition.toFixed(2)} wt% C.`;
+  $("#iron-status").textContent = `${ironState.view === "steel" ? "Steel-region range" : "Full diagram"} active at 1× zoom. Selected ${ironState.composition.toFixed(2)} wt% C at ${ironState.temperature.toFixed(0)} °C.`;
 }));
 
 // ---------------------------------------------------------------------------
@@ -2239,6 +2412,8 @@ function initialize() {
   updateIso({ announce: false });
   renderQuizProblem();
   updatePb({ announce: false });
+  renderIronDomainLegend();
+  setIronInteractionMode("read", { announce: false, redraw: false });
   updateIron({ announce: false });
 
   registerRedraw($("#water-chart"), drawWaterChart);

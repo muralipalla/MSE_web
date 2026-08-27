@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore water, isomorphous, lead-tin eutectic, and iron-cementite phase diagrams with interactive tie lines, lever-rule calculations, microstructures, and a fraction-conversion quiz.">
+  <meta name="description" content="Explore water, Cu-Ni isomorphous, Pb-Sn eutectic, and iron-cementite phase diagrams with interactive tie lines, lever-rule calculations, microstructures, and a fraction-conversion quiz.">
   <meta name="theme-color" content="#fdf6ec">
   <title>Phase Diagrams | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=5">
-  <script src="../../js/main.js" defer></script>
-  <script type="module" src="app.js?v=6"></script>
+  <link rel="stylesheet" href="style.css?v=8">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script type="module" src="app.js?v=11"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the phase-diagram lesson</a>
@@ -38,7 +38,7 @@
 
     <nav class="phase-route" aria-label="Phase-diagram lesson sections">
       <a href="#water"><span>01</span> Water</a>
-      <a href="#isomorphous"><span>02</span> Isomorphous</a>
+      <a href="#isomorphous"><span>02</span> Cu&ndash;Ni</a>
       <a href="#eutectic"><span>03</span> Pb&ndash;Sn eutectic</a>
       <a href="#iron-carbide"><span>04</span> Fe&ndash;Fe<sub>3</sub>C</a>
     </nav>
@@ -92,35 +92,35 @@
     <section class="phase-card iso-section" id="isomorphous" aria-labelledby="iso-title">
       <div class="phase-heading">
         <div>
-          <p class="section-kicker">Section 2 &middot; Complete solid solubility</p>
-          <h2 id="iso-title">Isomorphous systems</h2>
+          <p class="section-kicker">Section 2 &middot; High-temperature isomorphous solidification</p>
+          <h2 id="iso-title">Copper&ndash;nickel isomorphous diagram</h2>
         </div>
-        <p>The liquidus begins solidification; the solidus marks the last liquid on cooling. Inside the lens-shaped two-phase field, a horizontal tie line connects the equilibrium liquid and solid compositions.</p>
+        <p>Cu and Ni form an FCC substitutional solid solution across the high-temperature solidification range. The liquidus begins solidification; the solidus marks the last liquid on cooling. A horizontal tie line connects the equilibrium liquid and solid compositions.</p>
       </div>
 
       <div class="interactive-grid">
         <figure class="diagram-panel interactive-diagram">
           <div class="diagram-toolbar">
             <div>
-              <strong>Idealized A&ndash;B isomorphous system</strong>
+              <strong>Cu&ndash;Ni equilibrium map</strong>
               <span>Click or tap the plot to move the alloy state.</span>
             </div>
             <button class="reset-button" id="iso-reset" type="button">Reset point</button>
           </div>
           <div class="chart-frame">
-            <canvas id="iso-chart" width="900" height="560" role="img" aria-label="Interactive binary isomorphous phase diagram with liquidus, solidus, tie line, and selected alloy state. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
+            <canvas id="iso-chart" width="900" height="560" role="img" aria-label="Interactive copper-nickel phase diagram plotted against nickel weight percent, with liquidus, solidus, tie line, and selected alloy state. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
           </div>
-          <figcaption>Shape-preserving cubic interpolation passes through every displayed teaching anchor without overshoot. The curves are illustrative rather than assessed thermodynamic data. Drag the sliders for precise values.</figcaption>
+          <figcaption>B-spline boundaries are digitized from the reusable vector reference and calibrated to the Cu and Ni melting points. They are an instructional trace, not assessed thermodynamic data. Drag the sliders for precise values.</figcaption>
         </figure>
 
-        <aside class="control-panel" aria-label="Isomorphous diagram controls and results">
+        <aside class="control-panel" aria-label="Copper-nickel diagram controls and results">
           <div class="control-field">
-            <label for="iso-composition"><span>Overall composition, C<sub>0</sub></span><output id="iso-composition-value" for="iso-composition">45.0 wt% B</output></label>
-            <input id="iso-composition" type="range" min="0" max="100" step="0.1" value="45">
+            <label for="iso-composition"><span>Overall composition, C<sub>0</sub></span><span class="field-output" id="iso-composition-value">35.0 wt% Ni</span></label>
+            <input id="iso-composition" type="range" min="0" max="100" step="0.1" value="35">
           </div>
           <div class="control-field">
-            <label for="iso-temperature"><span>Temperature</span><output id="iso-temperature-value" for="iso-temperature">1280 &deg;C</output></label>
-            <input id="iso-temperature" type="range" min="1050" max="1500" step="1" value="1280">
+            <label for="iso-temperature"><span>Temperature</span><span class="field-output" id="iso-temperature-value">1250 &deg;C</span></label>
+            <input id="iso-temperature" type="range" min="1050" max="1500" step="1" value="1250">
           </div>
 
           <div class="state-badge" id="iso-state-badge">Two phases</div>
@@ -134,7 +134,7 @@
             <div><dt>Solid fraction, W<sub>&alpha;</sub></dt><dd id="iso-solid-fraction">&mdash;</dd></div>
           </dl>
 
-          <div class="lever-visual" id="iso-lever-visual" aria-label="Lever rule arm lengths">
+          <div class="lever-visual" id="iso-lever-visual" role="group" aria-label="Lever rule arm lengths">
             <span class="lever-end left">C<sub>L</sub></span>
             <span class="lever-point" id="iso-lever-point">C<sub>0</sub></span>
             <span class="lever-end right">C<sub>&alpha;</sub></span>
@@ -149,6 +149,14 @@
           <p class="status-line" id="iso-status" role="status" aria-live="polite">Two-phase state selected.</p>
         </aside>
       </div>
+
+      <details class="reference-diagram">
+        <summary>Compare with the source Cu&ndash;Ni diagram</summary>
+        <figure>
+          <img src="assets/cu-ni-phase-diagram-cc-by-2.5.svg" width="740" height="500" loading="lazy" decoding="async" alt="French-language copper-nickel phase diagram used as the vector reference for the interactive trace.">
+          <figcaption><a href="https://commons.wikimedia.org/wiki/File:Diagramme_phase_Cu_Ni.svg" target="_blank" rel="noopener">Cu&ndash;Ni diagram by Romary, Wikimedia Commons</a>, <a href="https://creativecommons.org/licenses/by/2.5/" target="_blank" rel="noopener">CC BY 2.5</a>. The teaching version is translated, digitized as B-splines, and normalized to pure-component melting points.</figcaption>
+        </figure>
+      </details>
 
       <section class="fraction-quiz" aria-labelledby="fraction-quiz-title">
         <div class="quiz-copy">
@@ -186,7 +194,7 @@
           <p class="section-kicker">Section 3 &middot; Limited solid solubility</p>
           <h2 id="eutectic-title">Lead&ndash;tin eutectic phase diagram</h2>
         </div>
-        <p>At 183 &deg;C and 61.9 wt% Sn, liquid transforms isothermally into Pb-rich &alpha; and Sn-rich &beta;. The chart uses shape-preserving cubic interpolation through the displayed tabulated anchors; invariant lines remain exact and straight.</p>
+        <p>At 183 &deg;C and 61.9 wt% Sn, liquid transforms isothermally into Pb-rich &alpha; and Sn-rich &beta;. Its six B-spline boundaries are traced from a public-domain vector reference and normalized to the teaching landmarks; the invariant line remains exact and horizontal.</p>
       </div>
 
       <div class="mode-bar">
@@ -216,10 +224,10 @@
             <figcaption>Microstructure mode shows a generated representative micrograph when a close teaching example is available and a procedural schematic for other states.</figcaption>
           </figure>
 
-          <div class="compact-controls" aria-label="Lead-tin selected point controls">
-            <label for="pb-composition">Composition <output id="pb-composition-value" for="pb-composition">40.0 wt% Sn</output></label>
+          <div class="compact-controls" role="group" aria-label="Lead-tin selected point controls">
+            <label for="pb-composition">Composition <span class="field-output" id="pb-composition-value">40.0 wt% Sn</span></label>
             <input id="pb-composition" type="range" min="0" max="100" step="0.1" value="40">
-            <label for="pb-temperature">Temperature <output id="pb-temperature-value" for="pb-temperature">150 &deg;C</output></label>
+            <label for="pb-temperature">Temperature <span class="field-output" id="pb-temperature-value">150 &deg;C</span></label>
             <input id="pb-temperature" type="range" min="20" max="350" step="1" value="150">
           </div>
         </div>
@@ -232,7 +240,7 @@
           </header>
 
           <figure class="microstructure-card">
-            <img id="pb-micrograph" class="micrograph-image" width="1536" height="1024" alt="" decoding="async" hidden>
+            <img id="pb-micrograph" class="micrograph-image" src="assets/pb-sn-eutectic.png" width="1536" height="1024" alt="" decoding="async" hidden>
             <canvas id="pb-microstructure" width="520" height="347" role="img" aria-label="Schematic lead-tin microstructure for the selected point."></canvas>
             <figcaption>
               <span class="microstructure-kind" id="pb-micro-kind">Procedural schematic</span>
@@ -251,7 +259,15 @@
         </aside>
       </div>
 
-      <div class="reaction-strip" aria-label="Lead-tin eutectic reaction">
+      <details class="reference-diagram">
+        <summary>Compare with the source Pb&ndash;Sn diagram</summary>
+        <figure>
+          <img src="assets/pb-sn-phase-diagram-public-domain.svg?v=2" width="354" height="251" loading="lazy" decoding="async" alt="Czech-language lead-tin eutectic phase diagram used as the vector reference for the interactive trace.">
+          <figcaption><a href="https://commons.wikimedia.org/wiki/File:Faze-Sn-Pb.svg" target="_blank" rel="noopener">Pb&ndash;Sn diagram by Serych, Wikimedia Commons</a>, released to the public domain. The source plots wt% Pb from Sn to Pb; the teaching version reverses the horizontal axis to wt% Sn, translates the labels, digitizes the boundaries as B-splines, and normalizes them to the lesson&rsquo;s eutectic landmarks.</figcaption>
+        </figure>
+      </details>
+
+      <div class="reaction-strip" role="group" aria-label="Lead-tin eutectic reaction">
         <span>Cooling through 183 &deg;C</span>
         <strong>L<sub>61.9</sub> &rarr; &alpha;<sub>19.2</sub> + &beta;<sub>97.5</sub></strong>
         <small>Compositions are wt% Sn at the eutectic temperature.</small>
@@ -273,33 +289,50 @@
             <div class="diagram-toolbar">
               <div>
                 <strong>Fe&ndash;Fe<sub>3</sub>C equilibrium map</strong>
-                <span id="iron-chart-help">Choose Box zoom, then drag a rectangle; Escape cancels. Click a phase field, or choose a centre with the sliders and use Zoom in/out.</span>
+                <span id="iron-chart-help">Read phases is selected by default. Click or tap a phase field to report its composition, temperature, and phases. Choose Box zoom, then drag from the plot, axes, or surrounding canvas margin; only the part crossing the plotted data is enlarged. Reading mode resumes after the zoom. Steel &le; 1147 &deg;C focuses on solid-state transformations and omits higher-temperature fields. The sliders provide keyboard control.</span>
               </div>
               <div class="chart-control-groups">
                 <div class="chart-view-buttons" role="group" aria-label="Iron-carbide chart range">
                   <button type="button" data-iron-view="full" aria-pressed="true">Full diagram</button>
-                  <button type="button" data-iron-view="steel" aria-pressed="false">Steel region</button>
+                  <button type="button" data-iron-view="steel" aria-pressed="false">Steel &le; 1147 &deg;C</button>
+                </div>
+                <div class="chart-view-buttons iron-mode-buttons" role="group" aria-label="Iron-carbide chart interaction mode">
+                  <button type="button" data-iron-mode="read" aria-pressed="true" aria-controls="iron-chart" aria-describedby="iron-chart-help">Read phases</button>
+                  <button type="button" data-iron-mode="zoom" aria-pressed="false" aria-controls="iron-chart" aria-describedby="iron-chart-help">Box zoom</button>
                 </div>
                 <div class="chart-view-buttons chart-zoom-buttons" role="group" aria-label="Iron-carbide chart zoom">
                   <output id="iron-zoom-level" aria-label="Current zoom level">1&times;</output>
-                  <button type="button" data-iron-box-zoom aria-pressed="false" aria-controls="iron-chart" aria-describedby="iron-chart-help">Box zoom</button>
                   <button type="button" data-iron-zoom="in" aria-controls="iron-chart">Zoom in</button>
                   <button type="button" data-iron-zoom="out" aria-controls="iron-chart" disabled>Zoom out</button>
                   <button type="button" data-iron-zoom="reset" aria-controls="iron-chart" disabled>Reset</button>
                 </div>
               </div>
             </div>
+            <ul class="phase-domain-legend" aria-label="Iron-cementite phase-domain colour legend">
+              <li data-iron-domain="liquid"><span class="phase-domain-swatch" aria-hidden="true"></span>Liquid (L)</li>
+              <li data-iron-domain="delta"><span class="phase-domain-swatch" aria-hidden="true"></span>&delta; ferrite</li>
+              <li data-iron-domain="gamma"><span class="phase-domain-swatch" aria-hidden="true"></span>Austenite (&gamma;)</li>
+              <li data-iron-domain="alpha"><span class="phase-domain-swatch" aria-hidden="true"></span>&alpha; ferrite</li>
+              <li data-iron-domain="deltaLiquid"><span class="phase-domain-swatch" aria-hidden="true"></span>&delta; + L</li>
+              <li data-iron-domain="deltaGamma"><span class="phase-domain-swatch" aria-hidden="true"></span>&delta; + &gamma;</li>
+              <li data-iron-domain="gammaLiquid"><span class="phase-domain-swatch" aria-hidden="true"></span>&gamma; + L</li>
+              <li data-iron-domain="liquidCementite"><span class="phase-domain-swatch" aria-hidden="true"></span>L + Fe<sub>3</sub>C</li>
+              <li data-iron-domain="alphaGamma"><span class="phase-domain-swatch" aria-hidden="true"></span>&alpha; + &gamma;</li>
+              <li data-iron-domain="gammaCementite"><span class="phase-domain-swatch" aria-hidden="true"></span>&gamma; + Fe<sub>3</sub>C</li>
+              <li data-iron-domain="alphaCementite"><span class="phase-domain-swatch" aria-hidden="true"></span>&alpha; + Fe<sub>3</sub>C</li>
+              <li data-iron-domain="cementiteBoundary"><span class="phase-domain-swatch is-line" aria-hidden="true"></span>Fe<sub>3</sub>C boundary</li>
+            </ul>
             <div class="chart-frame iron-chart-frame">
-              <canvas id="iron-chart" width="980" height="650" role="img" aria-describedby="iron-chart-help" aria-label="Interactive iron-cementite phase diagram constructed from the supplied critical points. Use Box zoom to drag a rectangular region, or use the zoom buttons and adjacent composition and temperature sliders for keyboard control."></canvas>
+              <canvas id="iron-chart" width="980" height="650" role="img" aria-describedby="iron-chart-help" aria-label="Interactive colour-coded iron-cementite phase diagram drawn from the supplied B-spline trace and normalized to the labelled critical points. Read phases mode is active by default; click or tap a phase field to inspect composition, temperature, and phases. Choose Box zoom and drag from the plot, axes, or surrounding canvas margin to enlarge the part crossing the plotted data."></canvas>
               <div class="iron-zoom-box" aria-hidden="true" hidden></div>
             </div>
-            <figcaption>Curved boundaries use shape-preserving cubic interpolation through numbered and auxiliary teaching anchors; reaction isotherms remain exact and straight. Numbered dark points are supplied values, while small hollow points disclose added curve-shaping anchors. Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
+            <figcaption>Each colour identifies a phase domain using the legend above. Curved boundaries are drawn from the supplied B-spline trace and normalized to the labelled thermodynamic critical points; reaction isotherms remain exact, straight, and horizontal. Numbered dark points identify the supplied critical values. Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
           </figure>
 
-          <div class="compact-controls" aria-label="Iron-carbide selected point controls">
-            <label for="iron-composition">Composition <output id="iron-composition-value" for="iron-composition">0.40 wt% C</output></label>
+          <div class="compact-controls" role="group" aria-label="Iron-carbide selected point controls">
+            <label for="iron-composition">Composition <span class="field-output" id="iron-composition-value">0.40 wt% C</span></label>
             <input id="iron-composition" type="range" min="0" max="6.67" step="0.01" value="0.40">
-            <label for="iron-temperature">Temperature <output id="iron-temperature-value" for="iron-temperature">700 &deg;C</output></label>
+            <label for="iron-temperature">Temperature <span class="field-output" id="iron-temperature-value">700 &deg;C</span></label>
             <input id="iron-temperature" type="range" min="500" max="1600" step="1" value="700">
           </div>
         </div>
@@ -312,7 +345,7 @@
           </header>
 
           <figure class="microstructure-card iron-micro-card">
-            <img id="iron-micrograph" class="micrograph-image" width="1536" height="1024" alt="" decoding="async" hidden>
+            <img id="iron-micrograph" class="micrograph-image" src="assets/fe-ferrite-pearlite.png" width="1536" height="1024" alt="" decoding="async" hidden>
             <canvas id="iron-microstructure" width="520" height="347" role="img" aria-label="Schematic iron-carbide microstructure for the selected point."></canvas>
             <figcaption>
               <span class="microstructure-kind" id="iron-micro-kind">Procedural schematic</span>
@@ -338,7 +371,7 @@
             <strong>Microconstituent view</strong>
             <p id="iron-constituent">At room-temperature teaching conditions this composition is described as proeutectoid ferrite + pearlite.</p>
           </div>
-          <p class="status-line" id="iron-status" role="status" aria-live="polite">Selected 0.40 wt% C at 700 &deg;C.</p>
+          <p class="status-line" id="iron-status" role="status" aria-live="polite">Read phases mode active. Click or tap a field to inspect it.</p>
         </aside>
       </div>
 
@@ -376,9 +409,9 @@
 
     <details class="data-note">
       <summary>Data scope and references</summary>
-      <p>Charts are instructional equilibrium approximations, not design data. Shape-preserving smoothing passes through every anchor but does not create new measured data. Water landmarks follow NIST/IAPWS values. Pb&ndash;Sn anchors use the standard 61.9 wt% Sn, 183 &deg;C eutectic and 19.2/97.5 wt% Sn terminal compositions. The Fe&ndash;Fe<sub>3</sub>C construction follows the points supplied for this module and adds the stoichiometric cementite endpoint at 6.67 wt% C.</p>
+      <p>Charts are instructional equilibrium approximations, not design data. The Cu&ndash;Ni and Pb&ndash;Sn phase boundaries are B-spline traces from the credited reusable SVG references, normalized to the numerical landmarks used in this lesson; digitization does not create new measured data. Water landmarks follow NIST/IAPWS values. Pb&ndash;Sn uses the 61.9 wt% Sn, 183 &deg;C eutectic and 19.2/97.5 wt% Sn terminal compositions. The Fe&ndash;Fe<sub>3</sub>C construction follows the points supplied for this module and adds the stoichiometric cementite endpoint at 6.67 wt% C.</p>
       <p>Images marked <em>AI-generated representative micrograph</em> are original synthetic teaching visuals based on metallographic descriptions. They are not measured specimens, carry no magnification or scale, and should be used to recognize qualitative morphology only. Procedural schematics remain visible where no close generated example is available.</p>
-      <p><a href="https://www.nist.gov/document/steam-manual-222pdf" target="_blank" rel="noopener">NIST water and steam reference</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular492.pdf" target="_blank" rel="noopener">NIST lead&ndash;tin solder reference</a> &middot; <a href="assets/PROMPTS.md">Image-generation prompts</a></p>
+      <p><a href="https://www.nist.gov/document/steam-manual-222pdf" target="_blank" rel="noopener">NIST water and steam reference</a> &middot; <a href="https://commons.wikimedia.org/wiki/File:Diagramme_phase_Cu_Ni.svg" target="_blank" rel="noopener">Cu&ndash;Ni vector source</a> &middot; <a href="https://commons.wikimedia.org/wiki/File:Faze-Sn-Pb.svg" target="_blank" rel="noopener">Pb&ndash;Sn vector source</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular492.pdf" target="_blank" rel="noopener">NIST lead&ndash;tin solder reference</a> &middot; <a href="assets/PROMPTS.md">Image-generation prompts</a></p>
     </details>
 
     <nav class="phase-lesson-nav" aria-label="Teaching module sequence">

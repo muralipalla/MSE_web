@@ -243,6 +243,64 @@
   opacity: 0.46;
 }
 
+.phase-domain-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+  margin: 0;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--lavender-light) 28%, white);
+  list-style: none;
+}
+
+.phase-domain-legend li {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  min-height: 1.4rem;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.phase-domain-legend li[hidden] {
+  display: none;
+}
+
+.phase-domain-legend li.is-active {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--coral);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22rem;
+}
+
+.phase-domain-legend li.is-active .phase-domain-swatch {
+  box-shadow: 0 0 0 2px var(--ink);
+}
+
+.phase-domain-swatch {
+  flex: 0 0 auto;
+  width: 0.95rem;
+  height: 0.72rem;
+  border: 1px solid rgba(46, 42, 116, 0.2);
+  border-radius: 0.2rem;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45) inset;
+}
+
+.phase-domain-swatch.is-line {
+  height: 0.2rem;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+.phase-domain-legend li.is-active .phase-domain-swatch.is-line {
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
 .chart-frame {
   position: relative;
   min-height: 31rem;
@@ -454,7 +512,9 @@
 }
 
 .control-field output,
-.compact-controls output {
+.compact-controls output,
+.control-field .field-output,
+.compact-controls .field-output {
   color: var(--ink);
   font-weight: 900;
 }
@@ -1038,6 +1098,54 @@ input[type="range"] {
   font-weight: 800;
 }
 
+.reference-diagram {
+  margin-top: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 1.15rem;
+  background: var(--paper);
+}
+
+.reference-diagram summary {
+  padding: 0.85rem 1rem;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.reference-diagram[open] summary {
+  border-bottom: 1px solid var(--line);
+}
+
+.reference-diagram figure {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.42fr);
+  gap: 1rem;
+  align-items: center;
+  margin: 0;
+  padding: 1rem;
+}
+
+.reference-diagram img {
+  display: block;
+  width: 100%;
+  max-height: 32rem;
+  object-fit: contain;
+  background: white;
+}
+
+.reference-diagram figcaption {
+  margin: 0;
+  padding: 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.reference-diagram a {
+  color: var(--blue);
+  font-weight: 800;
+}
+
 .phase-lesson-nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1161,7 +1269,8 @@ input[type="range"] {
   .phase-intro,
   .phase-heading,
   .fraction-quiz,
-  .takeaway-section {
+  .takeaway-section,
+  .reference-diagram figure {
     grid-template-columns: 1fr;
   }
 
@@ -1244,6 +1353,10 @@ input[type="range"] {
 
   .chart-zoom-buttons {
     justify-content: flex-start;
+  }
+
+  .iron-mode-buttons button {
+    min-height: 2.75rem;
   }
 
   .concept-panel,
