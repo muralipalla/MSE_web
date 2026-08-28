@@ -580,6 +580,7 @@
 
   const pixelCanvas = document.createElement("canvas");
   const pixelContext = pixelCanvas.getContext("2d");
+  const KMC_BASE_SWEEPS = 120;
   const state = {
     seed: 4217,
     size: 40,
@@ -592,7 +593,7 @@
     exchanges: 0,
     time: 0,
     initialB: 0,
-    targetSweeps: 120,
+    targetSweeps: KMC_BASE_SWEEPS,
     running: false,
     frame: 0,
     runToken: 0
@@ -726,7 +727,8 @@
     const finalEvent = targetEvents();
     const startingEvent = state.events;
     const remainingEvents = finalEvent - startingEvent;
-    const fullRunDuration = Number(elements.speed.value);
+    const durationScale = Math.max(1, state.targetSweeps / KMC_BASE_SWEEPS);
+    const fullRunDuration = Number(elements.speed.value) * durationScale;
     const remainingDuration = fullRunDuration * remainingEvents / finalEvent;
     elements.status.textContent = `Kinetic Monte Carlo exchanges are running; this playback targets about ${(remainingDuration / 1000).toFixed(1)} seconds.`;
 
@@ -799,7 +801,8 @@
 
   function updateKmcReadout() {
     const sweeps = state.grid.length ? state.events / state.grid.length : 0;
-    elements.sweep.textContent = `${sweeps.toFixed(2)} / ${state.targetSweeps.toLocaleString()} sweeps`;
+    const formattedSweeps = sweeps.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    elements.sweep.textContent = `${formattedSweeps} / ${state.targetSweeps.toLocaleString()} sweeps`;
     elements.time.textContent = state.time.toFixed(3);
     elements.events.textContent = state.events.toLocaleString();
     elements.exchanges.textContent = state.exchanges.toLocaleString();

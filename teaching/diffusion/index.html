@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="style.css?v=16">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="random-walk-1d.js?v=7" defer></script>
-  <script src="app.js?v=13" defer></script>
+  <script src="app.js?v=14" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the diffusion lesson</a>
@@ -247,15 +247,16 @@
         </div>
         <div class="control-field control-wide">
           <label for="kmc-steps"><span>Target Monte Carlo sweeps</span><output id="kmc-steps-value" for="kmc-steps">120</output></label>
-          <input id="kmc-steps" type="range" min="5" max="300" step="5" value="120">
+          <input id="kmc-steps" type="range" min="5" max="1000" step="5" value="120">
         </div>
         <div class="control-field">
-          <label for="kmc-speed">Animation speed (target duration)</label>
-          <select id="kmc-speed">
-            <option value="36000">Slow &middot; about 36 s</option>
-            <option value="10000" selected>Normal &middot; about 10 s</option>
-            <option value="2000">Fast &middot; about 2 s</option>
+          <label for="kmc-speed">Animation speed (base duration)</label>
+          <select id="kmc-speed" aria-describedby="kmc-speed-hint">
+            <option value="36000">Slow &middot; 36 s at 120 sweeps</option>
+            <option value="10000" selected>Normal &middot; 10 s at 120 sweeps</option>
+            <option value="2000">Fast &middot; 2 s at 120 sweeps</option>
           </select>
+          <small class="control-hint" id="kmc-speed-hint">Longer sweep targets receive proportionally more time.</small>
         </div>
         <div class="button-cluster" role="group" aria-label="Kinetic Monte Carlo playback">
           <button class="action-button primary-action" id="kmc-play" type="button">Animate</button>
