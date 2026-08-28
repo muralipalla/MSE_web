@@ -3,7 +3,6 @@
 
   const ONE_D_STEPS = 100;
   const ONE_D_POPULATION = 1000;
-  const DISTRIBUTION_Y_MAX = 150;
 
   function centralReturnProbability(steps) {
     if (steps % 2 !== 0) return 0;
@@ -104,6 +103,7 @@
 
   const TARGET_STEPS = 100;
   const POPULATION = 1000;
+  const DISTRIBUTION_Y_MAX = 150;
   const VIEW_HALF_WIDTH = 20;
   const state = {
     seed: 9353,
