@@ -861,7 +861,10 @@ input[type="range"] {
   aspect-ratio: 3 / 2;
   object-fit: cover;
   background: #d9d9d7;
-  filter: grayscale(1) contrast(1.03);
+}
+
+.iso-micro-card {
+  margin-top: 0.85rem;
 }
 
 .microstructure-card figcaption {
@@ -1239,6 +1242,7 @@ input[type="range"] {
   .control-panel .state-badge,
   .control-panel h3,
   .control-panel > p,
+  .control-panel .microstructure-card,
   .control-panel .lever-visual,
   .control-panel .formula-hint,
   .control-panel .status-line {

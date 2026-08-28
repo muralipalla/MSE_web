@@ -1,21 +1,87 @@
-# AI-generated micrograph assets
+# AI-generated microstructure assets
 
-These original synthetic images are representative teaching visuals, not measured specimens. They do not contain a scale bar and must not be used for quantitative feature-size measurements. All four images were generated with the built-in ImageGen tool and then visually inspected.
+These images are synthetic teaching visuals, not measured specimens. They support qualitative phase and morphology recognition only. Do not infer feature size, phase fraction, magnification, or processing history from an image.
 
-## `pb-sn-eutectic.png`
+The Pb–Sn and Cu–Ni assets below were generated with the built-in ImageGen tool on 2026-08-28, visually inspected, and converted from PNG to WebP for the website. Final assets are stored under `microstructures/pb-sn/` and `microstructures/cu-ni/`.
 
-> Use case: scientific-educational. Asset type: website lesson micrograph. Primary request: Create an original, realistic polished-and-etched optical metallography micrograph representing a hypoeutectic lead-tin alloy at approximately 40 wt% Sn after slow solidification. Scene/backdrop: Entire frame is the polished metallographic specimen field viewed through a reflected-light optical microscope; no surrounding microscope hardware. Subject: Large light-gray primary Pb-rich alpha dendritic to globular regions occupy much of the field, with rounded branching arms and irregular islands. The interdendritic spaces are filled with a fine, distinctly darker alpha-plus-beta eutectic constituent showing credible tight lamellar colonies with varied local orientations. The microstructure should communicate primary alpha solidification followed by interdendritic eutectic. Style/medium: Highly realistic reflected-light optical metallography, polished and chemically etched metallic specimen, not an illustration or SEM image. Composition/framing: Landscape crop, dense edge-to-edge microstructure, broad representative field of view, no single centered object. Lighting/mood: Neutral even microscope illumination with subtle real-world brightness variation and restrained highlights. Color palette: Metallic grayscale only—pale silver/light gray primary alpha, medium-to-dark gray eutectic colonies, near-black etched boundaries in places. Materials/textures: Credible uneven etching response, faint polishing marks, subtle relief and local contrast variation, fine lamellae remain visible, natural metallographic imperfections without contamination. Constraints: Representative educational image, not claimed to be an actual measured sample. Scientifically plausible phase morphology for hypoeutectic Pb-Sn near 40 wt% Sn after slow cooling. No labels, no text, no arrows, no legend, no scale bar, no border, no watermark, no false-color tint. Avoid: SEM appearance, crystalline facets filling the whole field, equiaxed single-phase grains only, coarse black cracks, porosity dominating the image, colorful oxidation, decorative abstract pattern, perfect repeating lamellae, synthetic CGI gloss.
+## Shared generation prompt
 
-## `fe-ferrite-pearlite.png`
+Every Pb–Sn and Cu–Ni prompt used this shared specification, followed by one asset-specific request from the sections below.
 
-> Use case: scientific-educational. Asset type: website teaching-module microscopy asset. Primary request: Create an original, realistic etched optical metallography micrograph representative of hypoeutectoid plain-carbon steel at approximately 0.40 wt% C after slow cooling or normalizing. Scene/backdrop: Entire frame is the metallographic field of view, viewed perpendicular to a polished and chemically etched specimen surface. Subject: A scientifically plausible mixture of light polygonal proeutectoid ferrite grains and darker pearlite colonies. Ferrite should occupy a substantial light matrix fraction; pearlite should appear as irregular darker colonies, with fine lamellar ferrite-cementite texture discernible inside some colonies but naturally below resolution in others. Include credible grain boundaries, colony orientation changes, subtle polishing texture, and spatially uneven etching. Style/medium: High-quality grayscale bright-field optical metallography, realistic scientific microscopy rather than illustration or diagram. Composition/framing: Landscape crop, edge-to-edge microstructure, no specimen edges, no blank margins. Lighting/mood: Neutral microscope illumination with modest real optical contrast, slight vignetting and natural local exposure variation; avoid dramatic or cinematic lighting. Color palette: Grayscale only, light gray ferrite and charcoal-to-dark-gray pearlite. Materials/textures: Authentic etched steel surface with nonuniform grain contrast and restrained microscopic imperfections. Constraints: Representative synthetic teaching image, not an actual measured sample; scientifically credible phase balance for ~0.40 wt% C; no labels, no annotations, no arrows, no text, no scale bar, no watermark, no borders. Avoid: color tinting, scanning-electron-microscope appearance, exaggerated black cracks, dendrites, martensite needles, bainite sheaves, spheroidized carbides, casting porosity, decorative patterns, or perfectly regular computer-generated tessellation.
+> Use case: scientific-educational. Asset type: website phase-diagram lesson micrograph. Style/medium: original synthetic scientific microscopy image; photorealistic, not an illustration. Composition/framing: landscape 3:2, dense edge-to-edge field, no specimen edge or microscope hardware. Lighting/mood: neutral scientific illumination with restrained natural variation. Color palette: realistic metallic grayscale. Constraints: representative teaching image only; qualitative morphology, not a measured sample; no labels, text, arrows, legend, scale bar, border, watermark, logo, false-color overlay, cartoon styling, infographic appearance, or CGI gloss. Avoid: dominant cracks, porosity, bubbles, slag, inclusions, contamination, or decorative repetition.
 
-## `fe-pearlite.png`
+## Pb–Sn prompts
 
-> Use case: scientific-educational. Asset type: realistic microstructure image for an interactive materials-science lesson. Primary request: Create a scientifically plausible micrograph-style image of fully pearlitic eutectoid steel near 0.76 wt% carbon after slow cooling. Subject: the entire field is composed of pearlite colonies; within each colony, alternating ferrite and cementite lamellae are fine, parallel, and gently curved, with neighboring colonies showing clearly different lamellar orientations. Include realistic colony boundaries, occasional interrupted lamellae, subtle polishing and etching variation, and natural nonuniformity. Style/medium: high-resolution grayscale scanning-electron-microscopy appearance, photorealistic scientific metallography rather than an illustration. Composition/framing: landscape microscopy field filling the entire frame, no specimen edge. Lighting/mood: neutral scientific contrast, crisp but not artificially perfect. Constraints: representative AI-generated teaching image, scientifically plausible morphology; no text, no labels, no arrows, no scale bar, no colored overlays, no watermark, no logos. Avoid: honeycomb cells, biological tissue appearance, random particles instead of lamellae, overly regular computer-generated stripes.
+### `microstructures/pb-sn/liquid.webp`
 
-## `fe-pearlite-cementite.png`
+> Primary request: High-temperature in-situ reflected-light or confocal microscopy view of a homogeneous molten Pb–Sn alloy safely above its liquidus. Subject: a smooth continuous metallic liquid field with restrained thermal shimmer and faint broad convection mottling. Scientific constraints: absolutely no crystals, dendrites, grains, solid–liquid interfaces, precipitates, eutectic lamellae, oxide skin, slag, bubbles, or free-surface waves.
 
-The delivered image is the result of a refinement pass on an initial image of approximately 1.2 wt% C hypereutectoid steel.
+### `microstructures/pb-sn/alpha.webp`
 
-> Use case: scientific-educational. Asset type: website module microscopy asset. Input images: Image 1 is the edit target and scientific composition reference. Primary request: Refine Image 1 into a more credible etched reflected-light optical metallography micrograph of approximately 1.2 wt% C hypereutectoid steel after slow cooling. Change only these realism details: make the bright proeutectoid cementite network appreciably thinner and more delicate while still tracing the same irregular prior-austenite grain-boundary topology; make pearlite lamellae slightly finer, less perfectly parallel, and subtly variable in spacing, focus and etching contrast from colony to colony; add restrained optical-microscope tonal softness, subtle specimen grain, and mild nonuniform illumination. Preserve: grayscale landscape framing; edge-to-edge field of view; numerous differently oriented pearlite colonies; narrow bright cementite at prior-austenite boundaries; overall phase balance and topology; no broad white ferrite regions. Constraints: representative educational image, not an actual measured specimen; no ferrite grains, martensite, bainite, spheroidite or graphite; no labels, arrows, annotations, text, numbers, scale bar, border, logo, signature or watermark. Avoid: decorative perfect tessellation, thick white boundary bands, extreme SEM relief, color tinting, heavy scratches, blur that erases lamellae.
+> Primary request: Polished and lightly etched reflected-light optical metallograph of a single-phase Pb-rich alpha solid solution safely inside the alpha phase field. Subject: coarse irregular equiaxed polygonal alpha-Pb grains with subtle grain-orientation and etching contrast, thin credible grain boundaries, and occasional subdued annealing twins. Scientific constraints: no beta-Sn particles, eutectic constituent, dendrites, or second-phase network.
+
+### `microstructures/pb-sn/beta.webp`
+
+> Primary request: Polished and lightly etched reflected-light optical metallograph of a single-phase Sn-rich beta solid solution safely inside the beta phase field. Subject: irregular equiaxed beta-Sn grains with realistic orientation-dependent etching contrast and occasional twins characteristic of beta tin. Scientific constraints: no Pb-rich second phase, eutectic constituent, dendrites, precipitates, or second-phase network.
+
+### `microstructures/pb-sn/alpha-liquid.webp`
+
+> Primary request: High-temperature in-situ microscopy snapshot in the Pb-rich alpha plus liquid field above 183 degrees Celsius. Subject: rounded branched primary alpha-Pb dendrites with credible trunks and secondary arms occupying about forty percent of a continuous smooth molten matrix; clear natural solid–liquid interfaces. Scientific constraints: no eutectic lamellae, beta precipitates, quenched interdendritic solid, grain-boundary network, or pores.
+
+### `microstructures/pb-sn/liquid-beta.webp`
+
+> Primary request: High-temperature in-situ microscopy snapshot in the liquid plus Sn-rich beta field above 183 degrees Celsius. Subject: primary beta-Sn dendrites and irregular faceted rosettes occupying about forty percent of a continuous molten matrix, with natural branching and clean solid–liquid interfaces. Scientific constraints: no eutectic lamellae, primary alpha-Pb, precipitate particles, post-solidification grain boundaries, or porosity.
+
+### `microstructures/pb-sn/invariant-front.webp`
+
+> Primary request: Synthetic high-temperature in-situ view of the Pb–Sn eutectic reaction at 183 degrees Celsius near 61.9 weight percent tin. Subject: an irregular coupled growth front separates smooth residual liquid ahead from newly formed alpha-Pb plus beta-Sn eutectic colonies behind; fine alternating lamellae have changing orientation and spacing between colonies. Scientific constraints: no pre-existing primary dendrites, no single-phase grain field, and no fully transformed full-frame eutectic.
+
+### `microstructures/pb-sn/alpha-matrix-beta-precipitates.webp`
+
+> Primary request: Realistic grayscale BSE-SEM-style metallograph of a slowly cooled or aged Pb-rich alloy below the alpha solvus. Subject: bright Pb-rich alpha matrix grains containing a modest amount of darker beta-Sn solid-state precipitates; sparse blade-like plates and short lamellae nucleated preferentially at some grain boundaries, with a few discontinuous precipitation colonies advancing locally into grains; most alpha matrix remains unobstructed. Scientific constraints: not a full-field solidification eutectic and not dendritic.
+
+### `microstructures/pb-sn/beta-matrix-alpha-precipitates.webp`
+
+> Primary request: Realistic grayscale BSE-SEM-style metallograph of a slowly cooled Sn-rich alloy below the beta solvus. Subject: medium-dark beta-Sn matrix grains containing sparse bright Pb-rich alpha precipitates, mostly rounded or short plate-like particles at grain boundaries with some intragranular particles; low second-phase fraction, natural clustering, clear beta grain-orientation contrast. Scientific constraints: no eutectic lamellar field, primary dendrites, or continuous bright network.
+
+### `microstructures/pb-sn/eutectic.webp`
+
+> Primary request: Realistic grayscale BSE-SEM micrograph of slowly solidified Pb–Sn at the eutectic composition, approximately 61.9 weight percent tin. Subject: the entire field consists of coupled alpha-Pb plus beta-Sn eutectic colonies; brighter Pb-rich alpha and darker Sn-rich beta form fine irregular alternating lamellae, with neighboring colonies showing different orientations, spacing, gentle curvature, and interrupted lamellae. Scientific constraints: no primary alpha islands, primary beta dendrites, or single-phase grains.
+
+### `microstructures/pb-sn/hypereutectic.webp`
+
+> Primary request: Realistic grayscale BSE-SEM micrograph of slowly solidified hypereutectic Pb–Sn near 80 weight percent tin. Subject: large darker Sn-rich primary beta dendrites and irregular faceted beta regions embedded in a finer alpha-Pb plus beta-Sn eutectic constituent; the eutectic contains brighter alpha and darker beta lamellae with varied colony orientation. Scientific constraints: no primary alpha dendrites and no uniform full-field lamellar eutectic.
+
+### `microstructures/pb-sn/hypoeutectic.webp`
+
+This previously generated site asset was retained and renamed to reflect what it actually represents.
+
+> Primary request: Create an original, realistic polished-and-etched optical metallography micrograph representing a hypoeutectic lead-tin alloy at approximately 40 wt% Sn after slow solidification. Subject: large light-gray primary Pb-rich alpha dendritic-to-globular regions with rounded branching arms and irregular islands; interdendritic spaces filled by a fine, darker alpha-plus-beta eutectic constituent with tight lamellar colonies in varied orientations. Constraints: scientifically plausible hypoeutectic morphology; metallic grayscale only; no labels, text, arrows, legend, scale bar, border, watermark, or false-color tint.
+
+## Cu–Ni prompts
+
+### `microstructures/cu-ni/liquid.webp`
+
+> Primary request: High-temperature in-situ reflected-light microscopy of a homogeneous molten Cu–Ni alloy safely above the liquidus. Subject: continuous neutral metallic liquid with subtle broad convection mottling and restrained thermal shimmer. Scientific constraints: no solid grains, dendrites, interfaces, precipitates, eutectic, oxide film, bubbles, slag, porosity, or free-surface waves.
+
+### `microstructures/cu-ni/liquid-alpha.webp`
+
+> Primary request: High-temperature in-situ microscopy of a Cu–Ni alloy near 1250 degrees Celsius in the liquid plus alpha phase field. Subject: primary FCC alpha Cu–Ni solid-solution dendrites with credible trunks and secondary branches occupy about forty percent of the field while continuous liquid occupies the rest; smooth natural solid–liquid interfaces and subtle thermal contrast. Scientific constraints: one solid solution plus liquid, not two differently colored solid phases; no eutectic lamellae, precipitates, intermetallics, pores, or post-solidification grain boundaries.
+
+### `microstructures/cu-ni/alpha.webp`
+
+> Primary request: Polished and lightly etched bright-field optical metallograph of a homogenized single-phase FCC Cu–Ni substitutional solid solution after equilibrium cooling and annealing. Subject: irregular equiaxed grains with realistic orientation-dependent etching contrast, thin grain boundaries, and occasional straight annealing twins. Scientific constraints: only one phase is present; no light–dark chemical phase separation, eutectic, precipitates, particles, interdendritic constituent, or intermetallics.
+
+## Fe–C supplied sequence
+
+The Fe–C source images were supplied by the site author from `D:\Github\Assets\Microstructures`. All source images are 1254 × 1254 PNGs. They were centre-cropped to 1254 × 836 to fit the lesson's 3:2 media card and to remove the AI-drawn scale bars, then encoded as WebP. The displayed crops are deliberately non-quantitative.
+
+- `austenite.webp`: equiaxed austenite reference.
+- `solidification-1.webp` through `solidification-5.webp`: increasing dendritic solid fraction in liquid; selected from the calculated solid fraction in δ + liquid or γ + liquid.
+- `hypoeutectoid-1.webp` through `hypoeutectoid-4.webp`: increasing proeutectoid ferrite fraction in α + γ; selected from the calculated α fraction.
+- `hypoeutectoid-5.webp`: final ferrite + pearlite morphology below the eutectoid.
+- `hypereutectoid-1.webp` through `hypereutectoid-4.webp`: increasing proeutectoid cementite in γ + Fe₃C; selected from the calculated Fe₃C fraction.
+- `hypereutectoid-5.webp`: final pearlite + proeutectoid cementite morphology below the eutectoid.
+- `grey-cast-iron.webp`: graphite-bearing gray-iron contrast. It is explicitly labelled as outside the metastable Fe–Fe₃C equilibrium field.
+
+The existing `fe-pearlite.png` remains the eutectoid endpoint because none of the supplied sequence images represents an all-pearlite field closely enough. Procedural schematics remain for Fe–C states that have no scientifically close supplied image, such as pure liquid, single-phase δ or α ferrite, cementite, δ + γ, liquid + Fe₃C, and the ledeburite/eutectic field.

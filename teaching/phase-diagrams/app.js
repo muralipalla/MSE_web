@@ -532,6 +532,28 @@ function classifyIso(composition, temperature) {
   };
 }
 
+function isoMicrographFor(result) {
+  if (result.region === "Liquid") {
+    return {
+      src: "assets/microstructures/cu-ni/liquid.webp",
+      alt: "AI-generated high-temperature microscopy view of a homogeneous molten copper-nickel alloy with subtle convection contrast and no solid crystals.",
+      caption: "Homogeneous Cu–Ni liquid above the liquidus, shown as a synthetic high-temperature in-situ microscopy view. Qualitative morphology only."
+    };
+  }
+  if (result.region === "Liquid + α") {
+    return {
+      src: "assets/microstructures/cu-ni/liquid-alpha.webp",
+      alt: "AI-generated high-temperature microscopy view of primary FCC copper-nickel alpha dendrites growing through a continuous liquid matrix.",
+      caption: "Cu–Ni in the liquid + α field: primary FCC α solid-solution dendrites within the remaining liquid. Synthetic high-temperature view; qualitative morphology only."
+    };
+  }
+  return {
+    src: "assets/microstructures/cu-ni/alpha.webp",
+    alt: "AI-generated grayscale optical metallograph of a single-phase FCC copper-nickel solid solution with equiaxed grains and annealing twins.",
+    caption: "Single-phase FCC Cu–Ni α solid solution after homogenization and annealing: equiaxed grains with orientation contrast and occasional twins. Synthetic teaching image; no second phase."
+  };
+}
+
 function drawIsoChart() {
   const canvas = $("#iso-chart");
   const plot = makePlot(canvas, [0, 100], [1050, 1500]);
@@ -594,6 +616,7 @@ function updateIso({ announce = true } = {}) {
   isoState.temperature = Number($("#iso-temperature").value);
   const result = classifyIso(isoState.composition, isoState.temperature);
   currentIsoResult = result;
+  const mediaState = setMicrostructureMedia("iso", isoMicrographFor(result), result.summary);
   $("#iso-composition-value").textContent = `${isoState.composition.toFixed(1)} wt% Ni`;
   $("#iso-temperature-value").textContent = `${isoState.temperature.toFixed(0)} °C`;
   $("#iso-state-badge").textContent = result.badge;
@@ -616,7 +639,7 @@ function updateIso({ announce = true } = {}) {
     $("#iso-solid-fraction").textContent = percent(result.fractions.solid);
     $("#iso-lever-point").style.left = liquid ? "0%" : "100%";
   }
-  if (announce) $("#iso-status").textContent = `${result.region} at ${isoState.composition.toFixed(1)} wt% Ni and ${isoState.temperature.toFixed(0)} °C.`;
+  if (announce) $("#iso-status").textContent = `${result.region} at ${isoState.composition.toFixed(1)} wt% Ni and ${isoState.temperature.toFixed(0)} °C. ${microstructureStatus(mediaState)}`;
   drawIsoChart();
 }
 
@@ -874,55 +897,79 @@ function setMicrostructureMedia(system, micrograph, schematicDescription) {
   const kind = $(`#${system}-micro-kind`);
   const caption = $(`#${system}-micro-caption`);
 
+  const updateAsyncStatus = (state) => {
+    const status = $(`#${system}-status`);
+    if (!status) return;
+    const replacement = microstructureStatus(state);
+    const knownMessages = [
+      microstructureStatus("micrograph"),
+      microstructureStatus("loading"),
+      microstructureStatus("loading-image"),
+      microstructureStatus("fallback"),
+      microstructureStatus("unavailable"),
+      microstructureStatus("schematic")
+    ];
+    const currentMessage = knownMessages.find((message) => status.textContent.includes(message));
+    if (currentMessage) status.textContent = status.textContent.replace(currentMessage, replacement);
+    else if (state === "fallback" || state === "unavailable") status.textContent = replacement;
+  };
+
   const showSchematic = (label = "Procedural schematic · not to scale", state = "schematic") => {
     image.hidden = true;
-    canvas.hidden = false;
+    if (canvas) canvas.hidden = false;
     kind.textContent = label;
     caption.textContent = schematicDescription;
     image.dataset.mediaState = state;
   };
 
+  const showMicrograph = (entry) => {
+    image.hidden = false;
+    if (canvas) canvas.hidden = true;
+    kind.textContent = entry.kind || "AI-generated representative micrograph";
+    caption.textContent = entry.caption;
+    image.alt = entry.alt;
+    image.dataset.mediaState = "micrograph";
+  };
+
   if (micrograph) {
-    const showMicrograph = () => {
-      image.hidden = false;
-      canvas.hidden = true;
-      kind.textContent = "AI-generated representative micrograph";
-      caption.textContent = micrograph.caption;
-      image.dataset.mediaState = "micrograph";
+    image.dataset.requestedAsset = micrograph.src;
+    image.onload = () => {
+      if (image.dataset.requestedAsset !== micrograph.src) return;
+      showMicrograph(micrograph);
+      updateAsyncStatus("micrograph");
     };
-    const currentSource = image.getAttribute("src");
-    if (currentSource === micrograph.src && image.complete && image.naturalWidth > 0) {
-      image.dataset.requestedAsset = micrograph.src;
-      image.alt = micrograph.alt;
-      showMicrograph();
+    image.onerror = () => {
+      if (image.dataset.requestedAsset !== micrograph.src) return;
+      image.alt = "";
+      if (canvas) {
+        showSchematic("Procedural schematic · image unavailable", "fallback");
+        updateAsyncStatus("fallback");
+      } else {
+        image.hidden = true;
+        kind.textContent = "Generated image unavailable";
+        caption.textContent = `${micrograph.caption} The local image could not be loaded.`;
+        image.dataset.mediaState = "unavailable";
+        updateAsyncStatus("unavailable");
+      }
+    };
+
+    if (image.getAttribute("src") === micrograph.src && image.complete && image.naturalWidth > 0) {
+      showMicrograph(micrograph);
       return "micrograph";
     }
-    if (image.dataset.failedAsset === micrograph.src) {
-      showSchematic("Procedural schematic · image unavailable", "unavailable");
-      return "unavailable";
+
+    image.hidden = true;
+    if (canvas) canvas.hidden = false;
+    kind.textContent = canvas ? "Loading representative image · schematic shown meanwhile" : "Loading representative image";
+    caption.textContent = micrograph.caption;
+    image.alt = micrograph.alt;
+    image.dataset.mediaState = "loading";
+    if (image.getAttribute("src") !== micrograph.src) image.src = micrograph.src;
+    else if (image.complete) {
+      image.onerror();
+      return canvas ? "fallback" : "unavailable";
     }
-    if (image.dataset.requestedAsset !== micrograph.src) {
-      image.dataset.requestedAsset = micrograph.src;
-      image.dataset.failedAsset = "";
-      image.loading = "eager";
-      image.alt = micrograph.alt;
-      image.onload = () => {
-        if (image.dataset.requestedAsset !== micrograph.src) return;
-        showMicrograph();
-        const status = $(`#${system}-status`);
-        status.textContent = "Representative AI micrograph loaded for the selected state.";
-      };
-      image.onerror = () => {
-        if (image.dataset.requestedAsset !== micrograph.src) return;
-        image.dataset.failedAsset = micrograph.src;
-        showSchematic("Procedural schematic · image unavailable", "unavailable");
-        const status = $(`#${system}-status`);
-        status.textContent = "Generated image unavailable; the procedural schematic remains visible.";
-      };
-      image.src = micrograph.src;
-    }
-    showSchematic("Procedural schematic · loading micrograph", "loading");
-    return "loading";
+    return canvas ? "loading" : "loading-image";
   }
 
   image.onload = null;
@@ -934,9 +981,11 @@ function setMicrostructureMedia(system, micrograph, schematicDescription) {
 }
 
 function microstructureStatus(state) {
-  if (state === "micrograph") return "Representative AI micrograph displayed.";
-  if (state === "loading") return "Procedural schematic displayed while the representative AI micrograph loads.";
-  if (state === "unavailable") return "Generated image unavailable; procedural schematic displayed.";
+  if (state === "micrograph") return "Representative AI image displayed.";
+  if (state === "loading") return "Representative AI image loading; schematic shown meanwhile.";
+  if (state === "loading-image") return "Representative AI image loading.";
+  if (state === "fallback") return "Generated image unavailable; procedural schematic displayed instead.";
+  if (state === "unavailable") return "Generated image unavailable.";
   return "Procedural microstructure schematic displayed.";
 }
 
@@ -1135,13 +1184,84 @@ function pbMicroDescription(result) {
 }
 
 function pbMicrographFor(result) {
-  const closeToFortyPercentSn = between(pbState.composition, 35, 45);
-  if (pbState.mode !== "micro" || result.region !== "α + β" || result.invariant || pbState.temperature >= PB.eutecticTemperature || !closeToFortyPercentSn) return null;
-  return {
-    src: "assets/pb-sn-eutectic.png",
-    alt: "AI-generated grayscale optical micrograph representative of hypoeutectic lead-tin near 40 weight percent tin, with light primary alpha regions in a darker lamellar alpha-beta eutectic constituent.",
-    caption: "Representative hypoeutectic Pb–Sn near 40 wt% Sn after slow solidification: light primary α regions within a darker lamellar α + β eutectic constituent. Synthetic teaching image; qualitative morphology only, no scale."
-  };
+  if (result.invariant) {
+    return {
+      src: "assets/microstructures/pb-sn/invariant-front.webp",
+      alt: "AI-generated high-temperature microscopy view of a lead-tin eutectic growth front separating residual liquid from newly formed lamellar alpha-beta colonies.",
+      caption: "Pb–Sn eutectic reaction at 183 °C: a coupled α + β growth front advances into residual liquid. Synthetic high-temperature view; reaction progress is not fixed by the phase diagram alone."
+    };
+  }
+  if (result.region === "Liquid") {
+    return {
+      src: "assets/microstructures/pb-sn/liquid.webp",
+      alt: "AI-generated high-temperature microscopy view of homogeneous molten lead-tin with subtle convection contrast and no crystals.",
+      caption: "Homogeneous Pb–Sn liquid above the liquidus, shown as a synthetic high-temperature in-situ microscopy view. Qualitative morphology only."
+    };
+  }
+  if (result.region === "α") {
+    return {
+      src: "assets/microstructures/pb-sn/alpha.webp",
+      alt: "AI-generated grayscale optical metallograph of single-phase lead-rich alpha grains with orientation contrast and occasional twins.",
+      caption: "Single-phase Pb-rich α solid solution: equiaxed grains with orientation-dependent etching contrast. Synthetic teaching image; no β constituent is shown."
+    };
+  }
+  if (result.region === "β") {
+    return {
+      src: "assets/microstructures/pb-sn/beta.webp",
+      alt: "AI-generated grayscale optical metallograph of single-phase tin-rich beta grains with orientation contrast and occasional twins.",
+      caption: "Single-phase Sn-rich β solid solution: equiaxed grains with orientation-dependent etching contrast. Synthetic teaching image; no α constituent is shown."
+    };
+  }
+  if (result.region === "α + liquid") {
+    return {
+      src: "assets/microstructures/pb-sn/alpha-liquid.webp",
+      alt: "AI-generated high-temperature microscopy view of lead-rich alpha dendrites growing through molten lead-tin.",
+      caption: "Pb-rich α + liquid: primary α dendrites grow through a continuous liquid matrix above the eutectic temperature. Synthetic high-temperature view."
+    };
+  }
+  if (result.region === "Liquid + β") {
+    return {
+      src: "assets/microstructures/pb-sn/liquid-beta.webp",
+      alt: "AI-generated high-temperature microscopy view of tin-rich beta dendrites and rosettes growing through molten lead-tin.",
+      caption: "Liquid + Sn-rich β: primary β dendrites and faceted rosettes grow through a continuous liquid matrix. Synthetic high-temperature view."
+    };
+  }
+  if (result.region === "α + β" && pbState.composition < PB.alphaEutectic) {
+    return {
+      src: "assets/microstructures/pb-sn/alpha-matrix-beta-precipitates.webp",
+      alt: "AI-generated grayscale electron micrograph of a lead-rich alpha matrix containing sparse darker beta tin precipitates and discontinuous colonies.",
+      caption: "Pb-rich α matrix below the solvus with sparse β precipitates and local discontinuous-precipitation colonies. Representative slow-cooled or aged morphology."
+    };
+  }
+  if (result.region === "α + β" && pbState.composition > PB.betaEutectic) {
+    return {
+      src: "assets/microstructures/pb-sn/beta-matrix-alpha-precipitates.webp",
+      alt: "AI-generated grayscale electron micrograph of a tin-rich beta matrix containing sparse bright lead-rich alpha precipitates.",
+      caption: "Sn-rich β matrix below the solvus with sparse bright Pb-rich α precipitates, concentrated mainly at grain boundaries. Representative slow-cooled or aged morphology."
+    };
+  }
+  if (result.region === "α + β" && Math.abs(pbState.composition - PB.eutecticComposition) <= 1.5) {
+    return {
+      src: "assets/microstructures/pb-sn/eutectic.webp",
+      alt: "AI-generated grayscale electron micrograph of a fully lamellar lead-tin eutectic with differently oriented alpha-beta colonies.",
+      caption: "Near-eutectic Pb–Sn after solidification: the field is filled by coupled α + β lamellar colonies with varied orientations and spacing."
+    };
+  }
+  if (result.region === "α + β" && pbState.composition < PB.eutecticComposition) {
+    return {
+      src: "assets/microstructures/pb-sn/hypoeutectic.webp",
+      alt: "AI-generated grayscale metallograph of hypoeutectic lead-tin with primary lead-rich alpha regions inside a fine alpha-beta eutectic constituent.",
+      caption: "Hypoeutectic Pb–Sn after solidification: primary Pb-rich α regions within a finer α + β eutectic constituent. Synthetic teaching image; qualitative morphology only."
+    };
+  }
+  if (result.region === "α + β") {
+    return {
+      src: "assets/microstructures/pb-sn/hypereutectic.webp",
+      alt: "AI-generated grayscale electron micrograph of hypereutectic lead-tin with primary tin-rich beta dendrites in a fine alpha-beta eutectic constituent.",
+      caption: "Hypereutectic Pb–Sn after solidification: primary Sn-rich β dendrites and faceted regions within a finer α + β eutectic constituent."
+    };
+  }
+  return null;
 }
 
 function drawPbMicrostructure() {
@@ -1269,8 +1389,8 @@ $$("[data-pb-mode]").forEach((button) => button.addEventListener("click", () => 
   pbState.mode = button.dataset.pbMode;
   $$("[data-pb-mode]").forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
   $("#pb-mode-help").textContent = pbState.mode === "tie"
-    ? "Tie-line mode reports equilibrium phase compositions and fractions."
-    : "Microstructure mode shows a matching representative micrograph when available, otherwise a schematic.";
+    ? "Tie-line mode reports equilibrium compositions and fractions; the representative image remains synchronized."
+    : "Microstructure mode keeps a representative AI image synchronized with the selected phase field.";
   drawPbChart();
   const mediaState = drawPbMicrostructure();
   $("#pb-status").textContent = `${pbState.mode === "tie" ? "Tie-line" : "Microstructure"} mode active. ${microstructureStatus(mediaState)} Click the diagram to inspect a point.`;
@@ -1955,29 +2075,135 @@ function ironMicroDescription(result) {
 }
 
 function ironMicrographFor(result) {
-  if (result.region !== "α + Fe₃C" || result.invariant || ironState.temperature >= 727) return null;
   const composition = ironState.composition;
-  if (between(composition, 0.32, 0.48)) {
+  const sequenceStage = (fraction, maximum = 5) => {
+    const value = clamp(Number.isFinite(fraction) ? fraction : 0, 0, 1);
+    const stage = value <= 0.08 ? 1 : value <= 0.28 ? 2 : value <= 0.55 ? 3 : value <= 0.8 ? 4 : 5;
+    return Math.min(stage, maximum);
+  };
+  const transformation = (src, alt, caption) => ({
+    src: `assets/microstructures/fe-c/${src}`,
+    alt,
+    caption,
+    kind: "AI-generated transformation visualization"
+  });
+
+  if (result.invariant) {
+    if (result.kind === "Eutectoid") {
+      if (composition < 0.70) {
+        return transformation(
+          "hypoeutectoid-5.webp",
+          "AI-generated transformation visualization of ferrite surrounding lamellar pearlite colonies in hypoeutectoid steel.",
+          "Hypoeutectoid endpoint below the eutectoid: proeutectoid ferrite surrounds lamellar pearlite colonies. The selected invariant itself has reaction-path-dependent progress."
+        );
+      }
+      if (composition <= 0.84) {
+        return {
+          src: "assets/fe-pearlite.png",
+          alt: "AI-generated grayscale microscopy image of eutectoid steel with pearlite colonies in varied lamellar orientations.",
+          caption: "Near-eutectoid endpoint: pearlite colonies with differently oriented ferrite–cementite lamellae. The selected invariant itself has reaction-path-dependent progress."
+        };
+      }
+      if (composition <= 2.14) {
+        return transformation(
+          "hypereutectoid-5.webp",
+          "AI-generated transformation visualization of pearlite colonies outlined by proeutectoid cementite in hypereutectoid steel.",
+          "Hypereutectoid endpoint below the eutectoid: lamellar pearlite colonies are outlined by proeutectoid cementite. The selected invariant itself has reaction-path-dependent progress."
+        );
+      }
+      return null;
+    }
+    if (result.kind === "Peritectic") {
+      return transformation(
+        "solidification-3.webp",
+        "AI-generated transformation visualization of branched solid dendrites growing through liquid during iron-carbon solidification.",
+        "Representative intermediate solidification frame for the peritectic neighbourhood. It conveys growing solid within liquid; phase labels come from the selected diagram state."
+      );
+    }
+    if (result.kind === "α–γ") {
+      return transformation(
+        "hypoeutectoid-2.webp",
+        "AI-generated transformation visualization of early ferrite formation at austenite grain boundaries.",
+        "Early α formation at prior-γ boundaries, used as a qualitative view of the α ↔ γ transformation neighbourhood."
+      );
+    }
+    if (result.kind === "δ–γ") {
+      return {
+        src: "assets/microstructures/fe-c/austenite.webp",
+        alt: "AI-generated optical metallograph of equiaxed austenite grains with annealing twins.",
+        caption: "Equiaxed austenite grains with annealing twins, used as the γ-side reference for the δ ↔ γ boundary. Synthetic teaching image."
+      };
+    }
+    return null;
+  }
+
+  if (result.region === "Austenite γ") {
     return {
-      src: "assets/fe-ferrite-pearlite.png",
-      alt: "AI-generated grayscale optical micrograph representative of slowly cooled hypoeutectoid steel near 0.40 weight percent carbon, showing light polygonal ferrite and darker pearlite colonies.",
-      caption: "Representative hypoeutectoid steel near 0.40 wt% C after slow cooling: light polygonal proeutectoid ferrite with darker pearlite colonies. Synthetic teaching image; qualitative morphology only, no scale."
+      src: "assets/microstructures/fe-c/austenite.webp",
+      alt: "AI-generated optical metallograph of equiaxed austenite grains with straight annealing twins.",
+      caption: "Single-phase FCC austenite γ: equiaxed grains with annealing twins. Synthetic representative micrograph; qualitative morphology only."
     };
   }
-  if (between(composition, 0.72, 0.80)) {
-    return {
-      src: "assets/fe-pearlite.png",
-      alt: "AI-generated grayscale microscopy image representative of eutectoid steel near 0.76 weight percent carbon, showing pearlite colonies with differently oriented ferrite-cementite lamellae.",
-      caption: "Representative eutectoid steel near 0.76 wt% C after slow cooling: pearlite colonies with differently oriented ferrite–cementite lamellae. Synthetic teaching image; qualitative morphology only, no scale."
-    };
+
+  if (result.region === "δ + liquid" || result.region === "γ + liquid") {
+    const stage = sequenceStage(result.leftFraction);
+    const solidPhase = result.region.startsWith("δ") ? "δ ferrite" : "austenite γ";
+    return transformation(
+      `solidification-${stage}.webp`,
+      `AI-generated false-color transformation visualization of ${solidPhase} dendrites growing through iron-carbon liquid, stage ${stage} of five.`,
+      `Solidification frame ${stage}/5: ${solidPhase} dendrites occupy an increasing share of the remaining liquid. Phase fractions are selected from the lever-rule result; morphology is qualitative.`
+    );
   }
-  if (between(composition, 1.05, 1.35)) {
-    return {
-      src: "assets/fe-pearlite-cementite.png",
-      alt: "AI-generated grayscale optical micrograph representative of slowly cooled hypereutectoid steel near 1.2 weight percent carbon, showing pearlite colonies bounded by a thin proeutectoid cementite network.",
-      caption: "Representative hypereutectoid steel near 1.2 wt% C after slow cooling: pearlite colonies with a thin proeutectoid cementite network. Synthetic teaching image; qualitative morphology only, no scale."
-    };
+
+  if (result.region === "α + γ") {
+    const stage = sequenceStage(result.leftFraction, 4);
+    return transformation(
+      `hypoeutectoid-${stage}.webp`,
+      `AI-generated false-color transformation visualization of blue ferrite progressively forming around orange austenite grains, stage ${stage} of four.`,
+      `Hypoeutectoid transformation frame ${stage}/4: blue proeutectoid ferrite progressively forms around orange austenite γ. The discrete frame follows the calculated α fraction qualitatively.`
+    );
   }
+
+  if (result.region === "γ + Fe₃C") {
+    const stage = sequenceStage(result.rightFraction, 4);
+    return transformation(
+      `hypereutectoid-${stage}.webp`,
+      `AI-generated false-color transformation visualization of purple proeutectoid cementite progressively decorating orange austenite grain boundaries, stage ${stage} of four.`,
+      `Hypereutectoid transformation frame ${stage}/4: purple proeutectoid cementite progressively decorates orange austenite γ boundaries. The discrete frame follows the calculated Fe₃C fraction qualitatively.`
+    );
+  }
+
+  if (result.region === "α + Fe₃C" && ironState.temperature < 727) {
+    if (composition > 2.14) {
+      return {
+        src: "assets/microstructures/fe-c/grey-cast-iron.webp",
+        alt: "AI-generated grayscale metallograph of gray cast iron with dark graphite flakes in a ferritic-pearlitic matrix.",
+        caption: "Gray cast iron contrast: dark graphite flakes in a ferritic–pearlitic matrix. This stable-system, processing-dependent morphology is outside the metastable Fe–Fe₃C equilibrium field selected on the chart."
+      };
+    }
+    if (composition < 0.70) {
+      return transformation(
+        "hypoeutectoid-5.webp",
+        "AI-generated false-color transformation visualization of ferrite surrounding lamellar pearlite colonies in hypoeutectoid steel.",
+        "Hypoeutectoid steel after slow cooling: proeutectoid ferrite surrounds lamellar pearlite colonies. Synthetic qualitative endpoint visualization."
+      );
+    }
+    if (composition <= 0.84) {
+      return {
+        src: "assets/fe-pearlite.png",
+        alt: "AI-generated grayscale microscopy image of eutectoid steel with pearlite colonies in varied lamellar orientations.",
+        caption: "Near-eutectoid steel after slow cooling: pearlite colonies with differently oriented ferrite–cementite lamellae. Synthetic teaching image; qualitative morphology only."
+      };
+    }
+    if (composition <= 2.14) {
+      return transformation(
+        "hypereutectoid-5.webp",
+        "AI-generated false-color transformation visualization of pearlite colonies outlined by proeutectoid cementite in hypereutectoid steel.",
+        "Hypereutectoid steel after slow cooling: lamellar pearlite colonies are outlined by proeutectoid cementite. Synthetic qualitative endpoint visualization."
+      );
+    }
+  }
+
   return null;
 }
 

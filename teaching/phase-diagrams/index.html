@@ -127,6 +127,14 @@
           <h3 id="iso-region">Liquid + &alpha;</h3>
           <p id="iso-guidance">The tie line meets the liquidus at C<sub>L</sub> and the solidus at C<sub>&alpha;</sub>.</p>
 
+          <figure class="microstructure-card iso-micro-card">
+            <img id="iso-micrograph" class="micrograph-image" src="assets/microstructures/cu-ni/liquid-alpha.webp" width="1536" height="1024" alt="AI-generated high-temperature microscopy view of Cu-Ni alpha dendrites growing through a continuous liquid matrix." decoding="async">
+            <figcaption>
+              <span class="microstructure-kind" id="iso-micro-kind">AI-generated representative micrograph</span>
+              <span id="iso-micro-caption">Representative Cu&ndash;Ni solidification: FCC &alpha; dendrites growing through the remaining liquid. Synthetic teaching image; qualitative morphology only.</span>
+            </figcaption>
+          </figure>
+
           <dl class="reading-list compact-readings">
             <div><dt>Liquid composition, C<sub>L</sub></dt><dd id="iso-liquid-composition">&mdash;</dd></div>
             <div><dt>Solid composition, C<sub>&alpha;</sub></dt><dd id="iso-solid-composition">&mdash;</dd></div>
@@ -200,7 +208,7 @@
       <div class="mode-bar">
         <div>
           <strong>Exploration mode</strong>
-          <span id="pb-mode-help">Microstructure mode shows a matching representative micrograph when available, otherwise a schematic.</span>
+          <span id="pb-mode-help">Microstructure mode keeps a representative AI image synchronized with the selected phase field.</span>
         </div>
         <div class="segmented-control" id="pb-mode-control" role="group" aria-label="Lead-tin exploration mode">
           <button type="button" data-pb-mode="tie" aria-pressed="false">Tie line</button>
@@ -221,7 +229,7 @@
             <div class="chart-frame">
               <canvas id="pb-chart" width="900" height="580" role="img" aria-label="Interactive lead-tin eutectic phase diagram with phase fields and a selected alloy state. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
             </div>
-            <figcaption>Microstructure mode shows a generated representative micrograph when a close teaching example is available and a procedural schematic for other states.</figcaption>
+            <figcaption>Microstructure mode keeps a generated representative image synchronized with the selected phase field; tie-line mode emphasizes equilibrium compositions while retaining the same image.</figcaption>
           </figure>
 
           <div class="compact-controls" role="group" aria-label="Lead-tin selected point controls">
@@ -240,11 +248,11 @@
           </header>
 
           <figure class="microstructure-card">
-            <img id="pb-micrograph" class="micrograph-image" src="assets/pb-sn-eutectic.png" width="1536" height="1024" alt="" decoding="async" hidden>
-            <canvas id="pb-microstructure" width="520" height="347" role="img" aria-label="Schematic lead-tin microstructure for the selected point."></canvas>
+            <img id="pb-micrograph" class="micrograph-image" src="assets/microstructures/pb-sn/hypoeutectic.webp" width="1536" height="1024" alt="AI-generated grayscale metallographic image of hypoeutectic Pb-Sn with primary alpha regions in a fine alpha-beta eutectic constituent." decoding="async">
+            <canvas id="pb-microstructure" width="520" height="347" role="img" aria-label="Schematic lead-tin microstructure for the selected point." hidden></canvas>
             <figcaption>
-              <span class="microstructure-kind" id="pb-micro-kind">Procedural schematic</span>
-              <span id="pb-micro-caption">Primary &alpha; plus a lamellar &alpha; + &beta; eutectic constituent.</span>
+              <span class="microstructure-kind" id="pb-micro-kind">AI-generated representative micrograph</span>
+              <span id="pb-micro-caption">Hypoeutectic Pb&ndash;Sn: primary &alpha; regions within a finer &alpha; + &beta; eutectic constituent. Synthetic teaching image; qualitative morphology only.</span>
             </figcaption>
           </figure>
 
@@ -345,11 +353,11 @@
           </header>
 
           <figure class="microstructure-card iron-micro-card">
-            <img id="iron-micrograph" class="micrograph-image" src="assets/fe-ferrite-pearlite.png" width="1536" height="1024" alt="" decoding="async" hidden>
-            <canvas id="iron-microstructure" width="520" height="347" role="img" aria-label="Schematic iron-carbide microstructure for the selected point."></canvas>
+            <img id="iron-micrograph" class="micrograph-image" src="assets/microstructures/fe-c/hypoeutectoid-5.webp" width="1254" height="836" alt="AI-generated transformation visualization of slowly cooled hypoeutectoid steel with ferrite surrounding lamellar pearlite colonies." decoding="async">
+            <canvas id="iron-microstructure" width="520" height="347" role="img" aria-label="Schematic iron-carbide microstructure for the selected point." hidden></canvas>
             <figcaption>
-              <span class="microstructure-kind" id="iron-micro-kind">Procedural schematic</span>
-              <span id="iron-micro-caption">Hypoeutectoid steel: proeutectoid ferrite with pearlite.</span>
+              <span class="microstructure-kind" id="iron-micro-kind">AI-generated transformation visualization</span>
+              <span id="iron-micro-caption">Hypoeutectoid steel after slow cooling: proeutectoid ferrite surrounding lamellar pearlite colonies. Qualitative morphology only.</span>
             </figcaption>
           </figure>
           <div class="micrograph-presets" role="group" aria-label="Generated iron-carbon micrograph examples" aria-describedby="iron-micro-example-note">
@@ -357,8 +365,9 @@
             <button type="button" data-iron-micro-example="0.40">0.40 wt% C</button>
             <button type="button" data-iron-micro-example="0.76">0.76 wt% C</button>
             <button type="button" data-iron-micro-example="1.20">1.20 wt% C</button>
+            <button type="button" data-iron-micro-example="3.50">Gray iron contrast</button>
           </div>
-          <p class="micrograph-preset-note" id="iron-micro-example-note">Presets place the diagram point at 700 &deg;C; images represent the final slow-cooled morphology.</p>
+          <p class="micrograph-preset-note" id="iron-micro-example-note">Presets place the diagram point at 700 &deg;C. The gray-iron image is an explicitly labelled stable-system contrast; graphite is not an equilibrium phase in the metastable Fe&ndash;Fe<sub>3</sub>C diagram.</p>
 
           <dl class="reading-list compact-readings">
             <div><dt>Overall composition</dt><dd id="iron-overall">0.40 wt% C</dd></div>
@@ -410,7 +419,7 @@
     <details class="data-note">
       <summary>Data scope and references</summary>
       <p>Charts are instructional equilibrium approximations, not design data. The Cu&ndash;Ni and Pb&ndash;Sn phase boundaries are B-spline traces from the credited reusable SVG references, normalized to the numerical landmarks used in this lesson; digitization does not create new measured data. Water landmarks follow NIST/IAPWS values. Pb&ndash;Sn uses the 61.9 wt% Sn, 183 &deg;C eutectic and 19.2/97.5 wt% Sn terminal compositions. The Fe&ndash;Fe<sub>3</sub>C construction follows the points supplied for this module and adds the stoichiometric cementite endpoint at 6.67 wt% C.</p>
-      <p>Images marked <em>AI-generated representative micrograph</em> are original synthetic teaching visuals based on metallographic descriptions. They are not measured specimens, carry no magnification or scale, and should be used to recognize qualitative morphology only. Procedural schematics remain visible where no close generated example is available.</p>
+      <p>Images marked <em>AI-generated representative micrograph</em> or <em>AI-generated transformation visualization</em> are synthetic teaching visuals based on metallographic descriptions. They are not measured specimens and should be used only to recognize qualitative morphology. Supplied Fe&ndash;C sequence images were centre-cropped to remove AI-drawn scale bars; none of the displayed images supports quantitative feature-size measurement. Procedural schematics remain only where the supplied Fe&ndash;C set has no scientifically close state.</p>
       <p><a href="https://www.nist.gov/document/steam-manual-222pdf" target="_blank" rel="noopener">NIST water and steam reference</a> &middot; <a href="https://commons.wikimedia.org/wiki/File:Diagramme_phase_Cu_Ni.svg" target="_blank" rel="noopener">Cu&ndash;Ni vector source</a> &middot; <a href="https://commons.wikimedia.org/wiki/File:Faze-Sn-Pb.svg" target="_blank" rel="noopener">Pb&ndash;Sn vector source</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/circ/nbscircular492.pdf" target="_blank" rel="noopener">NIST lead&ndash;tin solder reference</a> &middot; <a href="assets/PROMPTS.md">Image-generation prompts</a></p>
     </details>
 
