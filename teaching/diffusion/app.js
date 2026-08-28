@@ -1036,6 +1036,7 @@
   function profileName(value = elements.profile.value) {
     if (value === "pulse") return "Narrow-pulse";
     if (value === "linear") return "Linear-gradient";
+    if (value === "sinusoidal") return "Sinusoidal fluctuation";
     return "Step";
   }
 
@@ -1097,6 +1098,13 @@
     if (profile === "step") {
       for (let index = 0; index < state.nodes; index += 1) {
         state.concentration[index] = index < Math.floor(state.nodes / 2) ? 0 : 1;
+      }
+      return;
+    }
+    if (profile === "sinusoidal") {
+      for (let index = 0; index < state.nodes; index += 1) {
+        const normalizedPosition = (index + 0.5) / state.nodes;
+        state.concentration[index] = 0.5 + 0.4 * Math.sin(2 * Math.PI * normalizedPosition + Math.PI / 2);
       }
       return;
     }
