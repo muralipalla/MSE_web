@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore diffusion from 1D and 2D random walks to kinetic Monte Carlo and Fick's laws with interactive simulations.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Diffusion | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=14">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="random-walk-1d.js?v=4" defer></script>
+  <script src="app.js?v=12" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the diffusion lesson</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="diffusion-shell" id="lesson">
+    <header class="diffusion-intro">
+      <div>
+        <p class="eyebrow">Teaching page 05</p>
+        <h1>Diffusion</h1>
+      </div>
+      <div class="diffusion-intro-copy">
+        <p>Follow diffusion across three scales: a single atom loses its memory in a random walk, many atoms mix through stochastic exchanges, and a smooth concentration field obeys Fick&rsquo;s laws.</p>
+        <p class="diffusion-intro-note">Same spreading process. Three complementary descriptions.</p>
+      </div>
+    </header>
+
+    <nav class="diffusion-route" aria-label="Diffusion lesson sections">
+      <a href="#random-walk"><span>01</span> Random Walk</a>
+      <a href="#kinetic-monte-carlo"><span>02</span> Kinetic Monte Carlo</a>
+      <a href="#ficks-laws"><span>03</span> Fick&rsquo;s laws</a>
+    </nav>
+
+    <section class="diffusion-card" id="random-walk" aria-labelledby="random-walk-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Section 1 &middot; One dimension, then two</p>
+          <h2 id="random-walk-title">Random Walk</h2>
+        </div>
+        <p>Begin with a coin-flip walk along a line, then give the atom a second dimension. Compare a single unpredictable path with the smooth distribution formed by 1,000 independent walkers.</p>
+      </div>
+
+      <section class="dimension-lab" aria-labelledby="rw1d-title">
+        <div class="dimension-heading">
+          <div><p class="panel-kicker">1D coin-flip walk</p><h3 id="rw1d-title">First, constrain motion to a line</h3></div>
+          <span>01 / 02</span>
+        </div>
+
+        <aside class="prediction-card" aria-labelledby="rw1d-prediction-title">
+          <div class="prediction-question">
+            <p class="panel-kicker">Predict before you simulate</p>
+            <h4 id="rw1d-prediction-title">Picture a single atom on a straight line.</h4>
+            <p>It&rsquo;s going to take exactly 100 steps, flipping a coin each time: heads it moves right, tails it moves left.</p>
+            <p>Using RMS distance as our measure, after 100 completely random steps, how far from its starting point do you expect it to end up?</p>
+          </div>
+          <fieldset class="prediction-entry">
+            <legend>Choose an RMS-distance estimate</legend>
+            <label class="prediction-choice" for="rw1d-choice-100"><input id="rw1d-choice-100" type="radio" name="rw1d-choice" value="100"><span class="choice-letter">A</span><span>100 lattice spacings</span></label>
+            <label class="prediction-choice" for="rw1d-choice-50"><input id="rw1d-choice-50" type="radio" name="rw1d-choice" value="50"><span class="choice-letter">B</span><span>50 lattice spacings</span></label>
+            <label class="prediction-choice" for="rw1d-choice-10"><input id="rw1d-choice-10" type="radio" name="rw1d-choice" value="10"><span class="choice-letter">C</span><span>10 lattice spacings</span></label>
+            <button class="action-button primary-action" id="rw1d-reveal" type="button">Reveal the 1D answer</button>
+            <p class="prediction-status" id="rw1d-prediction-status" role="status" aria-live="polite"></p>
+          </fieldset>
+          <div class="prediction-result" id="rw1d-result" hidden>
+            <p class="prediction-comparison" id="rw1d-comparison"></p>
+            <dl>
+              <div><dt>Your prediction</dt><dd id="rw1d-chosen-answer">&mdash;</dd></div>
+              <div><dt>RMS distance</dt><dd id="rw1d-theory-answer">&mdash;</dd></div>
+              <div><dt>Mean |x|</dt><dd id="rw1d-mean-answer">&mdash;</dd></div>
+              <div><dt>Expected at origin</dt><dd id="rw1d-origin-answer">&mdash;</dd></div>
+            </dl>
+            <p class="prediction-insight" id="rw1d-insight"></p>
+          </div>
+        </aside>
+
+        <div class="control-strip one-d-controls" aria-label="One-dimensional random-walk controls">
+          <div class="control-summary"><span>Fixed experiment</span><strong>100 steps &middot; 1,000 walkers</strong></div>
+          <div class="control-field">
+            <label for="rw1d-speed">Animation speed (target duration)</label>
+            <select id="rw1d-speed">
+              <option value="36000">Slow &middot; about 36 s</option>
+              <option value="10000" selected>Normal &middot; about 10 s</option>
+              <option value="2000">Fast &middot; about 2 s</option>
+            </select>
+          </div>
+          <div class="button-cluster" role="group" aria-label="One-dimensional random-walk playback">
+            <button class="action-button primary-action" id="rw1d-play" type="button">Animate</button>
+            <button class="action-button" id="rw1d-step" type="button">One step</button>
+            <button class="action-button" id="rw1d-reset" type="button">Reset</button>
+            <button class="action-button" id="rw1d-resample" type="button">New trial</button>
+          </div>
+        </div>
+
+        <div class="walk-grid one-d-grid">
+          <figure class="simulation-panel">
+            <div class="panel-heading">
+              <div><strong>Single atom</strong><span>Heads: right &middot; Tails: left</span></div>
+              <div class="panel-chip-row"><span class="panel-chip position-chip" id="rw1d-position-chip">Atom x/a = 0</span><span class="panel-chip" id="rw1d-step-chip">0 / 100 steps</span></div>
+            </div>
+            <div class="canvas-frame one-d-line-frame">
+              <canvas id="rw1d-atom-canvas" width="780" height="500" role="img" aria-label="One atom at the origin on an unbounded one-dimensional lattice."></canvas>
+            </div>
+            <figcaption>The atom moves one lattice spacing per coin flip. The number-line viewport pans when the atom reaches an edge; its position is never constrained.</figcaption>
+          </figure>
+
+          <figure class="simulation-panel">
+            <div class="panel-heading">
+              <div><strong>1,000 independent atoms</strong><span>Watch the atom cloud spread along the line</span></div>
+              <button class="action-button distribution-toggle" id="rw1d-distribution-toggle" type="button" aria-pressed="false" aria-controls="rw1d-ensemble-canvas">Show distribution</button>
+            </div>
+            <div class="canvas-frame one-d-ensemble-frame">
+              <canvas id="rw1d-ensemble-canvas" width="780" height="500" role="img" aria-label="One thousand atoms, all initially at the origin on a one-dimensional lattice. The distribution overlay is hidden."></canvas>
+            </div>
+            <figcaption>Every dot is one atom. Vertical separation prevents dots from hiding one another and has no physical meaning. Select <strong>Show distribution</strong> to overlay the observed counts and the exact binomial theoretical curve; its markers identify physically reachable sites.</figcaption>
+          </figure>
+        </div>
+
+        <dl class="stat-grid one-d-stat-grid" aria-label="One-dimensional random-walk measurements">
+          <div><dt>Current step, N</dt><dd id="rw1d-current-step">0</dd></div>
+          <div><dt>Single atom x/a</dt><dd id="rw1d-position">0</dd></div>
+          <div><dt>Ensemble mean x/a</dt><dd id="rw1d-mean-position">0.00</dd></div>
+          <div><dt>Ensemble &lang;|x|&rang;</dt><dd id="rw1d-mean-distance">0.00 a</dd></div>
+          <div><dt>Ensemble x<sub>rms</sub></dt><dd id="rw1d-rms-distance">0.00 a</dd></div>
+          <div><dt>Theory x<sub>rms</sub></dt><dd id="rw1d-theory-distance">0.00 a</dd></div>
+        </dl>
+        <p class="status-line" id="rw1d-status" role="status" aria-live="polite">Ready. The atom and all 1,000 walkers are at x/a = 0.</p>
+      </section>
+
+      <section class="dimension-lab dimension-lab-2d" aria-labelledby="rw2d-title">
+        <div class="dimension-heading">
+          <div><p class="panel-kicker">2D square-lattice walk</p><h3 id="rw2d-title">Now add a second dimension</h3></div>
+          <span>02 / 02</span>
+        </div>
+
+        <aside class="prediction-card" aria-labelledby="rw2d-prediction-title">
+          <div class="prediction-question">
+            <p class="panel-kicker">Transfer your prediction</p>
+            <h4 id="rw2d-prediction-title">Now let the atom take 100 random unit steps on a 2D square lattice.</h4>
+            <p>Each step is equally likely to go up, down, left, or right. Compared with the 1D walk, will its RMS distance from the start be smaller, the same, or larger?</p>
+            <p class="prediction-invitation">Does the answer depend on dimensionality?</p>
+          </div>
+          <fieldset class="prediction-entry">
+            <legend>Predict the 2D RMS distance</legend>
+            <label class="prediction-choice" for="rw2d-choice-smaller"><input id="rw2d-choice-smaller" type="radio" name="rw2d-choice" value="smaller"><span class="choice-letter">A</span><span>Smaller than 10a</span></label>
+            <label class="prediction-choice" for="rw2d-choice-same"><input id="rw2d-choice-same" type="radio" name="rw2d-choice" value="same"><span class="choice-letter">B</span><span>The same: 10a</span></label>
+            <label class="prediction-choice" for="rw2d-choice-larger"><input id="rw2d-choice-larger" type="radio" name="rw2d-choice" value="larger"><span class="choice-letter">C</span><span>Larger than 10a</span></label>
+            <button class="action-button primary-action" id="rw2d-reveal" type="button">Reveal the 2D answer</button>
+            <p class="prediction-status" id="rw2d-prediction-status" role="status" aria-live="polite"></p>
+          </fieldset>
+          <div class="prediction-result" id="rw2d-result" hidden>
+            <p class="prediction-comparison" id="rw2d-comparison"></p>
+            <dl>
+              <div><dt>Your prediction</dt><dd id="rw2d-chosen-answer">&mdash;</dd></div>
+              <div><dt>1D RMS distance</dt><dd>10.00a</dd></div>
+              <div><dt>2D RMS distance</dt><dd>10.00a</dd></div>
+              <div><dt>Spread per axis</dt><dd>7.07a</dd></div>
+            </dl>
+            <p class="prediction-insight" id="rw2d-insight"></p>
+          </div>
+        </aside>
+
+        <div class="control-strip" aria-label="Two-dimensional random-walk controls">
+          <div class="control-field control-wide">
+            <label for="walk-steps"><span>Number of steps</span><output id="walk-steps-value" for="walk-steps">100</output></label>
+            <input id="walk-steps" type="range" min="1" max="1000" step="1" value="100">
+          </div>
+          <div class="control-field">
+            <label for="walk-population">Endpoint walkers</label>
+            <select id="walk-population"><option value="100">100</option><option value="1000" selected>1,000</option></select>
+          </div>
+          <div class="control-field">
+            <label for="walk-speed">Animation speed (target duration)</label>
+            <select id="walk-speed"><option value="36000">Slow &middot; about 36 s</option><option value="10000" selected>Normal &middot; about 10 s</option><option value="2000">Fast &middot; about 2 s</option></select>
+          </div>
+          <div class="button-cluster" role="group" aria-label="Two-dimensional random-walk playback">
+            <button class="action-button primary-action" id="walk-play" type="button">Animate</button><button class="action-button" id="walk-step" type="button">One step</button><button class="action-button" id="walk-reset" type="button">Reset</button><button class="action-button" id="walk-resample" type="button">New trial</button>
+          </div>
+        </div>
+
+        <div class="walk-grid">
+          <figure class="simulation-panel">
+            <div class="panel-heading"><div><strong>Single atom on a 20 &times; 20 grid</strong><span>Starts at (0, 0); the axes pan at an edge.</span></div><div class="panel-chip-row"><span class="panel-chip position-chip" id="walk-position-chip">Atom (0, 0)</span><span class="panel-chip" id="walk-step-chip">0 / 100 steps</span></div></div>
+            <div class="canvas-frame path-frame"><canvas id="walk-path-canvas" width="780" height="500" role="img" aria-label="One atom at coordinate zero, zero on a clearly drawn 20 by 20 square lattice."></canvas></div>
+            <figcaption>The orange atom moves one lattice spacing per step on an unbounded lattice. The initial limits are &minus;10 to 9; each axis pans by 10 lattice spacings when the atom reaches its visible edge.</figcaption>
+          </figure>
+          <figure class="simulation-panel">
+            <div class="panel-heading"><div><strong>Large 2D ensemble</strong></div><div class="legend-inline" aria-label="Distance-ring legend"><span><i class="legend-ring mean-ring"></i>Mean radius</span><span><i class="legend-ring rms-ring"></i>Theory RMS</span></div></div>
+            <div class="canvas-frame ensemble-frame"><canvas id="walk-cloud-canvas" width="780" height="500" role="img" aria-label="One thousand random walkers at the centre, before any steps."></canvas></div>
+            <figcaption>The solid ring is the measured mean radius &lang;r&rang;. The dashed ring is the theoretical root-mean-square distance.</figcaption>
+          </figure>
+        </div>
+
+        <dl class="stat-grid" aria-label="Two-dimensional random-walk measurements">
+          <div><dt>Current step, N</dt><dd id="walk-current-step">0</dd></div><div><dt>Ensemble mean position</dt><dd id="walk-mean-position">(0.00, 0.00)</dd></div><div><dt>Ensemble &lang;r&rang;</dt><dd id="walk-mean-radius">0.00 a</dd></div><div><dt>Ensemble r<sub>rms</sub></dt><dd id="walk-rms-radius">0.00 a</dd></div><div><dt>Unbounded theory r<sub>rms</sub></dt><dd id="walk-theory-radius">0.00 a</dd></div>
+        </dl>
+        <p class="status-line" id="walk-status" role="status" aria-live="polite">Ready. The atom and every ensemble walker are at (0, 0).</p>
+      </section>
+    </section>
+
+    <section class="diffusion-card" id="kinetic-monte-carlo" aria-labelledby="kmc-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Section 2 &middot; Atomistic interdiffusion</p>
+          <h2 id="kmc-title">Two-species kinetic Monte Carlo</h2>
+        </div>
+        <p>A fully occupied lattice contains A atoms (blue) and B atoms (orange). Each event selects one nearest-neighbour bond; unlike atoms exchange positions while the total amount of B remains exactly constant.</p>
+      </div>
+
+      <div class="model-note">
+        <strong>Model used here</strong>
+        <p>This is an ideal, symmetric interchange model with equal bond rate &Gamma;: periodic boundaries vertically and reflecting, no-flux boundaries horizontally. The stochastic clock reports t* = &Gamma;t; a sweep is only an event-count unit. The model captures composition-conserving mixing, not vacancy-mediated diffusion or species-dependent activation barriers.</p>
+      </div>
+
+      <div class="control-strip kmc-controls" aria-label="Kinetic Monte Carlo controls">
+        <div class="control-field">
+          <label for="kmc-profile">Initial concentration</label>
+          <select id="kmc-profile">
+            <option value="pulse">Middle B layer (pulse)</option>
+            <option value="step" selected>Step: A | B</option>
+            <option value="linear">Linear B gradient</option>
+          </select>
+        </div>
+        <div class="control-field">
+          <label for="kmc-size">Grid size</label>
+          <select id="kmc-size">
+            <option value="24">24 &times; 24</option>
+            <option value="40" selected>40 &times; 40</option>
+            <option value="64">64 &times; 64</option>
+            <option value="96">96 &times; 96</option>
+          </select>
+        </div>
+        <div class="control-field control-wide">
+          <label for="kmc-steps"><span>Target Monte Carlo sweeps</span><output id="kmc-steps-value" for="kmc-steps">120</output></label>
+          <input id="kmc-steps" type="range" min="5" max="300" step="5" value="120">
+        </div>
+        <div class="control-field">
+          <label for="kmc-speed">Animation speed (target duration)</label>
+          <select id="kmc-speed">
+            <option value="36000">Slow &middot; about 36 s</option>
+            <option value="10000" selected>Normal &middot; about 10 s</option>
+            <option value="2000">Fast &middot; about 2 s</option>
+          </select>
+        </div>
+        <div class="button-cluster" role="group" aria-label="Kinetic Monte Carlo playback">
+          <button class="action-button primary-action" id="kmc-play" type="button">Animate</button>
+          <button class="action-button" id="kmc-step" type="button">One sweep</button>
+          <button class="action-button" id="kmc-reset" type="button">Reset</button>
+          <button class="action-button" id="kmc-resample" type="button">New seed</button>
+        </div>
+      </div>
+
+      <div class="kmc-grid">
+        <figure class="simulation-panel lattice-panel">
+          <div class="panel-heading">
+            <div><strong>Atomic configuration</strong><span>Nearest-neighbour A &harr; B exchanges</span></div>
+            <div class="species-legend" aria-label="Atom colour legend">
+              <span><i class="atom-key atom-a"></i>A</span>
+              <span><i class="atom-key atom-b"></i>B</span>
+            </div>
+          </div>
+          <div class="canvas-frame lattice-frame">
+            <canvas id="kmc-grid-canvas" width="620" height="620" role="img" aria-label="Forty by forty binary lattice with A atoms on the left and B atoms on the right."></canvas>
+          </div>
+          <figcaption>One sweep equals N<sub>sites</sub> randomly selected bond events. Same-species selections are valid null events in the continuous-time process.</figcaption>
+        </figure>
+
+        <figure class="simulation-panel profile-panel">
+          <div class="panel-heading">
+            <div><strong>Column concentration</strong><span>Fraction of B atoms in each x column</span></div>
+            <div class="line-legend" aria-label="Concentration curve legend">
+              <span><i class="current-line"></i>Current</span>
+              <span><i class="initial-line"></i>Initial</span>
+            </div>
+          </div>
+          <div class="canvas-frame profile-frame">
+            <canvas id="kmc-profile-canvas" width="760" height="500" role="img" aria-label="Initial step concentration profile for B atoms."></canvas>
+          </div>
+          <figcaption>Column averaging connects the atomistic lattice to the smooth concentration fields used in Fick&rsquo;s laws.</figcaption>
+        </figure>
+      </div>
+
+      <dl class="stat-grid kmc-stats" aria-label="Kinetic Monte Carlo measurements">
+        <div><dt>Progress</dt><dd id="kmc-sweep">0.00 / 120 sweeps</dd></div>
+        <div><dt>KMC time, t*</dt><dd id="kmc-time">0.000</dd></div>
+        <div><dt>Bond events</dt><dd id="kmc-events">0</dd></div>
+        <div><dt>Successful exchanges</dt><dd id="kmc-exchanges">0</dd></div>
+        <div><dt>B fraction</dt><dd id="kmc-b-fraction">0.5000</dd></div>
+      </dl>
+      <p class="status-line" id="kmc-status" role="status" aria-live="polite">Step profile ready. The B fraction will remain constant.</p>
+    </section>
+
+    <section class="diffusion-card" id="ficks-laws" aria-labelledby="ficks-title">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Section 3 &middot; Continuum description</p>
+          <h2 id="ficks-title">Fick&rsquo;s laws of diffusion</h2>
+        </div>
+        <p>When atomic detail is averaged over many sites, concentration becomes a continuous field. Fick&rsquo;s first law relates flux to a gradient; conservation of matter turns that relation into the time-dependent second law.</p>
+      </div>
+
+      <div class="law-grid">
+        <article class="law-card first-law">
+          <p class="panel-kicker">Fick&rsquo;s first law</p>
+          <div class="law-equation" aria-label="J equals negative D times partial C over partial x">J = &minus;D&nbsp;<span class="fraction"><span>&part;C</span><span>&part;x</span></span></div>
+          <p><strong>Flux follows the downhill direction.</strong> The minus sign makes J point from high concentration toward low concentration.</p>
+          <dl><div><dt>J</dt><dd>mol m<sup>&minus;2</sup> s<sup>&minus;1</sup></dd></div><div><dt>D</dt><dd>m<sup>2</sup> s<sup>&minus;1</sup></dd></div></dl>
+        </article>
+        <article class="law-card second-law">
+          <p class="panel-kicker">Fick&rsquo;s second law &middot; constant D</p>
+          <div class="law-equation" aria-label="Partial C over partial t equals D times partial squared C over partial x squared"><span class="fraction"><span>&part;C</span><span>&part;t</span></span> = D&nbsp;<span class="fraction"><span>&part;<sup>2</sup>C</span><span>&part;x<sup>2</sup></span></span></div>
+          <p><strong>Curvature changes concentration.</strong> Peaks flatten, sharp interfaces broaden, and total solute is conserved in a closed domain.</p>
+          <dl><div><dt>C</dt><dd>mol m<sup>&minus;3</sup></dd></div><div><dt>t</dt><dd>s</dd></div></dl>
+        </article>
+      </div>
+
+      <details class="analytical-panel">
+        <summary>
+          <span><strong>Analytical solutions of Fick&rsquo;s second law</strong><small>Open the closed-form solution module</small></span>
+          <span class="analytical-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="analytical-intro">
+          <div>
+            <p class="panel-kicker">Similarity variable</p>
+            <div class="analytical-equation">&eta; = <span class="fraction"><span>x</span><span>2&radic;(Dt)</span></span></div>
+          </div>
+          <p>For one-dimensional diffusion with constant D, many profiles depend on x and t only through &eta;. That is why every characteristic diffusion depth scales as &radic;(Dt).</p>
+        </div>
+        <div class="analytical-grid">
+          <article>
+            <p class="solution-label">Instantaneous planar source &middot; infinite medium</p>
+            <h3>A narrow pulse becomes Gaussian</h3>
+            <div class="analytical-equation">C(x,t) = <span class="fraction"><span>M</span><span>&radic;(4&pi;Dt)</span></span> exp<span class="equation-bracket">[&minus;<span class="fraction"><span>x<sup>2</sup></span><span>4Dt</span></span>]</span></div>
+            <p>M is the conserved amount per unit area. The peak falls while the variance grows as &sigma;<sup>2</sup> = 2Dt.</p>
+          </article>
+          <article>
+            <p class="solution-label">Diffusion couple &middot; infinite medium</p>
+            <h3>A sharp step becomes an error function</h3>
+            <div class="analytical-equation">C(x,t) = <span class="fraction"><span>C<sub>L</sub> + C<sub>R</sub></span><span>2</span></span> + <span class="fraction"><span>C<sub>R</sub> &minus; C<sub>L</sub></span><span>2</span></span> erf(&eta;)</div>
+            <p>The midpoint remains (C<sub>L</sub> + C<sub>R</sub>)/2 while the interfacial width grows in proportion to &radic;(Dt).</p>
+          </article>
+          <article>
+            <p class="solution-label">Constant surface concentration &middot; semi-infinite solid</p>
+            <h3>A maintained surface produces an erfc profile</h3>
+            <div class="analytical-equation"><span class="fraction"><span>C(x,t) &minus; C<sub>0</sub></span><span>C<sub>s</sub> &minus; C<sub>0</sub></span></span> = erfc(&eta;)</div>
+            <p>C<sub>s</sub> is held at the surface and C<sub>0</sub> is the initial bulk concentration. This idealization is widely used for case hardening and constant-source doping.</p>
+          </article>
+        </div>
+        <div class="analytical-assumptions"><strong>Use these solutions when:</strong> D is constant, transport is one-dimensional, the stated initial and boundary conditions apply, and the domain is large compared with the diffusion depth.</div>
+      </details>
+
+      <div class="control-strip fdm-controls" aria-label="Finite-difference controls">
+        <div class="control-field">
+          <label for="fdm-profile">Initial concentration</label>
+          <select id="fdm-profile">
+            <option value="pulse">Narrow central pulse</option>
+            <option value="step" selected>Step: low | high</option>
+            <option value="linear">Linear gradient</option>
+          </select>
+        </div>
+        <div class="control-field">
+          <label for="fdm-nodes">Grid cells (cell-centred)</label>
+          <select id="fdm-nodes">
+            <option value="51">51</option>
+            <option value="101" selected>101</option>
+            <option value="201">201</option>
+          </select>
+        </div>
+        <div class="control-field">
+          <label for="fdm-diffusivity">Diffusivity, D</label>
+          <select id="fdm-diffusivity">
+            <option value="1e-13">1 × 10⁻¹³ m²/s</option>
+            <option value="1e-12" selected>1 × 10⁻¹² m²/s</option>
+            <option value="1e-11">1 × 10⁻¹¹ m²/s</option>
+          </select>
+        </div>
+        <div class="control-field control-wide">
+          <label for="fdm-time"><span>Target dimensionless time, &tau; = Dt/L<sup>2</sup></span><output id="fdm-time-value" for="fdm-time">0.080</output></label>
+          <input id="fdm-time" type="range" min="0.005" max="0.200" step="0.005" value="0.080">
+        </div>
+        <div class="control-field">
+          <label for="fdm-speed">Animation speed (target duration)</label>
+          <select id="fdm-speed">
+            <option value="36000">Slow &middot; about 36 s</option>
+            <option value="10000" selected>Normal &middot; about 10 s</option>
+            <option value="2000">Fast &middot; about 2 s</option>
+          </select>
+        </div>
+        <div class="button-cluster" role="group" aria-label="Finite-difference playback">
+          <button class="action-button primary-action" id="fdm-play" type="button">Animate</button>
+          <button class="action-button" id="fdm-step" type="button">One increment</button>
+          <button class="action-button" id="fdm-reset" type="button">Reset</button>
+        </div>
+      </div>
+
+      <div class="continuum-grid">
+        <figure class="simulation-panel continuum-panel">
+          <div class="panel-heading">
+            <div><strong>Finite-difference solution</strong><span>Closed 100 &micro;m domain with no-flux ends</span></div>
+            <span class="stability-badge">Stable &middot; Fo &le; 0.45</span>
+          </div>
+          <div class="canvas-frame continuum-frame">
+            <canvas id="fdm-canvas" width="1000" height="520" role="img" aria-label="Initial step concentration profile in a closed one-dimensional domain."></canvas>
+          </div>
+          <figcaption>Solid: numerical solution. Dashed: initial condition. The explicit cell-centred update uses &Delta;&tau; &le; 0.45&Delta;X<sup>2</sup>, below the one-dimensional stability limit Fo &le; 0.5.</figcaption>
+        </figure>
+
+        <aside class="method-panel" aria-labelledby="method-title">
+          <p class="panel-kicker">Explicit conservative update</p>
+          <h3 id="method-title">Fluxes cross cell faces</h3>
+          <div class="method-equation">J<sub>i+&frac12;</sub> = &minus;D&nbsp;<span class="fraction"><span>C<sub>i+1</sub> &minus; C<sub>i</sub></span><span>&Delta;x</span></span></div>
+          <div class="method-equation">C<sub>i</sub><sup>n+1</sup> = C<sub>i</sub><sup>n</sup> &minus; <span class="fraction"><span>&Delta;t</span><span>&Delta;x</span></span>(J<sub>i+&frac12;</sub> &minus; J<sub>i&minus;&frac12;</sub>)</div>
+          <p>Boundary-face fluxes are set to zero. What leaves one cell enters its neighbour, so the discrete integral of C stays constant apart from round-off.</p>
+          <dl class="method-stats">
+            <div><dt>Dimensionless time, &tau;</dt><dd id="fdm-current-time">0.00000</dd></div>
+            <div><dt>Physical time</dt><dd id="fdm-physical-time">0.0 s</dd></div>
+            <div><dt>Fourier number</dt><dd id="fdm-fourier">0.450</dd></div>
+            <div><dt>Mass retained</dt><dd id="fdm-mass">100.000%</dd></div>
+            <div><dt>Concentration range</dt><dd id="fdm-range">0.000 &ndash; 1.000</dd></div>
+          </dl>
+        </aside>
+      </div>
+      <p class="status-line" id="fdm-status" role="status" aria-live="polite">Step profile ready at &tau; = 0.</p>
+
+      <details class="code-panel">
+        <summary><span>Python program: solve the same diffusion equation</span><span class="summary-hint">Show code</span></summary>
+        <div class="code-toolbar">
+          <p>NumPy implementation of the same no-flux, conservative explicit scheme.</p>
+          <div>
+            <a class="action-button code-link" href="../../python/diffusion/solve_diffusion.py" download>Download .py</a>
+            <button class="action-button" id="copy-python" type="button">Copy code</button>
+          </div>
+        </div>
+        <pre><code id="python-code"># Requires: python -m pip install numpy matplotlib
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Physical domain and constant diffusivity
+L = 100e-6                 # m
+D = 1e-12                  # m^2 s^-1
+nodes = 101
+dx = L / nodes
+x = -L / 2 + (np.arange(nodes) + 0.5) * dx
+
+# Step initial condition: low concentration | high concentration
+C = np.where(x &lt; 0.0, 0.0, 1.0)
+C_initial = C.copy()
+
+# Explicit stability: Fo = D*dt/dx^2 must not exceed 1/2 in 1D
+Fo = 0.45
+dt = Fo * dx**2 / D
+target_tau = 0.08          # tau = D*t/L^2
+target_time = target_tau * L**2 / D
+elapsed = 0.0
+
+while elapsed &lt; target_time:
+    step_dt = min(dt, target_time - elapsed)
+    # Face fluxes. The two boundary faces remain zero (no flux).
+    flux = np.zeros(nodes + 1)
+    flux[1:nodes] = -D * np.diff(C) / dx
+
+    # Conservative balance: what leaves one cell enters the next.
+    C -= (step_dt / dx) * (flux[1:] - flux[:-1])
+    elapsed += step_dt
+
+print(f"Fo = {Fo:.2f}")
+print(f"Mass retained = {C.sum() / C_initial.sum():.12f}")
+
+plt.plot(x * 1e6, C_initial, "--", label="initial")
+plt.plot(x * 1e6, C, label="finite difference")
+plt.xlabel("Position (micrometres)")
+plt.ylabel("Normalized concentration")
+plt.ylim(-0.03, 1.03)
+plt.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+        <p class="copy-status" id="copy-status" role="status" aria-live="polite"></p>
+      </details>
+
+      <section class="applications-panel" aria-labelledby="applications-title">
+        <div class="applications-heading">
+          <div>
+            <p class="section-kicker">Practical applications</p>
+            <h3 id="applications-title">Where controlled diffusion shapes a material</h3>
+          </div>
+          <p>Temperature sets D, time sets the penetration scale &radic;(Dt), and the boundary condition determines the concentration-profile shape.</p>
+        </div>
+        <div class="applications-grid">
+          <article>
+            <span class="application-index">01</span>
+            <div>
+              <h4>Carburizing steel</h4>
+              <p>At high temperature, carbon diffuses from a carbon-rich atmosphere into austenitic steel. Quenching converts the enriched case into a hard, wear-resistant surface while the lower-carbon core remains tougher.</p>
+              <p class="application-model"><strong>Useful idealization:</strong> constant surface concentration, giving an erfc profile. Case depth grows approximately with &radic;(Dt).</p>
+            </div>
+          </article>
+          <article>
+            <span class="application-index">02</span>
+            <div>
+              <h4>Semiconductor doping</h4>
+              <p>Boron, phosphorus, or arsenic can diffuse through silicon during thermal processing. The resulting concentration profile controls junction depth and therefore the electrical behaviour of a device.</p>
+              <p class="application-model"><strong>Useful idealizations:</strong> constant-source predeposition gives an erfc profile; limited-source drive-in approaches a Gaussian profile. Implantation followed by annealing is also common.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <section class="diffusion-card takeaway-card" aria-labelledby="bridge-title">
+      <div>
+        <p class="section-kicker">Connect the scales</p>
+        <h2 id="bridge-title">Random steps become a smooth law</h2>
+      </div>
+      <ol>
+        <li><span>01</span><div><strong>Microscopic</strong><p>Unbiased atomic jumps create an RMS distance proportional to &radic;t.</p></div></li>
+        <li><span>02</span><div><strong>Mesoscopic</strong><p>Many exchanges broaden composition profiles while conserving each species.</p></div></li>
+        <li><span>03</span><div><strong>Continuum</strong><p>Fick&rsquo;s second law predicts that same broadening without tracking atoms one by one.</p></div></li>
+      </ol>
+      <a class="button primary quiz-cta" href="../../quizzes/diffusion/index.html">Practice diffusion problems &rarr;</a>
+    </section>
+
+    <nav class="lesson-nav" aria-label="Teaching module sequence">
+      <a href="../crystal-defects/index.html"><span>Previous module</span><strong>&larr; Crystal Defects</strong></a>
+      <a href="../phase-diagrams/index.html"><span>Next module</span><strong>Phase Diagrams &rarr;</strong></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Diffusion &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

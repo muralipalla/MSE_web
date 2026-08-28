@@ -7,6 +7,11 @@ Independent quiz modules:
     |-- style.css    Quiz-specific layout and answer states
     |-- app.js       Answer checking using the shared bond model
 
+    diffusion/
+    |-- index.html   Numerical and conceptual Fick's-law questions
+    |-- style.css    Responsive diffusion-quiz layout and answer states
+    |-- app.js       Numerical checking, feedback, and score handling
+
     miller-indices/
     |-- index.html   Miller, Miller-Bravais, and planar-density questions
     |-- style.css    Responsive quiz and shared-viewer layout

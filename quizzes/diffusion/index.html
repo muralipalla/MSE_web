@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Practice Fick's laws, diffusion distances, error-function profiles, finite-difference stability, and Arrhenius diffusion calculations.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Diffusion and Fick's Laws Quiz | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#quiz">Skip to the quiz</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Quiz navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#practice">&larr; Back to practice</a>
+    </nav>
+  </header>
+
+  <main class="diffusion-quiz-shell" id="quiz">
+    <header class="diffusion-quiz-intro">
+      <div>
+        <p class="eyebrow">Diffusion quiz</p>
+        <h1>From random walks to Fick&rsquo;s laws</h1>
+      </div>
+      <p>
+        Connect atom-scale motion to continuum transport. Work in SI units unless a
+        question specifies otherwise; numerical answers within the stated tolerance are accepted.
+      </p>
+    </header>
+
+    <section class="quiz-conventions" aria-labelledby="conventions-title">
+      <div>
+        <p class="section-kicker">Reference</p>
+        <h2 id="conventions-title">Relations used in this quiz</h2>
+      </div>
+      <div class="formula-list">
+        <p><strong>Fick I:</strong> <i>J</i> = &minus;<i>D</i> &part;<i>C</i>/&part;<i>x</i></p>
+        <p><strong>Fick II:</strong> &part;<i>C</i>/&part;<i>t</i> = <i>D</i> &part;<sup>2</sup><i>C</i>/&part;<i>x</i><sup>2</sup></p>
+        <p><strong>Random walk:</strong> &lang;<i>x</i><sup>2</sup>&rang; = 2<i>Dt</i> in 1D and &lang;<i>r</i><sup>2</sup>&rang; = 4<i>Dt</i> in 2D</p>
+        <p><strong>Arrhenius:</strong> <i>D</i> = <i>D</i><sub>0</sub> exp[&minus;<i>Q</i>/(<i>RT</i>)]</p>
+      </div>
+    </section>
+
+    <form class="diffusion-quiz-form" id="diffusion-quiz-form" novalidate>
+      <section class="quiz-part" aria-labelledby="fick-title">
+        <p class="section-kicker">Part A</p>
+        <h2 id="fick-title">Fick&rsquo;s laws and flux</h2>
+
+        <article class="quiz-question" data-question="q1">
+          <div class="question-heading"><h3>1. Direction of diffusion</h3></div>
+          <p>At a point in a solid, <i>D</i> is positive and d<i>C</i>/d<i>x</i> &gt; 0. In which direction is the diffusive flux?</p>
+          <fieldset class="answer-options" aria-describedby="q1-status">
+            <legend class="visually-hidden">Choose the direction of the diffusive flux</legend>
+            <label><input type="radio" name="q1" value="negative-x"> In the negative <i>x</i> direction</label>
+            <label><input type="radio" name="q1" value="positive-x"> In the positive <i>x</i> direction</label>
+            <label><input type="radio" name="q1" value="zero"> The flux is zero</label>
+          </fieldset>
+          <p class="answer-status" id="q1-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q1">Show solution</button>
+          <div class="solution-panel" id="solution-q1" hidden>
+            <p>Fick&rsquo;s first law is <i>J</i> = &minus;<i>D</i> d<i>C</i>/d<i>x</i>. A positive concentration gradient therefore gives a flux in the <strong>negative <i>x</i> direction</strong>, toward lower concentration.</p>
+          </div>
+        </article>
+
+        <article class="quiz-question" data-question="q2">
+          <div class="question-heading"><h3>2. Calculate a steady flux</h3></div>
+          <p>
+            <i>D</i> = 1.5 &times; 10<sup>&minus;10</sup> m<sup>2</sup>/s. Concentration falls from
+            2.4 &times; 10<sup>4</sup> to 0.8 &times; 10<sup>4</sup> mol/m<sup>3</sup> over 2.0 mm.
+            Find <i>J</i>, taking the positive direction toward the lower-concentration side.
+          </p>
+          <label class="numeric-answer" for="q2-answer">
+            <span>Diffusive flux, <i>J</i></span>
+            <input id="q2-answer" type="number" inputmode="decimal" step="any" aria-describedby="q2-status">
+            <span>mmol m<sup>&minus;2</sup> s<sup>&minus;1</sup></span>
+          </label>
+          <p class="answer-status" id="q2-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q2">Show solution</button>
+          <div class="solution-panel" id="solution-q2" hidden>
+            <p>d<i>C</i>/d<i>x</i> = (&minus;1.6 &times; 10<sup>4</sup>)/(2.0 &times; 10<sup>&minus;3</sup>) = &minus;8.0 &times; 10<sup>6</sup> mol m<sup>&minus;4</sup>. Thus <i>J</i> = <strong>1.2 &times; 10<sup>&minus;3</sup> mol m<sup>&minus;2</sup> s<sup>&minus;1</sup> = 1.20 mmol m<sup>&minus;2</sup> s<sup>&minus;1</sup></strong>.</p>
+          </div>
+        </article>
+
+        <article class="quiz-question" data-question="q3">
+          <div class="question-heading"><h3>3. Recognise a steady profile</h3></div>
+          <p>For constant <i>D</i>, no sources, and fixed boundary concentrations, what does Fick&rsquo;s second law predict for an initially linear concentration profile?</p>
+          <fieldset class="answer-options" aria-describedby="q3-status">
+            <legend class="visually-hidden">Choose what happens to the linear concentration profile</legend>
+            <label><input type="radio" name="q3" value="linear-steady"> It remains linear and steady</label>
+            <label><input type="radio" name="q3" value="sharpens"> It sharpens into a step</label>
+            <label><input type="radio" name="q3" value="oscillates"> It develops oscillations</label>
+          </fieldset>
+          <p class="answer-status" id="q3-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q3">Show solution</button>
+          <div class="solution-panel" id="solution-q3" hidden>
+            <p>Fick&rsquo;s second law gives &part;<i>C</i>/&part;<i>t</i> = <i>D</i>&part;<sup>2</sup><i>C</i>/&part;<i>x</i><sup>2</sup>. A linear profile has zero curvature, so &part;<i>C</i>/&part;<i>t</i> = 0 and it <strong>remains steady</strong>.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="quiz-part" aria-labelledby="walk-title">
+        <p class="section-kicker">Part B</p>
+        <h2 id="walk-title">Random walks and continuum profiles</h2>
+
+        <article class="quiz-question" data-question="q4">
+          <div class="question-heading"><h3>4. Two-dimensional diffusion distance</h3></div>
+          <p>For isotropic 2D diffusion, <i>D</i> = 2.0 &times; 10<sup>&minus;12</sup> m<sup>2</sup>/s and <i>t</i> = 250 s. Find the root-mean-square radial displacement.</p>
+          <label class="numeric-answer" for="q4-answer">
+            <span><i>r</i><sub>rms</sub></span>
+            <input id="q4-answer" type="number" inputmode="decimal" step="any" aria-describedby="q4-status">
+            <span>&micro;m</span>
+          </label>
+          <p class="answer-status" id="q4-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q4">Show solution</button>
+          <div class="solution-panel" id="solution-q4" hidden>
+            <p>In 2D, &lang;<i>r</i><sup>2</sup>&rang; = 4<i>Dt</i>. Therefore <i>r</i><sub>rms</sub> = &radic;(4<i>Dt</i>) = &radic;[4(2.0 &times; 10<sup>&minus;12</sup>)(250)] = <strong>44.72 &micro;m</strong>.</p>
+          </div>
+        </article>
+
+        <article class="quiz-question" data-question="q5">
+          <div class="question-heading"><h3>5. Time to diffuse</h3></div>
+          <p>How long does a species with <i>D</i> = 3.0 &times; 10<sup>&minus;11</sup> m<sup>2</sup>/s take to reach a 1D rms displacement of 12 &micro;m?</p>
+          <label class="numeric-answer" for="q5-answer">
+            <span>Time, <i>t</i></span>
+            <input id="q5-answer" type="number" inputmode="decimal" step="any" aria-describedby="q5-status">
+            <span>s</span>
+          </label>
+          <p class="answer-status" id="q5-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q5">Show solution</button>
+          <div class="solution-panel" id="solution-q5" hidden>
+            <p>In 1D, &lang;<i>x</i><sup>2</sup>&rang; = 2<i>Dt</i>. Thus <i>t</i> = <i>x</i><sub>rms</sub><sup>2</sup>/(2<i>D</i>) = (12 &times; 10<sup>&minus;6</sup>)<sup>2</sup>/[2(3.0 &times; 10<sup>&minus;11</sup>)] = <strong>2.40 s</strong>.</p>
+          </div>
+        </article>
+
+        <article class="quiz-question" data-question="q6">
+          <div class="question-heading"><h3>6. Step-profile solution</h3></div>
+          <p>Initially, the fraction of B is 0 for <i>x</i> &lt; 0 and 1 for <i>x</i> &gt; 0. For constant <i>D</i>, what is the fraction of B at <i>x</i> = 2&radic;(<i>Dt</i>)? Give your answer as a percentage.</p>
+          <label class="numeric-answer" for="q6-answer">
+            <span>Fraction of B</span>
+            <input id="q6-answer" type="number" inputmode="decimal" step="any" min="0" max="100" aria-describedby="q6-status">
+            <span>%</span>
+          </label>
+          <p class="answer-status" id="q6-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q6">Show solution</button>
+          <div class="solution-panel" id="solution-q6" hidden>
+            <p>The step solution is <i>C</i><sub>B</sub> = &frac12;[1 + erf(<i>x</i>/2&radic;(<i>Dt</i>))]. Here the error-function argument is 1, so <i>C</i><sub>B</sub> = &frac12;[1 + 0.84270] = <strong>0.92135, or 92.14%</strong>.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="quiz-part" aria-labelledby="numerical-title">
+        <p class="section-kicker">Part C</p>
+        <h2 id="numerical-title">Numerical methods and temperature</h2>
+
+        <article class="quiz-question" data-question="q7">
+          <div class="question-heading"><h3>7. Explicit-scheme stability</h3></div>
+          <p>A 1D forward-time, centred-space solver uses &Delta;<i>x</i> = 1.0 &micro;m and <i>D</i> = 1.0 &times; 10<sup>&minus;12</sup> m<sup>2</sup>/s. Find the largest stable time step.</p>
+          <label class="numeric-answer" for="q7-answer">
+            <span>&Delta;<i>t</i><sub>max</sub></span>
+            <input id="q7-answer" type="number" inputmode="decimal" step="any" aria-describedby="q7-status">
+            <span>s</span>
+          </label>
+          <p class="answer-status" id="q7-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q7">Show solution</button>
+          <div class="solution-panel" id="solution-q7" hidden>
+            <p>For the 1D explicit scheme, <i>D</i>&Delta;<i>t</i>/&Delta;<i>x</i><sup>2</sup> &le; &frac12;. Therefore &Delta;<i>t</i><sub>max</sub> = &Delta;<i>x</i><sup>2</sup>/(2<i>D</i>) = (10<sup>&minus;6</sup>)<sup>2</sup>/(2 &times; 10<sup>&minus;12</sup>) = <strong>0.50 s</strong>.</p>
+          </div>
+        </article>
+
+        <article class="quiz-question" data-question="q8">
+          <div class="question-heading"><h3>8. Arrhenius temperature dependence</h3></div>
+          <p>For an activation energy <i>Q</i> = 120 kJ/mol, by what factor does <i>D</i> increase when temperature rises from 800 K to 1000 K? Assume the same <i>D</i><sub>0</sub> and use <i>R</i> = 8.314 J mol<sup>&minus;1</sup> K<sup>&minus;1</sup>.</p>
+          <label class="numeric-answer" for="q8-answer">
+            <span><i>D</i><sub>1000 K</sub>/<i>D</i><sub>800 K</sub></span>
+            <input id="q8-answer" type="number" inputmode="decimal" step="any" aria-describedby="q8-status">
+            <span>times</span>
+          </label>
+          <p class="answer-status" id="q8-status"></p>
+          <button class="solution-toggle" type="button" aria-expanded="false" aria-controls="solution-q8">Show solution</button>
+          <div class="solution-panel" id="solution-q8" hidden>
+            <p><i>D</i><sub>2</sub>/<i>D</i><sub>1</sub> = exp{&minus;(<i>Q</i>/<i>R</i>)[1/<i>T</i><sub>2</sub> &minus; 1/<i>T</i><sub>1</sub>]} = exp{&minus;(120000/8.314)(1/1000 &minus; 1/800)} = <strong>36.91</strong>.</p>
+          </div>
+        </article>
+      </section>
+
+      <div class="quiz-actions">
+        <button class="button primary" type="submit">Check all answers</button>
+        <button class="button secondary" id="clear-quiz" type="button">Clear answers</button>
+      </div>
+      <p class="quiz-feedback" id="quiz-feedback" role="status" aria-live="polite">Eight questions, one point each.</p>
+    </form>
+
+    <article class="quiz-next">
+      <div>
+        <p class="section-kicker">Explore the mechanisms</p>
+        <h2>Return to the diffusion module</h2>
+        <p>Compare individual random walks, kinetic Monte Carlo mixing, and the finite-difference continuum solution.</p>
+      </div>
+      <a class="button primary" href="../../teaching/diffusion/index.html">Open diffusion module</a>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Diffusion quiz &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>
