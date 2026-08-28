@@ -7,10 +7,10 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Diffusion | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=16">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="random-walk-1d.js?v=7" defer></script>
-  <script src="app.js?v=12" defer></script>
+  <script src="app.js?v=13" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the diffusion lesson</a>
@@ -364,6 +364,14 @@
         <div class="analytical-assumptions"><strong>Use these solutions when:</strong> D is constant, transport is one-dimensional, the stated initial and boundary conditions apply, and the domain is large compared with the diffusion depth.</div>
       </details>
 
+      <aside class="stability-challenge" aria-labelledby="stability-challenge-title">
+        <div>
+          <p class="panel-kicker">Numerical stability challenge</p>
+          <h3 id="stability-challenge-title">What happens when the time step becomes too large?</h3>
+        </div>
+        <p>Start at Fo = 0.45, then move beyond the explicit limit Fo = 0.50. Watch a smooth diffusion profile turn into growing, nonphysical oscillations even though the update still conserves total mass.</p>
+      </aside>
+
       <div class="control-strip fdm-controls" aria-label="Finite-difference controls">
         <div class="control-field">
           <label for="fdm-profile">Initial concentration</label>
@@ -389,6 +397,11 @@
             <option value="1e-11">1 × 10⁻¹¹ m²/s</option>
           </select>
         </div>
+        <div class="control-field control-wide fdm-fourier-control">
+          <label for="fdm-fourier-control"><span>Fourier number, Fo = D&Delta;t/&Delta;x<sup>2</sup></span><output id="fdm-fourier-value" for="fdm-fourier-control">0.45</output></label>
+          <input id="fdm-fourier-control" type="range" min="0.05" max="0.70" step="0.01" value="0.45" aria-describedby="fdm-fourier-hint">
+          <small class="control-hint" id="fdm-fourier-hint">Fo &le; 0.50: stable &middot; Fo &gt; 0.50: unstable</small>
+        </div>
         <div class="control-field control-wide">
           <label for="fdm-time"><span>Target dimensionless time, &tau; = Dt/L<sup>2</sup></span><output id="fdm-time-value" for="fdm-time">0.080</output></label>
           <input id="fdm-time" type="range" min="0.005" max="0.200" step="0.005" value="0.080">
@@ -412,12 +425,12 @@
         <figure class="simulation-panel continuum-panel">
           <div class="panel-heading">
             <div><strong>Finite-difference solution</strong><span>Closed 100 &micro;m domain with no-flux ends</span></div>
-            <span class="stability-badge">Stable &middot; Fo &le; 0.45</span>
+            <span class="stability-badge" id="fdm-stability" data-state="stable">Stable &middot; Fo = 0.45</span>
           </div>
           <div class="canvas-frame continuum-frame">
             <canvas id="fdm-canvas" width="1000" height="520" role="img" aria-label="Initial step concentration profile in a closed one-dimensional domain."></canvas>
           </div>
-          <figcaption>Solid: numerical solution. Dashed: initial condition. The explicit cell-centred update uses &Delta;&tau; &le; 0.45&Delta;X<sup>2</sup>, below the one-dimensional stability limit Fo &le; 0.5.</figcaption>
+          <figcaption>Solid: numerical solution. Dashed: initial condition. For this one-dimensional explicit update, Fo &le; 0.5 is stable; above the limit, numerical errors grow into oscillations that are not physical diffusion.</figcaption>
         </figure>
 
         <aside class="method-panel" aria-labelledby="method-title">
@@ -429,7 +442,7 @@
           <dl class="method-stats">
             <div><dt>Dimensionless time, &tau;</dt><dd id="fdm-current-time">0.00000</dd></div>
             <div><dt>Physical time</dt><dd id="fdm-physical-time">0.0 s</dd></div>
-            <div><dt>Fourier number</dt><dd id="fdm-fourier">0.450</dd></div>
+            <div><dt>Selected Fourier number</dt><dd id="fdm-fourier">0.450</dd></div>
             <div><dt>Mass retained</dt><dd id="fdm-mass">100.000%</dd></div>
             <div><dt>Concentration range</dt><dd id="fdm-range">0.000 &ndash; 1.000</dd></div>
           </dl>
@@ -442,6 +455,7 @@
         <div class="code-toolbar">
           <p>NumPy implementation of the same no-flux, conservative explicit scheme.</p>
           <div>
+            <a class="action-button code-link colab-link" href="https://colab.research.google.com/github/muralipalla/MSE_web/blob/main/python/diffusion/diffusion_stability_lab.ipynb" target="_blank" rel="noopener noreferrer">Run in Google Colab <span aria-hidden="true">&#8599;</span></a>
             <a class="action-button code-link" href="../../python/diffusion/solve_diffusion.py" download>Download .py</a>
             <button class="action-button" id="copy-python" type="button">Copy code</button>
           </div>
@@ -461,12 +475,16 @@ x = -L / 2 + (np.arange(nodes) + 0.5) * dx
 C = np.where(x &lt; 0.0, 0.0, 1.0)
 C_initial = C.copy()
 
-# Explicit stability: Fo = D*dt/dx^2 must not exceed 1/2 in 1D
+# Explicit stability: Fo = D*dt/dx^2 must not exceed 1/2 in 1D.
+# Change this to 0.55 and rerun to reveal numerical instability.
 Fo = 0.45
 dt = Fo * dx**2 / D
 target_tau = 0.08          # tau = D*t/L^2
 target_time = target_tau * L**2 / D
 elapsed = 0.0
+iterations = 0
+diverged = False
+plot_min, plot_max = -2.0, 3.0
 
 while elapsed &lt; target_time:
     step_dt = min(dt, target_time - elapsed)
@@ -477,15 +495,25 @@ while elapsed &lt; target_time:
     # Conservative balance: what leaves one cell enters the next.
     C -= (step_dt / dx) * (flux[1:] - flux[:-1])
     elapsed += step_dt
+    iterations += 1
+
+    if not np.all(np.isfinite(C)) or C.min() &lt; plot_min or C.max() &gt; plot_max:
+        diverged = True
+        break
 
 print(f"Fo = {Fo:.2f}")
+print("Predicted behavior:", "stable" if Fo &lt;= 0.5 else "unstable")
 print(f"Mass retained = {C.sum() / C_initial.sum():.12f}")
+print(f"Concentration range = [{C.min():.4f}, {C.max():.4f}]")
+if diverged:
+    print(f"Stopped after {iterations} increments: nonphysical oscillations left the plot range.")
 
 plt.plot(x * 1e6, C_initial, "--", label="initial")
 plt.plot(x * 1e6, C, label="finite difference")
 plt.xlabel("Position (micrometres)")
 plt.ylabel("Normalized concentration")
-plt.ylim(-0.03, 1.03)
+plt.axhspan(0, 1, color="tab:green", alpha=0.06, label="physical range")
+plt.ylim((plot_min, plot_max) if Fo &gt; 0.5 else (-0.03, 1.03))
 plt.legend()
 plt.tight_layout()
 plt.show()</code></pre>

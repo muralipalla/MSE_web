@@ -980,8 +980,38 @@
   color: var(--diffusion-orange);
 }
 
+.stability-challenge {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.75fr) minmax(18rem, 1.25fr);
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(217, 104, 43, 0.28);
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #fff5ea, #fffdf9);
+}
+
+.stability-challenge h3 {
+  margin: 0.3rem 0 0;
+  color: var(--ink);
+  font-size: 1.18rem;
+}
+
+.stability-challenge > p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
 .fdm-controls {
-  grid-template-columns: repeat(3, minmax(9rem, 0.72fr)) minmax(17rem, 1.55fr) minmax(8rem, 0.65fr);
+  grid-template-columns: repeat(3, minmax(8.5rem, 0.7fr)) repeat(2, minmax(15rem, 1.25fr)) minmax(8rem, 0.65fr);
+}
+
+.control-hint {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 750;
 }
 
 .continuum-grid {
@@ -1003,6 +1033,21 @@
   background: #e4f2ea;
   color: var(--diffusion-green) !important;
   font-weight: 850;
+}
+
+.stability-badge[data-state="limit"] {
+  background: #fff1c9;
+  color: #7a5000 !important;
+}
+
+.stability-badge[data-state="unstable"] {
+  background: #ffe2df;
+  color: #9b2c24 !important;
+}
+
+.stability-badge[data-state="diverged"] {
+  background: #9b2c24;
+  color: white !important;
 }
 
 .method-panel {
@@ -1140,6 +1185,12 @@
   background: rgba(255, 255, 255, 0.08);
   color: white;
   text-decoration: none;
+}
+
+.code-toolbar .colab-link {
+  border-color: #f5b400;
+  background: #fbbc04;
+  color: #2d2a23;
 }
 
 .code-link {
@@ -1367,6 +1418,7 @@
 
   .prediction-card,
   .analytical-intro,
+  .stability-challenge,
   .applications-heading {
     grid-template-columns: 1fr;
   }

@@ -982,6 +982,8 @@
     profile: document.querySelector("#fdm-profile"),
     nodes: document.querySelector("#fdm-nodes"),
     diffusivity: document.querySelector("#fdm-diffusivity"),
+    fourierControl: document.querySelector("#fdm-fourier-control"),
+    fourierValue: document.querySelector("#fdm-fourier-value"),
     time: document.querySelector("#fdm-time"),
     timeValue: document.querySelector("#fdm-time-value"),
     speed: document.querySelector("#fdm-speed"),
@@ -994,6 +996,7 @@
     fourier: document.querySelector("#fdm-fourier"),
     mass: document.querySelector("#fdm-mass"),
     range: document.querySelector("#fdm-range"),
+    stability: document.querySelector("#fdm-stability"),
     status: document.querySelector("#fdm-status"),
     copy: document.querySelector("#copy-python"),
     code: document.querySelector("#python-code"),
@@ -1004,21 +1007,24 @@
 
   if (!elements.canvas) return;
 
-  const FOURIER = 0.45;
+  const STABILITY_LIMIT = 0.5;
+  const UNSTABLE_Y_MIN = -2;
+  const UNSTABLE_Y_MAX = 3;
   const DOMAIN_LENGTH = 100e-6;
   const state = {
     nodes: 101,
     diffusivity: 1e-12,
+    selectedFourier: 0.45,
     targetTau: 0.08,
     deltaX: 0.01,
     deltaTau: 0.000045,
-    currentFourier: FOURIER,
     tau: 0,
     iteration: 0,
     concentration: new Float64Array(0),
     initial: new Float64Array(0),
     next: new Float64Array(0),
     initialMass: 0,
+    diverged: false,
     running: false,
     frame: 0,
     runToken: 0
@@ -1034,22 +1040,45 @@
     pauseFdm(false);
     state.nodes = Number(elements.nodes.value);
     state.diffusivity = Number(elements.diffusivity.value);
+    state.selectedFourier = Number(elements.fourierControl.value);
     state.targetTau = Number(elements.time.value);
     state.deltaX = 1 / state.nodes;
-    state.deltaTau = FOURIER * state.deltaX * state.deltaX;
-    state.currentFourier = FOURIER;
+    state.deltaTau = state.selectedFourier * state.deltaX * state.deltaX;
     state.tau = 0;
     state.iteration = 0;
+    state.diverged = false;
     state.concentration = new Float64Array(state.nodes);
     state.next = new Float64Array(state.nodes);
     buildInitialConcentration();
     state.initial = state.concentration.slice();
     state.initialMass = sumConcentration(state.initial);
+    elements.fourierValue.value = state.selectedFourier.toFixed(2);
     elements.timeValue.value = state.targetTau.toFixed(3);
     elements.status.textContent = announcement || `${profileName()} profile ready at τ = 0.`;
     updateFdmReadout();
     drawFdm();
+    updateStabilityBadge();
     updateFdmLabel();
+  }
+
+  function updateStabilityBadge(value = state.selectedFourier, diverged = state.diverged) {
+    if (diverged) {
+      elements.stability.dataset.state = "diverged";
+      elements.stability.textContent = `Diverged · Fo = ${value.toFixed(2)}`;
+      return;
+    }
+    if (Math.abs(value - STABILITY_LIMIT) < 1e-12) {
+      elements.stability.dataset.state = "limit";
+      elements.stability.textContent = `Stability limit · Fo = ${value.toFixed(2)}`;
+      return;
+    }
+    if (value > STABILITY_LIMIT) {
+      elements.stability.dataset.state = "unstable";
+      elements.stability.textContent = `Unstable · Fo = ${value.toFixed(2)}`;
+      return;
+    }
+    elements.stability.dataset.state = "stable";
+    elements.stability.textContent = `Stable · Fo = ${value.toFixed(2)}`;
   }
 
   function buildInitialConcentration() {
@@ -1090,12 +1119,58 @@
     state.next = c;
     state.iteration += 1;
     state.tau = Math.min(state.targetTau, state.tau + stepTau);
-    state.currentFourier = stepFourier;
+    if (concentrationHasDiverged(state.concentration)) {
+      state.diverged = true;
+      updateStabilityBadge();
+    }
     return true;
+  }
+
+  function concentrationHasDiverged(values) {
+    for (let index = 0; index < values.length; index += 1) {
+      const value = values[index];
+      if (!Number.isFinite(value)) return true;
+      if (state.selectedFourier > STABILITY_LIMIT && (value < UNSTABLE_Y_MIN || value > UNSTABLE_Y_MAX)) return true;
+    }
+    return false;
+  }
+
+  function estimateRemainingFdmIncrements() {
+    let concentration = state.concentration.slice();
+    let next = new Float64Array(state.nodes);
+    let tau = state.tau;
+    let increments = 0;
+    const maximumIncrements = Math.ceil((state.targetTau - tau) / state.deltaTau) + 1;
+
+    while (tau < state.targetTau - 1e-15 && increments < maximumIncrements) {
+      const stepTau = Math.min(state.deltaTau, state.targetTau - tau);
+      const stepFourier = stepTau / (state.deltaX * state.deltaX);
+      next[0] = concentration[0] + stepFourier * (concentration[1] - concentration[0]);
+      for (let index = 1; index < state.nodes - 1; index += 1) {
+        next[index] = concentration[index] + stepFourier * (
+          concentration[index + 1] - 2 * concentration[index] + concentration[index - 1]
+        );
+      }
+      next[state.nodes - 1] = concentration[state.nodes - 1] + stepFourier * (
+        concentration[state.nodes - 2] - concentration[state.nodes - 1]
+      );
+      const previous = concentration;
+      concentration = next;
+      next = previous;
+      tau = Math.min(state.targetTau, tau + stepTau);
+      increments += 1;
+      if (concentrationHasDiverged(concentration)) break;
+    }
+
+    return increments;
   }
 
   function reachedFdmTarget() {
     return state.tau >= state.targetTau - 1e-15;
+  }
+
+  function fdmComplete() {
+    return state.diverged || reachedFdmTarget();
   }
 
   function startFdm() {
@@ -1103,18 +1178,24 @@
       pauseFdm(true);
       return;
     }
-    if (reachedFdmTarget()) initialiseFdm("Finite-difference solution restarted at τ = 0.");
+    if (fdmComplete()) initialiseFdm("Finite-difference solution restarted at τ = 0.");
     state.running = true;
     state.runToken += 1;
     const token = state.runToken;
     elements.play.textContent = "Pause";
+    elements.fourierControl.disabled = true;
     elements.step.disabled = true;
     elements.speed.disabled = true;
     const startingTau = state.tau;
+    const startingIteration = state.iteration;
     const remainingTau = state.targetTau - startingTau;
     const fullRunDuration = Number(elements.speed.value);
     const remainingDuration = fullRunDuration * remainingTau / state.targetTau;
-    elements.status.textContent = `The continuum concentration field is evolving; this playback targets about ${(remainingDuration / 1000).toFixed(1)} seconds.`;
+    const paceUnstableRun = state.selectedFourier > STABILITY_LIMIT;
+    const remainingIncrements = paceUnstableRun ? estimateRemainingFdmIncrements() : 0;
+    elements.status.textContent = paceUnstableRun
+      ? `Fo = ${state.selectedFourier.toFixed(2)} exceeds the stability limit. The growing, nonphysical oscillations are paced over about ${(remainingDuration / 1000).toFixed(1)} seconds so you can follow them.`
+      : `The continuum concentration field is evolving; this playback targets about ${(remainingDuration / 1000).toFixed(1)} seconds.`;
 
     let runStartTime = null;
     const animate = (timestamp) => {
@@ -1125,15 +1206,21 @@
       const desiredTau = progress >= 1
         ? state.targetTau
         : startingTau + progress * remainingTau;
+      const desiredIteration = startingIteration + Math.floor(progress * remainingIncrements);
       const frameStart = performance.now();
-      while (state.tau < desiredTau - 1e-15 && !reachedFdmTarget() && performance.now() - frameStart < 10) {
+      while (
+        (paceUnstableRun ? state.iteration < desiredIteration : state.tau < desiredTau - 1e-15)
+        && !fdmComplete()
+        && performance.now() - frameStart < 10
+      ) {
         const finalIncrement = state.targetTau - state.tau <= state.deltaTau * (1 + 1e-9);
-        if (progress < 1 && finalIncrement) break;
+        if (!paceUnstableRun && progress < 1 && finalIncrement) break;
         advanceFdm();
       }
       updateFdmReadout();
       drawFdm();
-      if (reachedFdmTarget()) finishFdm();
+      if (state.diverged) finishDivergedFdm();
+      else if (reachedFdmTarget()) finishFdm();
       else state.frame = window.requestAnimationFrame(animate);
     };
     state.frame = window.requestAnimationFrame(animate);
@@ -1145,8 +1232,9 @@
     if (state.frame) window.cancelAnimationFrame(state.frame);
     state.frame = 0;
     elements.play.textContent = "Animate";
+    elements.fourierControl.disabled = false;
     elements.speed.disabled = false;
-    elements.step.disabled = reachedFdmTarget();
+    elements.step.disabled = fdmComplete();
     if (announce) {
       elements.status.textContent = `Paused at τ = ${state.tau.toFixed(5)}.`;
       updateFdmLabel();
@@ -1155,19 +1243,33 @@
 
   function finishFdm() {
     pauseFdm(false);
-    elements.status.textContent = `Solution reached target τ = ${state.targetTau.toFixed(3)} with ${massPercent().toFixed(3)}% of the initial mass retained.`;
+    elements.status.textContent = state.selectedFourier > STABILITY_LIMIT
+      ? `Target τ = ${state.targetTau.toFixed(3)} was reached before the plotted range diverged, but Fo = ${state.selectedFourier.toFixed(2)} is still above the stability limit. Increase the target time or choose One increment to reveal the growing oscillation.`
+      : `Solution reached target τ = ${state.targetTau.toFixed(3)} with ${massPercent().toFixed(3)}% of the initial mass retained.`;
+    updateFdmLabel();
+  }
+
+  function finishDivergedFdm() {
+    pauseFdm(false);
+    const range = concentrationRange();
+    const retainedMass = massPercent();
+    const massMessage = Number.isFinite(retainedMass) ? ` Mass is still ${retainedMass.toFixed(3)}%, showing that conservation alone does not guarantee stability.` : "";
+    elements.status.textContent = `Numerical instability detected at τ = ${state.tau.toFixed(5)}: Fo = ${state.selectedFourier.toFixed(2)} produced a nonphysical concentration range ${formatConcentrationRange(range)}.${massMessage} Reset and choose Fo ≤ 0.50 to recover a stable solution.`;
     updateFdmLabel();
   }
 
   function oneFdmIncrement() {
     pauseFdm(false);
-    if (!reachedFdmTarget()) {
+    if (!fdmComplete()) {
       advanceFdm();
       updateFdmReadout();
       drawFdm();
-      elements.status.textContent = `Advanced one stable increment to τ = ${state.tau.toFixed(5)}.`;
+      elements.status.textContent = state.selectedFourier > STABILITY_LIMIT
+        ? `Advanced one potentially unstable increment to τ = ${state.tau.toFixed(5)}.`
+        : `Advanced one stable increment to τ = ${state.tau.toFixed(5)}.`;
     }
-    if (reachedFdmTarget()) finishFdm();
+    if (state.diverged) finishDivergedFdm();
+    else if (reachedFdmTarget()) finishFdm();
   }
 
   function sumConcentration(values) {
@@ -1193,21 +1295,34 @@
   function concentrationRange() {
     let minimum = Infinity;
     let maximum = -Infinity;
+    let finite = true;
     for (let index = 0; index < state.concentration.length; index += 1) {
-      minimum = Math.min(minimum, state.concentration[index]);
-      maximum = Math.max(maximum, state.concentration[index]);
+      const value = state.concentration[index];
+      if (!Number.isFinite(value)) {
+        finite = false;
+        continue;
+      }
+      minimum = Math.min(minimum, value);
+      maximum = Math.max(maximum, value);
     }
-    return { minimum, maximum };
+    if (minimum === Infinity) return { minimum: UNSTABLE_Y_MIN, maximum: UNSTABLE_Y_MAX, finite: false };
+    return { minimum, maximum, finite };
+  }
+
+  function formatConcentrationRange(range) {
+    const suffix = range.finite ? "" : " (non-finite values present)";
+    return `${range.minimum.toFixed(3)} – ${range.maximum.toFixed(3)}${suffix}`;
   }
 
   function updateFdmReadout() {
     const range = concentrationRange();
     elements.currentTime.textContent = state.tau.toFixed(5);
     elements.physicalTime.textContent = formatTime(physicalSeconds());
-    elements.fourier.textContent = state.currentFourier.toFixed(3);
-    elements.mass.textContent = `${massPercent().toFixed(3)}%`;
-    elements.range.textContent = `${range.minimum.toFixed(3)} – ${range.maximum.toFixed(3)}`;
-    elements.step.disabled = reachedFdmTarget();
+    elements.fourier.textContent = state.selectedFourier.toFixed(3);
+    const retainedMass = massPercent();
+    elements.mass.textContent = Number.isFinite(retainedMass) ? `${retainedMass.toFixed(3)}%` : "not finite";
+    elements.range.textContent = formatConcentrationRange(range);
+    elements.step.disabled = fdmComplete();
   }
 
   function fitCanvas(canvas) {
@@ -1230,7 +1345,15 @@
     const plotWidth = Math.max(1, width - margin.left - margin.right);
     const plotHeight = Math.max(1, height - margin.top - margin.bottom);
     const xAt = (index) => margin.left + (index + 0.5) * plotWidth / state.nodes;
-    const yAt = (value) => margin.top + (1 - value) * plotHeight;
+    const unstablePlot = state.selectedFourier > STABILITY_LIMIT;
+    const yMinimum = unstablePlot ? UNSTABLE_Y_MIN : 0;
+    const yMaximum = unstablePlot ? UNSTABLE_Y_MAX : 1;
+    const yAt = (value) => {
+      const finiteValue = Number.isFinite(value) ? value : 0.5;
+      const clippedValue = Math.max(yMinimum, Math.min(yMaximum, finiteValue));
+      return margin.top + (yMaximum - clippedValue) / (yMaximum - yMinimum) * plotHeight;
+    };
+    const yTicks = unstablePlot ? [-2, -1, 0, 1, 2, 3] : [0, 0.25, 0.5, 0.75, 1];
 
     context.clearRect(0, 0, width, height);
     context.fillStyle = "#fffefb";
@@ -1238,10 +1361,10 @@
     context.font = "12px system-ui, sans-serif";
     context.textBaseline = "middle";
 
-    [0, 0.25, 0.5, 0.75, 1].forEach((value) => {
+    yTicks.forEach((value) => {
       const y = yAt(value);
       context.beginPath();
-      context.strokeStyle = value === 0 ? "rgba(46, 42, 116, 0.35)" : "rgba(46, 42, 116, 0.09)";
+      context.strokeStyle = value === 0 || value === 1 ? "rgba(46, 42, 116, 0.35)" : "rgba(46, 42, 116, 0.09)";
       context.moveTo(margin.left, y);
       context.lineTo(width - margin.right, y);
       context.stroke();
@@ -1265,18 +1388,30 @@
     context.fillText("Normalized concentration, C", 0, 0);
     context.restore();
 
+    if (unstablePlot) {
+      context.fillStyle = "rgba(47, 122, 90, 0.08)";
+      context.fillRect(margin.left, yAt(1), plotWidth, yAt(0) - yAt(1));
+    }
+
+    context.save();
     context.beginPath();
-    state.concentration.forEach((value, index) => {
-      const x = xAt(index);
-      const y = yAt(value);
-      if (index === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
-    });
-    context.lineTo(xAt(state.nodes - 1), yAt(0));
-    context.lineTo(xAt(0), yAt(0));
-    context.closePath();
-    context.fillStyle = "rgba(23, 107, 135, 0.11)";
-    context.fill();
+    context.rect(margin.left, margin.top, plotWidth, plotHeight);
+    context.clip();
+
+    if (!unstablePlot) {
+      context.beginPath();
+      state.concentration.forEach((value, index) => {
+        const x = xAt(index);
+        const y = yAt(value);
+        if (index === 0) context.moveTo(x, y);
+        else context.lineTo(x, y);
+      });
+      context.lineTo(xAt(state.nodes - 1), yAt(0));
+      context.lineTo(xAt(0), yAt(0));
+      context.closePath();
+      context.fillStyle = "rgba(23, 107, 135, 0.11)";
+      context.fill();
+    }
 
     context.beginPath();
     state.initial.forEach((value, index) => {
@@ -1298,14 +1433,22 @@
       else context.lineTo(x, y);
     });
     context.setLineDash([]);
-    context.strokeStyle = "#176b87";
+    context.strokeStyle = unstablePlot ? "#b23a2b" : "#176b87";
     context.lineWidth = 2.8;
     context.stroke();
+    context.restore();
   }
 
   function updateFdmLabel() {
     const range = concentrationRange();
-    elements.canvas.setAttribute("aria-label", `${profileName()} finite-difference concentration profile at dimensionless time ${state.tau.toFixed(5)}. Concentration ranges from ${range.minimum.toFixed(3)} to ${range.maximum.toFixed(3)}; mass retained ${massPercent().toFixed(3)} percent.`);
+    const retainedMass = massPercent();
+    const stabilityDescription = state.diverged
+      ? "Numerical divergence has been detected."
+      : state.selectedFourier > STABILITY_LIMIT
+        ? `The selected Fourier number ${state.selectedFourier.toFixed(2)} exceeds the stability limit.`
+        : `The selected Fourier number ${state.selectedFourier.toFixed(2)} is stable.`;
+    const massDescription = Number.isFinite(retainedMass) ? `${retainedMass.toFixed(3)} percent` : "not finite";
+    elements.canvas.setAttribute("aria-label", `${profileName()} finite-difference concentration profile at dimensionless time ${state.tau.toFixed(5)}. ${stabilityDescription} Concentration range: ${formatConcentrationRange(range)}; mass retained ${massDescription}.`);
   }
 
   async function copyPython() {
@@ -1320,6 +1463,12 @@
   elements.profile.addEventListener("change", () => initialiseFdm(`${profileName()} initial condition selected.`));
   elements.nodes.addEventListener("change", () => initialiseFdm(`Grid changed to ${elements.nodes.value} points; the solution was reset.`));
   elements.diffusivity.addEventListener("change", () => initialiseFdm("Diffusivity changed. The normalized profile reset; the physical time scale was updated."));
+  elements.fourierControl.addEventListener("input", () => {
+    const value = Number(elements.fourierControl.value);
+    elements.fourierValue.value = value.toFixed(2);
+    updateStabilityBadge(value, false);
+  });
+  elements.fourierControl.addEventListener("change", () => initialiseFdm(`Fourier number changed to ${Number(elements.fourierControl.value).toFixed(2)}; the solution was reset.`));
   elements.time.addEventListener("input", () => {
     elements.timeValue.value = Number(elements.time.value).toFixed(3);
   });
