@@ -80,6 +80,8 @@
   "use strict";
 
   const elements = {
+    steps: document.querySelector("#rw1d-steps"),
+    stepsValue: document.querySelector("#rw1d-steps-value"),
     speed: document.querySelector("#rw1d-speed"),
     play: document.querySelector("#rw1d-play"),
     step: document.querySelector("#rw1d-step"),
@@ -101,13 +103,13 @@
 
   if (!elements.atomCanvas || !elements.ensembleCanvas) return;
 
-  const TARGET_STEPS = 100;
   const POPULATION = 1000;
   const DISTRIBUTION_Y_MAX = 150;
   const VIEW_HALF_WIDTH = 20;
   const state = {
     seed: 9353,
     currentStep: 0,
+    targetSteps: Number(elements.steps.value),
     atomPosition: 0,
     endpoints: new Int16Array(POPULATION),
     path: [0],
@@ -133,6 +135,7 @@
 
   function initialise(announcement = "Ready. The atom and all 1,000 walkers are at x/a = 0.") {
     pause(false);
+    state.targetSteps = Number(elements.steps.value);
     state.currentStep = 0;
     state.atomPosition = 0;
     state.endpoints = new Int16Array(POPULATION);
@@ -140,6 +143,7 @@
     state.viewMin = -VIEW_HALF_WIDTH;
     state.viewMax = VIEW_HALF_WIDTH;
     state.random = createRandom(state.seed);
+    elements.stepsValue.value = state.targetSteps.toLocaleString();
     elements.status.textContent = announcement;
     updateReadout();
     render();
@@ -147,7 +151,7 @@
   }
 
   function takeOneStep() {
-    if (state.currentStep >= TARGET_STEPS) return false;
+    if (state.currentStep >= state.targetSteps) return false;
     state.atomPosition += state.random() < 0.5 ? -1 : 1;
     state.path.push(state.atomPosition);
     for (let index = 0; index < state.endpoints.length; index += 1) {
@@ -173,15 +177,16 @@
       pause(true);
       return;
     }
-    if (state.currentStep >= TARGET_STEPS) initialise("The 1D trial restarted at the origin.");
+    if (state.currentStep >= state.targetSteps) initialise("The 1D trial restarted at the origin.");
     state.running = true;
     state.runToken += 1;
     const token = state.runToken;
     const startingStep = state.currentStep;
-    const remainingSteps = TARGET_STEPS - startingStep;
+    const remainingSteps = state.targetSteps - startingStep;
     const fullDuration = Number(elements.speed.value);
-    const remainingDuration = fullDuration * remainingSteps / TARGET_STEPS;
+    const remainingDuration = fullDuration * remainingSteps / state.targetSteps;
     elements.play.textContent = "Pause";
+    elements.steps.disabled = true;
     elements.step.disabled = true;
     elements.speed.disabled = true;
     elements.status.textContent = `Coin flips are moving the atom and 1,000 walkers; this playback targets about ${(remainingDuration / 1000).toFixed(1)} seconds.`;
@@ -193,7 +198,7 @@
       const elapsed = timestamp - runStartTime;
       const progress = Math.min(1, elapsed / Math.max(1, remainingDuration));
       const desiredStep = progress >= 1
-        ? TARGET_STEPS
+        ? state.targetSteps
         : startingStep + Math.floor(progress * remainingSteps);
       if (state.currentStep < desiredStep) {
         while (state.currentStep < desiredStep) takeOneStep();
@@ -201,7 +206,7 @@
         render();
         updateCanvasLabels();
       }
-      if (state.currentStep >= TARGET_STEPS) finish();
+      if (state.currentStep >= state.targetSteps) finish();
       else state.frame = window.requestAnimationFrame(animate);
     };
     state.frame = window.requestAnimationFrame(animate);
@@ -213,8 +218,9 @@
     if (state.frame) window.cancelAnimationFrame(state.frame);
     state.frame = 0;
     elements.play.textContent = "Animate";
+    elements.steps.disabled = false;
     elements.speed.disabled = false;
-    elements.step.disabled = state.currentStep >= TARGET_STEPS;
+    elements.step.disabled = state.currentStep >= state.targetSteps;
     if (announce) {
       elements.status.textContent = `Paused after ${state.currentStep} coin flips.`;
       updateCanvasLabels();
@@ -224,7 +230,7 @@
   function finish() {
     pause(false);
     const stats = statistics();
-    elements.status.textContent = `Trial complete: 100 coin flips each. The ensemble RMS distance is ${stats.rms.toFixed(2)}a; theory predicts 10.00a.`;
+    elements.status.textContent = `Trial complete: ${state.targetSteps.toLocaleString()} coin flips each. The ensemble RMS distance is ${stats.rms.toFixed(2)}a; theory predicts ${Math.sqrt(state.targetSteps).toFixed(2)}a.`;
     updateCanvasLabels();
   }
 
@@ -236,7 +242,7 @@
       updateCanvasLabels();
       elements.status.textContent = `Flip ${state.currentStep}: the atom is at x/a = ${state.atomPosition}.`;
     }
-    if (state.currentStep >= TARGET_STEPS) finish();
+    if (state.currentStep >= state.targetSteps) finish();
   }
 
   function statistics() {
@@ -260,14 +266,14 @@
   function updateReadout() {
     const stats = statistics();
     elements.positionChip.textContent = `Atom x/a = ${state.atomPosition}`;
-    elements.stepChip.textContent = `${state.currentStep} / ${TARGET_STEPS} steps`;
-    elements.currentStep.textContent = state.currentStep.toString();
+    elements.stepChip.textContent = `${state.currentStep.toLocaleString()} / ${state.targetSteps.toLocaleString()} steps`;
+    elements.currentStep.textContent = state.currentStep.toLocaleString();
     elements.position.textContent = state.atomPosition.toString();
     elements.meanPosition.textContent = stats.mean.toFixed(2);
     elements.meanDistance.textContent = `${stats.meanAbsolute.toFixed(2)} a`;
     elements.rmsDistance.textContent = `${stats.rms.toFixed(2)} a`;
     elements.theoryDistance.textContent = `${stats.theoryRms.toFixed(2)} a`;
-    elements.step.disabled = state.currentStep >= TARGET_STEPS;
+    elements.step.disabled = state.currentStep >= state.targetSteps;
   }
 
   function fitCanvas(canvas) {
@@ -403,7 +409,7 @@
       counts.set(position, (counts.get(position) || 0) + 1);
       observedRadius = Math.max(observedRadius, Math.abs(position));
     }
-    const baseRadius = Math.max(10, Math.ceil(4 * Math.sqrt(TARGET_STEPS) / 5) * 5);
+    const baseRadius = Math.max(10, Math.ceil(4 * Math.sqrt(state.targetSteps) / 5) * 5);
     const radius = Math.max(baseRadius, Math.ceil(observedRadius / 5) * 5);
     const left = 54;
     const right = width - 20;
@@ -540,7 +546,7 @@
   function updateCanvasLabels() {
     const stats = statistics();
     const countsAtOrigin = state.endpoints.reduce((count, position) => count + (position === 0 ? 1 : 0), 0);
-    elements.atomCanvas.setAttribute("aria-label", `One atom at x over a equals ${state.atomPosition} after ${state.currentStep} of 100 coin-flip steps. The unbounded number-line viewport spans ${state.viewMin} to ${state.viewMax}.`);
+    elements.atomCanvas.setAttribute("aria-label", `One atom at x over a equals ${state.atomPosition} after ${state.currentStep} of ${state.targetSteps} coin-flip steps. The unbounded number-line viewport spans ${state.viewMin} to ${state.viewMax}.`);
     elements.ensembleCanvas.setAttribute(
       "aria-label",
       state.showDistribution
@@ -549,6 +555,10 @@
     );
   }
 
+  elements.steps.addEventListener("input", () => {
+    elements.stepsValue.value = Number(elements.steps.value).toLocaleString();
+  });
+  elements.steps.addEventListener("change", () => initialise("Step count changed. The 1D trial returned to the origin."));
   elements.play.addEventListener("click", start);
   elements.step.addEventListener("click", advanceOneStep);
   elements.reset.addEventListener("click", () => initialise("The 1D trial was reset to the origin."));

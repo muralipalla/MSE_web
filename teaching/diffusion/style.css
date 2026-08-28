@@ -161,10 +161,6 @@
   background: linear-gradient(135deg, #faf8ff, #fffdf9);
 }
 
-.one-d-controls {
-  grid-template-columns: minmax(14rem, 1fr) minmax(14rem, 1fr);
-}
-
 .control-summary {
   display: grid;
   align-content: center;

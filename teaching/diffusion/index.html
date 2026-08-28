@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Diffusion | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="random-walk-1d.js?v=6" defer></script>
+  <script src="random-walk-1d.js?v=7" defer></script>
   <script src="app.js?v=12" defer></script>
 </head>
 <body>
@@ -86,7 +86,11 @@
         </aside>
 
         <div class="control-strip one-d-controls" aria-label="One-dimensional random-walk controls">
-          <div class="control-summary"><span>Fixed experiment</span><strong>100 steps &middot; 1,000 walkers</strong></div>
+          <div class="control-field control-wide">
+            <label for="rw1d-steps"><span>Number of steps</span><output id="rw1d-steps-value" for="rw1d-steps">100</output></label>
+            <input id="rw1d-steps" type="range" min="1" max="1000" step="1" value="100">
+          </div>
+          <div class="control-summary"><span>Fixed population</span><strong>1,000 walkers</strong></div>
           <div class="control-field">
             <label for="rw1d-speed">Animation speed (target duration)</label>
             <select id="rw1d-speed">
@@ -123,7 +127,7 @@
             <div class="canvas-frame one-d-ensemble-frame">
               <canvas id="rw1d-ensemble-canvas" width="780" height="500" role="img" aria-label="One thousand atoms, all initially at the origin on a one-dimensional lattice. The distribution overlay is hidden."></canvas>
             </div>
-            <figcaption>Every dot is one atom. Vertical separation prevents dots from hiding one another and has no physical meaning. Select <strong>Show distribution</strong> to overlay the observed counts and the exact binomial theoretical curve; its markers identify physically reachable sites.</figcaption>
+            <figcaption>Every dot is one atom. Vertical separation prevents dots from hiding one another and has no physical meaning. Select <strong>Show distribution</strong> to overlay the observed counts and the exact binomial theoretical curve; its markers identify physically reachable sites. The count axis is fixed at 150, so taller early peaks are clipped at the top.</figcaption>
           </figure>
         </div>
 
