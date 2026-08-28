@@ -201,6 +201,34 @@
   justify-items: end;
 }
 
+.iron-diagram-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.iron-diagram-toolbar .chart-control-groups {
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+  scrollbar-width: thin;
+}
+
+.iron-diagram-toolbar .chart-control-groups > .chart-view-buttons {
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+}
+
+.iron-diagram-toolbar .chart-view-buttons button,
+.iron-diagram-toolbar .chart-zoom-buttons output {
+  white-space: nowrap;
+}
+
 .chart-zoom-buttons {
   align-items: center;
   justify-content: flex-end;
@@ -537,55 +565,79 @@ input[type="range"] {
   text-transform: uppercase;
 }
 
-.lever-visual {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  min-height: 3.4rem;
-  margin-top: 0.85rem;
-  color: var(--ink-soft);
-  font-size: 0.72rem;
+.lever-force-diagram {
+  margin: 0.85rem 0 0;
+  padding: 0.45rem 0.55rem 0.55rem;
+  border: 1px solid rgba(46, 42, 116, 0.16);
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, #fffefa, #f7f3ff);
+  transition: opacity 160ms ease;
+}
+
+.lever-force-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 6.4rem;
+  overflow: visible;
+}
+
+.lever-force-diagram.is-inactive svg {
+  opacity: 0.32;
+}
+
+.lever-beam {
+  stroke: var(--ink);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.lever-force {
+  stroke: var(--coral);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.lever-force-diagram marker path {
+  fill: var(--coral);
+}
+
+.lever-endpoint {
+  fill: white;
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+.lever-fulcrum {
+  fill: var(--lavender-light);
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.lever-force-label,
+.lever-composition-label,
+.lever-fulcrum-label {
+  fill: var(--ink-soft);
+  font-family: system-ui, sans-serif;
+  font-size: 15px;
   font-weight: 850;
+  text-anchor: middle;
 }
 
-.lever-visual::before {
-  position: absolute;
-  right: 1.25rem;
-  left: 1.25rem;
-  top: 50%;
-  height: 3px;
-  border-radius: 999px;
-  background: var(--ink);
-  content: "";
+.lever-force-label {
+  fill: var(--coral);
 }
 
-.lever-end,
-.lever-point {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  min-width: 2.5rem;
-  min-height: 2.5rem;
-  place-items: center;
-  padding: 0.3rem;
-  border: 2px solid var(--ink);
-  border-radius: 50%;
-  background: white;
+.lever-fulcrum-label {
+  fill: var(--ink);
 }
 
-.lever-point {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  border-color: var(--coral);
-  background: var(--coral);
-  color: white;
-}
-
-.lever-end.right {
-  grid-column: 3;
-  justify-self: end;
+.lever-force-diagram figcaption {
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  text-align: center;
 }
 
 .formula-hint,
@@ -971,6 +1023,7 @@ input[type="range"] {
 }
 
 .iron-micro-card {
+  margin-top: calc(1rem + var(--iron-figure-offset, 0px));
   background: #ede6d5;
 }
 
@@ -1243,7 +1296,7 @@ input[type="range"] {
   .control-panel h3,
   .control-panel > p,
   .control-panel .microstructure-card,
-  .control-panel .lever-visual,
+  .control-panel .lever-force-diagram,
   .control-panel .formula-hint,
   .control-panel .status-line {
     grid-column: 1;

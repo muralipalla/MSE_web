@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Phase Diagrams | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
   <script src="../../js/main.js?v=2" defer></script>
-  <script type="module" src="app.js?v=11"></script>
+  <script type="module" src="app.js?v=12"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the phase-diagram lesson</a>
@@ -67,9 +67,9 @@
             </div>
           </div>
           <div class="chart-frame water-chart-frame">
-            <canvas id="water-chart" width="900" height="520" role="img" aria-label="Pressure-temperature phase diagram of water showing solid, liquid, vapour, triple point, and critical point."></canvas>
+            <canvas id="water-chart" width="900" height="520" role="img" aria-label="Pressure-temperature phase diagram of water extending to 1000 degrees Celsius and showing solid, liquid, vapour, triple point, critical point, and the supercritical region."></canvas>
           </div>
-          <figcaption>Schematic boundary shapes for ordinary Ice Ih; landmark values are labelled. Water is unusual because the ice&ndash;liquid boundary slopes to lower temperature as pressure rises.</figcaption>
+          <figcaption>Schematic boundary shapes for ordinary Ice Ih; the temperature axis extends to 1000 &deg;C. The liquid tint fades beyond the critical point into the supercritical region&mdash;the liquid&ndash;vapour boundary is not extrapolated. Water is unusual because the ice&ndash;liquid boundary slopes to lower temperature as pressure rises.</figcaption>
         </figure>
 
         <aside class="concept-panel" aria-labelledby="water-reading-title">
@@ -142,11 +142,31 @@
             <div><dt>Solid fraction, W<sub>&alpha;</sub></dt><dd id="iso-solid-fraction">&mdash;</dd></div>
           </dl>
 
-          <div class="lever-visual" id="iso-lever-visual" role="group" aria-label="Lever rule arm lengths">
-            <span class="lever-end left">C<sub>L</sub></span>
-            <span class="lever-point" id="iso-lever-point">C<sub>0</sub></span>
-            <span class="lever-end right">C<sub>&alpha;</sub></span>
-          </div>
+          <figure class="lever-force-diagram" id="iso-lever-visual" aria-label="Lever-rule vector force diagram">
+            <svg viewBox="0 0 400 130" role="img" aria-labelledby="iso-lever-title iso-lever-description">
+              <title id="iso-lever-title">Lever-rule force balance</title>
+              <desc id="iso-lever-description">Downward phase-fraction vectors act at the liquid and alpha compositions. A triangular fulcrum marks the overall composition.</desc>
+              <defs>
+                <marker id="iso-force-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" markerUnits="userSpaceOnUse" orient="auto">
+                  <path d="M 0 0 L 10 5 L 0 10 z"></path>
+                </marker>
+              </defs>
+              <line class="lever-beam" x1="40" y1="58" x2="360" y2="58"></line>
+              <line class="lever-force lever-force-left" id="iso-force-liquid" x1="40" y1="17" x2="40" y2="49" marker-end="url(#iso-force-arrow)"></line>
+              <line class="lever-force lever-force-right" id="iso-force-alpha" x1="360" y1="17" x2="360" y2="49" marker-end="url(#iso-force-arrow)"></line>
+              <text class="lever-force-label" id="iso-force-liquid-label" x="40" y="12">Wₗ</text>
+              <text class="lever-force-label" id="iso-force-alpha-label" x="360" y="12">Wα</text>
+              <circle class="lever-endpoint" cx="40" cy="58" r="4"></circle>
+              <circle class="lever-endpoint" cx="360" cy="58" r="4"></circle>
+              <text class="lever-composition-label" x="40" y="122">Cₗ</text>
+              <text class="lever-composition-label" x="360" y="122">Cα</text>
+              <g id="iso-lever-point" transform="translate(152 0)">
+                <polygon class="lever-fulcrum" points="0,60 -20,103 20,103"></polygon>
+                <text class="lever-fulcrum-label" x="0" y="91">C₀</text>
+              </g>
+            </svg>
+            <figcaption id="iso-lever-caption">The triangular fulcrum marks C<sub>0</sub>; the downward phase-fraction vectors act through opposite lever arms.</figcaption>
+          </figure>
 
           <details class="formula-hint" open>
             <summary>Tie line and lever rule</summary>
@@ -294,7 +314,7 @@
       <div class="iron-grid">
         <div class="diagram-and-controls">
           <figure class="diagram-panel interactive-diagram">
-            <div class="diagram-toolbar">
+            <div class="diagram-toolbar iron-diagram-toolbar">
               <div>
                 <strong>Fe&ndash;Fe<sub>3</sub>C equilibrium map</strong>
                 <span id="iron-chart-help">Read phases is selected by default. Click or tap a phase field to report its composition, temperature, and phases. Choose Box zoom, then drag from the plot, axes, or surrounding canvas margin; only the part crossing the plotted data is enlarged. Reading mode resumes after the zoom. Steel &le; 1147 &deg;C focuses on solid-state transformations and omits higher-temperature fields. The sliders provide keyboard control.</span>
@@ -334,7 +354,7 @@
               <canvas id="iron-chart" width="980" height="650" role="img" aria-describedby="iron-chart-help" aria-label="Interactive colour-coded iron-cementite phase diagram drawn from the supplied B-spline trace and normalized to the labelled critical points. Read phases mode is active by default; click or tap a phase field to inspect composition, temperature, and phases. Choose Box zoom and drag from the plot, axes, or surrounding canvas margin to enlarge the part crossing the plotted data."></canvas>
               <div class="iron-zoom-box" aria-hidden="true" hidden></div>
             </div>
-            <figcaption>Each colour identifies a phase domain using the legend above. Curved boundaries are drawn from the supplied B-spline trace and normalized to the labelled thermodynamic critical points; reaction isotherms remain exact, straight, and horizontal. Numbered dark points identify the supplied critical values. Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
+            <figcaption>Each colour identifies a phase domain using the legend above. Curved boundaries are drawn from the supplied B-spline trace and normalized to the labelled thermodynamic critical points; reaction isotherms remain exact, straight, and horizontal. Dark point markers locate the supplied critical values. Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
           </figure>
 
           <div class="compact-controls" role="group" aria-label="Iron-carbide selected point controls">

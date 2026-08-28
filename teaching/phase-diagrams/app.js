@@ -104,13 +104,15 @@ function makePlot(canvas, xDomain, yDomain, options = {}) {
 
 function drawAxes(plot, options) {
   const { context, margins, plotWidth, plotHeight, x, y, compact } = plot;
-  const fontSize = compact ? 10 : 11;
+  const tickFontSize = options.tickFontSize ?? (compact ? 10 : 11);
+  const axisLabelFontSize = options.axisLabelFontSize ?? (compact ? 11 : 12);
+  const yLabelOffset = options.yLabelOffset ?? (compact ? 12 : 15);
   context.save();
   if (options.background !== false) {
     context.fillStyle = COLORS.paper;
     context.fillRect(margins.left, margins.top, plotWidth, plotHeight);
   }
-  context.font = `${fontSize}px system-ui, sans-serif`;
+  context.font = `${tickFontSize}px system-ui, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "top";
 
@@ -147,10 +149,10 @@ function drawAxes(plot, options) {
   context.fillStyle = COLORS.ink;
   context.textAlign = "center";
   context.textBaseline = "bottom";
-  context.font = `700 ${compact ? 11 : 12}px system-ui, sans-serif`;
+  context.font = `700 ${axisLabelFontSize}px system-ui, sans-serif`;
   context.fillText(options.xLabel, margins.left + plotWidth / 2, plot.height - 4);
   context.save();
-  context.translate(compact ? 12 : 15, margins.top + plotHeight / 2);
+  context.translate(yLabelOffset, margins.top + plotHeight / 2);
   context.rotate(-Math.PI / 2);
   context.fillText(options.yLabel, 0, 0);
   context.restore();
@@ -318,7 +320,7 @@ const WATER_POINTS = {
 
 const WATER_SUBLIMATION = [[-60, 0.00001], [-45, 0.00006], [-30, 0.00038], [-15, 0.0019], [0.01, 0.00611657]];
 const WATER_VAPORIZATION = [[0.01, 0.00611657], [25, 0.0317], [50, 0.1235], [75, 0.3856], [100, 1.01325], [150, 4.76], [200, 15.55], [250, 39.76], [300, 85.88], [350, 165.3], [373.946, 220.64]];
-const WATER_FUSION = [[0.01, 0.00611657], [0, 1.01325], [-0.74, 100], [-1.1, 150], [-2.2, 300]];
+const WATER_FUSION = [[0.01, 0.00611657], [0, 1.01325], [-0.74, 100], [-1.1, 150], [-2.2, 300], [-7.4, 1000]];
 let waterSelection = "triple";
 
 function drawWaterChart() {
@@ -328,8 +330,8 @@ function drawWaterChart() {
   const margins = { left: compact ? 58 : 72, right: compact ? 14 : 26, top: 24, bottom: compact ? 50 : 58 };
   const plotWidth = width - margins.left - margins.right;
   const plotHeight = height - margins.top - margins.bottom;
-  const xDomain = [-60, 430];
-  const logDomain = [-5, Math.log10(300)];
+  const xDomain = [-60, 1000];
+  const logDomain = [-5, 3];
   const x = (value) => margins.left + ((value - xDomain[0]) / (xDomain[1] - xDomain[0])) * plotWidth;
   const y = (pressure) => margins.top + (1 - (Math.log10(pressure) - logDomain[0]) / (logDomain[1] - logDomain[0])) * plotHeight;
 
@@ -343,7 +345,8 @@ function drawWaterChart() {
   context.lineTo(margins.left, y(WATER_SUBLIMATION[0][1]));
   WATER_SUBLIMATION.forEach(([temperature, pressure]) => context.lineTo(x(temperature), y(pressure)));
   vaporCurve.slice(1).forEach(([px, py]) => context.lineTo(px, py));
-  context.lineTo(x(430), margins.top + plotHeight);
+  context.lineTo(x(xDomain[1]), y(WATER_POINTS.critical.pressure));
+  context.lineTo(x(xDomain[1]), margins.top + plotHeight);
   context.closePath();
   context.fillStyle = "rgba(240, 80, 48, 0.09)";
   context.fill();
@@ -365,16 +368,33 @@ function drawWaterChart() {
   context.beginPath();
   context.moveTo(x(0.01), y(0.00611657));
   WATER_VAPORIZATION.slice(1).forEach(([temperature, pressure]) => context.lineTo(x(temperature), y(pressure)));
-  context.lineTo(x(430), margins.top);
-  context.lineTo(x(-11.5), margins.top);
+  context.lineTo(x(500), y(WATER_POINTS.critical.pressure));
+  context.lineTo(x(500), margins.top);
+  context.lineTo(x(-7.4), margins.top);
   [...WATER_FUSION].reverse().forEach(([temperature, pressure]) => context.lineTo(x(temperature), y(pressure)));
   context.closePath();
-  context.fillStyle = "rgba(31, 115, 94, 0.12)";
+  const liquidFade = context.createLinearGradient(x(WATER_POINTS.critical.temperature), 0, x(500), 0);
+  liquidFade.addColorStop(0, "rgba(31, 115, 94, 0.12)");
+  liquidFade.addColorStop(1, "rgba(31, 115, 94, 0)");
+  context.fillStyle = liquidFade;
   context.fill();
   context.restore();
 
-  const xTicks = compact ? [-50, 0, 100, 200, 300, 400] : [-50, 0, 50, 100, 200, 300, 400];
-  const pressureTicks = [0.00001, 0.001, 0.01, 0.1, 1, 10, 100];
+  context.save();
+  const supercriticalFade = context.createLinearGradient(x(WATER_POINTS.critical.temperature), 0, x(500), 0);
+  supercriticalFade.addColorStop(0, "rgba(103, 87, 168, 0)");
+  supercriticalFade.addColorStop(1, "rgba(103, 87, 168, 0.13)");
+  context.fillStyle = supercriticalFade;
+  context.fillRect(
+    x(WATER_POINTS.critical.temperature),
+    margins.top,
+    x(xDomain[1]) - x(WATER_POINTS.critical.temperature),
+    y(WATER_POINTS.critical.pressure) - margins.top
+  );
+  context.restore();
+
+  const xTicks = compact ? [0, 200, 400, 600, 800, 1000] : [-50, 0, 100, 200, 400, 600, 800, 1000];
+  const pressureTicks = [0.00001, 0.001, 0.01, 0.1, 1, 10, 100, 1000];
   context.font = `${compact ? 9 : 11}px system-ui, sans-serif`;
   context.textBaseline = "top";
   context.textAlign = "center";
@@ -424,14 +444,24 @@ function drawWaterChart() {
   context.font = `800 ${compact ? 13 : 16}px system-ui, sans-serif`;
   context.fillStyle = COLORS.blue;
   context.textAlign = "center";
-  context.fillText("ICE", x(-35), y(2));
+  if (compact) {
+    context.save();
+    context.translate(x(-28), y(2));
+    context.rotate(-Math.PI / 2);
+    context.font = "800 10px system-ui, sans-serif";
+    context.fillText("ICE", 0, 0);
+    context.restore();
+  } else {
+    context.fillText("ICE", x(-30), y(2));
+  }
   context.fillStyle = COLORS.teal;
-  context.fillText("LIQUID", x(90), y(18));
+  context.fillText("LIQUID", x(150), y(18));
   context.fillStyle = COLORS.coral;
-  context.fillText("VAPOUR", x(235), y(0.08));
+  context.fillText("VAPOUR", x(620), y(0.08));
   context.fillStyle = COLORS.lavender;
   context.font = `750 ${compact ? 9 : 11}px system-ui, sans-serif`;
-  context.fillText("SUPERCRITICAL", x(395), y(250));
+  context.textBaseline = "top";
+  context.fillText("SUPERCRITICAL", x(700), margins.top + 4);
 
   context.fillStyle = COLORS.ink;
   context.textAlign = "center";
@@ -556,17 +586,23 @@ function isoMicrographFor(result) {
 
 function drawIsoChart() {
   const canvas = $("#iso-chart");
-  const plot = makePlot(canvas, [0, 100], [1050, 1500]);
+  const compactCanvas = canvas.getBoundingClientRect().width < 520;
+  const plot = makePlot(canvas, [0, 100], [1050, 1500], {
+    margins: { left: compactCanvas ? 58 : 68, right: compactCanvas ? 16 : 28, top: compactCanvas ? 25 : 30, bottom: compactCanvas ? 58 : 64 }
+  });
   canvas._plot = plot;
   drawAxes(plot, {
     xTicks: plot.compact ? [0, 25, 50, 75, 100] : [0, 20, 40, 60, 80, 100],
     yTicks: [1085, 1200, 1300, 1400, 1455, 1500],
     xLabel: "Composition (wt% Ni)",
-    yLabel: "Temperature (°C)"
+    yLabel: "Temperature (°C)",
+    tickFontSize: plot.compact ? 11 : 13,
+    axisLabelFontSize: plot.compact ? 13 : 15,
+    yLabelOffset: plot.compact ? 16 : 15
   });
 
   const lens = [...ISO_LIQUIDUS, ...[...ISO_SOLIDUS].reverse()];
-  fillPolygon(plot, lens, "rgba(213, 144, 24, 0.13)");
+  fillPolygon(plot, lens, "rgba(148, 91, 98, 0.15)");
   fillPolygon(plot, [[0, 1500], [100, 1500], ...[...ISO_LIQUIDUS].reverse()], "rgba(240, 80, 48, 0.07)");
   fillPolygon(plot, [[0, 1050], ...ISO_SOLIDUS, [100, 1050]], "rgba(56, 102, 148, 0.08)");
   pathLine(plot, ISO_LIQUIDUS, { color: COLORS.coral, width: 3 });
@@ -580,8 +616,6 @@ function drawIsoChart() {
   context.textAlign = "center";
   context.fillStyle = COLORS.coral;
   context.fillText("LIQUID", x(45), y(1430));
-  context.fillStyle = COLORS.amber;
-  context.fillText("L + α", x(49), y(1305));
   context.fillStyle = COLORS.blue;
   context.fillText("FCC α SOLID SOLUTION", x(52), y(1135));
   drawCurveLabel(plot, "LIQUIDUS", ISO_LIQUIDUS, 25, COLORS.coral, -11);
@@ -608,7 +642,44 @@ function drawIsoChart() {
     context.fillStyle = COLORS.blue;
     context.fillText("Cα", x(right), y(isoState.temperature) - 12);
   }
+  context.save();
+  context.font = `800 ${compact ? 11 : 14}px system-ui, sans-serif`;
+  context.textAlign = "center";
+  context.textBaseline = "alphabetic";
+  context.lineWidth = compact ? 3 : 4;
+  context.strokeStyle = "rgba(255, 254, 250, 0.94)";
+  context.strokeText("L + α", x(49), y(1290));
+  context.fillStyle = "#76506e";
+  context.fillText("L + α", x(49), y(1290));
+  context.restore();
   drawSelection(plot, isoState.composition, isoState.temperature);
+}
+
+function updateIsoLever(position, active) {
+  const diagram = $("#iso-lever-visual");
+  const fulcrum = $("#iso-lever-point");
+  const caption = $("#iso-lever-caption");
+  const boundedPosition = clamp(position, 0, 100);
+  const leverX = 40 + boundedPosition * 3.2;
+  const liquidFraction = 1 - boundedPosition / 100;
+  const alphaFraction = boundedPosition / 100;
+  const updateForceVector = (lineSelector, labelSelector, symbol, fraction) => {
+    const line = $(lineSelector);
+    const label = $(labelSelector);
+    const vectorTop = 49 - fraction * 32;
+    line.setAttribute("y1", vectorTop.toFixed(1));
+    line.style.visibility = fraction < 0.005 ? "hidden" : "visible";
+    label.setAttribute("y", Math.max(12, vectorTop - 5).toFixed(1));
+    label.textContent = `${symbol} ${(fraction * 100).toFixed(0)}%`;
+  };
+  updateForceVector("#iso-force-liquid", "#iso-force-liquid-label", "Wₗ", liquidFraction);
+  updateForceVector("#iso-force-alpha", "#iso-force-alpha-label", "Wα", alphaFraction);
+  fulcrum.setAttribute("transform", `translate(${leverX.toFixed(1)} 0)`);
+  diagram.classList.toggle("is-inactive", !active);
+  diagram.setAttribute("aria-disabled", String(!active));
+  caption.textContent = active
+    ? "The triangular fulcrum marks C₀; the downward phase-fraction vectors act through opposite lever arms."
+    : "A lever balance is defined only inside the liquid + α two-phase field.";
 }
 
 function updateIso({ announce = true } = {}) {
@@ -630,14 +701,14 @@ function updateIso({ announce = true } = {}) {
     $("#iso-solid-fraction").textContent = result.fractions.indeterminate ? "Indeterminate at transition" : percent(result.fractions.solid);
     if (result.fractions.indeterminate) $("#iso-guidance").textContent = "At a pure-component melting point, composition alone cannot determine the amounts; heat added or removed controls reaction progress.";
     const leverPosition = ((isoState.composition - result.liquidComposition) / (result.solidComposition - result.liquidComposition)) * 100;
-    $("#iso-lever-point").style.left = `${clamp(leverPosition, 0, 100)}%`;
+    updateIsoLever(leverPosition, true);
   } else {
     const liquid = result.fractions.liquid === 1;
     $("#iso-liquid-composition").textContent = liquid ? `${isoState.composition.toFixed(1)} wt% Ni` : "Not present";
     $("#iso-solid-composition").textContent = liquid ? "Not present" : `${isoState.composition.toFixed(1)} wt% Ni`;
     $("#iso-liquid-fraction").textContent = percent(result.fractions.liquid);
     $("#iso-solid-fraction").textContent = percent(result.fractions.solid);
-    $("#iso-lever-point").style.left = liquid ? "0%" : "100%";
+    updateIsoLever(liquid ? 0 : 100, false);
   }
   if (announce) $("#iso-status").textContent = `${result.region} at ${isoState.composition.toFixed(1)} wt% Ni and ${isoState.temperature.toFixed(0)} °C. ${microstructureStatus(mediaState)}`;
   drawIsoChart();
@@ -1098,13 +1169,19 @@ function classifyPb(composition, temperature) {
 
 function drawPbChart() {
   const canvas = $("#pb-chart");
-  const plot = makePlot(canvas, [0, 100], [20, 350]);
+  const compactCanvas = canvas.getBoundingClientRect().width < 520;
+  const plot = makePlot(canvas, [0, 100], [20, 350], {
+    margins: { left: compactCanvas ? 58 : 68, right: compactCanvas ? 34 : 38, top: compactCanvas ? 25 : 30, bottom: compactCanvas ? 58 : 64 }
+  });
   canvas._plot = plot;
   drawAxes(plot, {
     xTicks: plot.compact ? [0, 25, 50, 75, 100] : [0, 20, 40, 60, 80, 100],
     yTicks: [50, 100, 150, 183, 250, 300, 350],
     xLabel: "Composition (wt% Sn)",
-    yLabel: "Temperature (°C)"
+    yLabel: "Temperature (°C)",
+    tickFontSize: plot.compact ? 11 : 13,
+    axisLabelFontSize: plot.compact ? 13 : 15,
+    yLabelOffset: plot.compact ? 16 : 15
   });
 
   fillPolygon(plot, [...PB.leftLiquidus, [PB.alphaEutectic, 183], ...[...PB.leftSolidus].reverse()], "rgba(56, 102, 148, 0.12)");
@@ -1129,8 +1206,21 @@ function drawPbChart() {
   context.fillText("α", x(6), y(175));
   context.fillText("α + L", x(25), y(230));
   context.fillStyle = COLORS.lavender;
-  context.fillText("L + β", x(82), y(195));
-  context.fillText("β", x(99.6), y(120));
+  context.fillText("L + β", x(85), y(195));
+  context.save();
+  context.strokeStyle = COLORS.lavender;
+  context.lineWidth = compact ? 1.2 : 1.5;
+  context.beginPath();
+  context.moveTo(x(99.1), y(175));
+  context.lineTo(x(100) + (compact ? 6 : 8), y(175));
+  context.stroke();
+  context.font = `800 ${compact ? 10 : 13}px system-ui, sans-serif`;
+  context.textAlign = "left";
+  context.textBaseline = "middle";
+  context.fillText("β", x(100) + (compact ? 9 : 11), y(175));
+  context.restore();
+  context.textAlign = "center";
+  context.font = `800 ${compact ? 10 : 13}px system-ui, sans-serif`;
   context.fillStyle = COLORS.amber;
   context.fillText("α + β", x(55), y(95));
 
@@ -1880,6 +1970,24 @@ console.assert(FE_DOMAIN_PROBES.every(([expectedKey, point]) => {
     && classifyIron(...point).region === FE_DOMAIN_STYLES[expectedKey].region;
 }), "Every sampled Fe–C teaching state should occupy exactly one matching coloured phase field.");
 
+let ironAlignmentFrame = null;
+function scheduleIronFigureAlignment() {
+  cancelAnimationFrame(ironAlignmentFrame);
+  ironAlignmentFrame = requestAnimationFrame(() => {
+    const chart = $("#iron-chart");
+    const microstructure = $(".iron-micro-card");
+    if (!chart || !microstructure) return;
+    if (window.matchMedia("(max-width: 960px)").matches) {
+      microstructure.style.removeProperty("--iron-figure-offset");
+      return;
+    }
+    const existingOffset = Number.parseFloat(microstructure.style.getPropertyValue("--iron-figure-offset")) || 0;
+    const unshiftedMicrostructureTop = microstructure.getBoundingClientRect().top - existingOffset;
+    const offset = Math.max(0, chart.getBoundingClientRect().top - unshiftedMicrostructureTop);
+    microstructure.style.setProperty("--iron-figure-offset", `${offset.toFixed(1)}px`);
+  });
+}
+
 function drawIronChart() {
   const canvas = $("#iron-chart");
   const { xDomain, yDomain } = ironChartDomains();
@@ -1967,7 +2075,7 @@ function drawIronChart() {
         [0.8, 625, "α + Fe₃C", FE_DOMAIN_STYLES.alphaCementite.label]
       ]
     : [
-        [3.2, 1525, "LIQUID", FE_DOMAIN_STYLES.liquid.label], [0.07, 1450, "δ + γ", FE_DOMAIN_STYLES.deltaGamma.label], [0.82, 1280, "γ", FE_DOMAIN_STYLES.gamma.label],
+        [3.2, 1525, "LIQUID", FE_DOMAIN_STYLES.liquid.label], [1.15, 1175, "γ", FE_DOMAIN_STYLES.gamma.label],
         [1.3, 1350, "γ + L", FE_DOMAIN_STYLES.gammaLiquid.label], [6.0, 1180, "L + Fe₃C", FE_DOMAIN_STYLES.liquidCementite.label], [0.2, 780, "α + γ", FE_DOMAIN_STYLES.alphaGamma.label],
         [2.45, 880, "γ + Fe₃C", FE_DOMAIN_STYLES.gammaCementite.label], [3.1, 625, "α + Fe₃C", FE_DOMAIN_STYLES.alphaCementite.label]
       ];
@@ -1977,6 +2085,101 @@ function drawIronChart() {
       context.fillStyle = color;
       context.fillText(text, x(labelX), y(labelY));
     });
+  if (ironState.view === "full") {
+    const phaseCallouts = [
+      { key: "deltaLiquid", text: "δ + L", anchor: [0.2, 1510], label: [0.72, 1550], color: FE_DOMAIN_STYLES.deltaLiquid.label },
+      { key: "delta", text: "δ", anchor: [0.02, 1450], label: [0.42, 1462], color: FE_DOMAIN_STYLES.delta.label },
+      { key: "deltaGamma", text: "δ + γ", anchor: [0.075, 1425], label: [0.56, 1378], color: FE_DOMAIN_STYLES.deltaGamma.label }
+    ];
+    const xSpan = xDomain[1] - xDomain[0];
+    const ySpan = yDomain[1] - yDomain[0];
+    const clipPolygonEdge = (polygon, inside, intersection) => {
+      if (!polygon.length) return [];
+      const clipped = [];
+      polygon.forEach((current, index) => {
+        const previous = polygon[(index + polygon.length - 1) % polygon.length];
+        const currentInside = inside(current);
+        const previousInside = inside(previous);
+        if (currentInside && !previousInside) clipped.push(intersection(previous, current));
+        if (currentInside) clipped.push(current);
+        else if (previousInside) clipped.push(intersection(previous, current));
+      });
+      return clipped;
+    };
+    const clipPolygonToView = (polygon) => {
+      const atX = (boundary) => ([x1, y1], [x2, y2]) => {
+        const ratio = (boundary - x1) / (x2 - x1 || Number.EPSILON);
+        return [boundary, y1 + ratio * (y2 - y1)];
+      };
+      const atY = (boundary) => ([x1, y1], [x2, y2]) => {
+        const ratio = (boundary - y1) / (y2 - y1 || Number.EPSILON);
+        return [x1 + ratio * (x2 - x1), boundary];
+      };
+      let clipped = clipPolygonEdge(polygon, ([value]) => value >= xDomain[0], atX(xDomain[0]));
+      clipped = clipPolygonEdge(clipped, ([value]) => value <= xDomain[1], atX(xDomain[1]));
+      clipped = clipPolygonEdge(clipped, ([, value]) => value >= yDomain[0], atY(yDomain[0]));
+      return clipPolygonEdge(clipped, ([, value]) => value <= yDomain[1], atY(yDomain[1]));
+    };
+    const polygonCentroid = (polygon) => {
+      let twiceArea = 0;
+      let weightedX = 0;
+      let weightedY = 0;
+      polygon.forEach(([x1, y1], index) => {
+        const [x2, y2] = polygon[(index + 1) % polygon.length];
+        const cross = x1 * y2 - x2 * y1;
+        twiceArea += cross;
+        weightedX += (x1 + x2) * cross;
+        weightedY += (y1 + y2) * cross;
+      });
+      if (Math.abs(twiceArea) < 1e-9) {
+        return [
+          polygon.reduce((sum, [value]) => sum + value, 0) / polygon.length,
+          polygon.reduce((sum, [, value]) => sum + value, 0) / polygon.length
+        ];
+      }
+      return [weightedX / (3 * twiceArea), weightedY / (3 * twiceArea)];
+    };
+    const visibleCallouts = phaseCallouts
+      .map((callout) => ({ ...callout, visiblePolygon: clipPolygonToView(FE_DOMAIN_POLYGONS[callout.key]) }))
+      .filter(({ visiblePolygon }) => visiblePolygon.length >= 3)
+      .map((callout) => {
+        const [anchorX, anchorY] = polygonCentroid(callout.visiblePolygon);
+        return {
+          ...callout,
+          anchorPixelX: x(anchorX),
+          anchorPixelY: y(anchorY),
+          labelPixelX: x(clamp(callout.label[0], xDomain[0] + xSpan * 0.07, xDomain[1] - xSpan * 0.2)),
+          labelPixelY: y(clamp(callout.label[1], yDomain[0] + ySpan * 0.06, yDomain[1] - ySpan * 0.06))
+        };
+      })
+      .sort((a, b) => a.labelPixelY - b.labelPixelY);
+    const minimumLabelGap = compact ? 18 : 22;
+    visibleCallouts.forEach((callout, index) => {
+      if (index > 0) callout.labelPixelY = Math.max(callout.labelPixelY, visibleCallouts[index - 1].labelPixelY + minimumLabelGap);
+    });
+    const bottomOverflow = visibleCallouts.at(-1)?.labelPixelY - (margins.top + plotHeight - 12) || 0;
+    if (bottomOverflow > 0) visibleCallouts.forEach((callout) => { callout.labelPixelY -= bottomOverflow; });
+    visibleCallouts.forEach(({ text, anchorPixelX, anchorPixelY, labelPixelX, labelPixelY, color }) => {
+      context.save();
+      context.beginPath();
+      context.moveTo(anchorPixelX, anchorPixelY);
+      context.lineTo(labelPixelX - 6, labelPixelY);
+      context.strokeStyle = color;
+      context.globalAlpha = 0.72;
+      context.lineWidth = 1.25;
+      context.stroke();
+      context.globalAlpha = 1;
+      context.font = `800 ${compact ? 8 : 11}px system-ui, sans-serif`;
+      context.textAlign = "left";
+      context.textBaseline = "middle";
+      context.lineWidth = compact ? 3 : 4;
+      context.strokeStyle = "rgba(255, 254, 250, 0.94)";
+      context.strokeText(text, labelPixelX, labelPixelY);
+      context.fillStyle = color;
+      context.fillText(text, labelPixelX, labelPixelY);
+      context.restore();
+    });
+  }
   if (ironState.view === "full" && between(FE.cementite, xDomain[0] - 1e-6, xDomain[1] + 1e-6) && between(930, yDomain[0], yDomain[1])) {
     context.save();
     context.translate(x(6.64), y(930));
@@ -1989,18 +2192,7 @@ function drawIronChart() {
 
   FE.suppliedPoints
     .filter((point) => between(point.x, xDomain[0] - 1e-6, xDomain[1] + 1e-6) && between(point.y, yDomain[0] - 1e-6, yDomain[1] + 1e-6))
-    .forEach((point) => {
-      drawPoint(plot, point.x, point.y, { radius: compact ? 3.2 : 4, fill: COLORS.ink, strokeWidth: 1.5 });
-      const pointX = x(point.x);
-      const pointY = y(point.y);
-      const nearRightEdge = pointX > margins.left + plotWidth - 16;
-      const nearTopEdge = pointY < margins.top + 16;
-      context.fillStyle = COLORS.ink;
-      context.font = `800 ${compact ? 8 : 10}px system-ui, sans-serif`;
-      context.textAlign = nearRightEdge ? "right" : "left";
-      context.textBaseline = nearTopEdge ? "top" : "alphabetic";
-      context.fillText(String(point.number), pointX + (nearRightEdge ? -6 : 6), pointY + (nearTopEdge ? 6 : -6));
-    });
+    .forEach((point) => drawPoint(plot, point.x, point.y, { radius: compact ? 3.2 : 4, fill: COLORS.ink, strokeWidth: 1.5 }));
   context.restore();
 
   currentIronResult = classifyIron(ironState.composition, ironState.temperature);
@@ -2043,6 +2235,7 @@ function drawIronChart() {
   }
   drawSelection(plot, ironState.composition, ironState.temperature);
   context.restore();
+  scheduleIronFigureAlignment();
 }
 
 function ironFinalConstituent(composition) {
