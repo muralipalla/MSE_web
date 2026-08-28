@@ -819,6 +819,93 @@
   margin: 0;
 }
 
+.conservation-link {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.7fr) minmax(22rem, 1.3fr);
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: clamp(1rem, 3vw, 1.35rem);
+  border: 1px solid rgba(86, 69, 150, 0.24);
+  border-radius: 1.15rem;
+  background: linear-gradient(135deg, #f8f4ff, #f7fcfd);
+}
+
+.conservation-copy h3 {
+  margin: 0.3rem 0 0.45rem;
+  color: var(--ink);
+  font-size: 1.18rem;
+}
+
+.conservation-copy > p:last-child {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.conservation-equations {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.conservation-equations > div {
+  min-width: 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid rgba(23, 107, 135, 0.14);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.equation-label {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.conservation-equation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.16em;
+  overflow-x: auto;
+  color: var(--lavender);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.derivation-equation {
+  color: var(--diffusion-blue);
+  font-size: clamp(1.08rem, 2.25vw, 1.42rem);
+}
+
+.equation-group {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.constant-d-step {
+  display: inline-grid;
+  place-items: center;
+  margin: 0 0.18em;
+  color: var(--diffusion-orange);
+  font-family: system-ui, sans-serif;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.constant-d-step small {
+  font-size: 0.58rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 .analytical-panel {
   margin-bottom: 1rem;
   overflow: hidden;
@@ -1418,6 +1505,7 @@
 
   .prediction-card,
   .analytical-intro,
+  .conservation-link,
   .stability-challenge,
   .applications-heading {
     grid-template-columns: 1fr;

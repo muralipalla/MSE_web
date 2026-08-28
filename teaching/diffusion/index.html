@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Diffusion | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=16">
+  <link rel="stylesheet" href="style.css?v=17">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="random-walk-1d.js?v=7" defer></script>
   <script src="app.js?v=14" defer></script>
@@ -329,6 +329,30 @@
           <dl><div><dt>C</dt><dd>mol m<sup>&minus;3</sup></dd></div><div><dt>t</dt><dd>s</dd></div></dl>
         </article>
       </div>
+
+      <aside class="conservation-link" aria-labelledby="conservation-link-title">
+        <div class="conservation-copy">
+          <p class="panel-kicker">Species conservation &middot; no sources or sinks</p>
+          <h3 id="conservation-link-title">Conservation supplies the link between the two laws</h3>
+          <p>Concentration rises only when more material flows into a small region than flows out.</p>
+        </div>
+        <div class="conservation-equations">
+          <div>
+            <span class="equation-label">Local conservation &middot; general form</span>
+            <div class="conservation-equation" aria-label="Partial C over partial t plus divergence of J equals zero"><span class="fraction"><span>&part;C</span><span>&part;t</span></span> + &nabla;&middot;J = 0</div>
+          </div>
+          <div>
+            <span class="equation-label">In one dimension, substitute J = negative D partial C over partial x</span>
+            <div class="conservation-equation derivation-equation" aria-label="Partial C over partial t equals negative partial J over partial x, equals partial over partial x of D partial C over partial x, and for constant D equals D partial squared C over partial x squared">
+              <span class="fraction"><span>&part;C</span><span>&part;t</span></span>
+              = &minus;<span class="fraction"><span>&part;J</span><span>&part;x</span></span>
+              = <span class="fraction"><span>&part;</span><span>&part;x</span></span><span class="equation-group">(D&nbsp;<span class="fraction"><span>&part;C</span><span>&part;x</span></span>)</span>
+              <span class="constant-d-step"><small>constant D</small>&rarr;</span>
+              D&nbsp;<span class="fraction"><span>&part;<sup>2</sup>C</span><span>&part;x<sup>2</sup></span></span>
+            </div>
+          </div>
+        </div>
+      </aside>
 
       <details class="analytical-panel">
         <summary>
