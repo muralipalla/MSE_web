@@ -3,6 +3,7 @@
 
   const ONE_D_STEPS = 100;
   const ONE_D_POPULATION = 1000;
+  const DISTRIBUTION_Y_MAX = 150;
 
   function centralReturnProbability(steps) {
     if (steps % 2 !== 0) return 0;
@@ -429,16 +430,12 @@
     if (state.showDistribution) {
       theoretical = theoreticalEndpointCounts(state.currentStep)
         .filter(({ position }) => Math.abs(position) <= radius);
-      let maximumCount = 1;
-      counts.forEach((count) => { maximumCount = Math.max(maximumCount, count); });
-      theoretical.forEach(({ count }) => { maximumCount = Math.max(maximumCount, count); });
-      const yMaximum = Math.max(10, Math.ceil(maximumCount / 10) * 10);
-      distributionYAt = (count) => bottom - count / yMaximum * plotHeight;
+      distributionYAt = (count) => bottom - Math.min(count, DISTRIBUTION_Y_MAX) / DISTRIBUTION_Y_MAX * plotHeight;
       context.font = "650 10px system-ui, sans-serif";
       context.fillStyle = "#4a465c";
       context.strokeStyle = "rgba(23, 107, 135, 0.2)";
-      for (let index = 0; index <= 4; index += 1) {
-        const value = yMaximum * index / 4;
+      for (let index = 0; index <= 3; index += 1) {
+        const value = DISTRIBUTION_Y_MAX * index / 3;
         const y = distributionYAt(value);
         context.beginPath();
         context.moveTo(left, y);
