@@ -1,0 +1,591 @@
+.application-link {
+  display: inline-flex;
+  margin-top: 0.7rem;
+  color: var(--diffusion-blue);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2rem;
+}
+
+.carburizing-case-study {
+  margin-top: 1.5rem;
+  padding-top: clamp(1.25rem, 3vw, 2rem);
+  border-top: 2px solid rgba(23, 107, 135, 0.18);
+  scroll-margin-top: 6.5rem;
+}
+
+.carburizing-heading {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.9fr) minmax(20rem, 1.1fr);
+  gap: clamp(1rem, 4vw, 3.5rem);
+  align-items: end;
+  margin-bottom: 1rem;
+}
+
+.carburizing-heading h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.65rem, 3.5vw, 2.45rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.carburizing-heading > p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.carb-design-intent {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.92fr) minmax(20rem, 1.08fr);
+  gap: 1rem 2rem;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: clamp(1rem, 3vw, 1.45rem);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1.15rem;
+  background:
+    radial-gradient(circle at 95% 10%, rgba(255, 194, 88, 0.17), transparent 18rem),
+    linear-gradient(135deg, #172b3c, #154d58);
+  color: white;
+  box-shadow: 0 1rem 2.3rem rgba(25, 48, 62, 0.16);
+}
+
+.carb-design-intent::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0.36rem;
+  background: #ef9b45;
+  content: "";
+}
+
+.carb-design-label,
+.carb-kicker {
+  margin: 0;
+  color: #bd4f1e;
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.carb-design-label { color: #ffc56e; }
+
+.carb-design-intent h3 {
+  margin: 0.25rem 0 0;
+  color: white;
+  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+  line-height: 1.06;
+  letter-spacing: -0.025em;
+}
+
+.carb-design-intent > p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.96rem;
+}
+
+.carb-simulator,
+.carb-boundary-panel,
+.carb-assumptions-panel {
+  border: 1px solid var(--line);
+  border-radius: 1.15rem;
+  background: rgba(255, 253, 249, 0.98);
+}
+
+.carb-simulator { overflow: hidden; }
+
+.carb-simulator-heading,
+.carb-panel-heading,
+.carb-profile-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.carb-simulator-heading {
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(135deg, #f7fbfd, #fffdfa);
+}
+
+.carb-simulator-heading h3 {
+  margin: 0.2rem 0 0;
+  color: var(--ink);
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  line-height: 1.15;
+}
+
+.carb-data-state,
+.carb-method-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 2rem;
+  margin: 0;
+  padding: 0.42rem 0.72rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.carb-data-state {
+  max-width: 24rem;
+  border: 1px solid rgba(23, 107, 135, 0.22);
+  background: #e8f5f8;
+  color: #155a6d;
+  text-align: right;
+}
+
+.carb-method-chip {
+  border: 1px solid rgba(90, 76, 151, 0.25);
+  background: #f0edff;
+  color: #514384;
+}
+
+.carb-controls {
+  display: grid;
+  grid-template-columns: minmax(15rem, 1fr) minmax(15rem, 1fr) minmax(13rem, 0.62fr);
+  gap: 0.8rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  background: #fff8ed;
+}
+
+.carb-control-field,
+.carb-button-field {
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid rgba(217, 104, 43, 0.2);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.carb-control-field > span {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.carb-control-field strong,
+.carb-control-label {
+  color: var(--ink);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.carb-control-field output {
+  color: #bd4f1e;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+
+.carb-control-field input[type="range"] {
+  width: 100%;
+  margin: 0.75rem 0 0.25rem;
+  accent-color: #bd4f1e;
+}
+
+.carb-control-field small,
+.carb-mesh-toggle {
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.carb-button-field {
+  display: grid;
+  align-content: space-between;
+  gap: 0.5rem;
+}
+
+.carb-button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.carb-mesh-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  font-weight: 800;
+}
+
+.carb-mesh-toggle input { accent-color: var(--diffusion-blue); }
+
+.carb-simulation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.38fr) minmax(20rem, 0.82fr);
+}
+
+.carb-field-panel {
+  min-width: 0;
+  margin: 0;
+  border-right: 1px solid var(--line);
+}
+
+.carb-panel-heading,
+.carb-profile-heading { padding: 0.9rem 1rem; }
+
+.carb-panel-heading { border-bottom: 1px solid var(--line); }
+
+.carb-panel-heading h4,
+.carb-profile-heading h4 {
+  margin: 0.18rem 0 0;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.carb-field-stage {
+  position: relative;
+  min-height: 36rem;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fff0ce 0%, #fff8e9 34%, #fffdf9 100%);
+}
+
+#carb-field-canvas {
+  display: block;
+  width: 100%;
+  height: min(72vh, 47rem);
+  min-height: 36rem;
+}
+
+.carb-atmosphere-label {
+  position: absolute;
+  top: 0.85rem;
+  left: 50%;
+  padding: 0.48rem 0.72rem;
+  border: 1px solid rgba(189, 79, 30, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 249, 235, 0.95);
+  color: #873915;
+  font-size: 0.7rem;
+  font-weight: 900;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.carb-loading-card {
+  position: absolute;
+  z-index: 3;
+  top: 4rem;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.62rem 0.82rem;
+  border: 1px solid rgba(189, 79, 30, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 253, 249, 0.97);
+  color: #80401f;
+  font-size: 0.75rem;
+  font-weight: 850;
+  box-shadow: 0 0.5rem 1.5rem rgba(73, 48, 30, 0.1);
+  transform: translateX(-50%);
+}
+
+.carb-loading-dot {
+  width: 0.52rem;
+  height: 0.52rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #bd4f1e;
+  animation: carb-pulse 1.1s ease-in-out infinite alternate;
+}
+
+.carb-field-stage[data-state="ready"] .carb-loading-card { display: none; }
+
+@keyframes carb-pulse {
+  to { opacity: 0.35; transform: scale(0.8); }
+}
+
+.carb-colour-scale {
+  display: grid;
+  grid-template-columns: auto minmax(8rem, 1fr) auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.72rem 1rem 0;
+  color: var(--muted);
+  font-size: 0.67rem;
+}
+
+.carb-colour-scale span:last-child { text-align: right; }
+.carb-colour-scale strong { color: var(--ink); font-size: 0.75rem; }
+
+.carb-colour-scale i {
+  height: 0.74rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #00204c, #173f69 22%, #596c6c 43%, #948e65 64%, #d1b15a 82%, #ffea46);
+}
+
+.carb-field-panel figcaption {
+  padding: 0.65rem 1rem 1rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.carb-analysis-panel {
+  min-width: 0;
+  padding-bottom: 1rem;
+}
+
+.carb-profile-heading select {
+  max-width: 11.5rem;
+  min-height: 2.25rem;
+  padding: 0.4rem 1.8rem 0.4rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 0.55rem;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+#carb-profile-canvas {
+  display: block;
+  width: calc(100% - 1.6rem);
+  height: 19rem;
+  margin: 0 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: #fffefb;
+}
+
+.carb-result-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0.8rem;
+}
+
+.carb-result-grid > div {
+  min-width: 0;
+  padding: 0.72rem;
+  border: 1px solid var(--line);
+  border-radius: 0.72rem;
+  background: #f7fafb;
+}
+
+.carb-result-grid dt {
+  color: var(--muted);
+  font-size: 0.61rem;
+  font-weight: 900;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.carb-result-grid dd {
+  margin: 0.25rem 0 0;
+  color: var(--ink);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
+}
+
+.carb-result-grid small {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.61rem;
+}
+
+.carb-current-note {
+  margin: 0.8rem;
+  padding: 0.8rem;
+  border-left: 4px solid var(--diffusion-blue);
+  border-radius: 0.4rem 0.7rem 0.7rem 0.4rem;
+  background: #ebf6f8;
+  color: #1a5361;
+  font-size: 0.75rem;
+}
+
+.carb-current-note p { margin: 0.3rem 0 0; }
+
+.carb-boundary-panel {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.58fr) minmax(0, 1.42fr);
+  gap: 1.1rem;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 1rem;
+}
+
+.carb-boundary-intro h3 {
+  margin: 0.2rem 0 0;
+  color: var(--ink);
+  font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+}
+
+.carb-boundary-intro > p:last-child {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.carb-boundary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.carb-boundary-grid article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.62rem;
+  align-items: start;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 0.78rem;
+  background: white;
+}
+
+.carb-boundary-symbol {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 0.58rem;
+  color: white;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.92rem;
+  font-weight: 900;
+}
+
+.carb-gamma-c { background: #bd4f1e; }
+.carb-gamma-s { background: var(--diffusion-blue); }
+.carb-gamma-core { background: #66559c; }
+
+.carb-boundary-grid h4,
+.carb-assumptions-grid h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+
+.carb-boundary-grid p,
+.carb-assumptions-grid p {
+  margin: 0.28rem 0 0;
+  color: var(--muted);
+  font-size: 0.71rem;
+}
+
+.carb-assumptions-panel {
+  margin-top: 1rem;
+  overflow: hidden;
+}
+
+.carb-assumptions-panel summary {
+  padding: 0.9rem 1rem;
+  color: var(--ink);
+  font-size: 0.83rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.carb-assumptions-panel[open] summary { border-bottom: 1px solid var(--line); }
+
+.carb-assumptions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  padding: 1rem;
+}
+
+.carb-assumptions-grid a { color: var(--diffusion-blue); }
+
+.carb-warning-note {
+  margin: 0 1rem 1rem;
+  padding: 0.7rem;
+  border-radius: 0.65rem;
+  background: #fff3d8;
+  color: #744019;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 1120px) {
+  .carb-simulation-layout,
+  .carb-boundary-panel { grid-template-columns: 1fr; }
+
+  .carb-field-panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .carb-result-grid { grid-template-columns: repeat(3, minmax(10rem, 1fr)); }
+}
+
+@media (max-width: 860px) {
+  .carburizing-heading,
+  .carb-design-intent { grid-template-columns: 1fr; }
+
+  .carb-controls { grid-template-columns: 1fr 1fr; }
+
+  .carb-button-field {
+    grid-column: 1 / -1;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+  }
+
+  .carb-mesh-toggle { justify-self: end; }
+
+  .carb-boundary-grid,
+  .carb-assumptions-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 660px) {
+  .carb-simulator-heading,
+  .carb-panel-heading,
+  .carb-profile-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .carb-data-state {
+    max-width: none;
+    text-align: left;
+  }
+
+  .carb-controls {
+    grid-template-columns: 1fr;
+    padding-inline: 0.65rem;
+  }
+
+  .carb-button-field {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .carb-mesh-toggle { justify-self: start; }
+
+  .carb-field-stage,
+  #carb-field-canvas {
+    min-height: 30rem;
+  }
+
+  #carb-field-canvas {
+    height: 66vh;
+    max-height: 40rem;
+  }
+
+  .carb-result-grid { grid-template-columns: 1fr; }
+
+  .carb-atmosphere-label {
+    max-width: calc(100% - 1rem);
+    text-align: center;
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carb-loading-dot { animation: none; }
+}

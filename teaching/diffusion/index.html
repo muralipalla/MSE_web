@@ -3,14 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore diffusion from 1D and 2D random walks to kinetic Monte Carlo and Fick's laws with interactive simulations.">
+  <meta name="description" content="Explore diffusion from random walks and kinetic Monte Carlo to Fick's laws and an interactive gear-tooth carburizing model.">
   <meta name="theme-color" content="#fdf6ec">
   <title>Diffusion | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="style.css?v=17">
+  <link rel="stylesheet" href="carburizing.css?v=1">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="random-walk-1d.js?v=7" defer></script>
   <script src="app.js?v=15" defer></script>
+  <script src="carburizing.js?v=4" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the diffusion lesson</a>
@@ -561,6 +563,7 @@ plt.show()</code></pre>
               <h4>Carburizing steel</h4>
               <p>At high temperature, carbon diffuses from a carbon-rich atmosphere into austenitic steel. Quenching converts the enriched case into a hard, wear-resistant surface while the lower-carbon core remains tougher.</p>
               <p class="application-model"><strong>Useful idealization:</strong> constant surface concentration, giving an erfc profile. Case depth grows approximately with &radic;(Dt).</p>
+              <a class="application-link" href="#carburizing-case-study">Explore the gear-tooth FEM model &darr;</a>
             </div>
           </article>
           <article>
@@ -572,6 +575,125 @@ plt.show()</code></pre>
             </div>
           </article>
         </div>
+      </section>
+
+      <section class="carburizing-case-study" id="carburizing-case-study" aria-labelledby="carburizing-title">
+        <div class="carburizing-heading">
+          <div>
+            <p class="section-kicker">Applied case study &middot; Carburizing</p>
+            <h3 id="carburizing-title">Carbon diffusion through a gear tooth</h3>
+          </div>
+          <p>Move from the one-dimensional erfc idealization to a curved engineering component, where carbon enters through the tooth tip, flanks and root at the same time.</p>
+        </div>
+
+        <aside class="carb-design-intent" aria-labelledby="carb-design-title">
+          <div>
+            <p class="carb-design-label">Design intent</p>
+            <h3 id="carb-design-title">Hard where it wears. Tough where it carries the load.</h3>
+          </div>
+          <p>Carburizing concentrates carbon at the tooth surface so subsequent quenching can create a wear-resistant case, while the lower-carbon core retains the toughness needed to absorb impact and bending loads.</p>
+        </aside>
+
+        <div class="carb-simulator" role="group" aria-labelledby="carb-simulator-title">
+          <div class="carb-simulator-heading">
+            <div>
+              <p class="carb-kicker">Isothermal gas-carburizing idealization</p>
+              <h3 id="carb-simulator-title">Temperature&ndash;time explorer</h3>
+            </div>
+            <p class="carb-data-state" id="carb-data-state" role="status" aria-live="polite">The FEM fields will load as this case study enters view.</p>
+          </div>
+
+          <div class="carb-controls" role="group" aria-label="Carburizing controls">
+            <label class="carb-control-field" for="carb-temperature-control">
+              <span><strong>Temperature</strong><output id="carb-temperature-output" for="carb-temperature-control">950 &deg;C</output></span>
+              <input id="carb-temperature-control" type="range" min="850" max="1000" step="5" value="950" disabled>
+              <small>Higher temperature increases carbon mobility.</small>
+            </label>
+
+            <label class="carb-control-field" for="carb-duration-control">
+              <span><strong>Duration</strong><output id="carb-duration-output" for="carb-duration-control">0.00 h</output></span>
+              <input id="carb-duration-control" type="range" min="0" max="12" step="0.0833333333" value="0" disabled>
+              <small>The first positive duration is 5 min.</small>
+            </label>
+
+            <div class="carb-button-field">
+              <span class="carb-control-label">Evolution</span>
+              <div class="carb-button-row">
+                <button class="action-button primary-action" id="carb-play-control" type="button" disabled>Play</button>
+                <button class="action-button" id="carb-reset-control" type="button" disabled>Reset</button>
+              </div>
+              <label class="carb-mesh-toggle"><input id="carb-mesh-control" type="checkbox" disabled> Show FEM mesh</label>
+            </div>
+          </div>
+
+          <div class="carb-simulation-layout">
+            <figure class="carb-field-panel">
+              <div class="carb-panel-heading">
+                <div>
+                  <p class="carb-kicker">Carbon concentration field</p>
+                  <h4>Case development around the tooth</h4>
+                </div>
+                <span class="carb-method-chip">Nonlinear P2 FEM</span>
+              </div>
+              <div class="carb-field-stage" id="carb-field-stage" aria-busy="true">
+                <canvas id="carb-field-canvas" width="900" height="940" role="img" aria-describedby="carb-field-caption carb-data-state">A finite-element carbon-concentration map through a single gear tooth.</canvas>
+                <div class="carb-loading-card" id="carb-loading-card" aria-hidden="true"><span class="carb-loading-dot"></span><span>Preparing concentration fields&hellip;</span></div>
+                <span class="carb-atmosphere-label">Uniform atmosphere &middot; C<sub>s</sub> = 0.80 wt% C</span>
+              </div>
+              <div class="carb-colour-scale" aria-label="Carbon concentration scale from 0.20 to 0.80 weight percent">
+                <span>Core<br><strong>0.20 wt%</strong></span>
+                <i aria-hidden="true"></i>
+                <span>Surface<br><strong>0.80 wt%</strong></span>
+              </div>
+              <figcaption id="carb-field-caption">The radial sides mirror neighbouring teeth. The inner arc remains at the initial bulk carbon concentration.</figcaption>
+            </figure>
+
+            <aside class="carb-analysis-panel" aria-label="Carbon profile and current results">
+              <div class="carb-profile-heading">
+                <div>
+                  <p class="carb-kicker">Inward sampling path</p>
+                  <h4>Carbon profile versus depth</h4>
+                </div>
+                <label for="carb-probe-control"><span class="visually-hidden">Profile location</span><select id="carb-probe-control" disabled><option value="tip">Tip centreline</option><option value="flank">Pitch flank</option><option value="root">Root fillet</option></select></label>
+              </div>
+              <canvas id="carb-profile-canvas" width="620" height="420" role="img" aria-label="Carbon concentration versus inward depth from the selected tooth surface.">Carbon concentration profile.</canvas>
+
+              <dl class="carb-result-grid">
+                <div><dt>Carbon penetration depth</dt><dd><span id="carb-case-depth">&mdash;</span><small>Depth at 0.40 wt% C</small></dd></div>
+                <div><dt>Diffusivity range</dt><dd><span id="carb-diffusivity-range">&mdash;</span><small>Across 0.20&ndash;0.80 wt% C</small></dd></div>
+                <div><dt>FEM states used</dt><dd><span id="carb-interpolation-state">&mdash;</span><small>Temperature and time brackets</small></dd></div>
+              </dl>
+
+              <div class="carb-current-note">
+                <strong>Current state</strong>
+                <p id="carb-current-summary">Loading the validated finite-element results.</p>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div class="carb-boundary-panel" aria-labelledby="carb-boundary-title">
+          <div class="carb-boundary-intro">
+            <p class="carb-kicker">Boundary conditions</p>
+            <h3 id="carb-boundary-title">One tooth represents the repeating gear</h3>
+            <p>Concentration is normalized as <em>c</em> = (C &minus; C<sub>0</sub>)/(C<sub>s</sub> &minus; C<sub>0</sub>).</p>
+          </div>
+          <div class="carb-boundary-grid">
+            <article><span class="carb-boundary-symbol carb-gamma-c">&Gamma;<sub>c</sub></span><div><h4>Exposed profile</h4><p>Maintained surface concentration: <em>c</em> = 1.</p></div></article>
+            <article><span class="carb-boundary-symbol carb-gamma-s">&Gamma;<sub>s</sub></span><div><h4>Radial cuts</h4><p>Mirror symmetry: <strong>n</strong> &middot; D&nabla;<em>c</em> = 0.</p></div></article>
+            <article><span class="carb-boundary-symbol carb-gamma-core">&Gamma;<sub>0</sub></span><div><h4>Inner core</h4><p>Initial bulk concentration: <em>c</em> = 0.</p></div></article>
+          </div>
+        </div>
+
+        <details class="carb-assumptions-panel">
+          <summary>Model, numerical method and limitations</summary>
+          <div class="carb-assumptions-grid">
+            <div><h4>Physical model</h4><p>Generic binary Fe&ndash;C austenite with concentration-dependent <a href="https://doi.org/10.1016/0036-9748(86)90384-4" target="_blank" rel="noopener noreferrer">&Aring;gren diffusivity</a>. Temperature remains constant during each run.</p></div>
+            <div><h4>Numerical method</h4><p>14,085 curved six-node triangles, implicit backward-Euler time stepping and nonlinear Picard iteration.</p></div>
+            <div><h4>Interpretation</h4><p>The educational model omits alloy corrections, finite atmosphere transfer, carbide precipitation, stress coupling and phase transformations.</p></div>
+          </div>
+          <p class="carb-warning-note">At 850&deg;C, the calculation assumes that the selected steel is fully austenitic. Actual behaviour depends on alloy chemistry and transformation temperatures.</p>
+        </details>
       </section>
     </section>
 

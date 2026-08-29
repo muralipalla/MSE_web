@@ -1,0 +1,70 @@
+{
+  "schema": "mse.carburizing.browser-validation/1",
+  "passed": true,
+  "temperaturesC": [
+    850,
+    875,
+    900,
+    925,
+    950,
+    975,
+    1000
+  ],
+  "frameCount": 61,
+  "renderNodeCount": 7294,
+  "triangleCount": 14085,
+  "fieldBytes": 6229300,
+  "quantizationStepNormalized": 1.5259021896696422e-05,
+  "caseDepthCriterionWtPercent": 0.4,
+  "coreBoundaryCheck": {
+    "temperatureC": 1000,
+    "durationHours": 12.0,
+    "finalCoreToAtmosphereReactionRatio": 0.0015261421479131735,
+    "conservativeCumulativeCoreUptakeFractionUpperBound": 0.0006116871388456326,
+    "nearCoreBandMm": 0.5,
+    "maximumNormalizedConcentrationInBand": 0.0016021972991531242,
+    "rootPathLengthToCoreMm": 5.01612842492721,
+    "rootCaseContourClearanceMm": 3.613284966359064
+  },
+  "probes": {
+    "tip": {
+      "label": "Tip centreline",
+      "default950C4hCaseDepthMm": 1.1104,
+      "finalCaseDepthMm": {
+        "850": 0.9839,
+        "875": 1.329,
+        "900": 1.8059,
+        "925": 2.4807,
+        "950": 3.4227,
+        "975": 4.0,
+        "1000": 4.0
+      }
+    },
+    "flank": {
+      "label": "Pitch-flank radial path",
+      "default950C4hCaseDepthMm": 2.5161,
+      "finalCaseDepthMm": {
+        "850": 2.4602,
+        "875": 2.6198,
+        "900": 2.7825,
+        "925": 2.9489,
+        "950": 3.1257,
+        "975": 3.319,
+        "1000": 3.5
+      }
+    },
+    "root": {
+      "label": "Root-fillet radial path",
+      "default950C4hCaseDepthMm": 0.6854,
+      "finalCaseDepthMm": {
+        "850": 0.6511,
+        "875": 0.7524,
+        "900": 0.8619,
+        "925": 0.9801,
+        "950": 1.1087,
+        "975": 1.2459,
+        "1000": 1.4028
+      }
+    }
+  }
+}
