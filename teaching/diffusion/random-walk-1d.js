@@ -56,7 +56,7 @@
   const oneDMeanAbsolute = ONE_D_STEPS * oneDReturnProbability;
   setPredictionFeedback(
     "rw1d",
-    { "100": "100a", "50": "50a", "10": "10a" },
+    { "0": "0a", "5": "5a", "10": "10a", "100": "100a" },
     "10",
     () => {
       document.querySelector("#rw1d-theory-answer").textContent = `${oneDRms.toFixed(2)}a`;

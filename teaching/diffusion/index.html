@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="style.css?v=17">
   <link rel="stylesheet" href="carburizing.css?v=1">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="random-walk-1d.js?v=7" defer></script>
+  <script src="random-walk-1d.js?v=8" defer></script>
   <script src="app.js?v=15" defer></script>
   <script src="carburizing.js?v=4" defer></script>
 </head>
@@ -34,7 +34,7 @@
         <h1>Diffusion</h1>
       </div>
       <div class="diffusion-intro-copy">
-        <p>Follow diffusion across three scales: a single atom loses its memory in a random walk, many atoms mix through stochastic exchanges, and a smooth concentration field obeys Fick&rsquo;s laws.</p>
+        <p>Explore diffusion across scales: trace atoms through 1D and 2D random walks, watch two species mix through kinetic Monte Carlo, connect atomic motion to Fick&rsquo;s laws and continuum solutions, then apply those ideas to semiconductor doping and an interactive finite-element model of gear-tooth carburizing.</p>
         <p class="diffusion-intro-note">Same spreading process. Three complementary descriptions.</p>
       </div>
     </header>
@@ -56,22 +56,21 @@
 
       <section class="dimension-lab" aria-labelledby="rw1d-title">
         <div class="dimension-heading">
-          <div><p class="panel-kicker">1D coin-flip walk</p><h3 id="rw1d-title">First, constrain motion to a line</h3></div>
+          <div><p class="panel-kicker">1D coin-flip walk</p><h3 id="rw1d-title">Simple case of 1D</h3></div>
           <span>01 / 02</span>
         </div>
 
         <aside class="prediction-card" aria-labelledby="rw1d-prediction-title">
           <div class="prediction-question">
             <p class="panel-kicker">Predict before you simulate</p>
-            <h4 id="rw1d-prediction-title">Picture a single atom on a straight line.</h4>
-            <p>It&rsquo;s going to take exactly 100 steps, flipping a coin each time: heads it moves right, tails it moves left.</p>
-            <p>Using RMS distance as our measure, after 100 completely random steps, how far from its starting point do you expect it to end up?</p>
+            <h4 id="rw1d-prediction-title"><strong>Consider a one-dimensional random walk of 100 steps, moving right on heads and left on tails. How far from the origin is it expected to end up?</strong></h4>
           </div>
           <fieldset class="prediction-entry">
-            <legend>Choose an RMS-distance estimate</legend>
-            <label class="prediction-choice" for="rw1d-choice-100"><input id="rw1d-choice-100" type="radio" name="rw1d-choice" value="100"><span class="choice-letter">A</span><span>100 lattice spacings</span></label>
-            <label class="prediction-choice" for="rw1d-choice-50"><input id="rw1d-choice-50" type="radio" name="rw1d-choice" value="50"><span class="choice-letter">B</span><span>50 lattice spacings</span></label>
+            <legend>Choose an estimate</legend>
+            <label class="prediction-choice" for="rw1d-choice-0"><input id="rw1d-choice-0" type="radio" name="rw1d-choice" value="0"><span class="choice-letter">A</span><span>0 lattice spacings</span></label>
+            <label class="prediction-choice" for="rw1d-choice-5"><input id="rw1d-choice-5" type="radio" name="rw1d-choice" value="5"><span class="choice-letter">B</span><span>5 lattice spacings</span></label>
             <label class="prediction-choice" for="rw1d-choice-10"><input id="rw1d-choice-10" type="radio" name="rw1d-choice" value="10"><span class="choice-letter">C</span><span>10 lattice spacings</span></label>
+            <label class="prediction-choice" for="rw1d-choice-100"><input id="rw1d-choice-100" type="radio" name="rw1d-choice" value="100"><span class="choice-letter">D</span><span>100 lattice spacings</span></label>
             <button class="action-button primary-action" id="rw1d-reveal" type="button">Reveal the 1D answer</button>
             <p class="prediction-status" id="rw1d-prediction-status" role="status" aria-live="polite"></p>
           </fieldset>
