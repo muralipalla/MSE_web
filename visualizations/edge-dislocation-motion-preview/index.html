@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare edge- and screw-dislocation glide in a three-dimensional atomic lattice with synchronized Peierls energy and lattice-resistance plots.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Atomic Dislocation Motion | MSE Learning Lab</title>
+  <script>
+    if (new URLSearchParams(window.location.search).get("embed") === "1") {
+      document.documentElement.classList.add("is-embedded");
+    }
+  </script>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=4">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="../embed-frame.js?v=1" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js?v=3"></script>
+</head>
+<body>
+  <a class="skip-link" href="#edge-motion-preview">Skip to motion preview</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Preview navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../teaching/dislocations/index.html#atomic-motion">&larr; Dislocations module</a>
+    </nav>
+  </header>
+
+  <main class="motion-shell" id="edge-motion-preview">
+    <header class="motion-intro">
+      <div>
+        <p class="eyebrow">Dislocations module &middot; Section 01</p>
+        <h1>Watch edge and screw dislocations glide</h1>
+      </div>
+      <div class="motion-intro-copy">
+        <span class="preview-status">Work in Progress &middot; Dislocations module</span>
+        <p>
+          Switch the line character, projection, and visible layers while the core moves across
+          one slip plane. The synchronized barrier plot connects each atomic rearrangement to
+          the crystal's periodic lattice resistance.
+        </p>
+      </div>
+    </header>
+
+    <section class="motion-workspace" aria-labelledby="motion-viewer-title">
+      <section class="motion-viewer-card">
+        <header class="motion-viewer-heading">
+          <div>
+            <p class="panel-kicker">Simple-cubic teaching model</p>
+            <h2 id="motion-viewer-title">Edge dislocation glide</h2>
+          </div>
+          <span class="motion-phase-chip" id="motion-phase-chip">Preparing model&hellip;</span>
+        </header>
+
+        <p class="motion-viewer-note" id="motion-viewer-note">
+          Opposing shear tractions drive the line; a gold guide marks the compressed upper column associated with the core.
+        </p>
+
+        <div class="motion-visual-grid">
+          <div class="motion-viewer-frame" id="edge-motion-frame" data-mode="edge">
+            <canvas
+              id="edge-motion-canvas"
+              aria-hidden="true"
+              aria-label="Animated atomic lattice showing an edge dislocation moving across a horizontal slip plane."
+            >
+              Your browser does not support the canvas element.
+            </canvas>
+            <div class="motion-viewer-fallback" id="edge-motion-fallback" role="status">
+              Preparing the interactive dislocation model. If it does not appear, try a current browser with WebGL enabled.
+            </div>
+            <div class="motion-frame-readout" aria-hidden="true">
+              <span id="motion-stage-label">1 &middot; Surface entry</span>
+              <strong id="motion-core-readout">Core advance 0.0&lambda;</strong>
+            </div>
+            <div class="motion-viewer-legend" id="motion-viewer-legend" aria-label="Graphic legend" hidden>
+              <span><i class="motion-atom-key" aria-hidden="true"></i>Host atoms</span>
+              <span id="motion-defect-legend-item"><i class="motion-plane-key" aria-hidden="true"></i><b id="motion-defect-legend">Half-plane guide</b></span>
+              <span><i class="motion-slipped-key" aria-hidden="true"></i>Slipped, &delta; &asymp; <i>b</i></span>
+              <span><i class="motion-unslipped-key" aria-hidden="true"></i>Unslipped, &delta; &asymp; 0</span>
+              <span><i class="motion-line-key" aria-hidden="true"></i>Core line &xi;</span>
+              <span><i class="motion-burgers-key" aria-hidden="true"></i>Burgers vector <i>b</i></span>
+              <span><i class="motion-stress-key" aria-hidden="true"></i>Applied shear &tau;</span>
+            </div>
+          </div>
+
+          <figure class="motion-peierls-card" aria-labelledby="peierls-title">
+            <header class="motion-graph-heading">
+              <div>
+                <p class="panel-kicker" id="peierls-mode-label">Edge core &middot; one lattice period</p>
+                <h3 id="peierls-title">Peierls energy and stress</h3>
+              </div>
+              <output id="peierls-step-output">Step 0 / 10</output>
+            </header>
+            <svg id="peierls-graph" viewBox="0 0 460 340" role="img" aria-labelledby="peierls-graph-title peierls-graph-desc">
+              <title id="peierls-graph-title">Schematic Peierls energy barrier and lattice-resistance stress</title>
+              <desc id="peierls-graph-desc">The dislocation is in a stable energy valley at the start of a lattice period.</desc>
+              <defs>
+                <linearGradient id="peierls-slipped-gradient" x1="0" x2="1"><stop offset="0" stop-color="#ff735b" stop-opacity="0.18"/><stop offset="1" stop-color="#ff735b" stop-opacity="0.05"/></linearGradient>
+                <linearGradient id="peierls-unslipped-gradient" x1="0" x2="1"><stop offset="0" stop-color="#6bb7e6" stop-opacity="0.05"/><stop offset="1" stop-color="#6bb7e6" stop-opacity="0.17"/></linearGradient>
+                <clipPath id="peierls-plot-clip"><rect x="56" y="24" width="376" height="274" rx="6"/></clipPath>
+              </defs>
+              <g clip-path="url(#peierls-plot-clip)">
+                <rect id="peierls-slipped-region" x="56" y="24" width="0" height="274" fill="url(#peierls-slipped-gradient)"/>
+                <rect id="peierls-unslipped-region" x="56" y="24" width="376" height="274" fill="url(#peierls-unslipped-gradient)"/>
+              </g>
+              <g class="peierls-grid" aria-hidden="true">
+                <line x1="56" y1="140" x2="432" y2="140"/><line x1="56" y1="40" x2="432" y2="40"/>
+                <line x1="56" y1="220" x2="432" y2="220"/><line x1="56" y1="180" x2="432" y2="180"/><line x1="56" y1="260" x2="432" y2="260"/>
+                <line x1="56" y1="24" x2="56" y2="298"/><line x1="150" y1="24" x2="150" y2="298"/><line x1="244" y1="24" x2="244" y2="298"/><line x1="338" y1="24" x2="338" y2="298"/><line x1="432" y1="24" x2="432" y2="298"/>
+              </g>
+              <path id="peierls-energy-path" class="peierls-energy-path" d=""/>
+              <path id="peierls-stress-path" class="peierls-stress-path" d=""/>
+              <line id="peierls-core-guide" class="peierls-core-guide" x1="56" y1="24" x2="56" y2="298"/>
+              <circle id="peierls-energy-marker" class="peierls-energy-marker" cx="56" cy="140" r="6"/>
+              <circle id="peierls-stress-marker" class="peierls-stress-marker" cx="56" cy="220" r="5"/>
+              <g class="peierls-axis-labels" aria-hidden="true">
+                <text x="18" y="92" transform="rotate(-90 18 92)">E<tspan baseline-shift="sub">P</tspan> / &Delta;E</text>
+                <text x="18" y="246" transform="rotate(-90 18 246)">&tau;<tspan baseline-shift="sub">latt</tspan> / &tau;<tspan baseline-shift="sub">P</tspan></text>
+                <text x="244" y="330" text-anchor="middle">Position within one period, q = x / &lambda;</text>
+                <text x="56" y="315" text-anchor="middle">0</text><text x="150" y="315" text-anchor="middle">0.25</text><text x="244" y="315" text-anchor="middle">0.5</text><text x="338" y="315" text-anchor="middle">0.75</text><text x="432" y="315" text-anchor="middle">1</text>
+                <text x="64" y="132">stable valley</text><text x="244" y="34" text-anchor="middle">barrier top</text>
+                <text x="424" y="184" text-anchor="end">+1</text><text x="424" y="264" text-anchor="end">&minus;1</text>
+              </g>
+            </svg>
+            <div class="motion-graph-legend" aria-label="Graph legend">
+              <span><i class="peierls-energy-key" aria-hidden="true"></i>Energy barrier</span>
+              <span><i class="peierls-stress-key" aria-hidden="true"></i>Lattice-resistance stress</span>
+              <span><i class="peierls-marker-key" aria-hidden="true"></i>Current core</span>
+              <span><i class="peierls-slipped-key" aria-hidden="true"></i>Total slipped length</span>
+              <span><i class="peierls-unslipped-key" aria-hidden="true"></i>Total unslipped length</span>
+            </div>
+            <figcaption>
+              <strong>Normalized schematic:</strong> E<sub>P</sub>/&Delta;E = &frac12;[1 &minus; cos(2&pi;q)] and
+              &tau;<sub>latt</sub>/&tau;<sub>P</sub> = sin(2&pi;q). The curves repeat every &lambda;; the background split tracks total glide.
+              Magnitudes require a specified material and slip system.
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="motion-viewer-footer">
+          <p>Pointer: drag sideways to rotate and use the wheel to zoom. Keyboard: use the view and camera buttons.</p>
+          <p class="motion-schematic-note"><strong>Schematic:</strong> glide kinematics only; nucleation, thermal motion, and atom identities are not modeled.</p>
+        </div>
+      </section>
+
+      <aside class="motion-controls-card" aria-label="Dislocation motion controls">
+        <section class="motion-control-section motion-model-section" aria-labelledby="motion-model-title">
+          <p class="control-kicker">Model</p>
+          <h2 id="motion-model-title">Choose the line character</h2>
+          <div class="motion-mode-buttons" role="group" aria-label="Dislocation type">
+            <button class="motion-mode-button is-active" id="motion-edge-mode" type="button" aria-pressed="true" disabled>Edge</button>
+            <button class="motion-mode-button" id="motion-screw-mode" type="button" aria-pressed="false" disabled>Screw</button>
+          </div>
+          <fieldset class="motion-projection-control">
+            <legend>Projection</legend>
+            <div>
+              <span>Perspective</span>
+              <label class="motion-switch" for="motion-projection">
+                <input id="motion-projection" type="checkbox" role="switch" aria-label="Use orthographic projection" disabled>
+                <i aria-hidden="true"></i>
+              </label>
+              <span>Orthographic</span>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="motion-control-section" aria-labelledby="motion-playback-title">
+          <div class="motion-control-heading">
+            <div>
+              <p class="control-kicker">Motion</p>
+              <h2 id="motion-playback-title">Move the core</h2>
+            </div>
+            <output id="motion-progress-output" for="motion-progress">0%</output>
+          </div>
+
+          <label class="motion-range-label" for="motion-progress">
+            <span>Glide progress</span>
+            <input id="motion-progress" type="range" min="0" max="1000" step="1" value="0" disabled>
+          </label>
+          <div class="motion-range-ticks" aria-hidden="true"><span>Entry</span><span>Glide</span><span>Permanent slip</span></div>
+
+          <div class="motion-playback-buttons" role="group" aria-label="Playback controls">
+            <button class="motion-action motion-action-primary" id="motion-play" type="button" disabled>
+              <span aria-hidden="true">&#9654;</span> Play glide
+            </button>
+            <button class="motion-action" id="motion-step-back" type="button" disabled aria-label="Move the core back by one lattice site">&minus;1 site</button>
+            <button class="motion-action" id="motion-step-forward" type="button" disabled aria-label="Move the core forward by one lattice site">+1 site</button>
+            <button class="motion-action" id="motion-reset" type="button" disabled>Reset</button>
+          </div>
+
+          <div class="motion-select-grid">
+            <label for="motion-speed"><span>Playback speed</span>
+              <select id="motion-speed" disabled>
+                <option value="0.5">0.5&times;</option>
+                <option value="1" selected>1&times;</option>
+                <option value="1.5">1.5&times;</option>
+                <option value="2">2&times;</option>
+              </select>
+            </label>
+            <label for="motion-view"><span>View</span>
+              <select id="motion-view" disabled>
+                <option value="isometric">Isometric</option>
+                <option value="along-line">Atomic cross-section</option>
+                <option value="along-glide">Along glide direction</option>
+                <option value="custom" hidden>Custom</option>
+              </select>
+            </label>
+          </div>
+          <div class="motion-camera-buttons" role="group" aria-label="Keyboard-operable camera controls">
+            <button class="motion-camera-action" id="motion-rotate-left" type="button" disabled aria-label="Rotate model left">&larr; Rotate</button>
+            <button class="motion-camera-action" id="motion-rotate-right" type="button" disabled aria-label="Rotate model right">Rotate &rarr;</button>
+            <button class="motion-camera-action" id="motion-zoom-in" type="button" disabled aria-label="Zoom in">Zoom +</button>
+            <button class="motion-camera-action" id="motion-zoom-out" type="button" disabled aria-label="Zoom out">Zoom &minus;</button>
+          </div>
+        </section>
+
+        <section class="motion-control-section" aria-labelledby="motion-layers-title">
+          <p class="control-kicker">Layers</p>
+          <h2 id="motion-layers-title">What to show</h2>
+          <label class="motion-toggle" for="motion-show-plane">
+            <input id="motion-show-plane" type="checkbox" checked disabled>
+            <span><strong id="motion-plane-control-label">Half-plane guide</strong><small id="motion-plane-control-note">Mark the compressed upper column associated with the core.</small></span>
+          </label>
+          <label class="motion-toggle" for="motion-show-regions">
+            <input id="motion-show-regions" type="checkbox" checked disabled>
+            <span><strong>Slipped / unslipped regions</strong><small>Shade the trailing &delta; &asymp; <i>b</i> and leading &delta; &asymp; 0 parts of the glide plane.</small></span>
+          </label>
+          <label class="motion-toggle" for="motion-show-bonds">
+            <input id="motion-show-bonds" type="checkbox" checked disabled>
+            <span><strong>Atomic connections</strong><small>See the local neighbor switching during glide.</small></span>
+          </label>
+          <label class="motion-toggle" for="motion-show-stress">
+            <input id="motion-show-stress" type="checkbox" checked disabled>
+            <span><strong>Applied shear</strong><small>Show the opposing tractions that drive the line.</small></span>
+          </label>
+        </section>
+
+        <section class="motion-control-section motion-readout-section" aria-labelledby="motion-readout-title">
+          <p class="control-kicker">Live readout</p>
+          <h2 id="motion-readout-title">What has changed?</h2>
+          <dl class="motion-readout-list">
+            <div><dt>Core position</dt><dd id="motion-core-position">Left surface</dd></div>
+            <div><dt>Slip at centre</dt><dd id="motion-slip-value">0.00<i>b</i></dd></div>
+            <div><dt>Line character</dt><dd id="motion-character-value"><i>b</i> &perp; &xi;</dd></div>
+            <div><dt>Slip direction</dt><dd id="motion-slip-direction">[100]</dd></div>
+            <div><dt>Glide plane</dt><dd>(010)</dd></div>
+            <div><dt>Projection</dt><dd id="motion-projection-value">Perspective</dd></div>
+          </dl>
+          <p class="motion-live-status" id="motion-live-status" role="status" aria-live="polite">The model is loading.</p>
+        </section>
+      </aside>
+    </section>
+
+    <section class="motion-explanation" aria-labelledby="motion-explanation-title">
+      <div class="motion-explanation-heading">
+        <p class="section-kicker">Read the motion</p>
+        <h2 id="motion-explanation-title">A line defect carries slip without moving every atom across the crystal</h2>
+      </div>
+      <div class="motion-explanation-grid">
+        <article>
+          <span aria-hidden="true">01</span>
+          <h3>Local rearrangement</h3>
+          <p id="motion-local-explanation">For edge character, compressed and stretched rows exchange nearest neighbors near the core.</p>
+        </article>
+        <article>
+          <span aria-hidden="true">02</span>
+          <h3>One-site advance</h3>
+          <p>Each step advances the core by one Peierls-valley period &lambda; along the glide direction. Here &lambda; = a.</p>
+        </article>
+        <article>
+          <span aria-hidden="true">03</span>
+          <h3>Permanent slip</h3>
+          <p>After the line exits, the perfect-looking halves remain displaced by one full Burgers vector.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Dislocations module &middot; Work in Progress &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

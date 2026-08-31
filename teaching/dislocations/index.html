@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore atomic dislocation glide, the Peierls barrier, and continuous dislocation-line dynamics in an in-progress MSE Learning Lab module.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Dislocations — Work in Progress | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="app.js?v=1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the dislocations module</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+
+  <main class="dislocations-shell" id="lesson">
+    <header class="dislocations-intro">
+      <div>
+        <div class="dislocations-title-line">
+          <p class="eyebrow">Teaching page 05</p>
+          <span class="wip-badge">Work in Progress</span>
+        </div>
+        <h1>Dislocations</h1>
+      </div>
+      <div class="dislocations-intro-copy">
+        <p>
+          Follow slip from local atomic rearrangement to the collective motion of curved
+          dislocation lines. The two views connect lattice resistance at the core with the
+          multiplication and interaction processes that govern plastic flow.
+        </p>
+        <p class="dislocations-intro-note">
+          The interactive demonstrations are ready for review; the lecture narrative,
+          exercises, and final sequencing are still being developed.
+        </p>
+      </div>
+    </header>
+
+    <aside class="wip-notice" aria-labelledby="wip-title">
+      <span class="wip-mark" aria-hidden="true">WIP</span>
+      <div>
+        <p class="section-kicker">Module status</p>
+        <h2 id="wip-title">Work in Progress</h2>
+        <p>This page is intentionally marked as unfinished and should be treated as a lecture-development preview.</p>
+      </div>
+      <dl>
+        <div><dt>Available now</dt><dd>Two interactive demonstrations</dd></div>
+        <div><dt>Still evolving</dt><dd>Explanations, prompts, and assessment</dd></div>
+      </dl>
+    </aside>
+
+    <nav class="dislocations-route" aria-label="Dislocations module sections">
+      <a href="#atomic-motion"><span>01</span><strong>Atomic motion</strong><small>Edge, screw, and Peierls barrier</small></a>
+      <a href="#line-dynamics"><span>02</span><strong>Line dynamics</strong><small>Networks, multiplication, and interaction</small></a>
+    </nav>
+
+    <section class="dislocations-section" id="atomic-motion" aria-labelledby="atomic-motion-title">
+      <header class="dislocations-section-heading">
+        <div>
+          <p class="section-kicker">Section 01 &middot; Core-scale view</p>
+          <h2 id="atomic-motion-title">Watch slip advance through the lattice</h2>
+        </div>
+        <p>
+          Compare edge and screw character, switch between perspective and orthographic
+          projection, and reveal the slipped and unslipped regions. The adjacent Peierls plot
+          tracks the periodic energy barrier and lattice-resistance stress as the core advances.
+        </p>
+      </header>
+
+      <div class="concept-row" aria-label="Atomic-motion learning cues">
+        <article><span>Character</span><strong>Edge: <i>b</i> &perp; &xi;</strong><small>Screw: <i>b</i> &parallel; &xi;</small></article>
+        <article><span>Motion</span><strong>One core step at a time</strong><small>Local rearrangement carries macroscopic slip.</small></article>
+        <article><span>Barrier</span><strong>Periodic lattice resistance</strong><small>The plotted curves are normalized schematics.</small></article>
+      </div>
+
+      <div class="embed-card">
+        <div class="embed-toolbar">
+          <div>
+            <p class="panel-kicker">Interactive section</p>
+            <strong>Atomic edge and screw dislocation motion</strong>
+          </div>
+          <a href="../../visualizations/edge-dislocation-motion-preview/?revision=4" target="_blank" rel="noopener">Open standalone view <span aria-hidden="true">&nearr;</span></a>
+        </div>
+        <iframe
+          class="dislocations-embed"
+          src="../../visualizations/edge-dislocation-motion-preview/?embed=1&amp;revision=4"
+          title="Interactive atomic model of edge and screw dislocation motion with a Peierls barrier plot"
+          loading="eager"
+          allowfullscreen
+        ></iframe>
+        <p class="embed-status" data-embed-status>Loading the atomic-motion interactive&hellip;</p>
+      </div>
+
+      <p class="model-caveat">
+        <strong>Teaching-model boundary:</strong> the simple-cubic lattice illustrates glide
+        kinematics. It does not calculate a material-specific Peierls stress, nucleation rate,
+        thermal activation process, or atomistic potential-energy surface.
+      </p>
+    </section>
+
+    <section class="dislocations-section" id="line-dynamics" aria-labelledby="line-dynamics-title">
+      <header class="dislocations-section-heading">
+        <div>
+          <p class="section-kicker">Section 02 &middot; Network-scale view</p>
+          <h2 id="line-dynamics-title">Treat dislocations as interacting lines</h2>
+        </div>
+        <p>
+          Remove the atoms and follow a larger population of curved line segments. Inspect an
+          authentic relaxed ParaDiS ensemble, then play a solver-derived Frank&ndash;Read sequence
+          that bows out, multiplies, collides, and remeshes under applied stress.
+        </p>
+      </header>
+
+      <div class="concept-row" aria-label="Line-dynamics learning cues">
+        <article><span>Ensemble</span><strong>Dense ParaDiS networks</strong><small>Representative relaxed configurations, not a movie trajectory.</small></article>
+        <article><span>Source</span><strong>Frank&ndash;Read multiplication</strong><small>A pinned line bows out and creates additional line length.</small></article>
+        <article><span>Interaction</span><strong>Collisions and remeshing</strong><small>A lecture-scale bridge to discrete dislocation dynamics.</small></article>
+      </div>
+
+      <div class="embed-card">
+        <div class="embed-toolbar">
+          <div>
+            <p class="panel-kicker">Interactive section</p>
+            <strong>Continuous dislocation-line dynamics</strong>
+          </div>
+          <a href="../../visualizations/dislocation-line-dynamics-preview/?revision=3" target="_blank" rel="noopener">Open standalone view <span aria-hidden="true">&nearr;</span></a>
+        </div>
+        <iframe
+          class="dislocations-embed"
+          src="../../visualizations/dislocation-line-dynamics-preview/?embed=1&amp;revision=3"
+          title="Interactive three-dimensional continuous-line visualization of ParaDiS networks and Frank–Read multiplication"
+          loading="lazy"
+          allowfullscreen
+        ></iframe>
+        <p class="embed-status" data-embed-status>The line-dynamics interactive will load as this section approaches the viewport.</p>
+      </div>
+
+      <p class="model-caveat">
+        <strong>Data boundary:</strong> the TU Graz configurations are an ensemble of relaxed
+        networks, whereas the Frank&ndash;Read frames are time ordered. The browser interpolates
+        between stored solver frames for smooth playback; it does not run a full DDD solver live.
+      </p>
+    </section>
+
+    <section class="unfinished-note" aria-labelledby="unfinished-title">
+      <div>
+        <p class="section-kicker">Before release</p>
+        <h2 id="unfinished-title">What remains to be completed</h2>
+      </div>
+      <ul>
+        <li>Connect obstacle interactions and increasing line density to strain hardening.</li>
+        <li>Add lecture prompts that bridge the atomic and line-network descriptions.</li>
+        <li>Add knowledge checks and finalize terminology, pacing, and accessibility review.</li>
+      </ul>
+    </section>
+
+    <nav class="dislocations-lesson-nav" aria-label="Teaching module sequence">
+      <a href="../crystal-defects/index.html"><span>Previous module</span><strong>&larr; Crystal Defects</strong></a>
+      <a href="../diffusion/index.html"><span>Next module</span><strong>Diffusion &rarr;</strong></a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Dislocations &middot; Work in Progress &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore authentic ParaDiS dislocation networks and a solver-derived Frank–Read multiplication sequence as continuous lines in three dimensions.">
+  <meta name="theme-color" content="#f5efe4">
+  <title>Dislocation Line Dynamics | MSE Learning Lab</title>
+  <script>
+    if (new URLSearchParams(window.location.search).get("embed") === "1") {
+      document.documentElement.classList.add("is-embedded");
+    }
+  </script>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=3">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="../embed-frame.js?v=1" defer></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="app.js?v=2"></script>
+</head>
+<body>
+  <a class="skip-link" href="#line-dynamics-preview">Skip to the line-dynamics preview</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Preview navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../teaching/dislocations/index.html#line-dynamics">&larr; Dislocations module</a>
+    </nav>
+  </header>
+
+  <main class="line-shell" id="line-dynamics-preview">
+    <header class="line-intro">
+      <div>
+        <p class="eyebrow">Dislocations module &middot; Section 02</p>
+        <h1>Dislocations as interacting lines</h1>
+      </div>
+      <div class="line-intro-copy">
+        <span class="preview-status">Work in Progress &middot; Dislocations module</span>
+        <p>
+          Inspect a dense, atom-free ParaDiS network and then follow a Frank&ndash;Read source
+          through solver-generated bow-out, multiplication, collision, and remeshing.
+        </p>
+      </div>
+    </header>
+
+    <section class="line-workspace" aria-labelledby="line-viewer-title">
+      <section class="line-viewer-card">
+        <header class="line-viewer-heading">
+          <div>
+            <p class="panel-kicker" id="line-model-kicker">Authentic ParaDiS configuration</p>
+            <h2 id="line-viewer-title">TU Graz single-slip network</h2>
+          </div>
+          <span class="line-phase-chip" id="line-phase-chip">Loading data&hellip;</span>
+        </header>
+
+        <p class="line-viewer-note" id="line-viewer-note">
+          Six representative configurations are drawn from a 300-member ensemble. Their order is not simulation time.
+        </p>
+
+        <div class="line-visual-grid">
+          <div class="line-viewer-frame" id="line-viewer-frame">
+            <canvas
+              id="line-canvas"
+              role="img"
+              aria-label="Three-dimensional continuous-line rendering of a dislocation network."
+              aria-describedby="line-viewer-note line-model-note"
+            >
+              Your browser does not support the canvas element.
+            </canvas>
+            <div class="line-viewer-fallback" id="line-viewer-fallback" role="status">
+              Loading the dislocation data and three-dimensional viewer&hellip;
+            </div>
+
+            <div class="line-frame-top" aria-hidden="true">
+              <span class="line-data-badge" id="line-data-badge">TU Graz &middot; CC BY 4.0</span>
+              <span class="line-frame-counter" id="line-frame-counter">Configuration &mdash;</span>
+            </div>
+
+            <div class="line-frame-readout">
+              <p id="line-readout-label">Preparing network</p>
+              <strong id="line-readout-value">&mdash;</strong>
+            </div>
+
+            <div class="line-character-legend" aria-label="Line-character color legend" hidden>
+              <span class="line-character-item"><i class="line-edge-key" aria-hidden="true"></i>Edge</span>
+              <span class="line-character-item"><i class="line-mixed-key" aria-hidden="true"></i>Mixed</span>
+              <span class="line-character-item"><i class="line-screw-key" aria-hidden="true"></i>Screw</span>
+              <span><i class="line-pin-key" aria-hidden="true"></i><b id="line-marker-label">Nodes</b></span>
+            </div>
+            <p class="line-sr-only" id="line-accessible-status" role="status" aria-live="polite"></p>
+          </div>
+
+          <figure class="line-chart-card" aria-labelledby="line-chart-title">
+            <header class="line-chart-heading">
+              <div>
+                <p class="panel-kicker" id="line-chart-kicker">Six selected ensemble members</p>
+                <h3 id="line-chart-title">Network size across configurations</h3>
+              </div>
+              <output id="line-chart-output">Sample &mdash;</output>
+            </header>
+
+            <svg id="line-chart" viewBox="0 0 470 330" role="img" aria-labelledby="line-chart-svg-title line-chart-svg-desc">
+              <title id="line-chart-svg-title">Network line length and segment-count graph</title>
+              <desc id="line-chart-svg-desc">The graph compares normalized total line length and segment count for the selected network.</desc>
+              <defs>
+                <linearGradient id="line-chart-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ef6b59" stop-opacity="0.22"/>
+                  <stop offset="1" stop-color="#ef6b59" stop-opacity="0"/>
+                </linearGradient>
+                <clipPath id="line-chart-clip"><rect x="58" y="30" width="380" height="236" rx="6"/></clipPath>
+              </defs>
+              <g class="line-chart-grid" aria-hidden="true">
+                <line x1="58" y1="30" x2="438" y2="30"/>
+                <line x1="58" y1="89" x2="438" y2="89"/>
+                <line x1="58" y1="148" x2="438" y2="148"/>
+                <line x1="58" y1="207" x2="438" y2="207"/>
+                <line x1="58" y1="266" x2="438" y2="266"/>
+                <line x1="58" y1="30" x2="58" y2="266"/>
+                <line x1="153" y1="30" x2="153" y2="266"/>
+                <line x1="248" y1="30" x2="248" y2="266"/>
+                <line x1="343" y1="30" x2="343" y2="266"/>
+                <line x1="438" y1="30" x2="438" y2="266"/>
+              </g>
+              <g clip-path="url(#line-chart-clip)">
+                <path id="line-chart-area" class="line-chart-area" d=""/>
+                <path id="line-length-path" class="line-length-path" d=""/>
+                <path id="line-count-path" class="line-count-path" d=""/>
+                <line id="line-chart-guide" class="line-chart-guide" x1="58" y1="30" x2="58" y2="266"/>
+                <circle id="line-length-marker" class="line-length-marker" cx="58" cy="148" r="6"/>
+                <circle id="line-count-marker" class="line-count-marker" cx="58" cy="148" r="5"/>
+              </g>
+              <g class="line-chart-labels" aria-hidden="true">
+                <text x="18" y="150" transform="rotate(-90 18 150)">&Sigma;L / L<tspan baseline-shift="sub">box</tspan></text>
+                <text x="456" y="150" transform="rotate(90 456 150)">segment count</text>
+                <text id="line-chart-x-title" x="248" y="315" text-anchor="middle">Selected configuration rank (not time)</text>
+                <text x="58" y="286" text-anchor="middle" id="line-chart-x-start">low</text>
+                <text x="438" y="286" text-anchor="middle" id="line-chart-x-end">high</text>
+                <text x="48" y="34" text-anchor="end" id="line-chart-length-max">&mdash;</text>
+                <text x="48" y="266" text-anchor="end" id="line-chart-length-min">&mdash;</text>
+                <text x="447" y="34" id="line-chart-count-max">&mdash;</text>
+                <text x="447" y="266" id="line-chart-count-min">&mdash;</text>
+              </g>
+            </svg>
+
+            <div class="line-chart-legend" aria-label="Graph legend">
+              <span><i class="line-length-key" aria-hidden="true"></i>Normalized total length</span>
+              <span><i class="line-count-key" aria-hidden="true"></i>Segments</span>
+              <span><i class="line-current-key" aria-hidden="true"></i>Current state</span>
+            </div>
+            <figcaption id="line-chart-caption">
+              Each point is a different relaxed realization. The graph compares network size; it does not imply evolution between samples.
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="line-viewer-footer">
+          <p id="line-character-note">Drag to orbit, use the wheel to zoom, or use the camera buttons. Lines are colored by |<i>t</i>&middot;<i>b&#770;</i>|.</p>
+          <p class="line-model-note" id="line-model-note"><strong>Dataset view:</strong> authentic ParaDiS configurations, displayed as an ensemble rather than a movie.</p>
+        </div>
+      </section>
+
+      <aside class="line-controls-card" aria-label="Line-dynamics controls">
+        <section class="line-control-section" aria-labelledby="line-mode-title">
+          <p class="control-kicker">Source</p>
+          <h2 id="line-mode-title">Choose the evidence</h2>
+          <div class="line-mode-buttons" role="group" aria-label="Visualization dataset">
+            <button class="line-mode-button is-active" id="line-mode-tugraz" type="button" aria-pressed="true" data-requires-ready disabled>
+              <span>TU Graz</span><small>ParaDiS ensemble</small>
+            </button>
+            <button class="line-mode-button" id="line-mode-frank" type="button" aria-pressed="false" data-requires-ready disabled>
+              <span>Frank&ndash;Read</span><small>PyDiS trajectory</small>
+            </button>
+          </div>
+          <fieldset class="line-projection-control">
+            <legend>Projection</legend>
+            <div>
+              <span>Perspective</span>
+              <label class="line-switch" for="line-projection">
+                <input id="line-projection" type="checkbox" role="switch" aria-label="Use orthographic projection" data-requires-ready disabled>
+                <i aria-hidden="true"></i>
+              </label>
+              <span>Orthographic</span>
+            </div>
+          </fieldset>
+        </section>
+
+        <section class="line-control-section" aria-labelledby="line-playback-title">
+          <div class="line-control-heading">
+            <div>
+              <p class="control-kicker">Playback</p>
+              <h2 id="line-playback-title">Tour the ensemble</h2>
+            </div>
+            <output id="line-progress-output" for="line-progress">&mdash;</output>
+          </div>
+
+          <label class="line-range-label" for="line-progress">
+            <span id="line-range-title">Selected configuration</span>
+            <input id="line-progress" type="range" min="0" max="1000" step="1" value="1000" data-requires-ready disabled>
+          </label>
+          <div class="line-range-ticks" aria-hidden="true"><span id="line-range-start">Sparse sample</span><span id="line-range-middle">Ensemble</span><span id="line-range-end">Dense sample</span></div>
+
+          <div class="line-playback-buttons" role="group" aria-label="Playback controls">
+            <button class="line-action line-action-primary" id="line-play" type="button" data-requires-ready disabled><span aria-hidden="true">&#9654;</span> Tour samples</button>
+            <button class="line-action" id="line-step-back" type="button" data-requires-ready disabled aria-label="Move to previous state">&minus;1</button>
+            <button class="line-action" id="line-step-forward" type="button" data-requires-ready disabled aria-label="Move to next state">+1</button>
+            <button class="line-action" id="line-reset" type="button" data-requires-ready disabled>Reset</button>
+          </div>
+
+          <div class="line-select-grid">
+            <label for="line-configuration"><span>Configuration</span>
+              <select id="line-configuration" data-requires-ready disabled></select>
+            </label>
+            <label for="line-speed"><span>Playback speed</span>
+              <select id="line-speed" data-requires-ready disabled>
+                <option value="0.5">0.5&times;</option>
+                <option value="1" selected>1&times;</option>
+                <option value="1.5">1.5&times;</option>
+                <option value="2">2&times;</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="line-control-section" aria-labelledby="line-layers-title">
+          <p class="control-kicker">Layers</p>
+          <h2 id="line-layers-title">Read the network</h2>
+          <div class="line-layer-grid">
+            <label><input id="line-show-cell" type="checkbox" checked data-requires-ready disabled><span>Periodic cell</span></label>
+            <label><input id="line-show-nodes" type="checkbox" data-requires-ready disabled><span>Network nodes</span></label>
+            <label><input id="line-show-markers" type="checkbox" checked data-requires-ready disabled><span id="line-show-markers-label">Junction nodes</span></label>
+            <label><input id="line-show-loading" type="checkbox" checked data-requires-ready disabled><span>Stress and glide plane</span></label>
+            <label><input id="line-auto-rotate" type="checkbox" checked data-requires-ready disabled><span>Slow auto-rotate</span></label>
+          </div>
+          <label class="line-color-select" for="line-color-mode"><span>Line coloring</span>
+            <select id="line-color-mode" data-requires-ready disabled>
+              <option value="character" selected>Edge / mixed / screw character</option>
+              <option value="uniform">Single network color</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="line-control-section" aria-labelledby="line-camera-title">
+          <p class="control-kicker">Camera</p>
+          <h2 id="line-camera-title">Orient the cell</h2>
+          <div class="line-camera-buttons" role="group" aria-label="Camera orientations">
+            <button class="line-camera-action is-active" type="button" data-view="isometric" aria-pressed="true" data-requires-ready disabled>Isometric</button>
+            <button class="line-camera-action" type="button" data-view="front" aria-pressed="false" data-requires-ready disabled>Front</button>
+            <button class="line-camera-action" type="button" data-view="top" aria-pressed="false" data-requires-ready disabled>Top</button>
+          </div>
+          <div class="line-camera-buttons line-camera-nudge" role="group" aria-label="Camera adjustments">
+            <button class="line-camera-action" id="line-rotate-left" type="button" data-requires-ready disabled aria-label="Rotate model left">&larr; Rotate</button>
+            <button class="line-camera-action" id="line-rotate-right" type="button" data-requires-ready disabled aria-label="Rotate model right">Rotate &rarr;</button>
+            <button class="line-camera-action" id="line-zoom-in" type="button" data-requires-ready disabled>Zoom +</button>
+            <button class="line-camera-action" id="line-zoom-out" type="button" data-requires-ready disabled>Zoom &minus;</button>
+          </div>
+        </section>
+
+        <section class="line-metrics" aria-labelledby="line-metrics-title">
+          <div>
+            <p class="control-kicker">Current state</p>
+            <h2 id="line-metrics-title">Network readout</h2>
+          </div>
+          <dl>
+            <div><dt>Nodes</dt><dd id="line-metric-nodes">&mdash;</dd></div>
+            <div><dt>Segments</dt><dd id="line-metric-segments">&mdash;</dd></div>
+            <div><dt id="line-metric-markers-label">Junctions</dt><dd id="line-metric-markers">&mdash;</dd></div>
+            <div><dt>&Sigma;L / L<sub>box</sub></dt><dd id="line-metric-length">&mdash;</dd></div>
+          </dl>
+          <p class="line-stress-readout" id="line-stress-readout">Loading history is not provided for the ensemble.</p>
+        </section>
+      </aside>
+    </section>
+
+    <section class="line-explainer" aria-labelledby="line-explainer-title">
+      <div class="line-explainer-lead">
+        <p class="eyebrow">How to read this preview</p>
+        <h2 id="line-explainer-title">Two datasets, two different claims</h2>
+      </div>
+      <article>
+        <span class="line-explainer-index">01</span>
+        <h3>Ensemble evidence</h3>
+        <p>The TU Graz files are 300 statistically similar relaxed configurations. Six are selected by total-line-length quantile to keep the browser payload small.</p>
+      </article>
+      <article>
+        <span class="line-explainer-index">02</span>
+        <h3>Motion evidence</h3>
+        <p>The Frank&ndash;Read view uses 20 time-ordered PyDiS snapshots from a 200-step run under fixed &sigma;<sub>xz</sub> = &minus;0.40 GPa. Linear browser interpolation smooths the ten-step gaps.</p>
+      </article>
+      <article>
+        <span class="line-explainer-index">03</span>
+        <h3>Character color</h3>
+        <p>Color follows |<i>t</i>&middot;<i>b&#770;</i>|: zero is edge, one is screw, and intermediate values are mixed character.</p>
+      </article>
+    </section>
+
+    <section class="line-provenance" aria-labelledby="line-provenance-title">
+      <div>
+        <p class="eyebrow">Provenance</p>
+        <h2 id="line-provenance-title">Reproducible source data</h2>
+      </div>
+      <p>
+        ParaDiS data adapted from Satyapriya Gupta, with Benedikt Weger and Thomas Hochrainer,
+        <a href="https://doi.org/10.3217/an3jq-cdm10">Making sense of dislocation correlations &ndash; ParaDis data files</a>,
+        Graz University of Technology (2022), licensed <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
+        Frank&ndash;Read frames were generated locally from the
+        <a href="https://github.com/OpenDiS/OpenDiS/tree/main/examples/02_frank_read_src">OpenDiS/PyDiS example</a>
+        at commit <code>ef31c6d</code>, BSD-3-Clause.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer line-site-footer">
+    <p>&copy; 2026 MSE Learning Lab. Dislocations module &middot; Work in Progress.</p>
+  </footer>
+</body>
+</html>

@@ -24,6 +24,22 @@ Current module:
 The dislocation viewer is also embedded in `teaching/crystal-defects/` so the
 line-defect model appears in the core lesson while the standalone URL remains usable.
 
+    edge-dislocation-motion-preview/
+    |-- index.html    Atomic edge/screw glide and synchronized Peierls plot
+    |-- style.css     Standalone and embedded responsive layouts
+    |-- app.js        Three.js atomic model, controls, and graph synchronization
+
+    dislocation-line-dynamics-preview/
+    |-- index.html    ParaDiS network and Frank-Read playback interface
+    |-- style.css     Standalone and embedded responsive layouts
+    |-- app.js        Three.js continuous-line renderer and playback controls
+    |-- data/         Prepared ParaDiS and PyDiS visualization data
+    |-- tools/        Reproducible data-preparation script
+
+Both previews are integrated as separate sections of the Work in Progress
+`teaching/dislocations/` module. `embed-frame.js` lets each same-origin iframe
+report its content height to the teaching page while the standalone URLs remain usable.
+
     fcc-bct-cell/
     |-- index.html    FCC and alternative BCT cell explanation and controls
     |-- style.css     Site-matched responsive viewer layout
