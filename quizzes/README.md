@@ -17,6 +17,11 @@ Independent quiz modules:
     |-- style.css    Responsive quiz and shared-viewer layout
     |-- app.js       Answer checking and interactive Three.js crystal figures
 
+    phase-diagrams/
+    |-- index.html   Image-based hypoeutectoid steel composition question
+    |-- style.css    Responsive micrograph, reference-table, and answer layout
+    |-- app.js       Density conversion and inverse lever-rule checking
+
     crystal-structure-tutorial/
     |-- index.html   Ten numerical crystal-structure and XRD problems
     |-- style.css    Responsive problem cards, progress, and gated download

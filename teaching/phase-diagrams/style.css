@@ -378,6 +378,78 @@
   pointer-events: none;
 }
 
+.iron-transformation-dot {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.iron-transformation-dot[hidden] {
+  display: none;
+}
+
+.iron-transformation-dot-glyph {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  padding-left: 0.1rem;
+  place-items: center;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 0 4px rgba(201, 59, 31, 0.2), 0 4px 12px rgba(46, 42, 116, 0.3);
+  font-size: 0.68rem;
+  line-height: 1;
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.iron-transformation-dot-label {
+  position: absolute;
+  top: 50%;
+  left: calc(100% - 0.05rem);
+  padding: 0.18rem 0.4rem;
+  border: 1px solid rgba(46, 42, 116, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 254, 250, 0.94);
+  box-shadow: 0 3px 9px rgba(46, 42, 116, 0.14);
+  color: var(--ink);
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+  transform: translateY(-50%);
+}
+
+.iron-transformation-dot:hover .iron-transformation-dot-glyph,
+.iron-transformation-dot:focus-visible .iron-transformation-dot-glyph {
+  background: var(--ink);
+  transform: scale(1.1);
+}
+
+.iron-transformation-dot.is-playing .iron-transformation-dot-glyph {
+  background: var(--ink);
+  animation: iron-dot-pulse 800ms ease-in-out infinite alternate;
+}
+
+.iron-transformation-dot.is-playing .iron-transformation-dot-label {
+  color: var(--coral);
+}
+
+@keyframes iron-dot-pulse {
+  from { box-shadow: 0 0 0 3px rgba(201, 59, 31, 0.18), 0 4px 12px rgba(46, 42, 116, 0.24); }
+  to { box-shadow: 0 0 0 8px rgba(201, 59, 31, 0.08), 0 5px 15px rgba(46, 42, 116, 0.34); }
+}
+
 .diagram-panel figcaption {
   padding: 0.7rem 1rem 0.9rem;
   border-top: 1px solid var(--line);
@@ -1027,6 +1099,35 @@ input[type="range"] {
   background: #ede6d5;
 }
 
+.iron-animation-meter {
+  display: grid;
+  grid-template-columns: minmax(5rem, 1fr) auto;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.42rem 0.65rem;
+  border-top: 1px solid rgba(46, 42, 116, 0.14);
+  background: var(--ink);
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 850;
+}
+
+.iron-animation-track {
+  overflow: hidden;
+  height: 0.38rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.iron-animation-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--coral-bright, #f05030);
+  transition: width 80ms linear;
+}
+
 .anchor-points {
   margin-top: 1rem;
 }
@@ -1496,6 +1597,8 @@ input[type="range"] {
   .mode-bar,
   .micrograph-presets,
   .micrograph-preset-note,
+  .iron-transformation-dot,
+  .iron-animation-meter,
   .quiz-actions,
   .reset-button {
     display: none;
@@ -1512,5 +1615,11 @@ input[type="range"] {
 @media (prefers-reduced-motion: reduce) {
   .phase-route {
     backdrop-filter: none;
+  }
+
+  .iron-transformation-dot-glyph,
+  .iron-animation-track span {
+    animation: none;
+    transition: none;
   }
 }

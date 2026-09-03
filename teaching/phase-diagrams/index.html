@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Phase Diagrams | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
   <script src="../../js/main.js?v=2" defer></script>
-  <script type="module" src="app.js?v=12"></script>
+  <script type="module" src="app.js?v=13"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the phase-diagram lesson</a>
@@ -317,7 +317,7 @@
             <div class="diagram-toolbar iron-diagram-toolbar">
               <div>
                 <strong>Fe&ndash;Fe<sub>3</sub>C equilibrium map</strong>
-                <span id="iron-chart-help">Read phases is selected by default. Click or tap a phase field to report its composition, temperature, and phases. Choose Box zoom, then drag from the plot, axes, or surrounding canvas margin; only the part crossing the plotted data is enlarged. Reading mode resumes after the zoom. Steel &le; 1147 &deg;C focuses on solid-state transformations and omits higher-temperature fields. The sliders provide keyboard control.</span>
+                <span id="iron-chart-help">Read phases is selected by default. Click or tap a phase field to report its composition, temperature, and phases. The orange play button on the composition axis at 0.40 wt% C runs a two-second hypoeutectoid cooling sequence and marks each corresponding state on the diagram. Choose Box zoom, then drag from the plot, axes, or surrounding canvas margin; only the part crossing the plotted data is enlarged. Reading mode resumes after the zoom. Steel &le; 1147 &deg;C focuses on solid-state transformations and omits higher-temperature fields. The sliders provide keyboard control.</span>
               </div>
               <div class="chart-control-groups">
                 <div class="chart-view-buttons" role="group" aria-label="Iron-carbide chart range">
@@ -352,9 +352,13 @@
             </ul>
             <div class="chart-frame iron-chart-frame">
               <canvas id="iron-chart" width="980" height="650" role="img" aria-describedby="iron-chart-help" aria-label="Interactive colour-coded iron-cementite phase diagram drawn from the supplied B-spline trace and normalized to the labelled critical points. Read phases mode is active by default; click or tap a phase field to inspect composition, temperature, and phases. Choose Box zoom and drag from the plot, axes, or surrounding canvas margin to enlarge the part crossing the plotted data."></canvas>
+              <button type="button" class="iron-transformation-dot" id="iron-hypoeutectoid-trigger" aria-label="Play the two-second hypoeutectoid steel cooling animation at 0.40 weight percent carbon" aria-describedby="iron-animation-note" title="Play 2 s hypoeutectoid cooling animation" hidden>
+                <span class="iron-transformation-dot-glyph" aria-hidden="true">&#9654;</span>
+                <span class="iron-transformation-dot-label" aria-hidden="true">0.40 wt% C &middot; 2 s</span>
+              </button>
               <div class="iron-zoom-box" aria-hidden="true" hidden></div>
             </div>
-            <figcaption>Each colour identifies a phase domain using the legend above. Curved boundaries are drawn from the supplied B-spline trace and normalized to the labelled thermodynamic critical points; reaction isotherms remain exact, straight, and horizontal. Dark point markers locate the supplied critical values. Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
+            <figcaption>Each colour identifies a phase domain using the legend above. Curved boundaries are drawn from the supplied B-spline trace and normalized to the labelled thermodynamic critical points; reaction isotherms remain exact, straight, and horizontal. Dark point markers locate the supplied critical values. <span id="iron-animation-note">The orange play button sits on the composition axis at 0.40 wt% C. During playback, five dots trace its cooling path from above A<sub>3</sub> to below A<sub>1</sub>; the two-second duration is illustrative, not a physical transformation time.</span> Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
           </figure>
 
           <div class="compact-controls" role="group" aria-label="Iron-carbide selected point controls">
@@ -375,6 +379,10 @@
           <figure class="microstructure-card iron-micro-card">
             <img id="iron-micrograph" class="micrograph-image" src="assets/microstructures/fe-c/hypoeutectoid-5.webp" width="1254" height="836" alt="AI-generated transformation visualization of slowly cooled hypoeutectoid steel with ferrite surrounding lamellar pearlite colonies." decoding="async">
             <canvas id="iron-microstructure" width="520" height="347" role="img" aria-label="Schematic iron-carbide microstructure for the selected point." hidden></canvas>
+            <div class="iron-animation-meter" id="iron-animation-meter" role="progressbar" aria-label="Hypoeutectoid cooling animation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Not playing" hidden>
+              <span class="iron-animation-track" aria-hidden="true"><span id="iron-animation-fill"></span></span>
+              <span id="iron-animation-step">Frame 1 of 5</span>
+            </div>
             <figcaption>
               <span class="microstructure-kind" id="iron-micro-kind">AI-generated transformation visualization</span>
               <span id="iron-micro-caption">Hypoeutectoid steel after slow cooling: proeutectoid ferrite surrounding lamellar pearlite colonies. Qualitative morphology only.</span>

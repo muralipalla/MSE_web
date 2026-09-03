@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Infer the carbon content of hypoeutectoid steel from a proeutectoid-ferrite estimate, density conversion, and the inverse lever rule.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Hypoeutectoid Steel Composition Quiz | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script type="module" src="app.js?v=2"></script>
+</head>
+<body>
+  <a class="skip-link" href="#quiz">Skip to the quiz</a>
+
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Quiz navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#practice">&larr; Back to practice</a>
+    </nav>
+  </header>
+
+  <main class="phase-quiz-shell" id="quiz">
+    <header class="phase-quiz-intro">
+      <div>
+        <p class="eyebrow">Phase-diagram quiz</p>
+        <h1>Read composition from microstructure</h1>
+      </div>
+      <p>Convert a stereological estimate to a mass fraction, then run the hypoeutectoid lever rule in reverse.</p>
+    </header>
+
+    <section class="quiz-reference" aria-labelledby="reference-title">
+      <div class="reference-heading">
+        <p class="section-kicker">Given data</p>
+        <h2 id="reference-title">Density and eutectoid reference</h2>
+        <p>Densities are rounded teaching values. They vary with temperature, carbon content, and alloying.</p>
+      </div>
+
+      <div class="reference-tables">
+        <div class="table-wrap">
+          <table>
+            <caption>Approximate densities used in this exercise</caption>
+            <thead><tr><th scope="col">Material</th><th scope="col">Classification</th><th scope="col">Density</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">&alpha;-ferrite</th><td>Phase; includes proeutectoid ferrite</td><td>7.87 g cm<sup>&minus;3</sup></td></tr>
+              <tr><th scope="row">Cementite, Fe<sub>3</sub>C</th><td>Phase within pearlite</td><td>7.68 g cm<sup>&minus;3</sup></td></tr>
+              <tr><th scope="row">Pearlite</th><td>Microconstituent: &alpha; + Fe<sub>3</sub>C</td><td>7.85 g cm<sup>&minus;3</sup> (derived)</td></tr>
+              <tr><th scope="row">&gamma;-austenite</th><td>Parent phase; absent from the final structure</td><td>&asymp; 7.65 g cm<sup>&minus;3</sup> near A<sub>1</sub></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <dl class="composition-data">
+          <div><dt>C<sub>&alpha;</sub> at A<sub>1</sub></dt><dd>0.022 wt% C</dd></div>
+          <div><dt>C<sub>e</sub> (eutectoid &gamma;)</dt><dd>0.760 wt% C</dd></div>
+          <div><dt>C<sub>Fe₃C</sub></dt><dd>6.67 wt% C</dd></div>
+          <div><dt>Area&ndash;volume relation</dt><dd>A<sub>A</sub> &asymp; V<sub>V</sub></dd></div>
+        </dl>
+      </div>
+
+      <p class="reference-note">Pearlite is a microconstituent, not a phase. Its effective density is calculated from its ferrite and cementite contents. Only &rho;<sub>&alpha;</sub> and &rho;<sub>pearlite</sub> enter the final volume-to-mass conversion.</p>
+    </section>
+
+    <form class="composition-quiz-form" id="composition-quiz-form" novalidate>
+      <article class="microstructure-question" id="composition-question">
+        <figure class="quiz-micrograph">
+          <img src="../../teaching/phase-diagrams/assets/microstructures/fe-c/hypoeutectoid-5.webp" width="1254" height="836" alt="False-colour endpoint visualization of hypoeutectoid steel, with pale-blue proeutectoid ferrite surrounding dark-blue lamellar pearlite colonies." decoding="async">
+          <figcaption>Final frame of the supplied cooling sequence: pale blue denotes proeutectoid &alpha;-ferrite; dark lamellar colonies denote pearlite. This synthetic image is a qualitative morphology cue, not a calibrated measurement.</figcaption>
+        </figure>
+
+        <div class="question-workspace">
+          <p class="section-kicker">One-question challenge</p>
+          <h2>Estimate the original carbon content</h2>
+          <p>A slowly cooled hypoeutectoid steel has the final microstructure shown. For this exercise, a separate quantitative image analysis reports that proeutectoid &alpha;-ferrite occupies <strong>49.0% of a representative section area</strong>; the remainder is pearlite.</p>
+
+          <div class="stereology-given" aria-label="Image-analysis estimate">
+            <span>Given estimate</span>
+            <strong>49.0 area% proeutectoid &alpha;</strong>
+            <small>Take area fraction &asymp; volume fraction.</small>
+          </div>
+
+          <p>Use the density data to convert this to a mass fraction, then invert the lever rule at A<sub>1</sub>. What is the approximate original steel composition?</p>
+
+          <label class="composition-answer" for="composition-answer">
+            <span>Estimated composition, C<sub>0</sub></span>
+            <span class="answer-entry">
+              <input id="composition-answer" name="composition-answer" type="number" min="0" max="2.14" step="any" inputmode="decimal" autocomplete="off" aria-describedby="composition-status composition-tolerance">
+              <span>wt% C</span>
+            </span>
+          </label>
+          <p class="answer-hint" id="composition-tolerance">Enter the composition as a percentage, for example 0.40 rather than 0.004 or 40.</p>
+          <p class="answer-status" id="composition-status" role="status" aria-live="polite"></p>
+
+          <div class="quiz-actions">
+            <button class="button primary" type="submit">Check answer</button>
+            <button class="button secondary" id="clear-composition" type="button">Clear</button>
+          </div>
+
+          <button class="solution-toggle" id="solution-toggle" type="button" aria-expanded="false" aria-controls="worked-solution">Show worked solution</button>
+          <div class="worked-solution" id="worked-solution" hidden>
+            <h3>Worked solution</h3>
+            <ol>
+              <li>Pearlite contains W<sub>Fe₃C</sub><sup>P</sup> = (0.760 &minus; 0.022)/(6.67 &minus; 0.022) = 0.111 and W<sub>&alpha;</sub><sup>P</sup> = 0.889.</li>
+              <li>&rho;<sub>P</sub> = [0.889/7.87 + 0.111/7.68]<sup>&minus;1</sup> = 7.85 g cm<sup>&minus;3</sup>.</li>
+              <li>W<sub>&alpha;</sub><sup>pro</sup> = (0.490 &times; 7.87)/[(0.490 &times; 7.87) + (0.510 &times; 7.85)] = 0.491.</li>
+              <li>C<sub>0</sub> = C<sub>e</sub> &minus; W<sub>&alpha;</sub><sup>pro</sup>(C<sub>e</sub> &minus; C<sub>&alpha;</sub>) = 0.760 &minus; 0.491(0.760 &minus; 0.022) = <strong>0.398 wt% C &asymp; 0.40 wt% C</strong>.</li>
+            </ol>
+            <p>The stated 49.0% is supplied exercise data, not a measurement taken from the synthetic image. The usual introductory treatment also neglects small redistribution effects below A<sub>1</sub>.</p>
+          </div>
+        </div>
+      </article>
+    </form>
+
+    <details class="source-note">
+      <summary>Density sources and scope</summary>
+      <p>The ferrite value uses the rounded room-temperature density of pure iron reported by the <a href="https://nvlpubs.nist.gov/nistpubs/jres/16/jresv16n2p105_A1b.pdf" target="_blank" rel="noopener">National Bureau of Standards/NIST</a>. The cementite value is rounded from the recommended ambient-condition value compiled in the <a href="https://www.jstage.jst.go.jp/article/isijinternational/62/7/62_ISIJINT-2022-048/_html/-char/en" target="_blank" rel="noopener">ISIJ International cementite review</a>. The austenite context value is estimated from the temperature- and carbon-dependent lattice-parameter relation reported by <a href="https://repository.tudelft.nl/record/uuid:2c2306e8-8159-40a3-aeac-077b283f6510" target="_blank" rel="noopener">Onink and co-workers</a>; it is not used in the answer.</p>
+    </details>
+
+    <article class="quiz-next">
+      <div>
+        <p class="section-kicker">Review the diagram</p>
+        <h2>Return to the phase-diagram module</h2>
+        <p>Replay the 0.40 wt% C cooling sequence and follow its five marked positions across the Fe&ndash;Fe<sub>3</sub>C diagram.</p>
+      </div>
+      <a class="button primary" href="../../teaching/phase-diagrams/index.html#iron-carbide">Open Fe&ndash;Fe<sub>3</sub>C diagram</a>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Phase-diagram quiz &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

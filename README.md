@@ -33,6 +33,7 @@ Current quiz pages are:
     quizzes/atomic-bonding/index.html
     quizzes/diffusion/index.html
     quizzes/miller-indices/index.html
+    quizzes/phase-diagrams/index.html
 
 ## Add a teaching page
 

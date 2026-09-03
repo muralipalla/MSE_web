@@ -1666,6 +1666,48 @@ function updateIronDomainLegend(result) {
 
 const IRON_MAX_ZOOM_FACTOR = 8;
 const IRON_ZOOM_HISTORY_LIMIT = 20;
+const IRON_HYPOEUTECTOID_ANIMATION = Object.freeze({
+  composition: 0.4,
+  finalTemperature: 700,
+  duration: 2000,
+  frames: Object.freeze([
+    {
+      src: "assets/microstructures/fe-c/hypoeutectoid-1.webp",
+      temperature: 850,
+      shortLabel: "Austenite γ",
+      alt: "AI-generated transformation frame showing equiaxed orange austenite grains before hypoeutectoid steel begins cooling through its transformation range.",
+      caption: "Above A₃: the 0.40 wt% C steel is single-phase austenite γ."
+    },
+    {
+      src: "assets/microstructures/fe-c/hypoeutectoid-2.webp",
+      temperature: 785,
+      shortLabel: "Ferrite nucleates",
+      alt: "AI-generated transformation frame showing thin blue proeutectoid ferrite beginning to form along orange austenite grain boundaries.",
+      caption: "Just below A₃: blue proeutectoid ferrite α begins to form along prior-austenite grain boundaries."
+    },
+    {
+      src: "assets/microstructures/fe-c/hypoeutectoid-3.webp",
+      temperature: 760,
+      shortLabel: "Ferrite grows",
+      alt: "AI-generated transformation frame showing blue proeutectoid ferrite growing around shrinking orange austenite regions.",
+      caption: "Within α + γ: ferrite grows while the remaining austenite becomes enriched in carbon."
+    },
+    {
+      src: "assets/microstructures/fe-c/hypoeutectoid-4.webp",
+      temperature: 735,
+      shortLabel: "Approaching A₁",
+      alt: "AI-generated transformation frame showing a continuous blue ferrite matrix surrounding smaller orange austenite regions near the eutectoid temperature.",
+      caption: "Approaching A₁: proeutectoid ferrite is established and the remaining austenite approaches the eutectoid composition, about 0.76 wt% C."
+    },
+    {
+      src: "assets/microstructures/fe-c/hypoeutectoid-5.webp",
+      temperature: 700,
+      shortLabel: "Ferrite + pearlite",
+      alt: "AI-generated transformation frame showing blue proeutectoid ferrite surrounding dark lamellar pearlite colonies after slow cooling below the eutectoid temperature.",
+      caption: "Below A₁ (727 °C): the remaining austenite transforms to pearlite, leaving proeutectoid ferrite + pearlite."
+    }
+  ])
+});
 const ironState = {
   composition: 0.4,
   temperature: 700,
@@ -1673,6 +1715,14 @@ const ironState = {
   domain: null,
   zoomHistory: [],
   interactionMode: "read"
+};
+const ironAnimationState = {
+  active: false,
+  playing: false,
+  runId: 0,
+  requestId: null,
+  frameIndex: -1,
+  preloadPromise: null
 };
 let currentIronResult = null;
 let ironBoxGesture = null;
@@ -1988,6 +2038,67 @@ function scheduleIronFigureAlignment() {
   });
 }
 
+function positionIronTransformationDot(plot) {
+  const trigger = $("#iron-hypoeutectoid-trigger");
+  const frame = $(".iron-chart-frame");
+  if (!trigger || !frame || !plot) return;
+  const { composition } = IRON_HYPOEUTECTOID_ANIMATION;
+  const visible = ironState.interactionMode !== "zoom"
+    && between(composition, ...plot.xDomain);
+  trigger.hidden = !visible;
+  if (!visible) return;
+  const canvasRect = plot.canvas.getBoundingClientRect();
+  const frameRect = frame.getBoundingClientRect();
+  trigger.style.left = `${canvasRect.left - frameRect.left + plot.x(composition)}px`;
+  trigger.style.top = `${canvasRect.top - frameRect.top + plot.margins.top + plot.plotHeight}px`;
+}
+
+function drawIronAnimationPath(plot) {
+  if (!ironAnimationState.active || ironAnimationState.frameIndex < 0) return;
+  const { composition, frames } = IRON_HYPOEUTECTOID_ANIMATION;
+  if (!between(composition, ...plot.xDomain)) return;
+  const visibleFrames = frames.filter((frame) => between(frame.temperature, ...plot.yDomain));
+  if (!visibleFrames.length) return;
+  const { context, x, y, compact } = plot;
+  context.save();
+  context.strokeStyle = COLORS.coral;
+  context.globalAlpha = 0.72;
+  context.lineWidth = 1.8;
+  context.setLineDash([5, 5]);
+  context.beginPath();
+  context.moveTo(x(composition), y(visibleFrames[0].temperature));
+  context.lineTo(x(composition), y(visibleFrames.at(-1).temperature));
+  context.stroke();
+  context.setLineDash([]);
+  context.globalAlpha = 1;
+  frames.forEach((frame, index) => {
+    if (!between(frame.temperature, ...plot.yDomain)) return;
+    const isCurrent = index === ironAnimationState.frameIndex;
+    const isVisited = index < ironAnimationState.frameIndex;
+    drawPoint(plot, composition, frame.temperature, {
+      radius: isCurrent ? (compact ? 6.5 : 7.5) : (compact ? 3.5 : 4.2),
+      fill: isCurrent ? COLORS.coralBright : isVisited ? COLORS.coral : COLORS.paper,
+      stroke: isCurrent ? COLORS.ink : COLORS.coral,
+      strokeWidth: isCurrent ? 2.5 : 1.7
+    });
+  });
+  const currentFrame = frames[ironAnimationState.frameIndex];
+  if (between(currentFrame.temperature, ...plot.yDomain)) {
+    const label = `${ironAnimationState.frameIndex + 1}/5 · ${currentFrame.temperature} °C`;
+    const labelX = x(composition) + (compact ? 10 : 12);
+    const labelY = y(currentFrame.temperature) - (compact ? 9 : 11);
+    context.font = `850 ${compact ? 9 : 11}px system-ui, sans-serif`;
+    context.textAlign = "left";
+    context.textBaseline = "middle";
+    context.lineWidth = compact ? 3 : 4;
+    context.strokeStyle = "rgba(255, 254, 250, 0.96)";
+    context.strokeText(label, labelX, labelY);
+    context.fillStyle = COLORS.ink;
+    context.fillText(label, labelX, labelY);
+  }
+  context.restore();
+}
+
 function drawIronChart() {
   const canvas = $("#iron-chart");
   const { xDomain, yDomain } = ironChartDomains();
@@ -2020,7 +2131,7 @@ function drawIronChart() {
   canvas.classList.toggle("is-box-zoom", ironState.interactionMode === "zoom");
   canvas.setAttribute(
     "aria-label",
-    `Interactive colour-coded iron-cementite phase diagram drawn from the supplied B-spline trace and normalized to the labelled critical points. ${ironState.view === "steel" ? "Steel-region range" : "Full-composition range"}, ${ironZoomPhrase(zoomMetrics)} zoom. Displayed composition ${xDomain[0].toFixed(2)} to ${xDomain[1].toFixed(2)} weight percent carbon and temperature ${yDomain[0].toFixed(0)} to ${yDomain[1].toFixed(0)} degrees Celsius. ${ironState.interactionMode === "zoom" ? "Box zoom mode is active; drag from the plot, axes, or surrounding canvas margin to enlarge the part crossing the plotted data, then Read phases mode resumes." : "Read phases mode is active; click or tap a phase field to report composition, temperature, and phases."}`
+    `Interactive colour-coded iron-cementite phase diagram drawn from the supplied B-spline trace and normalized to the labelled critical points. ${ironState.view === "steel" ? "Steel-region range" : "Full-composition range"}, ${ironZoomPhrase(zoomMetrics)} zoom. Displayed composition ${xDomain[0].toFixed(2)} to ${xDomain[1].toFixed(2)} weight percent carbon and temperature ${yDomain[0].toFixed(0)} to ${yDomain[1].toFixed(0)} degrees Celsius. ${ironState.interactionMode === "zoom" ? "Box zoom mode is active; drag from the plot, axes, or surrounding canvas margin to enlarge the part crossing the plotted data, then Read phases mode resumes." : "Read phases mode is active; click or tap a phase field to report composition, temperature, and phases."} A separate orange play button on the composition axis at 0.40 weight percent carbon starts a two-second hypoeutectoid cooling animation.`
   );
 
   const { context, x, y, margins, plotWidth, plotHeight, compact } = plot;
@@ -2200,7 +2311,7 @@ function drawIronChart() {
   context.beginPath();
   context.rect(margins.left, margins.top, plotWidth, plotHeight);
   context.clip();
-  if (!currentIronResult.single && !currentIronResult.invariant) {
+  if (!ironAnimationState.active && !currentIronResult.single && !currentIronResult.invariant) {
     const lineRight = Math.min(currentIronResult.rightComposition, xDomain[1]);
     context.strokeStyle = COLORS.coral;
     context.lineWidth = 2.4;
@@ -2224,7 +2335,7 @@ function drawIronChart() {
       );
     }
   }
-  if (currentIronResult.invariant) {
+  if (!ironAnimationState.active && currentIronResult.invariant) {
     const endpoints = currentIronResult.compositions;
     context.strokeStyle = COLORS.coral;
     context.lineWidth = 2.4;
@@ -2233,8 +2344,10 @@ function drawIronChart() {
     context.lineTo(x(Math.min(endpoints.at(-1), xDomain[1])), y(ironState.temperature));
     context.stroke();
   }
-  drawSelection(plot, ironState.composition, ironState.temperature);
+  if (ironAnimationState.active) drawIronAnimationPath(plot);
+  else drawSelection(plot, ironState.composition, ironState.temperature);
   context.restore();
+  positionIronTransformationDot(plot);
   scheduleIronFigureAlignment();
 }
 
@@ -2415,6 +2528,7 @@ function drawCementiteNetwork(context, width, height, color = "#4c515a") {
 }
 
 function drawIronMicrostructure() {
+  if (ironAnimationState.active) return "animation";
   const result = currentIronResult || classifyIron(ironState.composition, ironState.temperature);
   const mediaState = setMicrostructureMedia("iron", ironMicrographFor(result), ironMicroDescription(result));
   if (mediaState === "micrograph") return mediaState;
@@ -2504,6 +2618,163 @@ function drawIronMicrostructure() {
   return mediaState;
 }
 
+function setIronAnimationMeter(progress, frameIndex, label = "") {
+  const meter = $("#iron-animation-meter");
+  const fill = $("#iron-animation-fill");
+  const step = $("#iron-animation-step");
+  if (!meter || !fill || !step) return;
+  const boundedProgress = clamp(progress, 0, 1);
+  const percentage = Math.round(boundedProgress * 100);
+  meter.hidden = false;
+  meter.setAttribute("aria-valuenow", String(percentage));
+  meter.setAttribute("aria-valuetext", boundedProgress >= 1
+    ? "Animation complete, frame 5 of 5"
+    : `${label}, frame ${frameIndex + 1} of ${IRON_HYPOEUTECTOID_ANIMATION.frames.length}`);
+  fill.style.width = `${percentage}%`;
+  step.textContent = boundedProgress >= 1
+    ? "Complete · 5/5"
+    : `${label} · ${frameIndex + 1}/5`;
+}
+
+function showIronAnimationFrame(frameIndex) {
+  if (ironAnimationState.frameIndex === frameIndex) return;
+  const frame = IRON_HYPOEUTECTOID_ANIMATION.frames[frameIndex];
+  const image = $("#iron-micrograph");
+  const canvas = $("#iron-microstructure");
+  image.onload = null;
+  image.onerror = null;
+  image.dataset.requestedAsset = frame.src;
+  image.dataset.mediaState = "animation";
+  image.src = frame.src;
+  image.alt = frame.alt;
+  image.hidden = false;
+  canvas.hidden = true;
+  $("#iron-micro-kind").textContent = `Two-second cooling sequence · frame ${frameIndex + 1}/5`;
+  $("#iron-micro-caption").textContent = frame.caption;
+  ironAnimationState.frameIndex = frameIndex;
+  drawIronChart();
+}
+
+function preloadIronAnimationFrames() {
+  if (ironAnimationState.preloadPromise) return ironAnimationState.preloadPromise;
+  ironAnimationState.preloadPromise = Promise.all(
+    IRON_HYPOEUTECTOID_ANIMATION.frames.map((frame) => new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        if (typeof image.decode !== "function") {
+          resolve(frame.src);
+          return;
+        }
+        image.decode().catch(() => {}).then(() => resolve(frame.src));
+      };
+      image.onerror = () => reject(new Error(`Could not load ${frame.src}`));
+      image.src = frame.src;
+    }))
+  ).catch((error) => {
+    ironAnimationState.preloadPromise = null;
+    throw error;
+  });
+  return ironAnimationState.preloadPromise;
+}
+
+function cancelIronTransformationAnimation({ hideMeter = true } = {}) {
+  ironAnimationState.runId += 1;
+  if (ironAnimationState.requestId !== null) cancelAnimationFrame(ironAnimationState.requestId);
+  ironAnimationState.requestId = null;
+  ironAnimationState.active = false;
+  ironAnimationState.playing = false;
+  ironAnimationState.frameIndex = -1;
+  const trigger = $("#iron-hypoeutectoid-trigger");
+  trigger?.classList.remove("is-playing");
+  trigger?.setAttribute("aria-label", "Play the two-second hypoeutectoid steel cooling animation at 0.40 weight percent carbon");
+  if (!hideMeter) return;
+  const meter = $("#iron-animation-meter");
+  const fill = $("#iron-animation-fill");
+  if (meter) {
+    meter.hidden = true;
+    meter.setAttribute("aria-valuenow", "0");
+    meter.setAttribute("aria-valuetext", "Not playing");
+  }
+  if (fill) fill.style.width = "0%";
+}
+
+function revealIronAnimationOutput() {
+  const card = $(".iron-micro-card");
+  const rect = card.getBoundingClientRect();
+  const isComfortablyVisible = rect.top < window.innerHeight * 0.82 && rect.bottom > window.innerHeight * 0.18;
+  if (isComfortablyVisible) return Promise.resolve();
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  card.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+  return new Promise((resolve) => window.setTimeout(resolve, reduceMotion ? 0 : 400));
+}
+
+async function playIronHypoeutectoidAnimation() {
+  cancelIronTransformationAnimation();
+  setIronInteractionMode("read", { announce: false, redraw: false });
+  resetIronZoom();
+  $("#iron-composition").value = IRON_HYPOEUTECTOID_ANIMATION.composition.toFixed(2);
+  $("#iron-temperature").value = String(IRON_HYPOEUTECTOID_ANIMATION.finalTemperature);
+  updateIron({ announce: false, revealSelection: true });
+
+  const runId = ++ironAnimationState.runId;
+  ironAnimationState.active = true;
+  const trigger = $("#iron-hypoeutectoid-trigger");
+  trigger.classList.add("is-playing");
+  trigger.setAttribute("aria-label", "Restart the two-second hypoeutectoid steel cooling animation");
+  $("#iron-status").textContent = "Loading the five supplied hypoeutectoid transformation frames.";
+
+  try {
+    await Promise.all([preloadIronAnimationFrames(), revealIronAnimationOutput()]);
+  } catch (error) {
+    if (runId !== ironAnimationState.runId) return;
+    cancelIronTransformationAnimation();
+    drawIronMicrostructure();
+    $("#iron-status").textContent = "The hypoeutectoid animation could not be loaded; the final representative image is displayed instead.";
+    console.error(error);
+    return;
+  }
+  if (runId !== ironAnimationState.runId) return;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) {
+    showIronAnimationFrame(IRON_HYPOEUTECTOID_ANIMATION.frames.length - 1);
+    setIronAnimationMeter(1, IRON_HYPOEUTECTOID_ANIMATION.frames.length - 1);
+    trigger.classList.remove("is-playing");
+    trigger.setAttribute("aria-label", "Show the final hypoeutectoid cooling frame again");
+    $("#iron-micro-kind").textContent = "Cooling sequence · final frame";
+    $("#iron-status").textContent = "Reduced-motion preference detected; the final ferrite + pearlite frame is shown without timed playback.";
+    return;
+  }
+
+  ironAnimationState.playing = true;
+  showIronAnimationFrame(0);
+  setIronAnimationMeter(0, 0, IRON_HYPOEUTECTOID_ANIMATION.frames[0].shortLabel);
+  $("#iron-status").textContent = "Playing the two-second hypoeutectoid cooling sequence at 0.40 wt% C.";
+  let startTime = null;
+  const advance = (timestamp) => {
+    if (runId !== ironAnimationState.runId) return;
+    if (startTime === null) startTime = timestamp;
+    const progress = clamp((timestamp - startTime) / IRON_HYPOEUTECTOID_ANIMATION.duration, 0, 1);
+    const frameIndex = Math.min(
+      IRON_HYPOEUTECTOID_ANIMATION.frames.length - 1,
+      Math.floor(progress * IRON_HYPOEUTECTOID_ANIMATION.frames.length)
+    );
+    showIronAnimationFrame(frameIndex);
+    setIronAnimationMeter(progress, frameIndex, IRON_HYPOEUTECTOID_ANIMATION.frames[frameIndex].shortLabel);
+    if (progress < 1) {
+      ironAnimationState.requestId = requestAnimationFrame(advance);
+      return;
+    }
+    ironAnimationState.requestId = null;
+    ironAnimationState.playing = false;
+    trigger.classList.remove("is-playing");
+    trigger.setAttribute("aria-label", "Replay the two-second hypoeutectoid steel cooling animation");
+    $("#iron-micro-kind").textContent = "Two-second cooling sequence · complete";
+    $("#iron-status").textContent = "Hypoeutectoid cooling animation complete: γ → proeutectoid α + carbon-enriched γ → proeutectoid α + pearlite.";
+  };
+  ironAnimationState.requestId = requestAnimationFrame(advance);
+}
+
 function ironPhaseSymbol(name) {
   return phaseSymbol(name);
 }
@@ -2518,6 +2789,10 @@ function clearIronBoxGesture() {
 
 function setIronInteractionMode(mode, { announce = true, redraw = true } = {}) {
   if (!new Set(["zoom", "read"]).has(mode)) return;
+  if (ironAnimationState.active) {
+    cancelIronTransformationAnimation();
+    drawIronMicrostructure();
+  }
   clearIronBoxGesture();
   ironState.interactionMode = mode;
   $$('[data-iron-mode]').forEach((button) => {
@@ -2711,6 +2986,7 @@ function updateIronZoomControls() {
 }
 
 function updateIron({ announce = true, revealSelection = false } = {}) {
+  cancelIronTransformationAnimation();
   ironState.composition = Number($("#iron-composition").value);
   ironState.temperature = Number($("#iron-temperature").value);
   if (revealSelection) keepIronSelectionVisible();
@@ -2775,6 +3051,14 @@ $("#iron-composition").addEventListener("change", () => updateIron({ revealSelec
 $("#iron-temperature").addEventListener("input", () => updateIron({ announce: false, revealSelection: true }));
 $("#iron-temperature").addEventListener("change", () => updateIron({ revealSelection: true }));
 installIronCanvasInteraction($("#iron-chart"));
+
+const ironHypoeutectoidTrigger = $("#iron-hypoeutectoid-trigger");
+ironHypoeutectoidTrigger.addEventListener("click", playIronHypoeutectoidAnimation);
+["pointerenter", "focus"].forEach((eventName) => {
+  ironHypoeutectoidTrigger.addEventListener(eventName, () => {
+    preloadIronAnimationFrames().catch(() => {});
+  }, { once: true });
+});
 
 $$('[data-iron-micro-example]').forEach((button) => button.addEventListener("click", () => {
   $("#iron-composition").value = button.dataset.ironMicroExample;
