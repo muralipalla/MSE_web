@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="style.css?v=1">
   <script src="../../js/main.js?v=2" defer></script>
-  <script type="module" src="app.js?v=2"></script>
+  <script type="module" src="app.js?v=3"></script>
 </head>
 <body>
   <a class="skip-link" href="#quiz">Skip to the quiz</a>
@@ -30,7 +30,7 @@
         <p class="eyebrow">Phase-diagram quiz</p>
         <h1>Read composition from microstructure</h1>
       </div>
-      <p>Convert a stereological estimate to a mass fraction, then run the hypoeutectoid lever rule in reverse.</p>
+      <p>Estimate proeutectoid ferrite from the image, convert your estimate to a mass fraction, then calculate the steel composition.</p>
     </header>
 
     <section class="quiz-reference" aria-labelledby="reference-title">
@@ -69,47 +69,57 @@
       <article class="microstructure-question" id="composition-question">
         <figure class="quiz-micrograph">
           <img src="../../teaching/phase-diagrams/assets/microstructures/fe-c/hypoeutectoid-5.webp" width="1254" height="836" alt="False-colour endpoint visualization of hypoeutectoid steel, with pale-blue proeutectoid ferrite surrounding dark-blue lamellar pearlite colonies." decoding="async">
-          <figcaption>Final frame of the supplied cooling sequence: pale blue denotes proeutectoid &alpha;-ferrite; dark lamellar colonies denote pearlite. This synthetic image is a qualitative morphology cue, not a calibrated measurement.</figcaption>
+          <figcaption>Pale-blue, unlamellated regions between colonies represent proeutectoid &alpha;-ferrite. The striped colonies are pearlite, including their pale ferrite lamellae. Use this synthetic image for a rough visual estimate.</figcaption>
         </figure>
 
         <div class="question-workspace">
-          <p class="section-kicker">One-question challenge</p>
+          <p class="section-kicker">Estimate, then calculate</p>
           <h2>Estimate the original carbon content</h2>
-          <p>A slowly cooled hypoeutectoid steel has the final microstructure shown. For this exercise, a separate quantitative image analysis reports that proeutectoid &alpha;-ferrite occupies <strong>49.0% of a representative section area</strong>; the remainder is pearlite.</p>
+          <p>Consider a slowly cooled hypoeutectoid steel represented by the microstructure shown. Estimate the percentage of the total image area occupied by <strong>proeutectoid &alpha;-ferrite</strong>; the remainder is pearlite.</p>
 
-          <div class="stereology-given" aria-label="Image-analysis estimate">
-            <span>Given estimate</span>
-            <strong>49.0 area% proeutectoid &alpha;</strong>
-            <small>Take area fraction &asymp; volume fraction.</small>
+          <div class="stereology-given" aria-label="Visual-estimation guidance">
+            <span>What to count</span>
+            <strong>The pale-blue regions between pearlite colonies</strong>
+            <small>Exclude the fine pale lamellae inside pearlite. Treat this field as representative and take area fraction &asymp; volume fraction.</small>
           </div>
 
-          <p>Use the density data to convert this to a mass fraction, then invert the lever rule at A<sub>1</sub>. What is the approximate original steel composition?</p>
+          <label class="composition-answer" for="ferrite-answer">
+            <span>1. Estimated proeutectoid ferrite</span>
+            <span class="answer-entry">
+              <input id="ferrite-answer" name="ferrite-answer" type="number" min="0" max="100" step="any" inputmode="decimal" autocomplete="off" aria-describedby="composition-status ferrite-tolerance">
+              <span>area%</span>
+            </span>
+          </label>
+          <p class="answer-hint" id="ferrite-tolerance">Enter a percentage of the total image area. Visual estimates within 5 percentage points of the reference are accepted.</p>
+
+          <p>Use <strong>your ferrite estimate</strong> and the density data to calculate its mass fraction, then invert the lever rule at A<sub>1</sub>. What is the approximate original carbon content?</p>
 
           <label class="composition-answer" for="composition-answer">
-            <span>Estimated composition, C<sub>0</sub></span>
+            <span>2. Calculated composition, C<sub>0</sub></span>
             <span class="answer-entry">
               <input id="composition-answer" name="composition-answer" type="number" min="0" max="2.14" step="any" inputmode="decimal" autocomplete="off" aria-describedby="composition-status composition-tolerance">
               <span>wt% C</span>
             </span>
           </label>
-          <p class="answer-hint" id="composition-tolerance">Enter the composition as a percentage, for example 0.40 rather than 0.004 or 40.</p>
+          <p class="answer-hint" id="composition-tolerance">Enter wt% C to two decimal places. Your calculation is checked against your ferrite estimate, with a tolerance of &plusmn;0.01 wt% C.</p>
           <p class="answer-status" id="composition-status" role="status" aria-live="polite"></p>
 
           <div class="quiz-actions">
-            <button class="button primary" type="submit">Check answer</button>
+            <button class="button primary" type="submit">Check answers</button>
             <button class="button secondary" id="clear-composition" type="button">Clear</button>
           </div>
 
           <button class="solution-toggle" id="solution-toggle" type="button" aria-expanded="false" aria-controls="worked-solution">Show worked solution</button>
           <div class="worked-solution" id="worked-solution" hidden>
-            <h3>Worked solution</h3>
+            <h3>Worked solution using an estimate of 15%</h3>
             <ol>
+              <li>The pale-blue regions between pearlite colonies occupy roughly <strong>15% of the image area</strong>. Taking area fraction &asymp; volume fraction gives V<sub>&alpha;</sub><sup>pro</sup> &asymp; 0.15 and V<sub>P</sub> &asymp; 0.85.</li>
               <li>Pearlite contains W<sub>Fe₃C</sub><sup>P</sup> = (0.760 &minus; 0.022)/(6.67 &minus; 0.022) = 0.111 and W<sub>&alpha;</sub><sup>P</sup> = 0.889.</li>
               <li>&rho;<sub>P</sub> = [0.889/7.87 + 0.111/7.68]<sup>&minus;1</sup> = 7.85 g cm<sup>&minus;3</sup>.</li>
-              <li>W<sub>&alpha;</sub><sup>pro</sup> = (0.490 &times; 7.87)/[(0.490 &times; 7.87) + (0.510 &times; 7.85)] = 0.491.</li>
-              <li>C<sub>0</sub> = C<sub>e</sub> &minus; W<sub>&alpha;</sub><sup>pro</sup>(C<sub>e</sub> &minus; C<sub>&alpha;</sub>) = 0.760 &minus; 0.491(0.760 &minus; 0.022) = <strong>0.398 wt% C &asymp; 0.40 wt% C</strong>.</li>
+              <li>W<sub>&alpha;</sub><sup>pro</sup> = (0.15 &times; 7.87)/[(0.15 &times; 7.87) + (0.85 &times; 7.85)] &asymp; 0.1503, or about 15.0 mass%.</li>
+              <li>C<sub>0</sub> = C<sub>e</sub> &minus; W<sub>&alpha;</sub><sup>pro</sup>(C<sub>e</sub> &minus; C<sub>&alpha;</sub>) = 0.760 &minus; 0.1503(0.760 &minus; 0.022) &asymp; <strong>0.649 wt% C &asymp; 0.65 wt% C</strong>.</li>
             </ol>
-            <p>The stated 49.0% is supplied exercise data, not a measurement taken from the synthetic image. The usual introductory treatment also neglects small redistribution effects below A<sub>1</sub>.</p>
+            <p>The 15% reference is an approximate visual estimate. Your carbon-content answer is checked using your own accepted ferrite estimate. This introductory treatment neglects small redistribution effects below A<sub>1</sub>.</p>
           </div>
         </div>
       </article>
@@ -124,7 +134,7 @@
       <div>
         <p class="section-kicker">Review the diagram</p>
         <h2>Return to the phase-diagram module</h2>
-        <p>Replay the 0.40 wt% C cooling sequence and follow its five marked positions across the Fe&ndash;Fe<sub>3</sub>C diagram.</p>
+        <p>Review proeutectoid ferrite, pearlite, and the lever rule on the Fe&ndash;Fe<sub>3</sub>C diagram.</p>
       </div>
       <a class="button primary" href="../../teaching/phase-diagrams/index.html#iron-carbide">Open Fe&ndash;Fe₃C diagram</a>
     </article>
