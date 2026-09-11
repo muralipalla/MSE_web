@@ -72,5 +72,5 @@ experiment button on the home page. It uses no external runtime dependencies.
 and growth lab with temperature-dependent CNT and diffusion-based rate laws,
 seeded stochastic nuclei, a movable microstructure section, live kinetics plots,
 and JSON/CSV export. Open `classical-nucleation-growth/index.html` directly or
-through the Nucleation & growth button on the home page. It uses no external
-runtime dependencies.
+through Classical Nucleation Theory in the home page&rsquo;s Core Modules section.
+It uses no external runtime dependencies.
