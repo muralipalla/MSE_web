@@ -67,3 +67,10 @@ on the home page. It uses no external runtime dependencies.
 
 Open `scanning-electron-microscopy/index.html` directly or through the SEM
 experiment button on the home page. It uses no external runtime dependencies.
+
+`classical-nucleation-growth/` contains a three-dimensional classical nucleation
+and growth lab with temperature-dependent CNT and diffusion-based rate laws,
+seeded stochastic nuclei, a movable microstructure section, live kinetics plots,
+and JSON/CSV export. Open `classical-nucleation-growth/index.html` directly or
+through the Nucleation & growth button on the home page. It uses no external
+runtime dependencies.

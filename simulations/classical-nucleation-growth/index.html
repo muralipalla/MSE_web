@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore classical nucleation and growth through physical rate laws, stochastic nuclei, and a section through a three-dimensional microstructure.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Classical Nucleation &amp; Growth Lab | MSE Learning Lab</title>
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="app.js?v=1" defer></script>
+</head>
+<body>
+<noscript>This laboratory requires JavaScript. Enable JavaScript and reopen this page.</noscript>
+<a class="skip-link" href="#cnt-lab">Skip to the classical nucleation lab</a>
+<header class="article-header">
+  <nav class="article-nav" aria-label="Simulation navigation">
+    <a class="brand" href="../../index.html">
+      <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span><strong>MSE</strong><small>Learning Lab</small></span>
+    </a>
+    <div class="site-links">
+      <a class="back-link" href="../../teaching/phase-transformations/index.html">Phase Transformations</a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </div>
+  </nav>
+</header>
+<div class="shell" id="cnt-lab">
+<header class="hero">
+ <div><div class="eyebrow">Materials science / interactive learning lab</div><h1>Classical nucleation &amp; growth</h1><p>Change the thermodynamics. Change the mobility. Watch a microstructure emerge.</p></div>
+ <div class="toolbar"><span class="tag">OFFLINE · 3D · ISOTHERMAL</span><button id="exportData">Export data</button><button id="help">Equations &amp; guide ↓</button></div>
+</header>
+<div class="intro"><strong>One physical clock. Two competing processes.</strong> Successful nuclei appear randomly at the CNT rate and grow with a diffusion-based interface law. Material changes reset the experiment; clock speed only changes how quickly physical time is displayed.</div>
+<main class="layout">
+<aside class="column controls">
+ <section class="panel pad temperature">
+  <div class="eyebrow">01 / choose temperature</div>
+  <div class="tempvalue"><strong id="Tlarge">540</strong><span>K</span><input type="number" id="Tnumber" min="180" max="1050" step="1" value="540" aria-label="Temperature in kelvin"></div>
+  <label class="sr-only" for="T">Temperature</label><input type="range" id="T" min="180" max="1050" step="1" value="540">
+  <div class="tempdetails"><span id="deltaT">ΔT = 460 K</span><span id="reducedT">T/Tₘ = 0.540</span></div>
+  <div class="presets"><button data-temp="0.92">Near melting</button><button data-temp="0.60">Moderate undercooling</button><button data-temp="0.52">Larger undercooling</button><button data-temp="0.28">Deep undercooling</button></div>
+  <p class="hint">Presets change only T. Compare at the same clock speed.</p>
+ </section>
+ <section class="panel pad">
+  <div class="eyebrow">02 / material parameters</div>
+  <div id="materialControls"></div>
+  <details><summary>Atomic scales &amp; sample size</summary><div id="advancedControls"></div><p class="hint">The sample is a periodic cube of side L, not a 2D population of circles.</p></details>
+  <div class="appnote">Illustrative generic material. These defaults are not calibrated to a particular metal.</div>
+ </section>
+ <section class="panel pad" id="clockPanel">
+  <div class="eyebrow">03 / run the experiment</div>
+  <div class="actions"><button id="run" class="primary">▶ Run</button><button id="step">Step</button><button id="reset">Restart</button></div>
+  <div class="speedrow"><label class="controltitle" for="speed">Physical clock</label><button class="small" id="fitClock" title="Choose an explicit display timescale without modifying nucleation or growth rates">Fit clock</button></div>
+  <input type="range" id="speed" min="-12" max="12" step="0.1" value="-2.7" aria-label="Logarithm base ten of physical seconds per display second">
+  <div class="labelrow"><output id="speedLabel" class="mono"></output><span class="unit">s / display s</span></div>
+  <p class="hint">One Step advances 0.1 display seconds. Fit clock changes the time axis, never the physics.</p>
+  <div class="seedrow"><label for="seed" class="small">Random seed</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="17"><button id="newSeed" class="small">New seed</button></div>
+  <details><summary>Controlled growth experiment</summary><p class="hint">Insert one supercritical test seed to isolate growth when spontaneous nucleation is rare. It is counted separately.</p><button id="testSeed" class="small" style="margin-top:9px">Insert test seed in this section</button></details>
+  <button id="defaults" class="secondary small" style="margin-top:12px;width:100%">Restore all defaults</button>
+ </section>
+</aside>
+<section class="column sample">
+ <section class="panel">
+  <div class="panelhead"><div><h2>Microstructure</h2><span class="small muted">A section through a three-dimensional sample</span></div><span id="status" class="status paused" role="status">Ready</span></div>
+  <div class="mobile-run" style="display:block;padding:0 16px 12px"><div class="actions"><button id="runMobile" class="primary">▶ Run</button><button id="resetMobile">Restart</button></div></div>
+  <div class="viewer"><canvas id="micro" aria-label="Evolving two-dimensional section through a 3D nucleation and growth simulation"></canvas><div class="viewlabel" id="viewlabel">XY section · z/L = 0.50</div><div id="empty" class="empty"><strong>From a liquid to a microstructure</strong>Press Run. Each new grain begins with a stochastic nucleation event in the 3D sample.</div></div>
+  <div class="slicecontrols">
+   <div><div class="labelrow"><label for="slice">Section position z/L</label><output id="sliceLabel">0.50</output></div><input type="range" id="slice" min="0" max="1" step="0.01" value="0.5"><div class="viewoptions"><label><input type="checkbox" id="boundaries" checked> Grain boundaries</label><label><input type="checkbox" id="showCenters"> Section markers</label></div><p class="hint">Dark = parent phase. Colours identify grains, not different phases.</p></div>
+   <div><canvas id="cube" class="cube" aria-label="Rotatable 3D map of nucleus birth positions and the current section"></canvas><div class="cubecaption">3D birth map · drag to rotate</div></div>
+  </div>
+  <div class="stats"><div class="stat"><span class="label">PHYSICAL TIME</span><strong id="time">0 s</strong></div><div class="stat"><span class="label">NUCLEI / 3D SAMPLE</span><strong id="count">0</strong></div><div class="stat"><span class="label">VOLUME TRANSFORMED</span><strong id="fraction">0.0%</strong></div></div>
+  <div class="progress"><div id="progress"></div></div>
+  <div class="runhint" id="runhint">Default: 1 μm periodic cube, 540 K. Press Run to begin.</div>
+ </section>
+ <section class="panel">
+  <div class="panelhead"><h2>Transformation kinetics</h2><button id="csvHistory" class="small">CSV</button></div>
+  <div class="legend"><span><i></i>3D volume fraction X(t)</span><span><i class="dashed"></i>Ideal 3D JMAK reference</span></div>
+  <canvas id="kinetics" class="plot" aria-label="Transformed volume fraction against physical time"></canvas>
+  <div class="plotfooter">Volume fraction: 40³ sampling points. JMAK: infinite-system, point-nucleus reference; not a fitted curve.</div>
+ </section>
+ <section class="panel pad">
+  <div class="eventhead"><h2>Nucleation events</h2><span id="eventCount" class="small muted">0 spontaneous · 0 test seeds</span></div>
+  <div id="eventLog" class="events"><div>No successful nucleation events yet.</div></div>
+ </section>
+</section>
+<aside class="column analytics">
+ <section class="panel pad readoutpanel">
+  <div class="eyebrow">The physics at this temperature</div>
+  <div class="readouts">
+   <div class="readout"><span class="label">Critical radius r*</span><strong id="rStar">—</strong><em>nm</em></div>
+   <div class="readout"><span class="label">Barrier ΔG* / k<sub>B</sub>T</span><strong id="barrierValue">—</strong><em>dimensionless</em></div>
+   <div class="readout teal"><span class="label">Nucleation rate J</span><strong id="JValue">—</strong><em>m⁻³ s⁻¹, per parent volume</em></div>
+   <div class="readout teal"><span class="label">Growth velocity u</span><strong id="uValue">—</strong><em>m s⁻¹</em></div>
+   <div class="readout"><span class="label">Diffusivity D(T)</span><strong id="DValue">—</strong><em>m² s⁻¹</em></div>
+   <div class="readout"><span class="label">Critical cluster n*</span><strong id="nStar">—</strong><em>atoms / structural units</em></div>
+  </div>
+  <div id="waiting" class="metricfoot"></div>
+  <div id="warnings" class="warning"></div>
+ </section>
+ <section class="panel">
+  <div class="panelhead"><h2>Nucleation versus temperature</h2><select id="rateScale" class="selectsmall" aria-label="Vertical scale for rate plots"><option value="normalized">Normalised</option><option value="log">Log₁₀ absolute</option></select></div>
+  <canvas id="nucleationPlot" class="plot" aria-label="Temperature dependence of the homogeneous nucleation rate; click to select temperature"></canvas>
+  <div class="plotfooter" id="nucleationCaption"></div>
+ </section>
+ <section class="panel">
+  <div class="panelhead"><h2>Growth versus temperature</h2><span class="small muted">click a curve to set T</span></div>
+  <canvas id="growthPlot" class="plot" aria-label="Temperature dependence of growth velocity; click to select temperature"></canvas>
+  <div class="plotfooter" id="growthCaption"></div>
+ </section>
+ <section class="panel">
+  <div class="panelhead"><h2>The free-energy barrier</h2><span class="small muted">current T</span></div>
+  <div class="legend"><span><i class="gold"></i>ΔG(r) / k<sub>B</sub>T</span><span>dashed: r* and ΔG*</span></div>
+  <canvas id="barrierPlot" class="plot" aria-label="Classical free-energy barrier as a function of spherical nucleus radius"></canvas>
+  <div class="plotfooter">Below r*: shrinking is favourable. Above r*: growth lowers the free energy. Subcritical fluctuations are not animated.</div>
+ </section>
+</aside>
+</main>
+<section class="panel theory" id="theory"><details id="theoryDetails"><summary>Equations, numerical method, assumptions &amp; a classroom guide</summary>
+<div class="theorygrid">
+ <div><h3>1. The thermodynamics of a spherical nucleus</h3>
+ <p>All calculations use SI units. The fusion enthalpy ΔH<sub>f</sub> and diffusion activation energy Q<sub>D</sub> are entered in kJ mol⁻¹ and converted to J mol⁻¹. V<sub>m</sub> is entered in cm³ mol⁻¹. A positive Δg denotes the free-energy decrease on solidification. Equal solid and liquid atomic volumes are assumed.</p>
+ <div class="eq">Δg<sub>m</sub> = ΔH<sub>f</sub>(1 − T/T<sub>m</sub>)<br>Δg<sub>v</sub> = Δg<sub>m</sub> / V<sub>m</sub> &nbsp;;&nbsp; Ω = V<sub>m</sub> / N<sub>A</sub><br>Δμ = Δg<sub>m</sub> / N<sub>A</sub><br>ΔG(r) = 4πγr² − (4π/3)r³Δg<sub>v</sub><br>r* = 2γ / Δg<sub>v</sub><br>ΔG* = 16πγ³ / (3Δg<sub>v</sub>²)<br>n* = (4π/3)r*³ / Ω</div>
+ <p>The driving-force approximation holds fusion enthalpy and entropy constant and neglects heat-capacity differences. The interfacial free energy γ is isotropic and constant. The continuum capillarity approximation is questionable for very small n*.</p>
+ <h3>2. A steady-state CNT nucleation rate</h3>
+ <div class="eq">D(T) = D₀ exp[−Q<sub>D</sub> / (RT)]<br>Z = [Δμ / (6πk<sub>B</sub>Tn*)]<sup>1/2</sup><br>f⁺ = 24D(n*)<sup>2/3</sup> / λ²<br>J = Ω<sup>−1</sup> Z f⁺ exp[−ΔG* / (k<sub>B</sub>T)]</div>
+ <p>Z is the Zeldovich factor, f⁺ is an attachment frequency, and λ is the atomic jump distance. The prefactor is an explicit diffusion-based closure, not a universal constant. J is the rate of successful nuclei per unit <em>remaining parent volume</em>. Barrier, rate and waiting time are distinct quantities. References [1–2] describe these CNT expressions.</p>
+ <h3>3. A separate postcritical growth law</h3>
+ <div class="eq">u(T) = (6D/λ){1 − exp[−Δg<sub>m</sub> / (RT)]}<br>rᵢ(t) = 1.05r* + u(T)(t − tᵢ)</div>
+ <p>This is a planar Wilson–Frenkel-type law with interlayer spacing d = λ and incorporation fraction f = 1 [3]. CNT itself does not prescribe a complete growth law. Using the planar velocity immediately after nucleation is an approximation: curvature-dependent early growth is not resolved. No solute or thermal diffusion field is solved; “diffusion-based” here refers to the kinetic prefactor.</p>
+ </div>
+ <div><h3>4. Random events, three-dimensional geometry</h3>
+ <p>A periodic cube of side L has volume V = L³. Homogeneous Poisson candidate events have rate JV over the entire cube. Their continuous times and uniform 3D positions are sampled with a seeded pseudorandom generator. A candidate is rejected when its centre has already transformed; this thinning gives rate J V<sub>parent</sub>. Birth acceptance uses continuous sphere geometry, not screen pixels or volume sampling points.</p>
+ <div class="eq">Δt<sub>candidate</sub> = −ln(U) / (JV)<br>P(no first nucleus by t) = exp(−JVt)<br>Mean first-nucleus waiting time = 1/(JV)</div>
+ <p>Accepted nuclei start at 1.05r*, with no artificial minimum visible size. Equal isotropic growth speeds permit an extended-sphere, first-arrival construction: the union of growing spheres locates the transformed region, and the first front to reach a point determines its grain identity. Grain identities are not overwritten at impingement. The finite birth sphere is a postcritical insertion approximation; only its centre is tested for parent-phase membership.</p>
+ <p>The main image is a 320 × 320 raster section, not a projection. A 40 × 40 × 40 midpoint quadrature estimates the volume fraction. The rotatable cube shows birth-position <em>markers</em>, not scaled grain radii. A grain can exist in the cube without intersecting the displayed section. Opposite faces are periodic, so a grain can appear at opposite image edges.</p>
+ <h3>5. Transformation kinetics and numerical limits</h3>
+ <div class="eq">X<sub>JMAK</sub>(t) = 1 − exp[−(π/3) J u³ t⁴]</div>
+ <p>This reference assumes a statistically infinite 3D material, steady homogeneous nucleation, zero initial seed radius and constant isotropic growth. A single finite periodic sample fluctuates about that limit; inserted test seeds and finite birth radii violate its assumptions. The reference is hidden after a manual seed is inserted.</p>
+ <p>A frame processes a bounded number of candidates to preserve browser responsiveness. When limited, the physical clock advances less rather than dropping events or altering J or u. The run explicitly pauses at 2,000 retained nuclei. It also pauses once the volume estimate reaches 99.9%; unresolved residual liquid can remain. Rates outside floating-point range retain logarithmic readouts but can be inactive on the numerical clock. The volume quadrature and image resolution require convergence checks for quantitative use.</p>
+ <h3>6. Try these experiments</h3>
+ <p><strong>Start at 540 K:</strong> press Run, observe nucleation, growth and impingement, then move the section slider. Restart with seed 17 to repeat the realization. Change γ or ΔH<sub>f</sub> and observe the barrier and waiting time.</p>
+ <p><strong>Compare temperatures at the same clock speed:</strong> near T<sub>m</sub>, spontaneous nucleation can be effectively absent. Insert a labelled test seed to see how growth differs from nucleation. Deep undercooling can suppress both kinetic rates. Fit clock accelerates the display and reports the new timescale; it is not a physical acceleration.</p>
+ <p><strong>Change D₀:</strong> in this model both J and u scale linearly with D at fixed T. This rescales the clock but does not independently control grain density. Increasing D₀ alone should reproduce the same stochastic geometry at the same transformed fraction, with all event times rescaled.</p>
+ <h3>7. Scope</h3>
+ <p>An isothermal ideal bath removes released latent heat. There are no heterogeneous nucleants, elastic strain, anisotropy, dendrites, solute partitioning, heat flow, coarsening, transient nucleation time lag, or glass-transition model. At T ≥ T<sub>m</sub>, forward solidification is disabled; melting is not modelled. Defaults are illustrative, and no quantitative prediction for a named material is implied.</p>
+ </div>
+</div>
+<h3>Sources for the implemented rate laws</h3>
+<p class="small muted">[1] <a href="https://www.sciencedirect.com/science/article/abs/pii/S025405842100794X" target="_blank" rel="noopener noreferrer">Assessment of the classical nucleation theory in supercooled nickel by molecular dynamics</a>, Materials Chemistry and Physics 272 (2021), 125011. Spherical CNT, Zeldovich factor and the attachment-frequency closure.<br>[2] <a href="https://www.sciencedirect.com/science/article/abs/pii/S0022309320304099" target="_blank" rel="noopener noreferrer">Critical assessment of the alleged failure of the Classical Nucleation Theory at low temperatures</a>, Journal of Non-Crystalline Solids (2020), 120297. Steady-state CNT and its qualifications.<br>[3] <a href="https://www.nature.com/articles/s41524-024-01217-6" target="_blank" rel="noopener noreferrer">Unraveling the crystallization kinetics of the Ge₂Sb₂Te₅ phase change compound with a machine-learned interatomic potential</a>, npj Computational Materials (2024). Wilson–Frenkel kinetics and prefactor choices. References are optional reading; the simulation requires no network connection.</p>
+</details></section>
+<footer class="footer"><span>Static HTML / CSS / JavaScript · no libraries, accounts, server or network requests</span><span>SI calculations · reproducible stochastic experiments · teaching model</span></footer>
+</div><div id="toast" class="toast" role="status"></div>
+
+</body>
+</html>
