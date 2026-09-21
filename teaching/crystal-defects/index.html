@@ -17,7 +17,7 @@
   <title>Crystal Defects | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../visualizations/dislocations/style.css?v=4">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=13">
   <script src="../../js/main.js?v=2" defer></script>
   <script type="importmap">
     {
@@ -27,7 +27,7 @@
       }
     }
   </script>
-  <script type="module" src="app.js?v=15"></script>
+  <script type="module" src="app.js?v=17"></script>
   <script type="module" src="../../visualizations/dislocations/app.js?v=5"></script>
 </head>
 <body>
@@ -358,16 +358,122 @@
       </p>
     </section>
 
+    <section class="defects-mixed-section" aria-labelledby="mixed-dislocation-title">
+      <div class="defects-section-heading">
+        <p class="section-kicker">Most lines are mixed</p>
+        <h2 id="mixed-dislocation-title">Mixed dislocation in three dimensions</h2>
+        <p>This separate Three.js model leaves the pure edge-and-screw explorer above unchanged. Rotate the dislocation line relative to a fixed Burgers vector to see the character change continuously.</p>
+      </div>
+
+      <div class="defects-mixed-explorer">
+        <figure class="defects-mixed-viewer">
+          <header>
+            <div>
+              <p class="defects-panel-kicker">Simple-cubic teaching model</p>
+              <h3 id="mixed-model-title">45&deg; mixed segment</h3>
+            </div>
+            <span id="mixed-character-badge">Equal edge + screw components</span>
+          </header>
+          <div class="defects-mixed-frame" id="mixed-frame" role="group" aria-labelledby="mixed-model-title" aria-label="Three-dimensional atomic lattice containing a straight mixed dislocation. The dislocation line is at 45 degrees to the Burgers vector.">
+            <canvas id="mixed-canvas" aria-hidden="true"></canvas>
+            <div class="defects-mixed-fallback" id="mixed-fallback" role="status">
+              <strong>Preparing the 3D mixed dislocation&hellip;</strong>
+              <span>The character controls and component values remain available if WebGL cannot start.</span>
+            </div>
+            <div class="defects-mixed-legend" aria-label="Mixed-dislocation model legend">
+              <span><i class="is-atom" aria-hidden="true"></i>Atoms</span>
+              <span><i class="is-plane" aria-hidden="true"></i>Slip plane</span>
+              <span><i class="is-burgers" aria-hidden="true"></i><i>b</i></span>
+              <span><i class="is-line" aria-hidden="true"></i><i>&xi;</i></span>
+            </div>
+          </div>
+          <figcaption>Drag to orbit and use the wheel to zoom. The lattice displacement combines the idealized edge and screw fields for the selected character angle.</figcaption>
+        </figure>
+
+        <aside class="defects-mixed-controls" aria-label="Mixed dislocation controls">
+          <label for="mixed-character-angle">Angle between <i>b</i> and <i>&xi;</i>, <output id="mixed-angle-output" for="mixed-character-angle">45&deg;</output></label>
+          <input id="mixed-character-angle" type="range" min="0" max="90" step="5" value="45" disabled aria-describedby="mixed-angle-help">
+          <small id="mixed-angle-help">0&deg; is pure screw; 90&deg; is pure edge; every intermediate value is mixed.</small>
+          <div class="defects-mixed-presets" role="group" aria-label="Dislocation character presets">
+            <button type="button" data-mixed-angle="0" disabled>Screw limit</button>
+            <button type="button" data-mixed-angle="45" disabled>45&deg; mixed</button>
+            <button type="button" data-mixed-angle="90" disabled>Edge limit</button>
+          </div>
+          <dl class="defects-mixed-readout">
+            <div><dt>Relationship</dt><dd id="mixed-relationship"><i>b</i> &ang; <i>&xi;</i> = 45&deg;</dd></div>
+            <div><dt>Screw component</dt><dd id="mixed-screw-component">|<i>b</i>| cos 45&deg; = 0.707|<i>b</i>|</dd></div>
+            <div><dt>Edge component</dt><dd id="mixed-edge-component">|<i>b</i>| sin 45&deg; = 0.707|<i>b</i>|</dd></div>
+          </dl>
+          <p class="defects-mixed-explanation" id="mixed-explanation">Both components are present: the Burgers vector is oblique to the dislocation line.</p>
+          <p class="defects-module-status" id="mixed-status" role="status" aria-live="polite">Preparing the interactive mixed-dislocation model.</p>
+        </aside>
+      </div>
+    </section>
+
     <section class="defects-grain-section" aria-labelledby="grain-title">
       <div class="defects-section-heading">
         <p class="section-kicker">Rotate neighbouring crystals</p>
         <h2 id="grain-title">A grain boundary is an interface between orientations</h2>
-        <p>A real boundary has five macroscopic crystallographic degrees of freedom. This unrelaxed 2D projection isolates one symmetric tilt angle.</p>
+        <p>A real boundary has five macroscopic crystallographic degrees of freedom. Use the 3D model to compare rotation about an axis in the boundary plane (tilt) with rotation about the boundary normal (twist).</p>
+      </div>
+
+      <div class="defects-boundary-explorer" id="boundary-explorer">
+        <div class="defects-boundary-controls">
+          <div class="defects-boundary-control">
+            <label for="boundary-tilt-angle">
+              <span><i class="defects-axis-dot is-tilt" aria-hidden="true"></i>Tilt component</span>
+              <output id="boundary-tilt-output" for="boundary-tilt-angle">12&deg;</output>
+            </label>
+            <input id="boundary-tilt-angle" type="range" min="0" max="30" step="1" value="12" disabled aria-describedby="boundary-tilt-help">
+            <small id="boundary-tilt-help">Rotate Grain B about the dashed axis lying in the boundary plane.</small>
+          </div>
+          <div class="defects-boundary-control">
+            <label for="boundary-twist-angle">
+              <span><i class="defects-axis-dot is-twist" aria-hidden="true"></i>Twist component</span>
+              <output id="boundary-twist-output" for="boundary-twist-angle">0&deg;</output>
+            </label>
+            <input id="boundary-twist-angle" type="range" min="0" max="30" step="1" value="0" disabled aria-describedby="boundary-twist-help">
+            <small id="boundary-twist-help">Rotate Grain B about the dotted axis normal to the boundary plane.</small>
+          </div>
+          <div class="defects-boundary-presets" role="group" aria-label="Boundary character presets">
+            <button type="button" data-boundary-preset="tilt" disabled>Pure tilt</button>
+            <button type="button" data-boundary-preset="twist" disabled>Pure twist</button>
+            <button type="button" data-boundary-preset="mixed" disabled>Mixed</button>
+            <button type="button" data-boundary-preset="reset" disabled>Reset</button>
+          </div>
+          <dl class="defects-boundary-readout">
+            <div><dt>Current character</dt><dd id="boundary-character">Pure tilt boundary</dd></div>
+            <div><dt>Rotation axis</dt><dd id="boundary-axis">In the boundary plane</dd></div>
+          </dl>
+          <p class="defects-module-status" id="boundary-status" role="status" aria-live="polite">Preparing the 3D grain-boundary model.</p>
+        </div>
+
+        <figure class="defects-boundary-figure">
+          <div class="defects-boundary-frame" id="boundary-frame" role="group" aria-label="Three-dimensional cubic lattices in two grains separated by a vertical boundary plane. Grain B has a 12 degree tilt and zero twist.">
+            <canvas id="boundary-canvas" aria-hidden="true"></canvas>
+            <div class="defects-boundary-fallback" id="boundary-fallback" role="status">
+              <strong>Preparing the 3D boundary&hellip;</strong>
+              <span>The angle controls and explanations remain available if WebGL cannot start.</span>
+            </div>
+            <div class="defects-boundary-legend" aria-label="3D boundary legend">
+              <span><i class="is-grain-a" aria-hidden="true"></i>Grain A</span>
+              <span><i class="is-grain-b" aria-hidden="true"></i>Grain B</span>
+              <span><i class="is-plane" aria-hidden="true"></i>Boundary plane</span>
+            </div>
+          </div>
+          <figcaption>Drag to orbit the model. The translucent plane is fixed; only Grain B rotates. Set one component to zero to isolate a pure tilt or pure twist boundary.</figcaption>
+        </figure>
+      </div>
+
+      <div class="defects-boundary-principle" aria-label="Tilt and twist boundary comparison">
+        <p><strong>Tilt:</strong> rotation axis lies <em>in</em> the boundary plane. A low-angle tilt boundary can be represented by an array of edge dislocations.</p>
+        <p><strong>Twist:</strong> rotation axis is <em>normal</em> to the boundary plane. A low-angle twist boundary can be represented by a two-dimensional network of screw dislocations.</p>
       </div>
 
       <div class="defects-grain-layout">
         <div class="defects-grain-controls">
-          <label for="grain-angle">Misorientation angle, <output id="grain-angle-output" for="grain-angle">8&deg;</output></label>
+          <p class="defects-panel-kicker">2D low-angle tilt model</p>
+          <label for="grain-angle">Symmetric tilt angle, <output id="grain-angle-output" for="grain-angle">8&deg;</output></label>
           <input id="grain-angle" type="range" min="0" max="30" step="1" value="8">
           <p class="defects-compact-equation">Low-angle model: D/b = 1/[2 sin(&theta;/2)]</p>
           <dl>
@@ -379,7 +485,7 @@
         </div>
         <figure class="defects-grain-figure">
           <canvas id="grain-canvas" width="760" height="440" role="img" aria-label="Two grains separated by an eight degree symmetric tilt boundary"></canvas>
-          <figcaption>Same phase and species on both sides; only the lattice orientation changes. The approximately 15&deg; low/high-angle division is a teaching convention.</figcaption>
+          <figcaption>This planar projection isolates symmetric tilt and shows the ideal edge-dislocation array at low angle. The approximately 15&deg; low/high-angle division is a teaching convention.</figcaption>
         </figure>
       </div>
 

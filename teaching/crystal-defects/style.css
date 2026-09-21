@@ -42,6 +42,7 @@
 .defects-void-section,
 .defects-ionic-section,
 .defects-dislocation-section,
+.defects-mixed-section,
 .defects-grain-section,
 .defects-astm-section,
 .defects-conclusion,
@@ -58,6 +59,7 @@
 .defects-void-section,
 .defects-ionic-section,
 .defects-dislocation-section,
+.defects-mixed-section,
 .defects-grain-section,
 .defects-astm-section,
 .defects-conclusion {
@@ -729,6 +731,516 @@
   color: var(--ink-soft);
 }
 
+.defects-mixed-explorer {
+  display: grid;
+  grid-template-columns: minmax(28rem, 1.35fr) minmax(17rem, 0.65fr);
+  gap: 1rem;
+  align-items: stretch;
+  margin-top: 1.25rem;
+}
+
+.defects-mixed-viewer,
+.defects-mixed-controls {
+  min-width: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--paper);
+}
+
+.defects-mixed-viewer {
+  display: flex;
+  flex-direction: column;
+}
+
+.defects-mixed-viewer > header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+.defects-mixed-viewer h3 {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.15;
+}
+
+.defects-mixed-viewer > header > span {
+  padding: 0.42rem 0.62rem;
+  border-radius: 999px;
+  background: var(--lavender-light);
+  color: var(--navy);
+  font-size: 0.8rem;
+  font-weight: 850;
+  text-align: center;
+}
+
+.defects-mixed-frame {
+  position: relative;
+  min-height: 31rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background:
+    radial-gradient(circle at 48% 42%, rgba(56, 102, 148, 0.34), transparent 45%),
+    linear-gradient(145deg, #101f35, #1a3150 56%, #111d31);
+}
+
+.defects-mixed-frame canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y pinch-zoom;
+}
+
+.defects-mixed-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.4rem;
+  padding: 2rem;
+  color: #eaf2ff;
+  text-align: center;
+}
+
+.defects-mixed-fallback[hidden] {
+  display: none;
+}
+
+.defects-mixed-fallback span {
+  max-width: 30rem;
+  color: #bed0e5;
+}
+
+.defects-mixed-legend {
+  position: absolute;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  left: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.9rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.65rem;
+  background: rgba(10, 24, 43, 0.76);
+  color: #edf6ff;
+  font-size: 0.82rem;
+  font-weight: 750;
+  backdrop-filter: blur(6px);
+}
+
+.defects-mixed-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.defects-mixed-legend i:first-child {
+  width: 0.78rem;
+  height: 0.22rem;
+  border-radius: 999px;
+  background: #75c9f5;
+}
+
+.defects-mixed-legend .is-atom {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+}
+
+.defects-mixed-legend .is-plane {
+  height: 0.6rem;
+  border: 1px solid #c1a8ff;
+  border-radius: 0.12rem;
+  background: rgba(193, 168, 255, 0.38);
+}
+
+.defects-mixed-legend .is-burgers {
+  background: #ffd23f;
+}
+
+.defects-mixed-legend .is-line {
+  background: #f06445;
+}
+
+.defects-mixed-viewer figcaption {
+  margin-top: 0.75rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.defects-mixed-controls > label {
+  display: block;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.defects-mixed-controls output {
+  color: var(--coral);
+  font-variant-numeric: tabular-nums;
+}
+
+.defects-mixed-controls > input[type="range"] {
+  width: 100%;
+  margin: 0.85rem 0 0.45rem;
+  accent-color: var(--coral);
+}
+
+.defects-mixed-controls > small {
+  display: block;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.defects-mixed-presets {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.defects-mixed-presets button {
+  min-height: 2.7rem;
+  border: 1px solid rgba(46, 42, 116, 0.23);
+  border-radius: 0.7rem;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.defects-mixed-presets button:hover:not(:disabled),
+.defects-mixed-presets button:focus-visible {
+  border-color: var(--coral);
+  background: var(--coral-light);
+}
+
+.defects-mixed-presets button:focus-visible,
+.defects-mixed-controls input:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 2px;
+}
+
+.defects-mixed-presets button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.defects-mixed-readout {
+  display: grid;
+  gap: 0.7rem;
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.defects-mixed-readout div {
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.defects-mixed-readout div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.defects-mixed-readout dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.defects-mixed-readout dd {
+  margin: 0.18rem 0 0;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.defects-mixed-explanation {
+  margin: 1rem 0 0;
+  padding: 0.75rem;
+  border-left: 3px solid var(--coral);
+  background: rgba(240, 100, 69, 0.07);
+  color: var(--ink-soft);
+}
+
+.defects-boundary-explorer {
+  display: grid;
+  grid-template-columns: minmax(17rem, 0.72fr) minmax(28rem, 1.28fr);
+  gap: 1rem;
+  align-items: stretch;
+  margin-top: 1.25rem;
+}
+
+.defects-boundary-controls,
+.defects-boundary-figure {
+  min-width: 0;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--paper);
+}
+
+.defects-boundary-control + .defects-boundary-control {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.defects-boundary-control label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.defects-boundary-control label span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.defects-boundary-control output {
+  color: var(--coral);
+  font-variant-numeric: tabular-nums;
+}
+
+.defects-axis-dot {
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px currentColor;
+}
+
+.defects-axis-dot.is-tilt {
+  background: #f06445;
+  color: #f06445;
+}
+
+.defects-axis-dot.is-twist {
+  background: #64d8c2;
+  color: #259b86;
+}
+
+.defects-boundary-control input[type="range"] {
+  width: 100%;
+  margin: 0.75rem 0 0.35rem;
+  accent-color: var(--coral);
+}
+
+.defects-boundary-control:nth-child(2) input[type="range"] {
+  accent-color: var(--defects-green);
+}
+
+.defects-boundary-control small {
+  display: block;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.defects-boundary-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.defects-boundary-presets button {
+  min-height: 2.65rem;
+  border: 1px solid rgba(46, 42, 116, 0.23);
+  border-radius: 0.7rem;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.defects-boundary-presets button:hover:not(:disabled),
+.defects-boundary-presets button:focus-visible {
+  border-color: var(--coral);
+  background: var(--coral-light);
+}
+
+.defects-boundary-presets button:focus-visible,
+.defects-boundary-control input:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 2px;
+}
+
+.defects-boundary-presets button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.defects-boundary-readout {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.defects-boundary-readout div {
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.7fr) minmax(0, 1.3fr);
+  gap: 0.8rem;
+}
+
+.defects-boundary-readout dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.defects-boundary-readout dd {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.defects-boundary-figure {
+  display: flex;
+  flex-direction: column;
+}
+
+.defects-boundary-frame {
+  position: relative;
+  min-height: 29rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(103, 87, 168, 0.17), transparent 48%),
+    linear-gradient(145deg, #12243e, #1c3151 55%, #122039);
+}
+
+.defects-boundary-frame canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y pinch-zoom;
+}
+
+.defects-boundary-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 0.4rem;
+  padding: 2rem;
+  color: #eaf2ff;
+  text-align: center;
+}
+
+.defects-boundary-fallback[hidden] {
+  display: none;
+}
+
+.defects-boundary-fallback span {
+  max-width: 30rem;
+  color: #bed0e5;
+}
+
+.defects-boundary-legend {
+  position: absolute;
+  right: 0.8rem;
+  bottom: 0.8rem;
+  left: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.9rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0.65rem;
+  background: rgba(10, 24, 43, 0.76);
+  color: #edf6ff;
+  font-size: 0.82rem;
+  font-weight: 750;
+  backdrop-filter: blur(6px);
+}
+
+.defects-boundary-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.defects-boundary-legend i {
+  width: 0.72rem;
+  height: 0.72rem;
+  border-radius: 50%;
+  background: #75c9f5;
+}
+
+.defects-boundary-legend .is-grain-b {
+  background: #c1a8ff;
+}
+
+.defects-boundary-legend .is-plane {
+  border: 1px solid #fff1bf;
+  border-radius: 0.12rem;
+  background: rgba(255, 210, 63, 0.42);
+}
+
+.defects-boundary-figure figcaption {
+  margin-top: 0.75rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.defects-boundary-principle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.8rem;
+}
+
+.defects-boundary-principle p {
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  border-left: 3px solid var(--coral);
+  background: rgba(240, 100, 69, 0.07);
+  color: var(--ink-soft);
+}
+
+.defects-boundary-principle p + p {
+  border-left-color: var(--defects-green);
+  background: rgba(31, 115, 94, 0.07);
+}
+
+.defects-grain-layout {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.defects-grain-controls .defects-panel-kicker {
+  margin: 0 0 0.55rem;
+  color: var(--coral);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
 .defects-dislocation-note a {
   color: var(--navy);
   font-weight: 800;
@@ -950,8 +1462,14 @@
   }
 
   .defects-grain-layout,
+  .defects-mixed-explorer,
+  .defects-boundary-explorer,
   .defects-astm-layout {
     grid-template-columns: 1fr;
+  }
+
+  .defects-boundary-frame {
+    min-height: 25rem;
   }
 
   .defects-astm-results {
@@ -988,6 +1506,15 @@
   .defects-conclusion {
     grid-template-columns: 1fr;
   }
+
+  .defects-boundary-principle {
+    grid-template-columns: 1fr;
+  }
+
+  .defects-mixed-viewer > header {
+    align-items: start;
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 40rem) {
@@ -1003,6 +1530,19 @@
 
   .defects-viewer-frame {
     aspect-ratio: 1;
+  }
+
+  .defects-boundary-frame {
+    min-height: 21rem;
+  }
+
+  .defects-mixed-frame {
+    min-height: 23rem;
+  }
+
+  .defects-boundary-readout div {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
   }
 
   .defects-viewer-fallback svg {

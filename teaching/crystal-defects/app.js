@@ -42,6 +42,19 @@ const elements = {
   ionicCharge: document.querySelector("#ionic-charge"),
   ionicDensity: document.querySelector("#ionic-density"),
   ionicStatus: document.querySelector("#ionic-status"),
+  mixedAngle: document.querySelector("#mixed-character-angle"),
+  mixedAngleOutput: document.querySelector("#mixed-angle-output"),
+  mixedPresets: [...document.querySelectorAll("[data-mixed-angle]")],
+  mixedTitle: document.querySelector("#mixed-model-title"),
+  mixedBadge: document.querySelector("#mixed-character-badge"),
+  mixedRelationship: document.querySelector("#mixed-relationship"),
+  mixedScrewComponent: document.querySelector("#mixed-screw-component"),
+  mixedEdgeComponent: document.querySelector("#mixed-edge-component"),
+  mixedExplanation: document.querySelector("#mixed-explanation"),
+  mixedStatus: document.querySelector("#mixed-status"),
+  mixedFrame: document.querySelector("#mixed-frame"),
+  mixedCanvas: document.querySelector("#mixed-canvas"),
+  mixedFallback: document.querySelector("#mixed-fallback"),
   grainAngle: document.querySelector("#grain-angle"),
   grainAngleOutput: document.querySelector("#grain-angle-output"),
   grainClass: document.querySelector("#grain-class"),
@@ -49,6 +62,17 @@ const elements = {
   grainExplanation: document.querySelector("#grain-explanation"),
   grainCanvas: document.querySelector("#grain-canvas"),
   grainStatus: document.querySelector("#grain-status"),
+  boundaryTilt: document.querySelector("#boundary-tilt-angle"),
+  boundaryTiltOutput: document.querySelector("#boundary-tilt-output"),
+  boundaryTwist: document.querySelector("#boundary-twist-angle"),
+  boundaryTwistOutput: document.querySelector("#boundary-twist-output"),
+  boundaryPresets: [...document.querySelectorAll("[data-boundary-preset]")],
+  boundaryCharacter: document.querySelector("#boundary-character"),
+  boundaryAxis: document.querySelector("#boundary-axis"),
+  boundaryStatus: document.querySelector("#boundary-status"),
+  boundaryFrame: document.querySelector("#boundary-frame"),
+  boundaryCanvas: document.querySelector("#boundary-canvas"),
+  boundaryFallback: document.querySelector("#boundary-fallback"),
   astmGrainCount: document.querySelector("#astm-grain-count"),
   astmNewField: document.querySelector("#astm-new-field"),
   astmMeasure: document.querySelector("#astm-measure"),
@@ -255,6 +279,27 @@ let orthographicCamera;
 let controls;
 let modelGroup;
 let resizeObserver;
+let mixedRenderer;
+let mixedScene;
+let mixedCamera;
+let mixedControls;
+let mixedModel;
+let mixedResizeObserver;
+const mixedState = {
+  ready: false,
+  failed: false
+};
+let boundaryRenderer;
+let boundaryScene;
+let boundaryCamera;
+let boundaryControls;
+let boundaryModel;
+let boundaryGrainB;
+let boundaryResizeObserver;
+const boundaryState = {
+  ready: false,
+  failed: false
+};
 const astmGrainFieldCache = new Map();
 const astmState = {
   seed: randomAstmSeed(),
@@ -312,8 +357,19 @@ function bindPageControls() {
   elements.orthographic.addEventListener("change", () => switchVoidProjection(elements.orthographic.checked, true));
   elements.resetView.addEventListener("click", () => resetVoidView(true));
 
+  elements.mixedAngle.addEventListener("input", () => updateMixedDislocation(false));
+  elements.mixedAngle.addEventListener("change", () => updateMixedDislocation(true));
+  elements.mixedPresets.forEach(button => button.addEventListener("click", () => {
+    elements.mixedAngle.value = button.dataset.mixedAngle;
+    updateMixedDislocation(true);
+  }));
   elements.grainAngle.addEventListener("input", updateGrainBoundary);
   elements.grainAngle.addEventListener("change", announceGrainBoundary);
+  elements.boundaryTilt.addEventListener("input", () => updateBoundaryModel(false));
+  elements.boundaryTilt.addEventListener("change", () => updateBoundaryModel(true));
+  elements.boundaryTwist.addEventListener("input", () => updateBoundaryModel(false));
+  elements.boundaryTwist.addEventListener("change", () => updateBoundaryModel(true));
+  elements.boundaryPresets.forEach(button => button.addEventListener("click", () => applyBoundaryPreset(button.dataset.boundaryPreset)));
   elements.astmGrainCount.addEventListener("change", () => {
     astmState.grainDensity = Number(elements.astmGrainCount.value);
     astmGrainFieldCache.clear();
@@ -596,9 +652,13 @@ async function initialiseThreeViewer() {
     }
 
     elements.voidCanvas.addEventListener("webglcontextlost", handleContextLoss, { once: true });
+    initialiseMixedDislocationViewer();
+    initialiseBoundaryViewer();
   } catch (error) {
     console.error("Unable to initialise the interstitial-void viewer.", error);
     showThreeFailure("The 3D viewer could not load. Use the selector and numerical facts to continue the lesson.");
+    showMixedFailure("The 3D library could not load. The character slider and component values remain available.");
+    showBoundaryFailure("The 3D library could not load. The angle controls and comparison text remain available.");
   }
 }
 
@@ -1203,6 +1263,537 @@ function enableThreeControls(enabled) {
 
 function setVoidStatus(message) {
   if (elements.voidStatus.textContent !== message) elements.voidStatus.textContent = message;
+}
+
+function initialiseMixedDislocationViewer() {
+  try {
+    mixedScene = new THREE.Scene();
+    mixedCamera = new THREE.PerspectiveCamera(38, 1, 0.1, 90);
+    mixedRenderer = new THREE.WebGLRenderer({
+      canvas: elements.mixedCanvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: "low-power"
+    });
+    mixedRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.65));
+    mixedRenderer.outputColorSpace = THREE.SRGBColorSpace;
+    mixedRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    mixedRenderer.toneMappingExposure = 1.12;
+
+    mixedControls = new OrbitControls(mixedCamera, elements.mixedCanvas);
+    mixedControls.enablePan = false;
+    mixedControls.enableDamping = false;
+    mixedControls.minDistance = 7;
+    mixedControls.maxDistance = 25;
+    mixedControls.target.set(0, 0, 0);
+    mixedControls.addEventListener("change", renderMixedDislocation);
+
+    mixedScene.add(new THREE.HemisphereLight(0xeaf6ff, 0x17243c, 2.3));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.15);
+    keyLight.position.set(5, 8, 7);
+    mixedScene.add(keyLight);
+    const rimLight = new THREE.DirectionalLight(0xff9c7d, 1.65);
+    rimLight.position.set(-6, 1, -5);
+    mixedScene.add(rimLight);
+
+    mixedCamera.position.set(8.8, 6.8, 9.4);
+    mixedCamera.lookAt(0, 0, 0);
+    mixedControls.update();
+    mixedState.ready = true;
+    mixedState.failed = false;
+    setMixedControlsEnabled(true);
+    elements.mixedCanvas.setAttribute("role", "img");
+    elements.mixedCanvas.setAttribute("aria-hidden", "false");
+    elements.mixedFallback.hidden = true;
+    resizeMixedDislocation();
+    updateMixedDislocation(false);
+    updateLiveText(elements.mixedStatus, "Interactive 45 degree mixed-dislocation model ready.");
+
+    if (typeof ResizeObserver === "function") {
+      mixedResizeObserver = new ResizeObserver(resizeMixedDislocation);
+      mixedResizeObserver.observe(elements.mixedFrame);
+    } else {
+      window.addEventListener("resize", resizeMixedDislocation);
+    }
+
+    elements.mixedCanvas.addEventListener("webglcontextlost", event => {
+      event.preventDefault();
+      showMixedFailure("The 3D context was lost. Reload the page to restore the model.");
+    }, { once: true });
+  } catch (error) {
+    console.error("Unable to initialise the mixed-dislocation viewer.", error);
+    showMixedFailure("The 3D mixed-dislocation model could not start. The slider still updates the component values.");
+  }
+}
+
+function updateMixedDislocation(announce) {
+  const angle = Number(elements.mixedAngle.value);
+  const radians = THREE ? THREE.MathUtils.degToRad(angle) : angle * Math.PI / 180;
+  const screwFraction = Math.abs(Math.cos(radians));
+  const edgeFraction = Math.abs(Math.sin(radians));
+  let title;
+  let badge;
+  let explanation;
+
+  if (angle === 0) {
+    title = "0° screw limit";
+    badge = "Pure screw: b ∥ ξ";
+    explanation = "The Burgers vector is parallel to the line, so only the screw component remains.";
+  } else if (angle === 90) {
+    title = "90° edge limit";
+    badge = "Pure edge: b ⟂ ξ";
+    explanation = "The Burgers vector is perpendicular to the line, so only the edge component remains.";
+  } else {
+    title = `${angle}° mixed segment`;
+    badge = angle === 45 ? "Equal edge + screw components" : angle < 45 ? "Screw-dominant mixed character" : "Edge-dominant mixed character";
+    explanation = "Both components are present: the Burgers vector is oblique to the dislocation line.";
+  }
+
+  elements.mixedAngleOutput.value = `${angle}°`;
+  elements.mixedTitle.textContent = title;
+  elements.mixedBadge.textContent = badge;
+  elements.mixedRelationship.innerHTML = `<i>b</i> ∠ <i>ξ</i> = ${angle}°`;
+  elements.mixedScrewComponent.innerHTML = `|<i>b</i>| cos ${angle}° = ${screwFraction.toFixed(3)}|<i>b</i>|`;
+  elements.mixedEdgeComponent.innerHTML = `|<i>b</i>| sin ${angle}° = ${edgeFraction.toFixed(3)}|<i>b</i>|`;
+  elements.mixedExplanation.textContent = explanation;
+
+  const description = `Three-dimensional simple-cubic lattice containing a straight ${angle === 0 ? "screw" : angle === 90 ? "edge" : "mixed"} dislocation. The dislocation line is at ${angle} degrees to the fixed Burgers vector. A translucent slip plane and idealized combined displacement field are shown.`;
+  elements.mixedFrame.setAttribute("aria-label", description);
+  elements.mixedCanvas.setAttribute("aria-label", description);
+  if (mixedState.ready) buildMixedDislocationScene(angle);
+  if (announce) updateLiveText(elements.mixedStatus, `${title}. Screw component ${screwFraction.toFixed(3)} b; edge component ${edgeFraction.toFixed(3)} b.`);
+}
+
+function buildMixedDislocationScene(angleDegrees) {
+  disposeMixedModel();
+  mixedModel = new THREE.Group();
+  mixedModel.name = "mixed-dislocation-model";
+  mixedScene.add(mixedModel);
+
+  const angle = THREE.MathUtils.degToRad(angleDegrees);
+  const lineDirection = new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle)).normalize();
+  const edgeDirection = angleDegrees === 0
+    ? new THREE.Vector3(0, 0, -1)
+    : new THREE.Vector3(Math.sin(angle), 0, -Math.cos(angle)).normalize();
+  const normalDirection = new THREE.Vector3(0, 1, 0);
+  const burgersMagnitude = 0.58;
+  const screwMagnitude = burgersMagnitude * Math.cos(angle);
+  const edgeMagnitude = burgersMagnitude * Math.sin(angle);
+  const poissonRatio = 0.33;
+  const xzValues = Array.from({ length: 9 }, (_, index) => -3 + index * 0.75);
+  const yValues = Array.from({ length: 7 }, (_, index) => -2.25 + index * 0.75);
+  const displacedPoints = new Map();
+  const pointEntries = [];
+
+  xzValues.forEach((x, xIndex) => yValues.forEach((y, yIndex) => xzValues.forEach((z, zIndex) => {
+    const original = new THREE.Vector3(x, y, z);
+    const transverseEdge = original.dot(edgeDirection);
+    const transverseNormal = original.dot(normalDirection);
+    const radiusSquared = Math.max(0.13, transverseEdge * transverseEdge + transverseNormal * transverseNormal);
+    const phase = Math.atan2(transverseNormal, transverseEdge);
+    const screwDisplacement = screwMagnitude / (2 * Math.PI) * phase;
+    const edgeParallel = edgeMagnitude / (2 * Math.PI) * (
+      phase + transverseEdge * transverseNormal / (2 * (1 - poissonRatio) * radiusSquared)
+    );
+    const edgeNormal = -edgeMagnitude / (2 * Math.PI) * (
+      (1 - 2 * poissonRatio) / (4 * (1 - poissonRatio)) * Math.log(radiusSquared) +
+      (transverseEdge * transverseEdge - transverseNormal * transverseNormal) / (4 * (1 - poissonRatio) * radiusSquared)
+    );
+    const displaced = original.clone()
+      .addScaledVector(lineDirection, screwDisplacement)
+      .addScaledVector(edgeDirection, edgeParallel)
+      .addScaledVector(normalDirection, edgeNormal);
+    const distanceToCore = Math.hypot(transverseEdge, transverseNormal);
+    const key = `${xIndex}:${yIndex}:${zIndex}`;
+    displacedPoints.set(key, displaced);
+    pointEntries.push({ key, displaced, distanceToCore, xIndex, yIndex, zIndex });
+  })));
+
+  const atomGeometry = new THREE.SphereGeometry(0.105, 16, 12);
+  const atomMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.28, metalness: 0.03 });
+  const atoms = new THREE.InstancedMesh(atomGeometry, atomMaterial, pointEntries.length);
+  const matrix = new THREE.Matrix4();
+  const hostColor = new THREE.Color(0x8fd5f5);
+  const coreColor = new THREE.Color(0xff8a6e);
+  pointEntries.forEach((entry, index) => {
+    matrix.makeTranslation(entry.displaced.x, entry.displaced.y, entry.displaced.z);
+    atoms.setMatrixAt(index, matrix);
+    atoms.setColorAt(index, entry.distanceToCore < 0.72 ? coreColor : hostColor);
+  });
+  atoms.instanceMatrix.needsUpdate = true;
+  if (atoms.instanceColor) atoms.instanceColor.needsUpdate = true;
+  mixedModel.add(atoms);
+
+  const bondPositions = [];
+  pointEntries.forEach(entry => {
+    [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach(([dx, dy, dz]) => {
+      const neighbour = displacedPoints.get(`${entry.xIndex + dx}:${entry.yIndex + dy}:${entry.zIndex + dz}`);
+      if (neighbour) bondPositions.push(...entry.displaced.toArray(), ...neighbour.toArray());
+    });
+  });
+  const bondGeometry = new THREE.BufferGeometry();
+  bondGeometry.setAttribute("position", new THREE.Float32BufferAttribute(bondPositions, 3));
+  mixedModel.add(new THREE.LineSegments(bondGeometry, new THREE.LineBasicMaterial({
+    color: 0x8bc8e7,
+    transparent: true,
+    opacity: 0.26
+  })));
+
+  const slipPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(7.1, 7.1),
+    new THREE.MeshBasicMaterial({
+      color: 0xa890ef,
+      transparent: true,
+      opacity: 0.1,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    })
+  );
+  slipPlane.rotation.x = -Math.PI / 2;
+  mixedModel.add(slipPlane);
+  const planeGrid = new THREE.GridHelper(7.1, 10, 0xc9bbff, 0x796cb0);
+  planeGrid.material.transparent = true;
+  planeGrid.material.opacity = 0.24;
+  planeGrid.material.depthWrite = false;
+  mixedModel.add(planeGrid);
+
+  const lineStart = lineDirection.clone().multiplyScalar(-3.75);
+  const lineEnd = lineDirection.clone().multiplyScalar(3.75);
+  mixedModel.add(makeCylinderBetween(lineStart, lineEnd, 0.085, 0xf06445));
+
+  const lineArrow = new THREE.ArrowHelper(lineDirection, lineDirection.clone().multiplyScalar(-3.35), 6.7, 0xf06445, 0.34, 0.18);
+  const burgersOrigin = new THREE.Vector3(-1.65, -2.58, -2.65);
+  const burgersArrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), burgersOrigin, 3.3, 0xffd23f, 0.38, 0.2);
+  [lineArrow, burgersArrow].forEach(arrow => {
+    arrow.line.material.depthTest = false;
+    arrow.cone.material.depthTest = false;
+    arrow.line.renderOrder = 6;
+    arrow.cone.renderOrder = 6;
+  });
+  mixedModel.add(lineArrow, burgersArrow);
+  renderMixedDislocation();
+}
+
+function makeCylinderBetween(start, end, radius, color) {
+  const direction = end.clone().sub(start);
+  const cylinder = new THREE.Mesh(
+    new THREE.CylinderGeometry(radius, radius, direction.length(), 18),
+    new THREE.MeshStandardMaterial({ color, roughness: 0.25, metalness: 0.02 })
+  );
+  cylinder.position.copy(start).add(end).multiplyScalar(0.5);
+  cylinder.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+  return cylinder;
+}
+
+function disposeMixedModel() {
+  if (!mixedModel || !mixedScene) return;
+  mixedScene.remove(mixedModel);
+  const geometries = new Set();
+  const materials = new Set();
+  mixedModel.traverse(object => {
+    if (object.geometry) geometries.add(object.geometry);
+    if (Array.isArray(object.material)) object.material.forEach(material => materials.add(material));
+    else if (object.material) materials.add(object.material);
+  });
+  geometries.forEach(geometry => geometry.dispose());
+  materials.forEach(material => material.dispose());
+  mixedModel = null;
+}
+
+function resizeMixedDislocation() {
+  if (!mixedState.ready || !mixedRenderer || !mixedCamera) return;
+  const width = Math.max(1, elements.mixedFrame.clientWidth);
+  const height = Math.max(1, elements.mixedFrame.clientHeight);
+  mixedRenderer.setSize(width, height, false);
+  mixedCamera.aspect = width / height;
+  mixedCamera.updateProjectionMatrix();
+  renderMixedDislocation();
+}
+
+function renderMixedDislocation() {
+  if (mixedState.ready && mixedRenderer && mixedScene && mixedCamera) {
+    mixedRenderer.render(mixedScene, mixedCamera);
+  }
+}
+
+function setMixedControlsEnabled(enabled) {
+  elements.mixedAngle.disabled = !enabled;
+  elements.mixedPresets.forEach(button => { button.disabled = !enabled; });
+}
+
+function showMixedFailure(message) {
+  mixedState.ready = false;
+  mixedState.failed = true;
+  setMixedControlsEnabled(true);
+  elements.mixedCanvas.setAttribute("aria-hidden", "true");
+  elements.mixedCanvas.removeAttribute("role");
+  elements.mixedFallback.hidden = false;
+  const strong = elements.mixedFallback.querySelector("strong");
+  const detail = elements.mixedFallback.querySelector("span");
+  if (strong) strong.textContent = "Three-dimensional mixed dislocation unavailable";
+  if (detail) detail.textContent = message;
+  updateMixedDislocation(false);
+  updateLiveText(elements.mixedStatus, message);
+}
+
+function initialiseBoundaryViewer() {
+  try {
+    boundaryScene = new THREE.Scene();
+    boundaryCamera = new THREE.PerspectiveCamera(36, 1, 0.1, 80);
+    boundaryRenderer = new THREE.WebGLRenderer({
+      canvas: elements.boundaryCanvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: "low-power"
+    });
+    boundaryRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.65));
+    boundaryRenderer.outputColorSpace = THREE.SRGBColorSpace;
+    boundaryRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    boundaryRenderer.toneMappingExposure = 1.12;
+    boundaryRenderer.localClippingEnabled = true;
+
+    boundaryControls = new OrbitControls(boundaryCamera, elements.boundaryCanvas);
+    boundaryControls.enablePan = false;
+    boundaryControls.enableDamping = false;
+    boundaryControls.minDistance = 7;
+    boundaryControls.maxDistance = 24;
+    boundaryControls.target.set(0, 0, 0);
+    boundaryControls.addEventListener("change", renderBoundaryViewer);
+
+    boundaryScene.add(new THREE.HemisphereLight(0xe8f5ff, 0x17243c, 2.35));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 3.2);
+    keyLight.position.set(5, 8, 7);
+    boundaryScene.add(keyLight);
+    const fillLight = new THREE.DirectionalLight(0xb89cff, 1.8);
+    fillLight.position.set(-6, -1, -5);
+    boundaryScene.add(fillLight);
+
+    buildBoundaryScene();
+    boundaryCamera.position.set(8.8, 6.7, 9.2);
+    boundaryCamera.lookAt(0, 0, 0);
+    boundaryControls.update();
+
+    boundaryState.ready = true;
+    boundaryState.failed = false;
+    setBoundaryControlsEnabled(true);
+    elements.boundaryCanvas.setAttribute("role", "img");
+    elements.boundaryCanvas.setAttribute("aria-hidden", "false");
+    elements.boundaryFallback.hidden = true;
+    resizeBoundaryViewer();
+    updateBoundaryModel(false);
+    updateLiveText(elements.boundaryStatus, "Interactive 3D boundary ready. Adjust tilt, twist, or both components.");
+
+    if (typeof ResizeObserver === "function") {
+      boundaryResizeObserver = new ResizeObserver(resizeBoundaryViewer);
+      boundaryResizeObserver.observe(elements.boundaryFrame);
+    } else {
+      window.addEventListener("resize", resizeBoundaryViewer);
+    }
+
+    elements.boundaryCanvas.addEventListener("webglcontextlost", event => {
+      event.preventDefault();
+      showBoundaryFailure("The 3D context was lost. Reload the page to restore the model.");
+    }, { once: true });
+  } catch (error) {
+    console.error("Unable to initialise the grain-boundary viewer.", error);
+    showBoundaryFailure("The 3D boundary could not start. The sliders still update the crystallographic classification.");
+  }
+}
+
+function buildBoundaryScene() {
+  boundaryModel = new THREE.Group();
+  boundaryModel.name = "grain-boundary-model";
+  boundaryScene.add(boundaryModel);
+
+  const leftClip = new THREE.Plane(new THREE.Vector3(-1, 0, 0), -0.035);
+  const rightClip = new THREE.Plane(new THREE.Vector3(1, 0, 0), -0.035);
+  const grainA = makeBoundaryGrain("left", 0x75c9f5, leftClip);
+  boundaryGrainB = makeBoundaryGrain("right", 0xc1a8ff, rightClip);
+  boundaryModel.add(grainA, boundaryGrainB);
+
+  const planeGeometry = new THREE.PlaneGeometry(5.4, 5.4);
+  const planeMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffd23f,
+    transparent: true,
+    opacity: 0.14,
+    side: THREE.DoubleSide,
+    depthWrite: false
+  });
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.rotation.y = Math.PI / 2;
+  plane.renderOrder = 2;
+  boundaryModel.add(plane);
+
+  const planeEdges = new THREE.LineSegments(
+    new THREE.EdgesGeometry(planeGeometry),
+    new THREE.LineBasicMaterial({ color: 0xffe68a, transparent: true, opacity: 0.82, depthTest: false })
+  );
+  planeEdges.rotation.y = Math.PI / 2;
+  planeEdges.renderOrder = 4;
+  boundaryModel.add(planeEdges);
+
+  boundaryModel.add(
+    makeBoundaryDashedAxis(new THREE.Vector3(0, -2.7, -3.2), new THREE.Vector3(0, -2.7, 3.2), 0xf06445),
+    makeBoundaryDashedAxis(new THREE.Vector3(-3.55, -2.45, -2.45), new THREE.Vector3(3.55, -2.45, -2.45), 0x64d8c2)
+  );
+}
+
+function makeBoundaryGrain(side, color, clippingPlane) {
+  const group = new THREE.Group();
+  group.name = side === "left" ? "grain-a" : "grain-b";
+  const xValues = side === "left" ? [-2.8, -2.1, -1.4, -0.7] : [0.7, 1.4, 2.1, 2.8];
+  const yzValues = [-2.1, -1.4, -0.7, 0, 0.7, 1.4, 2.1];
+  const atomGeometry = new THREE.SphereGeometry(0.105, 16, 12);
+  const atomMaterial = new THREE.MeshStandardMaterial({
+    color,
+    roughness: 0.3,
+    metalness: 0.04,
+    clippingPlanes: [clippingPlane]
+  });
+  const atomCount = xValues.length * yzValues.length * yzValues.length;
+  const atoms = new THREE.InstancedMesh(atomGeometry, atomMaterial, atomCount);
+  const matrix = new THREE.Matrix4();
+  let atomIndex = 0;
+  xValues.forEach(x => yzValues.forEach(y => yzValues.forEach(z => {
+    matrix.makeTranslation(x, y, z);
+    atoms.setMatrixAt(atomIndex, matrix);
+    atomIndex += 1;
+  })));
+  atoms.instanceMatrix.needsUpdate = true;
+  group.add(atoms);
+
+  const positions = [];
+  const addBond = (first, second) => positions.push(...first, ...second);
+  xValues.forEach((x, xIndex) => yzValues.forEach((y, yIndex) => yzValues.forEach((z, zIndex) => {
+    if (xIndex < xValues.length - 1) addBond([x, y, z], [xValues[xIndex + 1], y, z]);
+    if (yIndex < yzValues.length - 1) addBond([x, y, z], [x, yzValues[yIndex + 1], z]);
+    if (zIndex < yzValues.length - 1) addBond([x, y, z], [x, y, yzValues[zIndex + 1]]);
+  })));
+  const bondGeometry = new THREE.BufferGeometry();
+  bondGeometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  const bondMaterial = new THREE.LineBasicMaterial({
+    color,
+    transparent: true,
+    opacity: side === "left" ? 0.3 : 0.38,
+    clippingPlanes: [clippingPlane]
+  });
+  group.add(new THREE.LineSegments(bondGeometry, bondMaterial));
+  return group;
+}
+
+function makeBoundaryDashedAxis(start, end, color) {
+  const group = new THREE.Group();
+  const geometry = new THREE.BufferGeometry().setFromPoints([start, end]);
+  const material = new THREE.LineDashedMaterial({
+    color,
+    dashSize: 0.24,
+    gapSize: 0.14,
+    transparent: true,
+    opacity: 0.96,
+    depthTest: false
+  });
+  const line = new THREE.Line(geometry, material);
+  line.computeLineDistances();
+  line.renderOrder = 5;
+  group.add(line);
+
+  const direction = end.clone().sub(start).normalize();
+  const cone = new THREE.Mesh(
+    new THREE.ConeGeometry(0.13, 0.38, 18),
+    new THREE.MeshBasicMaterial({ color, depthTest: false })
+  );
+  cone.position.copy(end).addScaledVector(direction, -0.14);
+  cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+  cone.renderOrder = 6;
+  group.add(cone);
+  return group;
+}
+
+function applyBoundaryPreset(preset) {
+  const values = {
+    tilt: [12, 0],
+    twist: [0, 12],
+    mixed: [12, 12],
+    reset: [0, 0]
+  }[preset];
+  if (!values) return;
+  elements.boundaryTilt.value = values[0];
+  elements.boundaryTwist.value = values[1];
+  updateBoundaryModel(true);
+}
+
+function updateBoundaryModel(announce) {
+  const tilt = Number(elements.boundaryTilt.value);
+  const twist = Number(elements.boundaryTwist.value);
+  elements.boundaryTiltOutput.value = `${tilt}°`;
+  elements.boundaryTwistOutput.value = `${twist}°`;
+
+  let character;
+  let axis;
+  if (tilt === 0 && twist === 0) {
+    character = "Single-orientation reference";
+    axis = "No active rotation axis";
+  } else if (tilt > 0 && twist === 0) {
+    character = "Pure tilt boundary";
+    axis = "In the boundary plane";
+  } else if (tilt === 0 && twist > 0) {
+    character = "Pure twist boundary";
+    axis = "Normal to the boundary plane";
+  } else {
+    character = "Mixed tilt–twist boundary";
+    axis = "In-plane + boundary-normal axes";
+  }
+  elements.boundaryCharacter.textContent = character;
+  elements.boundaryAxis.textContent = axis;
+
+  if (boundaryGrainB && THREE) {
+    const tiltQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), THREE.MathUtils.degToRad(tilt));
+    const twistQuaternion = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(twist));
+    boundaryGrainB.quaternion.copy(twistQuaternion).multiply(tiltQuaternion);
+  }
+
+  const description = `Three-dimensional cubic lattices in two grains separated by a vertical boundary plane. Grain B has a ${tilt} degree tilt component and a ${twist} degree twist component; ${character.toLowerCase()}.`;
+  elements.boundaryFrame.setAttribute("aria-label", description);
+  elements.boundaryCanvas.setAttribute("aria-label", description);
+  renderBoundaryViewer();
+  if (announce) updateLiveText(elements.boundaryStatus, `${character}: ${tilt} degrees tilt and ${twist} degrees twist.`);
+}
+
+function resizeBoundaryViewer() {
+  if (!boundaryState.ready || !boundaryRenderer || !boundaryCamera) return;
+  const width = Math.max(1, elements.boundaryFrame.clientWidth);
+  const height = Math.max(1, elements.boundaryFrame.clientHeight);
+  boundaryRenderer.setSize(width, height, false);
+  boundaryCamera.aspect = width / height;
+  boundaryCamera.updateProjectionMatrix();
+  renderBoundaryViewer();
+}
+
+function renderBoundaryViewer() {
+  if (boundaryState.ready && boundaryRenderer && boundaryScene && boundaryCamera) {
+    boundaryRenderer.render(boundaryScene, boundaryCamera);
+  }
+}
+
+function setBoundaryControlsEnabled(enabled) {
+  elements.boundaryTilt.disabled = !enabled;
+  elements.boundaryTwist.disabled = !enabled;
+  elements.boundaryPresets.forEach(button => { button.disabled = !enabled; });
+}
+
+function showBoundaryFailure(message) {
+  boundaryState.ready = false;
+  boundaryState.failed = true;
+  setBoundaryControlsEnabled(true);
+  elements.boundaryCanvas.setAttribute("aria-hidden", "true");
+  elements.boundaryCanvas.removeAttribute("role");
+  elements.boundaryFallback.hidden = false;
+  const strong = elements.boundaryFallback.querySelector("strong");
+  const detail = elements.boundaryFallback.querySelector("span");
+  if (strong) strong.textContent = "Three-dimensional boundary unavailable";
+  if (detail) detail.textContent = message;
+  updateBoundaryModel(false);
+  updateLiveText(elements.boundaryStatus, message);
 }
 
 function updateGrainBoundary() {
