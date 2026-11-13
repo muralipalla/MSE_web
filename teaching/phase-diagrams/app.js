@@ -22,6 +22,19 @@ const COLORS = {
   paper: "#fffefa",
   grid: "rgba(46, 42, 116, 0.11)"
 };
+const SCREEN_COLORS = { ...COLORS };
+const PRINT_COLORS = {
+  ink: "#111111", inkSoft: "#222222", muted: "#222222", coral: "#111111",
+  coralBright: "#111111", lavender: "#111111", lavenderLight: "#ffffff",
+  blue: "#111111", blueLight: "#ffffff", teal: "#111111", tealLight: "#ffffff",
+  amber: "#111111", amberLight: "#ffffff", charcoal: "#111111",
+  paper: "#ffffff", grid: "#d9d9d9"
+};
+let printMode = false;
+
+function chartWidth(canvas) {
+  return printMode ? Number(canvas.getAttribute("width")) : canvas.getBoundingClientRect().width;
+}
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const between = (value, a, b, tolerance = 0) => value >= Math.min(a, b) - tolerance && value <= Math.max(a, b) + tolerance;
@@ -67,9 +80,9 @@ function leverFractions(overall, leftComposition, rightComposition) {
 
 function fitCanvas(canvas) {
   const rect = canvas.getBoundingClientRect();
-  const width = Math.max(280, rect.width || Number(canvas.getAttribute("width")) || 800);
-  const height = Math.max(180, rect.height || Number(canvas.getAttribute("height")) || 500);
-  const density = Math.min(2, window.devicePixelRatio || 1);
+  const width = Math.max(280, printMode ? Number(canvas.getAttribute("width")) : rect.width || Number(canvas.getAttribute("width")) || 800);
+  const height = Math.max(180, printMode ? Number(canvas.getAttribute("height")) : rect.height || Number(canvas.getAttribute("height")) || 500);
+  const density = printMode ? 3 : Math.min(2, window.devicePixelRatio || 1);
   const pixelWidth = Math.round(width * density);
   const pixelHeight = Math.round(height * density);
   if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
@@ -79,6 +92,10 @@ function fitCanvas(canvas) {
   const context = canvas.getContext("2d");
   context.setTransform(density, 0, 0, density, 0, 0);
   context.clearRect(0, 0, width, height);
+  if (printMode) {
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, width, height);
+  }
   context.lineJoin = "round";
   context.lineCap = "round";
   return { context, width, height, density };
@@ -104,9 +121,9 @@ function makePlot(canvas, xDomain, yDomain, options = {}) {
 
 function drawAxes(plot, options) {
   const { context, margins, plotWidth, plotHeight, x, y, compact } = plot;
-  const tickFontSize = options.tickFontSize ?? (compact ? 10 : 11);
-  const axisLabelFontSize = options.axisLabelFontSize ?? (compact ? 11 : 12);
-  const yLabelOffset = options.yLabelOffset ?? (compact ? 12 : 15);
+  const tickFontSize = printMode ? 15 : options.tickFontSize ?? (compact ? 10 : 11);
+  const axisLabelFontSize = printMode ? 18 : options.axisLabelFontSize ?? (compact ? 11 : 12);
+  const yLabelOffset = printMode ? 38 : options.yLabelOffset ?? (compact ? 12 : 15);
   context.save();
   if (options.background !== false) {
     context.fillStyle = COLORS.paper;
@@ -143,7 +160,7 @@ function drawAxes(plot, options) {
   });
 
   context.strokeStyle = COLORS.ink;
-  context.lineWidth = 1.6;
+  context.lineWidth = printMode ? 2.4 : 1.6;
   context.strokeRect(margins.left, margins.top, plotWidth, plotHeight);
 
   context.fillStyle = COLORS.ink;
@@ -168,7 +185,8 @@ function pathLine(plot, points, style = {}) {
     else context.lineTo(x(pointX), y(pointY));
   });
   context.strokeStyle = style.color || COLORS.ink;
-  context.lineWidth = style.width || 2.5;
+  context.lineWidth = printMode ? Math.max(3.5, style.width || 2.5) : style.width || 2.5;
+  if (printMode) context.strokeStyle = "#111111";
   context.setLineDash(style.dash || []);
   context.stroke();
   context.restore();
@@ -188,15 +206,16 @@ function drawCurveLabel(plot, text, curve, atX, color, screenOffset = 0) {
   context.save();
   context.translate(x(atX), y(interpolateY(curve, atX)) + screenOffset);
   context.rotate(angle);
-  context.font = `750 ${compact ? 9 : 11}px system-ui, sans-serif`;
+  context.font = `750 ${printMode ? 14 : compact ? 9 : 11}px system-ui, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "middle";
-  context.fillStyle = color;
+  context.fillStyle = printMode ? "#111111" : color;
   context.fillText(text, 0, 0);
   context.restore();
 }
 
 function fillPolygon(plot, points, color) {
+  if (printMode) return;
   const { context, x, y } = plot;
   context.save();
   context.beginPath();
@@ -217,7 +236,7 @@ function drawPoint(plot, pointX, pointY, options = {}) {
   context.save();
   context.beginPath();
   context.arc(px, py, options.radius || 5, 0, Math.PI * 2);
-  context.fillStyle = options.fill || COLORS.coral;
+  context.fillStyle = printMode ? "#111111" : options.fill || COLORS.coral;
   context.fill();
   context.lineWidth = options.strokeWidth || 2;
   context.strokeStyle = options.stroke || "white";
@@ -231,8 +250,8 @@ function drawSelection(plot, pointX, pointY, options = {}) {
   const py = y(pointY);
   context.save();
   context.strokeStyle = options.guideColor || COLORS.inkSoft;
-  context.globalAlpha = 0.42;
-  context.lineWidth = 1;
+  context.globalAlpha = printMode ? 0.8 : 0.42;
+  context.lineWidth = printMode ? 2 : 1;
   context.setLineDash([3, 5]);
   context.beginPath();
   context.moveTo(px, margins.top);
@@ -323,8 +342,7 @@ const WATER_VAPORIZATION = [[0.01, 0.00611657], [25, 0.0317], [50, 0.1235], [75,
 const WATER_FUSION = [[0.01, 0.00611657], [0, 1.01325], [-0.74, 100], [-1.1, 150], [-2.2, 300], [-7.4, 1000]];
 let waterSelection = "triple";
 
-function drawWaterChart() {
-  const canvas = $("#water-chart");
+function drawWaterChart(canvas = $("#water-chart")) {
   const { context, width, height } = fitCanvas(canvas);
   const compact = width < 520;
   const margins = { left: compact ? 58 : 72, right: compact ? 14 : 26, top: 24, bottom: compact ? 50 : 58 };
@@ -335,9 +353,10 @@ function drawWaterChart() {
   const x = (value) => margins.left + ((value - xDomain[0]) / (xDomain[1] - xDomain[0])) * plotWidth;
   const y = (pressure) => margins.top + (1 - (Math.log10(pressure) - logDomain[0]) / (logDomain[1] - logDomain[0])) * plotHeight;
 
-  context.fillStyle = "#f9f7ff";
+  context.fillStyle = printMode ? "#ffffff" : "#f9f7ff";
   context.fillRect(margins.left, margins.top, plotWidth, plotHeight);
 
+  if (!printMode) {
   const vaporCurve = WATER_VAPORIZATION.map(([temperature, pressure]) => [x(temperature), y(pressure)]);
   context.save();
   context.beginPath();
@@ -392,10 +411,11 @@ function drawWaterChart() {
     y(WATER_POINTS.critical.pressure) - margins.top
   );
   context.restore();
+  }
 
   const xTicks = compact ? [0, 200, 400, 600, 800, 1000] : [-50, 0, 100, 200, 400, 600, 800, 1000];
   const pressureTicks = [0.00001, 0.001, 0.01, 0.1, 1, 10, 100, 1000];
-  context.font = `${compact ? 9 : 11}px system-ui, sans-serif`;
+  context.font = `${printMode ? 15 : compact ? 9 : 11}px system-ui, sans-serif`;
   context.textBaseline = "top";
   context.textAlign = "center";
   xTicks.forEach((tick) => {
@@ -422,7 +442,7 @@ function drawWaterChart() {
     context.fillText(tick < 0.01 ? tick.toExponential(0) : String(tick), margins.left - 7, py);
   });
   context.strokeStyle = COLORS.ink;
-  context.lineWidth = 1.6;
+  context.lineWidth = printMode ? 2.4 : 1.6;
   context.strokeRect(margins.left, margins.top, plotWidth, plotHeight);
 
   const drawWaterBoundary = (points, color) => {
@@ -433,7 +453,7 @@ function drawWaterChart() {
       else context.lineTo(x(temperature), y(pressure));
     });
     context.strokeStyle = color;
-    context.lineWidth = 3;
+    context.lineWidth = printMode ? 4 : 3;
     context.stroke();
     context.restore();
   };
@@ -441,7 +461,7 @@ function drawWaterChart() {
   drawWaterBoundary(WATER_VAPORIZATION, COLORS.coral);
   drawWaterBoundary(WATER_FUSION, COLORS.teal);
 
-  context.font = `800 ${compact ? 13 : 16}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 19 : compact ? 13 : 16}px system-ui, sans-serif`;
   context.fillStyle = COLORS.blue;
   context.textAlign = "center";
   if (compact) {
@@ -459,17 +479,17 @@ function drawWaterChart() {
   context.fillStyle = COLORS.coral;
   context.fillText("VAPOUR", x(620), y(0.08));
   context.fillStyle = COLORS.lavender;
-  context.font = `750 ${compact ? 9 : 11}px system-ui, sans-serif`;
+  context.font = `750 ${printMode ? 15 : compact ? 9 : 11}px system-ui, sans-serif`;
   context.textBaseline = "top";
   context.fillText("SUPERCRITICAL", x(700), margins.top + 4);
 
   context.fillStyle = COLORS.ink;
   context.textAlign = "center";
   context.textBaseline = "bottom";
-  context.font = `700 ${compact ? 10 : 12}px system-ui, sans-serif`;
+  context.font = `700 ${printMode ? 18 : compact ? 10 : 12}px system-ui, sans-serif`;
   context.fillText("Temperature (°C)", margins.left + plotWidth / 2, height - 3);
   context.save();
-  context.translate(compact ? 10 : 14, margins.top + plotHeight / 2);
+  context.translate(printMode ? 38 : compact ? 10 : 14, margins.top + plotHeight / 2);
   context.rotate(-Math.PI / 2);
   context.fillText("Pressure (bar, logarithmic)", 0, 0);
   context.restore();
@@ -584,9 +604,8 @@ function isoMicrographFor(result) {
   };
 }
 
-function drawIsoChart() {
-  const canvas = $("#iso-chart");
-  const compactCanvas = canvas.getBoundingClientRect().width < 520;
+function drawIsoChart(canvas = $("#iso-chart")) {
+  const compactCanvas = chartWidth(canvas) < 520;
   const plot = makePlot(canvas, [0, 100], [1050, 1500], {
     margins: { left: compactCanvas ? 58 : 68, right: compactCanvas ? 16 : 28, top: compactCanvas ? 25 : 30, bottom: compactCanvas ? 58 : 64 }
   });
@@ -612,7 +631,7 @@ function drawIsoChart() {
   });
 
   const { context, x, y, compact } = plot;
-  context.font = `800 ${compact ? 11 : 14}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 18 : compact ? 11 : 14}px system-ui, sans-serif`;
   context.textAlign = "center";
   context.fillStyle = COLORS.coral;
   context.fillText("LIQUID", x(45), y(1430));
@@ -635,7 +654,7 @@ function drawIsoChart() {
     context.setLineDash([]);
     drawPoint(plot, left, isoState.temperature, { fill: COLORS.coral, radius: 5 });
     drawPoint(plot, right, isoState.temperature, { fill: COLORS.blue, radius: 5 });
-    context.font = `800 ${compact ? 9 : 11}px system-ui, sans-serif`;
+    context.font = `800 ${printMode ? 14 : compact ? 9 : 11}px system-ui, sans-serif`;
     context.textAlign = "center";
     context.fillStyle = COLORS.coral;
     context.fillText("Cₗ", x(left), y(isoState.temperature) - 12);
@@ -643,13 +662,13 @@ function drawIsoChart() {
     context.fillText("Cα", x(right), y(isoState.temperature) - 12);
   }
   context.save();
-  context.font = `800 ${compact ? 11 : 14}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 18 : compact ? 11 : 14}px system-ui, sans-serif`;
   context.textAlign = "center";
   context.textBaseline = "alphabetic";
   context.lineWidth = compact ? 3 : 4;
   context.strokeStyle = "rgba(255, 254, 250, 0.94)";
   context.strokeText("L + α", x(49), y(1290));
-  context.fillStyle = "#76506e";
+  context.fillStyle = printMode ? "#111111" : "#76506e";
   context.fillText("L + α", x(49), y(1290));
   context.restore();
   drawSelection(plot, isoState.composition, isoState.temperature);
@@ -1167,9 +1186,8 @@ function classifyPb(composition, temperature) {
     : pbSingle("β", "β", "Sn-rich β solid solution is stable.");
 }
 
-function drawPbChart() {
-  const canvas = $("#pb-chart");
-  const compactCanvas = canvas.getBoundingClientRect().width < 520;
+function drawPbChart(canvas = $("#pb-chart")) {
+  const compactCanvas = chartWidth(canvas) < 520;
   const plot = makePlot(canvas, [0, 100], [20, 350], {
     margins: { left: compactCanvas ? 58 : 68, right: compactCanvas ? 34 : 38, top: compactCanvas ? 25 : 30, bottom: compactCanvas ? 58 : 64 }
   });
@@ -1198,12 +1216,12 @@ function drawPbChart() {
   pathLine(plot, PB.eutectic, { color: COLORS.ink, width: 2.4 });
 
   const { context, x, y, compact } = plot;
-  context.font = `800 ${compact ? 10 : 13}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 17 : compact ? 10 : 13}px system-ui, sans-serif`;
   context.textAlign = "center";
   context.fillStyle = COLORS.coral;
   context.fillText("LIQUID", x(52), y(305));
   context.fillStyle = COLORS.blue;
-  context.fillText("α", x(6), y(175));
+  context.fillText("α", x(6), y(printMode ? 158 : 175));
   context.fillText("α + L", x(25), y(230));
   context.fillStyle = COLORS.lavender;
   context.fillText("L + β", x(85), y(195));
@@ -1211,16 +1229,16 @@ function drawPbChart() {
   context.strokeStyle = COLORS.lavender;
   context.lineWidth = compact ? 1.2 : 1.5;
   context.beginPath();
-  context.moveTo(x(99.1), y(175));
-  context.lineTo(x(100) + (compact ? 6 : 8), y(175));
+  context.moveTo(x(99.1), y(printMode ? 158 : 175));
+  context.lineTo(x(100) + (compact ? 6 : 8), y(printMode ? 158 : 175));
   context.stroke();
-  context.font = `800 ${compact ? 10 : 13}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 17 : compact ? 10 : 13}px system-ui, sans-serif`;
   context.textAlign = "left";
   context.textBaseline = "middle";
-  context.fillText("β", x(100) + (compact ? 9 : 11), y(175));
+  context.fillText("β", x(100) + (compact ? 9 : 11), y(printMode ? 158 : 175));
   context.restore();
   context.textAlign = "center";
-  context.font = `800 ${compact ? 10 : 13}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 17 : compact ? 10 : 13}px system-ui, sans-serif`;
   context.fillStyle = COLORS.amber;
   context.fillText("α + β", x(55), y(95));
 
@@ -1228,13 +1246,13 @@ function drawPbChart() {
     drawPoint(plot, composition, temperature, { radius: compact ? 2.6 : 3.2, fill: COLORS.paper, stroke: COLORS.ink, strokeWidth: 1.4 });
   });
   drawPoint(plot, PB.eutecticComposition, PB.eutecticTemperature, { radius: 5.5, fill: COLORS.coral });
-  context.font = `800 ${compact ? 9 : 11}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 14 : compact ? 9 : 11}px system-ui, sans-serif`;
   context.fillStyle = COLORS.ink;
   context.textAlign = "center";
   context.fillText("EUTECTIC", x(PB.eutecticComposition), y(PB.eutecticTemperature) + 17);
 
   currentPbResult = classifyPb(pbState.composition, pbState.temperature);
-  if (pbState.mode === "tie" && !currentPbResult.single && !currentPbResult.invariant) {
+  if ((pbState.mode === "tie" || printMode) && !currentPbResult.single && !currentPbResult.invariant) {
     context.strokeStyle = COLORS.coral;
     context.lineWidth = 2.4;
     context.setLineDash([7, 5]);
@@ -1246,7 +1264,7 @@ function drawPbChart() {
     drawPoint(plot, currentPbResult.leftComposition, pbState.temperature, { fill: COLORS.blue });
     drawPoint(plot, currentPbResult.rightComposition, pbState.temperature, { fill: COLORS.lavender });
   }
-  if (currentPbResult.invariant && pbState.mode === "tie") {
+  if (currentPbResult.invariant && (pbState.mode === "tie" || printMode)) {
     context.strokeStyle = COLORS.coral;
     context.lineWidth = 2.4;
     context.beginPath();
@@ -2099,11 +2117,10 @@ function drawIronAnimationPath(plot) {
   context.restore();
 }
 
-function drawIronChart() {
-  const canvas = $("#iron-chart");
+function drawIronChart(canvas = $("#iron-chart")) {
   const { xDomain, yDomain } = ironChartDomains();
   const plot = makePlot(canvas, xDomain, yDomain, {
-    margins: { left: canvas.getBoundingClientRect().width < 520 ? 54 : 68, right: canvas.getBoundingClientRect().width < 520 ? 16 : 28, top: 28, bottom: canvas.getBoundingClientRect().width < 520 ? 54 : 60 }
+    margins: { left: chartWidth(canvas) < 520 ? 54 : printMode ? 78 : 68, right: chartWidth(canvas) < 520 ? 16 : printMode ? 32 : 28, top: 28, bottom: chartWidth(canvas) < 520 ? 54 : printMode ? 68 : 60 }
   });
   canvas._plot = plot;
   const zoomMetrics = ironZoomMetrics({ xDomain, yDomain });
@@ -2178,7 +2195,7 @@ function drawIronChart() {
   context.beginPath();
   context.rect(margins.left, margins.top, plotWidth, plotHeight);
   context.clip();
-  context.font = `800 ${compact ? 9 : 12}px system-ui, sans-serif`;
+  context.font = `800 ${printMode ? 16 : compact ? 9 : 12}px system-ui, sans-serif`;
   context.textAlign = "center";
   const labels = ironState.view === "steel"
     ? [
@@ -2193,7 +2210,7 @@ function drawIronChart() {
   labels
     .filter(([labelX, labelY]) => between(labelX, xDomain[0], xDomain[1]) && between(labelY, yDomain[0], yDomain[1]))
     .forEach(([labelX, labelY, text, color]) => {
-      context.fillStyle = color;
+      context.fillStyle = printMode ? "#111111" : color;
       context.fillText(text, x(labelX), y(labelY));
     });
   if (ironState.view === "full") {
@@ -2275,18 +2292,18 @@ function drawIronChart() {
       context.beginPath();
       context.moveTo(anchorPixelX, anchorPixelY);
       context.lineTo(labelPixelX - 6, labelPixelY);
-      context.strokeStyle = color;
+      context.strokeStyle = printMode ? "#111111" : color;
       context.globalAlpha = 0.72;
       context.lineWidth = 1.25;
       context.stroke();
       context.globalAlpha = 1;
-      context.font = `800 ${compact ? 8 : 11}px system-ui, sans-serif`;
+      context.font = `800 ${printMode ? 15 : compact ? 8 : 11}px system-ui, sans-serif`;
       context.textAlign = "left";
       context.textBaseline = "middle";
       context.lineWidth = compact ? 3 : 4;
       context.strokeStyle = "rgba(255, 254, 250, 0.94)";
       context.strokeText(text, labelPixelX, labelPixelY);
-      context.fillStyle = color;
+      context.fillStyle = printMode ? "#111111" : color;
       context.fillText(text, labelPixelX, labelPixelY);
       context.restore();
     });
@@ -2311,7 +2328,7 @@ function drawIronChart() {
   context.beginPath();
   context.rect(margins.left, margins.top, plotWidth, plotHeight);
   context.clip();
-  if (!ironAnimationState.active && !currentIronResult.single && !currentIronResult.invariant) {
+  if ((!ironAnimationState.active || printMode) && !currentIronResult.single && !currentIronResult.invariant) {
     const lineRight = Math.min(currentIronResult.rightComposition, xDomain[1]);
     context.strokeStyle = COLORS.coral;
     context.lineWidth = 2.4;
@@ -2335,7 +2352,7 @@ function drawIronChart() {
       );
     }
   }
-  if (!ironAnimationState.active && currentIronResult.invariant) {
+  if ((!ironAnimationState.active || printMode) && currentIronResult.invariant) {
     const endpoints = currentIronResult.compositions;
     context.strokeStyle = COLORS.coral;
     context.lineWidth = 2.4;
@@ -2344,11 +2361,13 @@ function drawIronChart() {
     context.lineTo(x(Math.min(endpoints.at(-1), xDomain[1])), y(ironState.temperature));
     context.stroke();
   }
-  if (ironAnimationState.active) drawIronAnimationPath(plot);
+  if (ironAnimationState.active && !printMode) drawIronAnimationPath(plot);
   else drawSelection(plot, ironState.composition, ironState.temperature);
   context.restore();
-  positionIronTransformationDot(plot);
-  scheduleIronFigureAlignment();
+  if (!printMode) {
+    positionIronTransformationDot(plot);
+    scheduleIronFigureAlignment();
+  }
 }
 
 function ironFinalConstituent(composition) {
@@ -3109,6 +3128,71 @@ $$("[data-iron-view]").forEach((button) => button.addEventListener("click", () =
 
 // ---------------------------------------------------------------------------
 // Initial render and responsive redraws
+
+const PRINT_CHARTS = {
+  water: { draw: drawWaterChart, title: "Phase diagram of water", filename: "water-phase-diagram-print.png" },
+  iso: { draw: drawIsoChart, title: "Copper–nickel phase diagram", filename: "cu-ni-phase-diagram-print.png" },
+  pb: { draw: drawPbChart, title: "Lead–tin eutectic phase diagram", filename: "pb-sn-phase-diagram-print.png" },
+  iron: { draw: drawIronChart, title: "Iron–cementite phase diagram", filename: "fe-fe3c-phase-diagram-print.png" }
+};
+
+function printSelectionText(key) {
+  if (key === "water") return `Selected landmark: ${WATER_POINTS[waterSelection].label}`;
+  if (key === "iso") return `Selected state: ${isoState.composition.toFixed(1)} wt% Ni at ${isoState.temperature.toFixed(0)} °C`;
+  if (key === "pb") return `Selected state: ${pbState.composition.toFixed(1)} wt% Sn at ${pbState.temperature.toFixed(0)} °C`;
+  return `Selected state: ${ironState.composition.toFixed(2)} wt% C at ${ironState.temperature.toFixed(0)} °C · ${ironState.view === "steel" ? "steel range" : "full range"}`;
+}
+
+async function downloadPrintChart(key) {
+  const chart = PRINT_CHARTS[key];
+  if (!chart) return;
+  const chartCanvas = document.createElement("canvas");
+  chartCanvas.setAttribute("width", "1100");
+  chartCanvas.setAttribute("height", "680");
+  try {
+    printMode = true;
+    Object.assign(COLORS, PRINT_COLORS);
+    chart.draw(chartCanvas);
+  } finally {
+    printMode = false;
+    Object.assign(COLORS, SCREEN_COLORS);
+  }
+
+  const scale = 3;
+  const output = document.createElement("canvas");
+  output.width = 1100 * scale;
+  output.height = 770 * scale;
+  const context = output.getContext("2d");
+  context.fillStyle = "#ffffff";
+  context.fillRect(0, 0, output.width, output.height);
+  context.setTransform(scale, 0, 0, scale, 0, 0);
+  context.fillStyle = "#111111";
+  context.font = "700 25px system-ui, sans-serif";
+  context.fillText(chart.title, 78, 34);
+  context.drawImage(chartCanvas, 0, 48, 1100, 680);
+  context.font = "600 16px system-ui, sans-serif";
+  context.fillText(printSelectionText(key), 78, 754);
+
+  const blob = await new Promise((resolve) => output.toBlob(resolve, "image/png"));
+  if (!blob) throw new Error("Could not create the PNG image.");
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = chart.filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+$$('[data-download-chart]').forEach((button) => button.addEventListener("click", async () => {
+  try {
+    await downloadPrintChart(button.dataset.downloadChart);
+  } catch (error) {
+    console.error("Diagram download failed", error);
+    window.alert("The print image could not be created. Please try again.");
+  }
+}));
 
 function initialize() {
   setWaterSelection("triple");

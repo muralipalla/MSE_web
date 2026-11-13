@@ -16,9 +16,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Phase Diagrams | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <script src="../../js/main.js?v=2" defer></script>
-  <script type="module" src="app.js?v=13"></script>
+  <script type="module" src="app.js?v=14"></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the phase-diagram lesson</a>
@@ -78,6 +78,7 @@
           <div class="chart-frame water-chart-frame">
             <canvas id="water-chart" width="900" height="520" role="img" aria-label="Pressure-temperature phase diagram of water extending to 1000 degrees Celsius and showing solid, liquid, vapour, triple point, critical point, and the supercritical region."></canvas>
           </div>
+          <div class="diagram-download"><button type="button" data-download-chart="water">Download print image (PNG)</button></div>
           <figcaption>Schematic boundary shapes for ordinary Ice Ih; the temperature axis extends to 1000 &deg;C. The liquid tint fades beyond the critical point into the supercritical region&mdash;the liquid&ndash;vapour boundary is not extrapolated. Water is unusual because the ice&ndash;liquid boundary slopes to lower temperature as pressure rises.</figcaption>
         </figure>
 
@@ -119,6 +120,7 @@
           <div class="chart-frame">
             <canvas id="iso-chart" width="900" height="560" role="img" aria-label="Interactive copper-nickel phase diagram plotted against nickel weight percent, with liquidus, solidus, tie line, and selected alloy state. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
           </div>
+          <div class="diagram-download"><button type="button" data-download-chart="iso">Download print image (PNG)</button></div>
           <figcaption>B-spline boundaries are digitized from the reusable vector reference and calibrated to the Cu and Ni melting points. They are an instructional trace, not assessed thermodynamic data. Drag the sliders for precise values.</figcaption>
         </figure>
 
@@ -258,6 +260,7 @@
             <div class="chart-frame">
               <canvas id="pb-chart" width="900" height="580" role="img" aria-label="Interactive lead-tin eutectic phase diagram with phase fields and a selected alloy state. Use the adjacent composition and temperature sliders for keyboard control."></canvas>
             </div>
+            <div class="diagram-download"><button type="button" data-download-chart="pb">Download print image (PNG)</button></div>
             <figcaption>Microstructure mode keeps a generated representative image synchronized with the selected phase field; tie-line mode emphasizes equilibrium compositions while retaining the same image.</figcaption>
           </figure>
 
@@ -367,6 +370,7 @@
               </button>
               <div class="iron-zoom-box" aria-hidden="true" hidden></div>
             </div>
+            <div class="diagram-download"><button type="button" data-download-chart="iron">Download print image (PNG)</button></div>
             <figcaption>Each colour identifies a phase domain using the legend above. Curved boundaries are drawn from the supplied B-spline trace and normalized to the labelled thermodynamic critical points; reaction isotherms remain exact, straight, and horizontal. Dark point markers locate the supplied critical values. <span id="iron-animation-note">The orange play button sits on the composition axis at 0.40 wt% C. During playback, five dots trace its cooling path from above A<sub>3</sub> to below A<sub>1</sub>; the two-second duration is illustrative, not a physical transformation time.</span> Cementite is shown at 6.67 wt% C. This metastable schematic is not design data, and graphite equilibrium is outside its scope.</figcaption>
           </figure>
 
