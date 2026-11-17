@@ -266,11 +266,11 @@
       </div>
       <div class="feature-card">
         <h3>Hollomon equation</h3>
-        <p class="formula">&sigma;<sub>T</sub> = K(&epsilon;<sub>T,plas</sub>)<sup>n</sup></p>
-        <p>The subscript T stands for true, and &epsilon;<sub>T,plas</sub> is the plastic part of the true strain. The strength coefficient K has units of stress, and the strain-hardening exponent n is dimensionless.</p>
-        <p>Fit the law over a suitable range of uniform plastic flow, after any yield plateau and before necking. For engineering test data, first convert to true stress and true strain, then estimate the true plastic strain as &epsilon;<sub>T,plas</sub> &asymp; &epsilon;<sub>T</sub> &minus; &sigma;<sub>T</sub>/E, assuming small, linear elastic strains.</p>
-        <p>On logarithmic axes, plot true stress against true plastic strain. The fitted slope is n. Use plastic strain as a fraction when calculating K.</p>
-        <p class="example"><strong>Example.</strong> If true stress increases from 400 to 500 MPa as true plastic strain increases from 0.05 to 0.15, the two-point estimate is n = ln(500/400)/ln(0.15/0.05) &asymp; 0.203. Then K = 400/(0.05<sup>0.203</sup>) &asymp; 735 MPa. For measured data, fit all points in the selected strain range.</p>
+        <p class="formula">&sigma;<sub>T</sub> = K(&epsilon;<sub>T</sub>)<sup>n</sup></p>
+        <p><strong>Assumption.</strong> This form uses total true strain &epsilon;<sub>T</sub> and neglects elastic deformation.</p>
+        <p>The strength coefficient K has units of stress, and the strain-hardening exponent n is dimensionless. Fit the law over a suitable range of uniform plastic flow, after any yield plateau and before necking. Convert engineering test data to true stress and true strain before fitting.</p>
+        <p>On logarithmic axes, plot true stress against true strain. The fitted slope is n. Use strain as a fraction when calculating K.</p>
+        <p class="example"><strong>Example.</strong> If true stress increases from 400 to 500 MPa as true strain increases from 0.05 to 0.15, the two-point estimate is n = ln(500/400)/ln(0.15/0.05) &asymp; 0.203. Then K = 400/(0.05<sup>0.203</sup>) &asymp; 735 MPa. For measured data, fit all points in the selected strain range.</p>
       </div>
     </section>
 
