@@ -302,6 +302,15 @@
         <p>For a specimen that yields discontinuously and then strain hardens, use the maximum force after the yield plateau to calculate &sigma;<sub>TS</sub>. In the <a href="#energy">illustrative curve</a>, &sigma;<sub>TS</sub> = 460 MPa, and the engineering fracture stress is 305 MPa.</p>
         <a href="../../simulations/uniaxial-tension/index.html">Run the tensile test &rarr;</a>
       </div>
+      <article class="note">
+        <h3>Worked problem</h3>
+        <p>The true stress&ndash;strain curve of a material follows &sigma;<sub>T</sub> = 500&epsilon;<sub>T</sub><sup>0.3</sup>, where &sigma;<sub>T</sub> is in MPa and &epsilon;<sub>T</sub> is expressed as a fraction. Find the ultimate tensile strength. Assume the specimen deforms uniformly at constant volume up to the onset of necking.</p>
+        <h4>Solution</h4>
+        <ol>
+          <li><strong>Find the true strain at maximum force.</strong> By the <a href="#necking">Consid&egrave;re criterion</a>, d&sigma;<sub>T</sub>/d&epsilon;<sub>T</sub> = &sigma;<sub>T</sub> at the onset of necking. Substituting the power law gives 500(0.3)&epsilon;<sub>T</sub><sup>&minus;0.7</sup> = 500&epsilon;<sub>T</sub><sup>0.3</sup>. Solving gives &epsilon;<sub>T</sub> = 0.30. The true stress there is 500(0.30)<sup>0.3</sup> &asymp; 348.4 MPa.</li>
+          <li><strong>Calculate the engineering stress at that strain.</strong> At constant volume, A/A<sub>0</sub> = e<sup>&minus;&epsilon;<sub>T</sub></sup>. Therefore &sigma;<sub>TS</sub> = F<sub>max</sub>/A<sub>0</sub> = &sigma;<sub>T</sub>(A/A<sub>0</sub>) = 500(0.30)<sup>0.3</sup>e<sup>&minus;0.30</sup> &asymp; <strong>258 MPa</strong>.</li>
+        </ol>
+      </article>
     </section>
 
     <aside class="references">
