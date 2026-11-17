@@ -1,0 +1,69 @@
+.lesson-shell { width: min(74rem, calc(100% - 2rem)); margin: 3rem auto 5rem; }
+.hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: end; padding: 2rem 0 3rem; }
+.hero h1 { margin: .3rem 0; font-size: clamp(3.1rem, 7vw, 6rem); line-height: .98; letter-spacing: -.055em; }
+.hero-lead { color: var(--coral); font-weight: 800; font-size: 1.15rem; }
+.hero-copy { max-width: 34rem; color: var(--ink-soft); font-size: 1.12rem; }
+.hero-link, .inline-link { display: inline-block; color: var(--coral); font-weight: 800; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.route { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: rgba(255,255,255,.7); }
+.route span { color: var(--muted); font-size: .75rem; text-transform: uppercase; font-weight: 800; letter-spacing: .08em; margin-right: .4rem; }
+.route a { padding: .35rem .65rem; border-radius: .5rem; background: #f1edf8; font-size: .8rem; font-weight: 750; text-decoration: none; }
+.route a:hover { background: #e4def3; }
+.lesson-section { padding-top: 5rem; scroll-margin-top: 1rem; }
+.section-head { max-width: 50rem; margin-bottom: 1.5rem; }
+.section-head h2, .references h2 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; letter-spacing: -.035em; margin: .35rem 0 .8rem; }
+.section-head > p:last-child { color: var(--ink-soft); font-size: 1.05rem; }
+.formula-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.formula-grid article, .text-card, .interactive-card, .feature-card, .strain-panel, .graph-panel { background: #fff; border: 1px solid var(--line); border-radius: 1.2rem; box-shadow: var(--shadow); }
+.formula-grid article, .text-card { padding: 1.4rem; }
+.formula-grid article > span, .tag { display: inline-block; color: #5b4d9b; font-size: .72rem; text-transform: uppercase; font-weight: 850; letter-spacing: .08em; }
+h3 { line-height: 1.2; margin: .65rem 0; }
+.formula-grid p:not(.formula), .text-card p, .feature-card p:not(.formula), .strain-panel p:not(.formula), .interactive-card p { color: var(--ink-soft); }
+.formula { font-family: Georgia, serif; color: var(--ink); font-size: clamp(1.3rem, 2vw, 1.75rem); font-weight: 700; overflow-wrap: anywhere; }
+.note { margin-top: 1.25rem; border-left: 4px solid #8b7abe; padding: 1rem 1.25rem; background: #f0edf8; border-radius: 0 .7rem .7rem 0; color: var(--ink-soft); }
+.two-columns, .atomic-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.strain-panel { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 1.5rem; padding: 1.5rem 2rem; }
+.strain-panel svg { width: 100%; max-height: 260px; }
+svg text { fill: #554f82; font: 14px system-ui, sans-serif; }
+.axis { fill: none; stroke: #514a7e; stroke-width: 2; }
+.curve, .graph-line { fill: none; stroke: #c93b1f; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.unload { fill: none; stroke: #6757a8; stroke-width: 3; stroke-dasharray: 6 5; }
+.measure, .leader { fill: none; stroke: #777093; stroke-width: 1.5; }
+.example { padding: .8rem 1rem; background: #f8f5fc; border-radius: .6rem; }
+.interactive-card { padding: 1.5rem; display: flex; flex-direction: column; }
+.tag { border-radius: 99px; background: #eeeaf7; padding: .25rem .65rem; }
+.tag.coral { color: #a12e1a; background: #fff0e9; }
+.card-top { min-height: 10rem; }
+.atom-view { width: 100%; height: auto; background: #f8f7fc; border: 1px solid #ece8f4; border-radius: .8rem; margin: .8rem 0 1rem; }
+.interactive-card label { display: flex; justify-content: space-between; font-weight: 800; }
+.interactive-card output { color: var(--coral); }
+input[type=range] { width: 100%; accent-color: #c93b1f; cursor: pointer; }
+.range-ends { display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; }
+.button-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+button { font: inherit; cursor: pointer; }
+.button-row button, .graph-controls button { background: var(--ink); color: #fff; border: 1px solid var(--ink); border-radius: .55rem; padding: .55rem .85rem; font-weight: 750; }
+.button-row .quiet-button { background: white; color: var(--ink); }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+.model-caption, .caption { color: var(--muted); font-size: .88rem; }
+.graph-panel { padding: 1.5rem; }
+.graph-panel svg { display: block; width: 100%; max-height: 430px; }
+.graph-panel circle { fill: #c93b1f; }
+.graph-area { opacity: .8; }
+#toughness-area { fill: #ddd6f1; display: none; }
+#resilience-area { fill: #f5bca6; }
+.graph-controls { display: flex; flex-wrap: wrap; gap: .5rem; }
+.graph-controls button { background: white; color: var(--ink); }
+.graph-controls button[aria-pressed=true] { background: var(--ink); color: white; }
+.graph-panel > p { margin: .5rem 0 0; color: var(--ink-soft); }
+.feature-card { padding: 1.6rem 2rem; border-top: 4px solid #c93b1f; }
+.feature-card a { color: var(--coral); font-weight: 800; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 1rem; background: white; box-shadow: var(--shadow); }
+table { width: 100%; min-width: 650px; border-collapse: collapse; text-align: left; }
+th, td { padding: 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead { background: #eeeaf7; }
+tbody th { width: 18%; }
+tbody td { width: 41%; color: var(--ink-soft); }
+tbody tr:last-child > * { border-bottom: 0; }
+.references { margin-top: 5rem; padding: 2rem; border-radius: 1rem; background: #eae6f5; }
+.references a { font-weight: 700; }
+@media (max-width: 850px) { .formula-grid { grid-template-columns: repeat(2, 1fr); } .hero { gap: 1.5rem; } }
+@media (max-width: 600px) { .lesson-shell { margin-top: 1.5rem; } .hero, .two-columns, .atomic-grid, .strain-panel { grid-template-columns: 1fr; } .hero { padding-top: .5rem; } .formula-grid { grid-template-columns: 1fr; } .lesson-section { padding-top: 3.5rem; } .card-top { min-height: 0; } .graph-panel { padding: .8rem; } .graph-panel svg text { font-size: 16px; } }
