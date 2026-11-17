@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Learn uniaxial tension through stress and strain, yielding, atomic deformation, hardening, necking, toughness, and hardness.">
+  <meta name="description" content="Learn to interpret a uniaxial tension test through stress and strain, yielding, atomic slip, toughness, hardening, necking, and ultimate tensile strength.">
   <meta name="theme-color" content="#fdf6ec">
   <title>Uniaxial Tension Test | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="app.js?v=2" defer></script>
 </head>
@@ -22,7 +22,7 @@
       <div><p class="eyebrow">Core module 09 &middot; Mechanical behavior</p><h1>Uniaxial<br>Tension Test</h1></div>
       <div class="hero-copy"><p>A tensile test measures how a specimen deforms as a machine pulls it along one axis. Use the force and gauge extension to identify elastic response, yielding, strain hardening, and necking in a ductile metal.</p><a class="hero-link" href="../../simulations/uniaxial-tension/index.html">Open the tensile test simulation <span aria-hidden="true">&rarr;</span></a></div>
     </header>
-    <nav class="route" aria-label="Module sections"><a href="#measures">01 Stress and strain</a><a href="#yield">02 Yield and proof stress</a><a href="#strain-parts">03 Elastic and plastic strain</a><a href="#atomic">04 Atomic motion</a><a href="#energy">05 Curve and energy</a><a href="#hardening">06 Hardening</a><a href="#necking">07 Necking</a><a href="#uts">08 Tensile strength</a><a href="#hardness">09 Hardness</a></nav>
+    <nav class="route" aria-label="Module sections"><a href="#measures">01 Stress and strain</a><a href="#yield">02 Yield and proof stress</a><a href="#strain-parts">03 Elastic and plastic strain</a><a href="#atomic">04 Atomic motion</a><a href="#energy">05 Curve and energy</a><a href="#hardening">06 Hardening</a><a href="#necking">07 Necking</a><a href="#uts">08 Tensile strength</a></nav>
 
     <section class="lesson-section" id="measures">
       <div class="section-head">
@@ -302,36 +302,6 @@
         <p>For discontinuous yielding, ISO 6892-1 identifies F<sub>m</sub> from the portion of the curve beginning with work hardening after the yield plateau. In the <a href="#energy">illustrative curve</a>, that peak is 460 MPa, and the engineering fracture stress is 305 MPa.</p>
         <a href="../../simulations/uniaxial-tension/index.html">Run the tensile test &rarr;</a>
       </div>
-    </section>
-
-    <section class="lesson-section" id="hardness" aria-labelledby="hardness-title">
-      <div class="section-head">
-        <p class="section-kicker">09 / Indentation testing</p>
-        <h2 id="hardness-title">Brinell vs. Rockwell hardness</h2>
-        <p>Indentation hardness measures how strongly a material resists penetration under specified test conditions. Brinell uses the width of the residual impression. Rockwell uses the change in penetration depth during a prescribed force cycle.</p>
-      </div>
-      <div class="two-columns">
-        <article class="text-card">
-          <h3>Brinell measures indentation diameter</h3>
-          <p>Press a tungsten carbide ball of diameter <i>D</i> into the surface with a test force <i>F</i>. After removing the force, measure two perpendicular indentation diameters optically and average them to obtain <i>d</i>.</p>
-          <p class="formula">HBW = 0.102 <i>F</i> / <i>A</i><sub>i</sub></p>
-          <p>Estimate the curved indentation area as a spherical cap, <i>A</i><sub>i</sub> = (&pi;<i>D</i>/2)[<i>D</i> &minus; &radic;(<i>D</i><sup>2</sup> &minus; <i>d</i><sup>2</sup>)]. Use millimetres for <i>D</i> and <i>d</i>. The factor 0.102 converts the force in newtons to its approximate value in kilogram-force. A larger impression at the same ball size and force gives a lower HBW.</p>
-          <p class="example">If a 10 mm ball and 29.42 kN test force (3000 kgf) give a mean indentation diameter of 4.00 mm, report approximately <strong>229 HBW 10/3000</strong> for the standard dwell time. The suffix records the ball diameter in mm and the force in kgf.</p>
-        </article>
-        <article class="text-card">
-          <h3>Rockwell measures residual depth increase</h3>
-          <p>Apply a preliminary force and record the reference depth. Increase to the total test force, then return to the preliminary force. Measure the net depth increase <i>h</i> between the two readings taken at that same preliminary force.</p>
-          <p class="formula">HRC = 100 &minus; <i>h</i> / (0.002 mm)</p>
-          <p>Rockwell C uses a diamond cone and a total force of 150 kgf (about 1471 N). Rockwell B with a tungsten carbide ball (HRBW) uses a 1/16 in. (1.5875 mm) ball and a total force of 100 kgf (about 981 N). Both use a preliminary force of 10 kgf (about 98 N). Report the scale because the formula depends on it.</p>
-          <p class="example">A Rockwell C test with a residual depth increase of 0.080 mm gives <strong>60 HRC</strong>. For a given scale, a deeper indentation gives a lower hardness number.</p>
-        </article>
-      </div>
-      <div class="note">
-        <p><strong>Choose the method to suit the specimen.</strong> A large Brinell impression samples a wider region and can be useful for coarse cast metals. Rockwell gives a direct reading and suits routine checks when the scale matches the material and specimen thickness. Both methods require suitable surface preparation, support, and spacing between impressions.</p>
-        <p><strong>Hardness conversions are approximate.</strong> Conversion between scales and estimation of ultimate tensile strength depend on the material and its condition. Use tables for the applicable material family, or use a tensile test when a measured tensile strength is required.</p>
-      </div>
-      <p class="caption"><a href="https://www.iso.org/standard/59671.html">ISO 6506-1 (Brinell)</a> &middot; <a href="https://www.iso.org/standard/84343.html">ISO 6508-1 (Rockwell)</a> &middot; <a href="https://www.nist.gov/publications/nist-recommended-practice-guide-rockwell-hardness-measurement-metallic-materials">NIST guide to Rockwell testing</a> &middot; <a href="https://www.iso.org/standard/53810.html">ISO 18265 (hardness conversions)</a></p>
-      <a class="inline-link" href="../../simulations/hardness-test/index.html">Explore the Brinell &amp; Vickers simulation &rarr;</a>
     </section>
 
     <aside class="references">
