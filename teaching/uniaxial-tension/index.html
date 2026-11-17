@@ -7,9 +7,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Uniaxial Tension Test | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to lesson</a>
@@ -19,39 +19,328 @@
   </nav></header>
   <main class="lesson-shell" id="lesson">
     <header class="hero">
-      <div><p class="eyebrow">Core module 09 &middot; Mechanical behavior</p><h1>Uniaxial<br>Tension Test</h1><p class="hero-lead">From atomic bonds to the breaking point.</p></div>
-      <div class="hero-copy"><p>Pull a specimen along one axis and its response tells a story: bonds stretch, slip begins, the metal hardens, and deformation eventually localizes.</p><a class="hero-link" href="../../simulations/uniaxial-tension/index.html">Open the tensile test simulation <span aria-hidden="true">&rarr;</span></a></div>
+      <div><p class="eyebrow">Core module 09 &middot; Mechanical behavior</p><h1>Uniaxial<br>Tension Test</h1></div>
+      <div class="hero-copy"><p>A tensile test measures how a specimen deforms as a machine pulls it along one axis. Use the force and gauge extension to identify elastic response, yielding, strain hardening, and necking in a ductile metal.</p><a class="hero-link" href="../../simulations/uniaxial-tension/index.html">Open the tensile test simulation <span aria-hidden="true">&rarr;</span></a></div>
     </header>
-    <nav class="route" aria-label="Module sections"><span>Explore the lesson</span><a href="#measures">01 Measures</a><a href="#yield">02 Yield</a><a href="#strain-parts">03 Strain parts</a><a href="#atomic">04 Atomic motion</a><a href="#energy">05 Curve &amp; energy</a><a href="#hardening">06 Hardening</a><a href="#necking">07 Necking</a><a href="#uts">08 UTS</a><a href="#hardness">09 Hardness</a></nav>
+    <nav class="route" aria-label="Module sections"><a href="#measures">01 Stress and strain</a><a href="#yield">02 Yield and proof stress</a><a href="#strain-parts">03 Elastic and plastic strain</a><a href="#atomic">04 Atomic motion</a><a href="#energy">05 Curve and energy</a><a href="#hardening">06 Hardening</a><a href="#necking">07 Necking</a><a href="#uts">08 Tensile strength</a><a href="#hardness">09 Hardness</a></nav>
 
-    <section class="lesson-section" id="measures"><div class="section-head"><p class="section-kicker">01 / The measurements</p><h2>Four ways to describe a pull</h2><p>Let F be the tensile force, L<sub>0</sub> the original gauge length, L the current gauge length, A<sub>0</sub> the original cross-sectional area, and A the current area.</p></div>
-      <div class="formula-grid">
-        <article><span>Original area</span><h3>Engineering stress</h3><p class="formula">&sigma;<sub>E</sub> = F / A<sub>0</sub></p><p>Force divided by the initial area. It is the stress plotted in the conventional test curve.</p></article>
-        <article><span>Original length</span><h3>Engineering strain</h3><p class="formula">&epsilon;<sub>E</sub> = (L &minus; L<sub>0</sub>) / L<sub>0</sub></p><p>Change in gauge length divided by the initial gauge length; strain is dimensionless.</p></article>
-        <article><span>Current length</span><h3>True strain</h3><p class="formula">&epsilon;<sub>T</sub> = ln(L / L<sub>0</sub>)</p><p>Accumulated incremental extension relative to the current length.</p></article>
-        <article><span>Current area</span><h3>True stress</h3><p class="formula">&sigma;<sub>T</sub> = F / A</p><p>Force divided by the instantaneous cross-sectional area at the section considered.</p></article>
-      </div><div class="note"><strong>Before necking:</strong> &epsilon;<sub>T</sub> = ln(1 + &epsilon;<sub>E</sub>); assuming uniform deformation and approximately constant volume, &sigma;<sub>T</sub> &asymp; &sigma;<sub>E</sub>(1 + &epsilon;<sub>E</sub>). After necking, measure the local neck area for local true stress; gauge-length strain is no longer a local strain.</div>
+    <section class="lesson-section" id="measures">
+      <div class="section-head">
+        <p class="section-kicker">01 / Tensile measurements</p>
+        <h2>Stress and strain</h2>
+        <p>The load cell measures tensile force <i>F</i>. An extensometer measures extension between two points on the specimen that define its gauge length. Axial stress is force per cross-sectional area. Axial strain measures the relative change in length.</p>
+      </div>
+      <div class="two-columns measure-grid">
+        <article class="text-card">
+          <h3>Axial tensile stress</h3>
+          <p>Stress has units of pressure. In metals testing, MPa is convenient because 1 N/mm<sup>2</sup> = 1 MPa.</p>
+          <h4>Engineering stress</h4>
+          <p class="formula">&sigma;<sub>E</sub> = F / A<sub>0</sub></p>
+          <p>Divide force by the <strong>original</strong> cross-sectional area A<sub>0</sub> of the gauge section.</p>
+          <h4>True stress</h4>
+          <p class="formula">&sigma;<sub>T</sub> = F / A</p>
+          <p>Divide force by the <strong>current</strong> cross-sectional area A to obtain the mean axial stress across that section.</p>
+        </article>
+        <article class="text-card">
+          <h3>Axial tensile strain</h3>
+          <p>Strain is dimensionless. A strain of 0.10 can also be reported as 10%.</p>
+          <h4>Engineering strain</h4>
+          <p class="formula">&epsilon;<sub>E</sub> = (L &minus; L<sub>0</sub>) / L<sub>0</sub></p>
+          <p>Divide the extension by the <strong>original</strong> gauge length L<sub>0</sub>.</p>
+          <h4>True (logarithmic) strain</h4>
+          <p class="formula">d&epsilon;<sub>T</sub> = dL / L &nbsp;&rarr;&nbsp; &epsilon;<sub>T</sub> = ln(L / L<sub>0</sub>)</p>
+          <p>Accumulate increments of extension relative to the <strong>current</strong> length L. Gauge-length and local axial strain coincide when the gauge deforms uniformly.</p>
+        </article>
+      </div>
+      <div class="note">
+        <p><strong>Converting the measurements.</strong> For the same marked length, &epsilon;<sub>T</sub> = ln(1 + &epsilon;<sub>E</sub>) follows directly from the definitions. For uniform deformation with approximately constant gauge volume (a useful approximation during plastic flow in dense metals), AL &asymp; A<sub>0</sub>L<sub>0</sub>, so &sigma;<sub>T</sub> &asymp; &sigma;<sub>E</sub>(1 + &epsilon;<sub>E</sub>).</p>
+        <p><strong>Example.</strong> With F = 6.00 kN, A<sub>0</sub> = 20.0 mm<sup>2</sup>, measured A = 18.2 mm<sup>2</sup>, and a gauge length increasing from 50.0 to 55.0 mm, the stresses are 300 MPa (engineering) and about 330 MPa (true). The strains are 0.100 (engineering) and about 0.0953 (true).</p>
+      </div>
     </section>
 
-    <section class="lesson-section" id="yield"><div class="section-head"><p class="section-kicker">02 / The onset of plasticity</p><h2>Yield stress and proof stress</h2></div><div class="two-columns"><article class="text-card"><h3>Yield stress</h3><p>The stress at which appreciable permanent deformation begins. Some materials, such as certain low-carbon steels, show a distinct upper yield point followed by a drop to a lower yield point and a yield plateau.</p></article><article class="text-card"><h3>0.2% proof stress</h3><p>For a smooth transition, draw a line parallel to the initial elastic slope starting at engineering strain 0.002. Its intersection with the curve defines the 0.2% offset proof stress: an operational measure associated with 0.2% permanent strain under ideal elastic unloading.</p></article></div></section>
-
-    <section class="lesson-section" id="strain-parts"><div class="section-head"><p class="section-kicker">03 / Loading and unloading</p><h2>Separate total strain</h2><p>At a point on a tensile curve, the strain recovered on unloading is elastic; the strain that remains is plastic.</p></div><div class="strain-panel"><div><p class="formula">&epsilon;<sub>total</sub> = &epsilon;<sub>elastic</sub> + &epsilon;<sub>plastic</sub></p><p>For linear elastic unloading with slope E: &epsilon;<sub>elastic</sub> = &sigma; / E and &epsilon;<sub>plastic</sub> = &epsilon;<sub>total</sub> &minus; &sigma; / E. Use consistent stress units. This is a small-strain approximation; the unloading line is assumed parallel to the initial elastic line.</p><p class="example">Example: E = 200 GPa, &sigma; = 400 MPa and &epsilon;<sub>total</sub> = 0.012 give &epsilon;<sub>elastic</sub> = 0.002 and &epsilon;<sub>plastic</sub> = 0.010.</p></div><svg viewBox="0 0 360 220" role="img" aria-label="Schematic unloading line separates elastic recovery from permanent plastic strain"><path class="axis" d="M45 15V180H340"/><path class="curve" d="M45 180 L100 65 Q135 45 165 39 T275 28"/><path class="unload" d="M235 32 L180 180"/><circle cx="235" cy="32" r="5" fill="#c93b1f"/><path class="measure" d="M45 195H180 M180 195H235"/><text x="110" y="213" text-anchor="middle">plastic</text><text x="210" y="213" text-anchor="middle">elastic</text><text x="325" y="175">&epsilon;</text><text x="27" y="24">&sigma;</text><text x="190" y="105" transform="rotate(-69 190 105)">unload, slope E</text></svg></div></section>
-
-    <section class="lesson-section" id="atomic"><div class="section-head"><p class="section-kicker">04 / Atomic-scale view</p><h2>Two ways atoms respond</h2><p>Pull vertically on the two blocks. The motion is magnified and schematic, so that the changes can be seen.</p></div>
-      <div class="atomic-grid"><article class="interactive-card"><div class="card-top"><span class="tag">Recoverable</span><h3>Elastic bond stretching</h3><p>Atoms move apart along the tensile axis; their bonds stretch. Return the slider to zero to release the load and recover the original arrangement.</p></div><svg id="elastic-atoms" class="atom-view" viewBox="0 0 340 310" role="img" aria-label="Rectangular atomic block under elastic tensile deformation"></svg><label for="elastic-slider">Tensile load <output id="elastic-output">0%</output></label><input id="elastic-slider" type="range" min="0" max="100" value="0"><div class="range-ends"><span>Unloaded</span><span>More tension</span></div></article>
-      <article class="interactive-card"><div class="card-top"><span class="tag coral">Permanent</span><h3>Plastic slip at 45&deg;</h3><p>Tension drives relative shear along a 45&deg; plane. Increase accumulated slip, then unload to see the offset remain.</p></div><svg id="plastic-atoms" class="atom-view" viewBox="0 0 340 310" role="img" aria-label="Rectangular atomic block under tensile loading with slip on a 45 degree plane"></svg><label for="plastic-slider">Accumulated slip <output id="plastic-output">0%</output></label><input id="plastic-slider" type="range" min="0" max="100" value="0"><div class="range-ends"><span>No slip</span><span>More slip</span></div><div class="button-row"><button type="button" id="load-toggle" aria-pressed="true">Unload block</button><button type="button" id="reset-slip" class="quiet-button">Reset slip</button></div><p class="model-caption" id="plastic-status" aria-live="polite">Loaded: bond stretching and accumulated slip are shown.</p></article></div><div class="note">In this 2D illustration, opposing forces are vertical and the plane is inclined at 45&deg;, where the resolved shear stress is maximal for this simple orientation. Real slip depends on crystal orientation and available slip systems; dislocations move locally rather than two perfect halves sliding all at once.</div>
+    <section class="lesson-section" id="yield">
+      <div class="section-head">
+        <p class="section-kicker">02 / Onset of plastic deformation</p>
+        <h2>Yield stress and proof stress</h2>
+        <p>Yielding is the onset of plastic deformation. In a uniaxial test, the initial linear slope of the stress&ndash;strain curve gives Young&rsquo;s modulus E. A clear yield point and a gradual transition call for different ways of reporting yield strength.</p>
+      </div>
+      <div class="two-columns">
+        <article class="text-card">
+          <h3>Distinct yield points</h3>
+          <p>Some low-carbon steels exhibit discontinuous yielding. The upper yield strength R<sub>eH</sub> is the engineering stress at the initial peak before the first yield drop. The lower yield strength R<sub>eL</sub> is the lowest stress during the yielding stage, excluding any initial transient after the drop.</p>
+          <p>During the yield plateau, plastic deformation spreads along the gauge section in bands. The stress then rises as the specimen strain hardens.</p>
+        </article>
+        <article class="text-card">
+          <h3>0.2% offset proof stress</h3>
+          <p>When the transition is gradual, draw a line parallel to the initial elastic line, starting at 0.2% engineering strain (0.002 as a fraction) on the strain axis. The engineering stress at its intersection with the measured curve is the 0.2% proof stress R<sub>p0.2</sub>.</p>
+          <p>The offset defines a specified plastic extension using the elastic slope. Plastic deformation may begin below R<sub>p0.2</sub>.</p>
+        </article>
+      </div>
+      <figure class="strain-panel diagram-panel">
+        <figcaption>
+          <h3>Constructing R<sub>p0.2</sub></h3>
+          <p>For E = 200 GPa, the offset line is &sigma;<sub>E</sub> = E(&epsilon;<sub>E</sub> &minus; 0.002). In this illustration it intersects the loading curve at 0.36% total strain, giving R<sub>p0.2</sub> = 320 MPa.</p>
+        </figcaption>
+        <svg viewBox="0 0 480 300" role="img" aria-labelledby="proof-title proof-desc">
+          <title id="proof-title">0.2% offset proof stress construction</title>
+          <desc id="proof-desc">A dashed line through 0.20% strain runs parallel to the elastic part of the loading curve. The lines intersect at 0.36% total strain and 320 MPa.</desc>
+          <path class="axis" d="M55 38V244H455"/>
+          <path class="guide" d="M55 100H325V244"/>
+          <path class="curve" d="M55 244L130 154C155 124 245 111 325 100S402 89 435 85"/>
+          <path class="unload" d="M205 244L370 46"/>
+          <circle class="curve-point" cx="325" cy="100" r="5"/>
+          <text x="65" y="28">Engineering stress (MPa)</text>
+          <text x="48" y="105" text-anchor="end">320</text>
+          <text x="55" y="264" text-anchor="middle">0</text>
+          <text x="205" y="264" text-anchor="middle">0.20%</text>
+          <text x="325" y="264" text-anchor="middle">0.36%</text>
+          <text x="255" y="291" text-anchor="middle">Engineering strain</text>
+          <path class="leader" d="M331 105L348 125H357"/>
+          <text x="365" y="130">R<tspan baseline-shift="sub" font-size="11">p0.2</tspan></text>
+          <text x="220" y="215" transform="rotate(-50 220 215)">Offset line</text>
+        </svg>
+      </figure>
     </section>
 
-    <section class="lesson-section" id="energy"><div class="section-head"><p class="section-kicker">05 / Read the curve</p><h2>Yield points and energy</h2><p>An illustrative engineering stress&ndash;strain curve for a ductile material with a distinct yield-point drop. The elastic region is widened for clarity; the curve is not experimental data.</p></div><div class="graph-panel"><div class="graph-controls" role="group" aria-label="Highlight area under the curve"><button type="button" data-area="resilience" aria-pressed="true">Resilience</button><button type="button" data-area="toughness" aria-pressed="false">Toughness</button></div><svg id="energy-graph" viewBox="0 0 760 390" role="img" aria-labelledby="graph-title graph-desc"><title id="graph-title">Schematic engineering stress strain curve</title><desc id="graph-desc">The curve rises elastically to an upper yield point, drops to a lower yield point, hardens to a maximum, then falls to fracture. The elastic area is highlighted.</desc><path class="graph-area" id="toughness-area" d="M75 315 L150 135 L173 162 L225 162 C300 132 380 83 490 73 C575 73 630 109 680 151 L680 315 Z"/><path class="graph-area" id="resilience-area" d="M75 315 L150 135 L150 315 Z"/><path class="axis" d="M75 28V315H715"/><path class="graph-line" d="M75 315 L150 135 L173 162 L225 162 C300 132 380 83 490 73 C575 73 630 109 680 151"/><circle cx="150" cy="135" r="5"/><circle cx="173" cy="162" r="5"/><circle cx="490" cy="73" r="5"/><circle cx="680" cy="151" r="5"/><path class="leader" d="M150 135 L115 88 M173 162 L235 195 M490 73 L490 45 M680 151 L650 183"/><text x="77" y="78">Upper yield</text><text x="238" y="204">Lower yield</text><text x="490" y="34" text-anchor="middle">UTS</text><text x="610" y="199">Fracture</text><text x="365" y="365" text-anchor="middle">Engineering strain, &epsilon;E</text><text transform="translate(20 190) rotate(-90)" text-anchor="middle">Engineering stress, &sigma;E</text></svg><p id="area-explanation" aria-live="polite"><strong>Modulus of resilience:</strong> elastic energy absorbed per unit volume up to the elastic limit. For linear elasticity, U<sub>r</sub> &asymp; &sigma;<sub>y</sub><sup>2</sup> / (2E).</p></div><p class="caption">The total area to fracture is the modulus of toughness, an energy per unit original volume (J/m<sup>3</sup>). A distinct upper/lower yield is not present in every material.</p></section>
+    <section class="lesson-section" id="strain-parts">
+      <div class="section-head">
+        <p class="section-kicker">03 / Loading and unloading</p>
+        <h2>Elastic and plastic parts of total strain</h2>
+        <p>In the small-strain elastic&ndash;plastic model, unloading to zero force recovers the elastic part. The remaining extension gives the plastic part.</p>
+      </div>
+      <figure class="strain-panel diagram-panel">
+        <figcaption>
+          <p class="formula">&epsilon;<sub>total</sub> = &epsilon;<sub>elastic</sub> + &epsilon;<sub>plastic</sub></p>
+          <p>Assume a straight unloading line with the same slope E as the initial elastic line. The recovered strain is &sigma;/E. Subtract it from the total strain to find the plastic strain.</p>
+          <p class="example"><strong>Example.</strong> At 400 MPa and 1.2% total strain, a specimen with E = 200 GPa recovers 400/200,000 = 0.002 (0.2%) and retains 0.010 (1.0%) plastic strain.</p>
+        </figcaption>
+        <svg viewBox="0 0 480 328" role="img" aria-labelledby="unload-title unload-desc">
+          <title id="unload-title">Elastic recovery and residual plastic strain</title>
+          <desc id="unload-desc">From the loaded point at 1.2% strain and 400 MPa, the elastic unloading line has the same slope as the initial loading line and reaches zero stress at 1.0% plastic strain.</desc>
+          <path class="axis" d="M60 35V242H455"/>
+          <path class="guide" d="M60 70H420V242"/>
+          <path class="curve" d="M60 242L90 156C105 113 244 91 420 70"/>
+          <path class="unload" d="M420 70L360 242"/>
+          <circle class="curve-point" cx="420" cy="70" r="5"/>
+          <text x="70" y="25">Engineering stress (MPa)</text>
+          <text x="53" y="75" text-anchor="end">400</text>
+          <text x="405" y="58" text-anchor="end">Loaded point</text>
+          <text x="365" y="181" transform="rotate(-71 365 181)">Unloading</text>
+          <text x="60" y="262" text-anchor="middle">0</text>
+          <text x="360" y="262" text-anchor="middle">1.0%</text>
+          <text x="420" y="262" text-anchor="middle">1.2%</text>
+          <path class="measure" d="M60 270V280M60 275H360M360 270V280M360 275H420M420 270V280"/>
+          <text x="210" y="298" text-anchor="middle">Plastic strain</text>
+          <text x="390" y="298" text-anchor="middle">Elastic</text>
+          <text x="255" y="320" text-anchor="middle">Engineering strain</text>
+        </svg>
+      </figure>
+    </section>
 
-    <section class="lesson-section" id="hardening"><div class="section-head"><p class="section-kicker">06 / Beyond yield</p><h2>Power-law hardening</h2><p>As plastic deformation proceeds, dislocation interactions can make further deformation harder. A common fit to the plastic flow region is the Hollomon law:</p></div><div class="feature-card"><p class="formula">&sigma;<sub>T</sub> = K (&epsilon;<sub>p,T</sub>)<sup>n</sup></p><p><strong>K</strong> is the strength coefficient and <strong>n</strong> is the strain-hardening exponent. Here &epsilon;<sub>p,T</sub> is true plastic strain. On a log&ndash;log plot, n is the slope. The law is an empirical fit over a suitable plastic range, not a model for the elastic region or all materials.</p><p>In simplified necking derivations, elastic strain is neglected and total true strain is used in the power law; then the predicted true strain at uniform necking is approximately n.</p></div></section>
+    <section class="lesson-section" id="atomic" aria-labelledby="atomic-title">
+      <div class="section-head">
+        <p class="section-kicker">04 / Atomic-scale view</p>
+        <h2 id="atomic-title">Bond stretching and crystallographic slip</h2>
+        <p>The arrows show the applied tensile forces. Compare each deformed block with the dashed outline of its original shape.</p>
+      </div>
+      <div class="atomic-grid">
+        <article class="interactive-card">
+          <div class="card-top">
+            <h3>Elastic deformation</h3>
+            <p>Neighboring atoms move farther apart along the loading axis and closer together across it. Return the tensile stress to zero to recover the original spacings.</p>
+          </div>
+          <svg id="elastic-atoms" class="atom-view" viewBox="0 0 340 320" role="img" aria-label="Unloaded rectangular lattice"></svg>
+          <div class="atom-reading"><label for="elastic-slider">Applied tensile stress</label><output id="elastic-output" for="elastic-slider">0 MPa</output></div>
+          <input id="elastic-slider" type="range" min="0" max="200" step="5" value="0" aria-describedby="elastic-model">
+          <div class="range-ends"><span>0 MPa</span><span>200 MPa</span></div>
+          <p class="model-caption">Axial elastic strain <output id="elastic-strain" for="elastic-slider">0.000%</output></p>
+        </article>
+        <article class="interactive-card">
+          <div class="card-top">
+            <h3>Plastic deformation by slip</h3>
+            <p>Use the slider to compare snapshots after zero, one, or two dislocation passes along the plane, inclined at 45&deg; in the original block. Each pass adds to the surface step. Unload the block and check what recovers.</p>
+          </div>
+          <svg id="plastic-atoms" class="atom-view" viewBox="0 0 340 320" role="img" aria-label="Rectangular lattice under tension with an inclined slip plane"></svg>
+          <div class="atom-reading"><label for="plastic-slider">Completed slip events</label><output id="plastic-output" for="plastic-slider">0 passes</output></div>
+          <input id="plastic-slider" type="range" min="0" max="2" step="1" value="0" aria-describedby="plastic-status">
+          <div class="range-ends"><span>No slip</span><span>Two passes</span></div>
+          <div class="button-row">
+            <button type="button" id="load-toggle">Unload block</button>
+            <button type="button" id="reset-slip" class="quiet-button">Reset slip model</button>
+          </div>
+          <p class="model-caption" id="plastic-status" aria-live="polite">Under tension. No slip has occurred.</p>
+        </article>
+      </div>
+      <div class="note">
+        <p><strong>Why 45&deg;?</strong> Under uniaxial stress &sigma;, the shear stress resolved along a slip direction is &tau;<sub>R</sub> = &sigma; cos &phi; cos &lambda;, where &phi; and &lambda; are the angles between the tensile axis and, respectively, the slip-plane normal and the slip direction. Its maximum magnitude is &sigma;/2, attained when the two angles are 45&deg;. In a real crystal, slip begins on a crystallographic slip system when its critical resolved shear stress is reached. <a href="https://ocw.mit.edu/courses/3-40j-physical-metallurgy-fall-2009/resources/mit3_40jf09_lec06/">MIT OpenCourseWare: Slip systems and Schmid&rsquo;s law</a>.</p>
+        <p id="elastic-model"><strong>Model assumptions.</strong> The sketch uses E = 200 GPa and Poisson&rsquo;s ratio &nu; = 0.30. Elastic displacements are magnified 100 times. The block contains few lattice spacings, so the surface steps appear large relative to its size. The plastic view holds the tensile stress at an illustrative flow stress of 200 MPa and shows the offset after each dislocation has crossed the block. <a href="../dislocations/index.html#atomic-motion">See how a dislocation moves through a lattice</a>.</p>
+      </div>
+    </section>
 
-    <section class="lesson-section" id="necking"><div class="section-head"><p class="section-kicker">07 / Localization</p><h2>Why a neck forms</h2></div><div class="two-columns"><article class="text-card"><h3>Uniform elongation</h3><p>At first, deformation is distributed along the gauge length. The specimen strengthens as it hardens, but its cross-sectional area also decreases.</p></article><article class="text-card"><h3>Localized deformation</h3><p>When hardening can no longer compensate for the loss of area, the load reaches a maximum and a local neck develops in a typical ductile tensile specimen. Beyond this point the engineering stress falls, even though local true stress may continue to rise.</p></article></div><div class="note">For ideal uniform, rate-independent plastic deformation with approximately constant volume, the Consid&egrave;re condition at necking is d&sigma;<sub>T</sub>/d&epsilon;<sub>T</sub> = &sigma;<sub>T</sub>.</div></section>
+    <section class="lesson-section" id="energy">
+      <div class="section-head">
+        <p class="section-kicker">05 / Engineering stress&ndash;strain curve</p>
+        <h2>Yield points, resilience, and toughness</h2>
+        <p>The two plots show the same illustrative tensile test. The yield detail zooms in on the elastic region and yield plateau. Both plots use linear axes.</p>
+      </div>
+      <div class="graph-panel" id="energy-panel" data-highlight="resilience">
+        <div class="graph-controls" role="group" aria-label="Highlight area under the curve">
+          <button type="button" data-area="resilience" aria-pressed="true">Resilience</button>
+          <button type="button" data-area="toughness" aria-pressed="false">Toughness</button>
+        </div>
+        <div class="energy-plots">
+          <figure>
+            <figcaption>Full tensile curve</figcaption>
+            <svg viewBox="0 0 600 352" role="img" aria-labelledby="full-curve-title full-curve-desc">
+              <title id="full-curve-title">Engineering stress&ndash;strain curve up to fracture</title>
+              <desc id="full-curve-desc">After yielding at low strain, the specimen hardens to a maximum of 460 MPa at 20% strain. Engineering stress falls thereafter, reaching 305 MPa at fracture at 32% strain.</desc>
+              <path class="guide" d="M60 38H560M60 163H560"/>
+              <path class="graph-area toughness-area" d="M60 288L61.95 158 64.5 173 93 173 135 135.5 210 95.5 285 69.5 360 58 412.5 68 480 100.5 540 135.5V288Z"/>
+              <path class="graph-area resilience-area" d="M60 288L61.95 158V288Z"/>
+              <path class="axis" d="M60 36V288H560M60 288v5M210 288v5M360 288v5M510 288v5"/>
+              <path class="graph-line" d="M60 288L61.95 158 64.5 173 93 173 135 135.5 210 95.5 285 69.5 360 58 412.5 68 480 100.5 540 135.5"/>
+              <circle class="curve-point" cx="360" cy="58" r="5"/>
+              <circle class="curve-point" cx="540" cy="135.5" r="5"/>
+              <text x="65" y="23">Engineering stress (MPa)</text>
+              <text x="52" y="44" text-anchor="end">500</text>
+              <text x="52" y="169" text-anchor="end">250</text>
+              <text x="351" y="130" text-anchor="end">UTS: 460 MPa</text>
+              <path class="leader" d="M357 118L360 66"/>
+              <text x="542" y="158" text-anchor="end">Fracture</text>
+              <text x="60" y="314" text-anchor="middle">0</text>
+              <text x="210" y="314" text-anchor="middle">10%</text>
+              <text x="360" y="314" text-anchor="middle">20%</text>
+              <text x="510" y="314" text-anchor="middle">30%</text>
+              <text x="310" y="342" text-anchor="middle">Engineering strain</text>
+            </svg>
+          </figure>
+          <figure>
+            <figcaption>Detail near yield</figcaption>
+            <svg viewBox="0 0 600 352" role="img" aria-labelledby="yield-detail-title yield-detail-desc">
+              <title id="yield-detail-title">Zoom of the elastic region and yield plateau</title>
+              <desc id="yield-detail-desc">The elastic line ends at the upper yield strength, 260 MPa. The curve drops to the lower yield strength, 230 MPa, then plateaus before strain hardening begins.</desc>
+              <path class="guide" d="M60 48H560M60 168H560"/>
+              <path class="graph-area toughness-area" d="M60 288L86 80 120 104 500 104 560 97.57V288Z"/>
+              <path class="graph-area resilience-area" d="M60 288L86 80V288Z"/>
+              <path class="axis" d="M60 46V288H560M60 288v5M160 288v5M260 288v5M360 288v5M460 288v5M560 288v5"/>
+              <path class="graph-line" d="M60 288L86 80 120 104 500 104 560 97.57"/>
+              <path class="leader" d="M86 80L112 67H122M120 104L153 136H163"/>
+              <circle class="curve-point" cx="86" cy="80" r="5"/>
+              <circle class="curve-point" cx="120" cy="104" r="5"/>
+              <text x="65" y="23">Engineering stress (MPa)</text>
+              <text x="52" y="54" text-anchor="end">300</text>
+              <text x="52" y="174" text-anchor="end">150</text>
+              <text x="129" y="73">Upper yield: 260 MPa</text>
+              <text x="170" y="142">Lower yield: 230 MPa</text>
+              <text x="60" y="314" text-anchor="middle">0</text>
+              <text x="160" y="314" text-anchor="middle">0.5%</text>
+              <text x="260" y="314" text-anchor="middle">1.0%</text>
+              <text x="360" y="314" text-anchor="middle">1.5%</text>
+              <text x="460" y="314" text-anchor="middle">2.0%</text>
+              <text x="560" y="314" text-anchor="middle">2.5%</text>
+              <text x="310" y="342" text-anchor="middle">Engineering strain</text>
+            </svg>
+          </figure>
+        </div>
+        <p id="area-caption" class="caption" aria-live="polite">The shaded triangle ends at the elastic limit in the yield detail.</p>
+      </div>
+      <div class="two-columns energy-definitions">
+        <article class="text-card">
+          <h3>Modulus of resilience</h3>
+          <p>The recoverable elastic energy per unit volume is the area under the curve up to the elastic limit. For linear elasticity, U<sub>r</sub> = &sigma;<sub>el</sub><sup>2</sup>/(2E), where &sigma;<sub>el</sub> is the stress at the elastic limit.</p>
+          <p>This model places the elastic limit at upper yield. Here E = 200 GPa and &sigma;<sub>el</sub> = 260 MPa, so U<sub>r</sub> = 0.169 MJ/m<sup>3</sup>.</p>
+        </article>
+        <article class="text-card">
+          <h3>Modulus of toughness</h3>
+          <p>The entire area under the engineering curve to fracture, &int;<sub>0</sub><sup>&epsilon;<sub>f</sub></sup> &sigma;<sub>E</sub> d&epsilon;<sub>E</sub>, is the tensile work per unit original gauge volume. It is about 120 MJ/m<sup>3</sup> for the piecewise linear curve shown.</p>
+          <p>Use strain as a fraction in the integral. An area of 1 MPa on a fractional-strain axis equals 1 MJ/m<sup>3</sup>. Once deformation localizes, the work per original gauge volume can depend on the gauge length. Fracture toughness measures a material&rsquo;s resistance to crack extension.</p>
+        </article>
+      </div>
+    </section>
 
-    <section class="lesson-section" id="uts"><div class="section-head"><p class="section-kicker">08 / Maximum load</p><h2>Ultimate tensile strength</h2><p>The ultimate tensile strength (UTS) is the maximum engineering stress reached during the test:</p></div><div class="feature-card"><p class="formula">UTS = F<sub>max</sub> / A<sub>0</sub></p><p>For a typical ductile metal, the maximum load marks the onset of necking. The fracture stress is the engineering stress at separation and may be lower than UTS. Brittle materials may fracture without a significant plastic region or visible neck.</p><a href="../../simulations/uniaxial-tension/index.html">Run the tensile test &rarr;</a></div></section>
+    <section class="lesson-section" id="hardening">
+      <div class="section-head">
+        <p class="section-kicker">06 / Uniform plastic flow</p>
+        <h2>Power-law hardening</h2>
+        <p>During strain hardening, more true stress is needed to continue plastic flow. In many metals, dislocation interactions contribute to this increase in flow stress.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Hollomon equation</h3>
+        <p class="formula">&sigma;<sub>T</sub> = K(&epsilon;<sub>p,T</sub>)<sup>n</sup></p>
+        <p>The strength coefficient K has units of stress, and the strain-hardening exponent n is dimensionless. Fit the law over a suitable range of uniform plastic flow, after any yield plateau and before necking. For engineering test data, first convert to true stress and true strain, then estimate true plastic strain as &epsilon;<sub>p,T</sub> &asymp; &epsilon;<sub>T</sub> &minus; &sigma;<sub>T</sub>/E, assuming small, linear elastic strains.</p>
+        <p>On logarithmic axes, plot true stress against true plastic strain. The fitted slope is n. Use plastic strain as a fraction when calculating K.</p>
+        <p class="example"><strong>Example.</strong> If true stress increases from 400 to 500 MPa as true plastic strain increases from 0.05 to 0.15, the two-point estimate is n = ln(500/400)/ln(0.15/0.05) &asymp; 0.203. Then K = 400/(0.05<sup>0.203</sup>) &asymp; 735 MPa. For measured data, fit all points in the selected strain range.</p>
+      </div>
+    </section>
 
-    <section class="lesson-section" id="hardness"><div class="section-head"><p class="section-kicker">09 / A related measurement</p><h2>Brinell vs. Rockwell hardness</h2><p>Both measure resistance to indentation, but they use different observations and test scales.</p></div><div class="table-wrap"><table><thead><tr><th>Feature</th><th>Brinell</th><th>Rockwell</th></tr></thead><tbody><tr><th>Indenter</th><td>Tungsten carbide ball of specified diameter</td><td>Diamond cone or carbide ball, depending on scale</td></tr><tr><th>Reading</th><td>Measure indentation diameter optically; calculate HBW from force and curved indentation area.</td><td>Measure permanent indentation depth under the specified preliminary force after the additional force is removed; the machine reports hardness directly.</td></tr><tr><th>Typical use</th><td>Relatively large indent averages over a larger area; useful for coarse or heterogeneous materials.</td><td>Fast direct readings; choose a scale suitable for material and thickness, for example HRB or HRC.</td></tr><tr><th>Report</th><td>State HBW and test conditions (ball diameter, force and dwell when applicable).</td><td>State the scale, for example 60 HRC; different scales are not interchangeable.</td></tr></tbody></table></div><p class="caption">Hardness can correlate with tensile strength for some materials, but conversion depends on material and test conditions. Use an appropriate conversion standard; do not treat hardness as a direct tensile measurement.</p><a class="inline-link" href="../../simulations/hardness-test/index.html">Explore the Brinell &amp; Vickers simulation &rarr;</a></section>
+    <section class="lesson-section" id="necking">
+      <div class="section-head">
+        <p class="section-kicker">07 / Localization</p>
+        <h2>Onset of necking</h2>
+        <p>During uniform plastic elongation, the gauge section gets thinner as it gets longer. The tensile force F = &sigma;<sub>T</sub>A still rises while strain hardening offsets that loss of area. A diffuse neck starts to form when the uniform section can no longer sustain an increase in force.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Consid&egrave;re criterion</h3>
+        <p>Assume rate-independent plastic flow, uniform deformation up to the onset of necking, and approximately constant gauge volume. Then dA/A &asymp; &minus;d&epsilon;<sub>T</sub>. At maximum load, dF = A d&sigma;<sub>T</sub> + &sigma;<sub>T</sub> dA = 0, which gives the criterion:</p>
+        <p class="formula">d&sigma;<sub>T</sub>/d&epsilon;<sub>T</sub> = &sigma;<sub>T</sub></p>
+        <p>For a Hollomon material with negligible elastic strain, this gives &epsilon;<sub>T,neck</sub> &asymp; n. For example, n = 0.20 predicts about 0.20 true strain at the end of uniform elongation, or e<sup>0.20</sup> &minus; 1 &asymp; 22.1% engineering strain.</p>
+      </div>
+      <div class="note">
+        <strong>After necking.</strong> Deformation concentrates in the neck. Gauge-length strain describes the overall extension, while a local strain measurement is needed to resolve deformation in the neck. Dividing force by the measured minimum area gives the mean axial stress on that section. The neck has a multiaxial stress state, so this average alone is insufficient to recover the uniaxial flow curve.
+      </div>
+    </section>
 
-    <aside class="references"><p class="section-kicker">Continue learning</p><h2>References &amp; experiments</h2><p><a href="https://ocw.mit.edu/courses/3-11-mechanics-of-materials-fall-1999/d4ea545640f151bb66e6d8bc0ba55ed4_MIT3_11F99_ss.pdf">MIT OpenCourseWare: Stress&ndash;strain curves</a> &middot; <a href="https://ocw.mit.edu/courses/2-080j-structural-mechanics-fall-2013/30dc1a0f74debf21fb92a1df56616929_MIT2_080JF13_Lecture12.pdf">MIT: Elastic&ndash;plastic response and hardening</a> &middot; <a href="https://www.deakin.edu.au/students/study-support/faculties/sebe/engineering/tech-assist/materials/hardness-testing">Deakin University: Hardness testing</a></p></aside>
+    <section class="lesson-section" id="uts">
+      <div class="section-head">
+        <p class="section-kicker">08 / Maximum load</p>
+        <h2>Ultimate tensile strength</h2>
+        <p>Ultimate tensile strength (UTS, or R<sub>m</sub>) is the engineering stress at the peak of the tensile curve. Calculate it by dividing the maximum tensile force F<sub>m</sub> by the original cross-sectional area.</p>
+      </div>
+      <div class="feature-card">
+        <p class="formula">R<sub>m</sub> = F<sub>m</sub> / A<sub>0</sub></p>
+        <p>For a typical ductile metal, this peak marks the onset of diffuse necking. As the force falls after the peak, engineering stress falls with it. The engineering fracture stress uses the force just before separation and is lower on such a curve. For a brittle specimen that fractures without necking, maximum force can occur at fracture.</p>
+        <p>For discontinuous yielding, ISO 6892-1 identifies F<sub>m</sub> from the portion of the curve beginning with work hardening after the yield plateau. In the <a href="#energy">illustrative curve</a>, that peak is 460 MPa, and the engineering fracture stress is 305 MPa.</p>
+        <a href="../../simulations/uniaxial-tension/index.html">Run the tensile test &rarr;</a>
+      </div>
+    </section>
+
+    <section class="lesson-section" id="hardness" aria-labelledby="hardness-title">
+      <div class="section-head">
+        <p class="section-kicker">09 / Indentation testing</p>
+        <h2 id="hardness-title">Brinell vs. Rockwell hardness</h2>
+        <p>Indentation hardness measures how strongly a material resists penetration under specified test conditions. Brinell uses the width of the residual impression. Rockwell uses the change in penetration depth during a prescribed force cycle.</p>
+      </div>
+      <div class="two-columns">
+        <article class="text-card">
+          <h3>Brinell measures indentation diameter</h3>
+          <p>Press a tungsten carbide ball of diameter <i>D</i> into the surface with a test force <i>F</i>. After removing the force, measure two perpendicular indentation diameters optically and average them to obtain <i>d</i>.</p>
+          <p class="formula">HBW = 0.102 <i>F</i> / <i>A</i><sub>i</sub></p>
+          <p>Estimate the curved indentation area as a spherical cap, <i>A</i><sub>i</sub> = (&pi;<i>D</i>/2)[<i>D</i> &minus; &radic;(<i>D</i><sup>2</sup> &minus; <i>d</i><sup>2</sup>)]. Use millimetres for <i>D</i> and <i>d</i>. The factor 0.102 converts the force in newtons to its approximate value in kilogram-force. A larger impression at the same ball size and force gives a lower HBW.</p>
+          <p class="example">If a 10 mm ball and 29.42 kN test force (3000 kgf) give a mean indentation diameter of 4.00 mm, report approximately <strong>229 HBW 10/3000</strong> for the standard dwell time. The suffix records the ball diameter in mm and the force in kgf.</p>
+        </article>
+        <article class="text-card">
+          <h3>Rockwell measures residual depth increase</h3>
+          <p>Apply a preliminary force and record the reference depth. Increase to the total test force, then return to the preliminary force. Measure the net depth increase <i>h</i> between the two readings taken at that same preliminary force.</p>
+          <p class="formula">HRC = 100 &minus; <i>h</i> / (0.002 mm)</p>
+          <p>Rockwell C uses a diamond cone and a total force of 150 kgf (about 1471 N). Rockwell B with a tungsten carbide ball (HRBW) uses a 1/16 in. (1.5875 mm) ball and a total force of 100 kgf (about 981 N). Both use a preliminary force of 10 kgf (about 98 N). Report the scale because the formula depends on it.</p>
+          <p class="example">A Rockwell C test with a residual depth increase of 0.080 mm gives <strong>60 HRC</strong>. For a given scale, a deeper indentation gives a lower hardness number.</p>
+        </article>
+      </div>
+      <div class="note">
+        <p><strong>Choose the method to suit the specimen.</strong> A large Brinell impression samples a wider region and can be useful for coarse cast metals. Rockwell gives a direct reading and suits routine checks when the scale matches the material and specimen thickness. Both methods require suitable surface preparation, support, and spacing between impressions.</p>
+        <p><strong>Hardness conversions are approximate.</strong> Conversion between scales and estimation of ultimate tensile strength depend on the material and its condition. Use tables for the applicable material family, or use a tensile test when a measured tensile strength is required.</p>
+      </div>
+      <p class="caption"><a href="https://www.iso.org/standard/59671.html">ISO 6506-1 (Brinell)</a> &middot; <a href="https://www.iso.org/standard/84343.html">ISO 6508-1 (Rockwell)</a> &middot; <a href="https://www.nist.gov/publications/nist-recommended-practice-guide-rockwell-hardness-measurement-metallic-materials">NIST guide to Rockwell testing</a> &middot; <a href="https://www.iso.org/standard/53810.html">ISO 18265 (hardness conversions)</a></p>
+      <a class="inline-link" href="../../simulations/hardness-test/index.html">Explore the Brinell &amp; Vickers simulation &rarr;</a>
+    </section>
+
+    <aside class="references">
+      <h2>References</h2>
+      <ul>
+        <li><a href="https://ocw.mit.edu/courses/3-11-mechanics-of-materials-fall-1999/d4ea545640f151bb66e6d8bc0ba55ed4_MIT3_11F99_ss.pdf">David Roylance, MIT OpenCourseWare, <cite>Stress&ndash;Strain Curves</cite></a></li>
+        <li><a href="https://ocw.mit.edu/courses/2-080j-structural-mechanics-fall-2013/30dc1a0f74debf21fb92a1df56616929_MIT2_080JF13_Lecture12.pdf">MIT OpenCourseWare, <cite>Fundamental Concepts in Structural Plasticity</cite></a></li>
+        <li><a href="https://www.iso.org/standard/78322.html">ISO 6892-1, <cite>Metallic materials &mdash; Tensile testing &mdash; Part 1</cite></a></li>
+      </ul>
+    </aside>
   </main><footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Uniaxial tension &middot; <span data-year>2026</span></p></footer>
 </body></html>
