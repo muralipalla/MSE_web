@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Compare ductile and brittle fracture, read SEM fractographs, and use Griffith theory and fracture toughness to assess crack growth.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Fracture Mechanics | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/teaching-intro.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the fracture lesson</a>
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html">&larr; Back to home</a>
+    </nav>
+  </header>
+  <main class="teaching-shell fracture-lesson" id="lesson">
+    <header class="teaching-intro">
+      <div><p class="eyebrow">Teaching page 11</p><h1>Fracture Mechanics</h1></div>
+      <div class="teaching-intro-copy">
+        <p>Read a fracture surface for evidence of how a material failed. Then use stress, crack size, and fracture toughness to predict when an existing crack can grow.</p>
+        <p class="teaching-intro-note"><a href="../../simulations/fracture-toughness/index.html">Open the fracture toughness lab &rarr;</a></p>
+      </div>
+    </header>
+    <nav class="fracture-route" aria-label="Lesson sections">
+      <a href="#fracture-modes">Fracture modes</a><a href="#fractography">Fractography</a>
+      <a href="#transition">DBTT</a><a href="#cases">Historical failures</a>
+      <a href="#impact">Impact tests</a><a href="#testing">Fracture toughness tests</a>
+      <a href="#concentration">Stress concentration</a><a href="#griffith">Griffith theory</a>
+      <a href="#toughness">Fracture toughness</a><a href="#examples">Solved examples</a>
+    </nav>
+
+    <section id="fracture-modes" class="fracture-section" aria-labelledby="modes-title">
+      <h2 id="modes-title">Ductile and brittle fracture</h2>
+      <div class="two-up">
+        <article class="fracture-card">
+          <h3>Ductile fracture</h3>
+          <p>Substantial plastic deformation accompanies tearing. In many metals, voids nucleate near particles or inclusions, grow, and join to form a crack. A round tensile bar may neck and leave a cup-and-cone fracture with a fibrous center and inclined shear lips.</p>
+        </article>
+        <article class="fracture-card">
+          <h3>Brittle fracture</h3>
+          <p>A crack can travel rapidly with little overall plastic deformation. Cleavage in ferritic steel typically runs through grains along crystallographic planes. Cracks can also follow weakened grain boundaries, producing an intergranular fracture surface.</p>
+        </article>
+      </div>
+      <p class="section-note">A single fracture surface can contain both modes. Temperature, loading rate, and the constraint around the crack tip influence which mechanism dominates.</p>
+    </section>
+
+    <section id="fractography" class="fracture-section" aria-labelledby="fractography-title">
+      <h2 id="fractography-title">Read the fracture surface</h2>
+      <p class="section-lead">Start at low magnification to locate the likely origin and trace the crack path. Use higher magnification to look for dimples, cleavage facets, or exposed grain boundaries.</p>
+      <div id="fractography-figures" class="two-up">
+        <figure class="fracture-card photo-card">
+          <img src="ductile-dimples.jpg" width="680" height="510" alt="Scanning electron micrograph of a steel fracture surface with small dimples and several larger dark cavities" loading="lazy">
+          <figcaption><h3>Dimples in steel</h3><p>Rounded depressions mark where voids grew and joined in a Charpy specimen from steel column N8-C1M1.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=159">NIST NCSTAR 1-3D, Figure 5-10(c), cropped</a></figcaption>
+        </figure>
+        <figure class="fracture-card photo-card">
+          <img src="brittle-cleavage.jpg" width="1057" height="788" alt="Scanning electron micrograph showing flat cleavage facets and bright steps, with a 10 micrometre scale bar" loading="lazy">
+          <figcaption><h3>Cleavage facets in steel</h3><p>Flat facets and branching markings indicate cleavage across grains in a room-temperature impact specimen from steel truss seat N13-C3B1.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=161">NIST NCSTAR 1-3D, Figure 5-14, cropped</a></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="transition" class="fracture-section" aria-labelledby="transition-title">
+      <h2 id="transition-title">Ductile-to-brittle transition</h2>
+      <div class="figure-pair">
+        <div>
+          <p>Many ferritic steels absorb little impact energy on the cold <strong>lower shelf</strong> and much more on the warm <strong>upper shelf</strong>. In between, ductile tearing and cleavage can appear on the same fracture surface. Cooling increases the stress required for plastic flow, making cleavage more competitive at a loaded notch.</p>
+          <p>The <strong>ductile-to-brittle transition temperature</strong> (DBTT) depends on the criterion. A temperature at 27 J, the midpoint between the energy shelves, and the temperature at 50% shear fracture appearance may differ. Report the criterion, specimen, and test conditions with the result.</p>
+        </div>
+        <figure id="transition-figure" class="fracture-card technical-figure">
+          <img src="nist-charpy-transition.png" width="1757" height="1069" alt="Charpy absorbed energy rises from a low-energy shelf to a high-energy shelf as temperature rises, with a transition temperature marked between them" loading="lazy">
+          <figcaption>Charpy absorbed energy versus test temperature for a low-strength ferritic steel. <a href="https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2158.pdf#page=8">NIST Technical Note 2158, Figure 1</a></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="cases" class="fracture-section" aria-labelledby="cases-title">
+      <h2 id="cases-title">Historical fractures in cold conditions</h2>
+      <div class="two-up">
+        <article class="fracture-card">
+          <h3>Wartime welded ships</h3>
+          <figure class="case-figure">
+            <img src="schenectady-1943.jpg" width="886" height="694" alt="The SS Schenectady tanker after its hull fractured at the outfitting dock" loading="lazy">
+            <figcaption>The <i>SS Schenectady</i>, a welded T2 tanker. <a href="https://commons.wikimedia.org/wiki/File:TankerSchenectady.jpg">U.S. Government Printing Office, 1947, via Wikimedia Commons</a></figcaption>
+          </figure>
+          <p>In 1943 the tanker fractured while moored in Portland, Oregon. Wartime investigations examined cold-temperature notch toughness alongside crack initiation at structural details, welding, and residual stresses. Welded hulls could let a crack travel a long distance once it started.</p>
+          <a href="https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca3300/ca3398/data/ca3398data.pdf">Library of Congress engineering history</a>
+        </article>
+        <article class="fracture-card">
+          <h3>RMS Titanic</h3>
+          <figure class="case-figure">
+            <img src="titanic-belfast.jpg" width="1280" height="937" alt="Archival photograph of the Titanic hull afloat in Belfast before its funnels were fitted" loading="lazy">
+            <figcaption><i>RMS Titanic</i> at its launch in Belfast, 1911. <a href="https://www.loc.gov/item/2001704335/">Bain News Service, Library of Congress</a></figcaption>
+          </figure>
+          <p>Using a 27 J Charpy criterion, NIST reported transition temperatures of about 40 &deg;C and 70 &deg;C in two orientations of recovered hull plate. The estimated seawater temperature was &minus;2 &deg;C. The investigators also examined the wrought-iron rivets and their slag inclusions. The iceberg strike initiated the damage, and the response of plates and joints influenced the subsequent flooding.</p>
+          <p class="section-note">The recovered samples tell us how those materials could respond in the cold. The test result alone cannot reconstruct how every plate and joint failed during the collision.</p>
+          <a href="https://www.nist.gov/publications/metallurgy-rms-titanic">NIST metallurgical investigation</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="impact" class="fracture-section" aria-labelledby="impact-title">
+      <h2 id="impact-title">Impact tests</h2>
+      <div class="fracture-card">
+        <p><strong>Charpy</strong> supports a notched bar on two anvils and strikes opposite the notch. <strong>Izod</strong> clamps one end and strikes the free part above the notch on the notched side. Both read absorbed energy in joules from the pendulum&rsquo;s rebound.</p>
+        <p>Energy goes into deformation, crack growth, and fragment motion. Use Charpy data at multiple temperatures to study a steel&rsquo;s transition. For comparisons, match the method, notch geometry, specimen orientation, and temperature. A fracture toughness test instead measures the resistance of a sharp precrack under a specified loading condition.</p>
+        <p class="source-line"><a href="https://store.astm.org/standards/e23">ASTM E23, metals</a> &middot; <a href="https://www.iso.org/standard/63802.html">ISO 148-1, metallic Charpy</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication260-164.pdf">NIST comparison of the two setups</a></p>
+        <a class="button secondary" href="../../simulations/impact-test/index.html">Run the Charpy &amp; Izod lab</a>
+      </div>
+    </section>
+
+    <section id="testing" class="fracture-section" aria-labelledby="testing-title">
+      <h2 id="testing-title">Fracture toughness tests</h2>
+      <p class="section-lead">Grow a sharp fatigue precrack from a machined starter notch. Load the specimen so the crack opens in Mode I, and record force and displacement. Use the measured crack length and specimen geometry to determine resistance to crack extension.</p>
+      <div class="two-up">
+        <article class="fracture-card"><h3>Compact tension, C(T)</h3><p>Two pins pull through holes in the specimen. The resulting moment opens the crack. Measure crack length from the load line and use the C(T) geometry calibration.</p></article>
+        <article class="fracture-card"><h3>Single-edge bend, SE(B)</h3><p>A loading roller bends a notched bar over two supports. The precrack lies on the tensile side, opposite the loading roller. The calibration includes the support span.</p></article>
+      </div>
+      <dl class="test-methods fracture-card">
+        <div><dt><a href="https://store.astm.org/standards/e399">ASTM E399</a></dt><dd>Mode I plane-strain <i>K</i><sub>Ic</sub> when the response is predominantly linear elastic and the result passes the prescribed validity checks.</dd></div>
+        <div><dt><a href="https://store.astm.org/standards/e1820">ASTM E1820</a></dt><dd>Mode I toughness using <i>J</i> or crack-tip opening displacement (CTOD), including resistance curves for stable crack extension.</dd></div>
+        <div><dt><a href="https://www.iso.org/standard/78208.html">ISO 12135</a></dt><dd>Quasistatic fracture toughness of metallic materials using precracked specimens.</dd></div>
+      </dl>
+      <figure class="fracture-card specimen-example">
+        <img src="disk-compact-specimen.jpg" width="664" height="794" alt="Published disk compact tension specimen sketch with two loading holes, starter notch, remaining ligament, width, and thickness labeled" loading="lazy">
+        <figcaption>
+          <h3>A published disk compact specimen</h3>
+          <p>The disk compact DC(T) specimen is a variation on the compact tension geometry. This research drawing shows the starter notch, remaining ligament, thickness, and width. The lab below shows rectangular C(T) and SE(B) sketches.</p>
+          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6981386/#materials-13-00244-f002">Kong et al., <i>Materials</i> (2020), Figure 2</a> &middot; <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+        </figcaption>
+      </figure>
+      <a class="button secondary" href="../../simulations/fracture-toughness/index.html">Run the fracture toughness lab and see specimen sketches</a>
+    </section>
+
+    <section id="concentration" class="fracture-section" aria-labelledby="concentration-title">
+      <h2 id="concentration-title">Stress concentration</h2>
+      <div class="figure-pair">
+        <div>
+          <p>A hole or rounded notch raises the local elastic stress above the nominal stress. The elastic stress concentration factor is <i>K</i><sub>t</sub> = &sigma;<sub>max</sub>/&sigma;<sub>nom</sub>. It is dimensionless.</p>
+          <p>Consider a wide elastic plate under remote tension perpendicular to the long axis of an elliptical hole. Its semi-axes are <i>a</i> and <i>b</i>, with tip radius &rho; = <i>b</i><sup>2</sup>/<i>a</i>. The Inglis solution gives:</p>
+          <p class="formula"><i>K</i><sub>t</sub> = 1 + 2<i>a</i>/<i>b</i> = 1 + 2&radic;(<i>a</i>/&rho;)</p>
+          <p>A circular hole gives <i>K</i><sub>t</sub> = 3. As the ellipse sharpens toward a crack, the elastic peak stress grows without bound. A sharp crack is described by the stress intensity factor <i>K</i><sub>I</sub>, which sets the magnitude of the near-tip stress field.</p>
+        </div>
+        <figure class="fracture-card technical-figure">
+          <svg viewBox="0 0 440 270" role="img" aria-labelledby="hole-title hole-desc">
+            <title id="hole-title">Elliptical hole in a plate under tension</title>
+            <desc id="hole-desc">Vertical tension acts across a horizontal elliptical hole. The semi-major axis a points to the right tip, where stress is concentrated. The semi-minor axis b points upward.</desc>
+            <rect x="36" y="51" width="368" height="165" rx="8" fill="#e9e6f5" stroke="#5d5686" stroke-width="2"/>
+            <g fill="none" stroke="#c93b1f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M110 50V18m-6 7 6-7 6 7M220 50V18m-6 7 6-7 6 7M330 50V18m-6 7 6-7 6 7"/>
+              <path d="M110 216v32m-6-7 6 7 6-7M220 216v32m-6-7 6 7 6-7M330 216v32m-6-7 6 7 6-7"/>
+            </g>
+            <ellipse cx="220" cy="135" rx="88" ry="30" fill="#fff" stroke="#2e2a74" stroke-width="2"/>
+            <path d="M220 135h88M220 135v-30" fill="none" stroke="#6757a8" stroke-dasharray="4 4" stroke-width="1.6"/>
+            <circle cx="308" cy="135" r="5" fill="#c93b1f"/>
+            <path d="M313 139l28 29h20" fill="none" stroke="#6757a8" stroke-width="1.7"/>
+            <g fill="#2e2a74" font-family="system-ui,sans-serif" font-size="17">
+              <text x="257" y="128">a</text><text x="203" y="119">b</text><text x="319" y="190">Tip radius ρ</text>
+              <text x="351" y="32">σ<tspan dy="5" font-size="11">nom</tspan></text>
+            </g>
+          </svg>
+          <figcaption>Original schematic of the Inglis geometry. The peak tensile stress occurs at the ends of the major axis.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="griffith" class="fracture-section" aria-labelledby="griffith-title">
+      <h2 id="griffith-title">Griffith&rsquo;s energy balance</h2>
+      <div class="fracture-card">
+        <p>A growing crack releases mechanical energy and requires energy to create new surfaces. The energy release rate <i>G</i> is the decrease in total potential energy per unit increase in projected crack area. In the ideally brittle Griffith model, two surfaces cost <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub>, where &gamma;<sub>s</sub> is the energy per unit area of one surface.</p>
+        <p>For a central through crack of total length <strong>2<i>a</i></strong> in an effectively infinite plate under uniform tension &sigma;:</p>
+        <div class="formula-row">
+          <p class="formula"><i>G</i> = &pi;<i>a</i>&sigma;<sup>2</sup>/<i>E</i>&prime;</p>
+          <p class="formula">&sigma;<sub>c</sub> = &radic;(<i>E</i>&prime;<i>G</i><sub>c</sub>/(&pi;<i>a</i>))</p>
+        </div>
+        <p><i>E</i>&prime; = <i>E</i> in plane stress and <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>) in plane strain. At the onset of crack growth, <i>G</i> reaches <i>G</i><sub>c</sub>. A longer flaw needs a smaller applied stress to reach that condition. In metals, crack-tip deformation can add substantially to the surface energy cost.</p>
+        <p class="source-line"><a href="https://doi.org/10.1098/rsta.1921.0006">Griffith&rsquo;s original paper</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.960-16e2.pdf">NIST fractography and fracture mechanics guide</a></p>
+      </div>
+    </section>
+
+    <section id="toughness" class="fracture-section" aria-labelledby="toughness-title">
+      <h2 id="toughness-title">Fracture toughness</h2>
+      <p class="section-lead">Fracture toughness describes resistance to extension of an existing crack. In linear elastic fracture mechanics, use the applied Mode I stress intensity <i>K</i><sub>I</sub> to describe the driving force and the measured toughness to describe the resistance.</p>
+      <div class="two-up">
+        <article class="fracture-card">
+          <h3>Driving force and resistance</h3>
+          <p class="formula"><i>K</i><sub>I</sub> = <i>Y</i>&sigma;&radic;(&pi;<i>a</i>)</p>
+          <p><i>Y</i> accounts for geometry and loading. Here <i>a</i> is a center crack&rsquo;s half-length or an edge crack&rsquo;s full depth. Use metres for <i>a</i> with &sigma; in MPa to obtain MPa&radic;m. In Mode I linear elasticity, <i>G</i> = <i>K</i><sub>I</sub><sup>2</sup>/<i>E</i>&prime;.</p>
+          <p><i>K</i><sub>Ic</sub> is a qualified plane-strain result. Under those linear elastic conditions, crack extension is predicted when <i>K</i><sub>I</sub> reaches <i>K</i><sub>Ic</sub>. When plasticity is appreciable, use an elastic-plastic parameter such as <i>J</i> or CTOD under the appropriate test method.</p>
+        </article>
+        <article class="fracture-card crack-demo" aria-labelledby="crack-demo-title">
+          <h3 id="crack-demo-title">Vary the crack length</h3>
+          <p>Consider a wide plate with a central crack, <i>Y</i> = 1, &sigma; = 180 MPa, and <i>K</i><sub>Ic</sub> = 24 MPa&radic;m. Assume Mode I plane strain and small-scale yielding. Move the slider to compare the driving force with the toughness.</p>
+          <label for="crack-size"><span>Crack half-length <i>a</i></span> <output id="crack-size-value" for="crack-size">2.0 mm</output></label>
+          <input id="crack-size" type="range" min="0.5" max="12" step="0.1" value="2">
+          <div class="intensity-scale" aria-hidden="true">
+            <span class="intensity-bar" id="intensity-bar"></span>
+            <span class="intensity-limit"></span>
+          </div>
+          <div class="scale-labels" aria-hidden="true"><span>0</span><span>24</span><span>36 MPa&radic;m</span></div>
+          <p class="crack-readout" role="status"><i>K</i><sub>I</sub> = <strong id="intensity-value">14.3</strong> MPa&radic;m. <span id="crack-status">Below the fracture threshold.</span></p>
+        </article>
+      </div>
+    </section>
+
+    <section id="examples" class="fracture-section" aria-labelledby="examples-title">
+      <h2 id="examples-title">Solved examples</h2>
+      <div class="two-up solutions">
+        <article class="fracture-card">
+          <h3>Find a 27 J transition temperature</h3>
+          <p>A Charpy series gives 20 J at &minus;40 &deg;C and 50 J at &minus;20 &deg;C. Estimate <i>T</i><sub>27 J</sub> by linear interpolation between those points.</p>
+          <p>The fraction of the interval is (27 &minus; 20)/(50 &minus; 20) = 7/30. Therefore <i>T</i><sub>27 J</sub> = &minus;40 + (7/30)(20) = <strong>&minus;35.3 &deg;C</strong>.</p>
+        </article>
+        <article class="fracture-card">
+          <h3>Find the stress at a hole</h3>
+          <p>An elliptical hole has <i>a</i> = 4 mm and <i>b</i> = 2 mm. The remote tensile stress is 50 MPa, perpendicular to the long axis.</p>
+          <p><i>K</i><sub>t</sub> = 1 + 2(4/2) = 5. The peak elastic stress is 5 &times; 50 = <strong>250 MPa</strong>.</p>
+        </article>
+        <article class="fracture-card">
+          <h3>Predict fracture stress with Griffith theory</h3>
+          <p>A large glass plate in plane stress has <i>E</i> = 70 GPa, &gamma;<sub>s</sub> = 1.0 J/m<sup>2</sup>, and a central crack of total length 0.20 mm. Find &sigma;<sub>c</sub> for ideally brittle growth.</p>
+          <p>Use the half-length <i>a</i> = 1.0 &times; 10<sup>&minus;4</sup> m and <i>G</i><sub>c</sub> = 2.0 J/m<sup>2</sup>. Substituting into &radic;(<i>E</i>&prime;<i>G</i><sub>c</sub>/(&pi;<i>a</i>)) gives <strong>21.1 MPa</strong>.</p>
+        </article>
+        <article class="fracture-card">
+          <h3>Find a critical edge-crack depth</h3>
+          <p>A wide plate in tension has &sigma; = 160 MPa and <i>K</i><sub>Ic</sub> = 30 MPa&radic;m. Assume Mode I, small-scale yielding, and <i>Y</i> = 1.12 over the relevant crack sizes.</p>
+          <p>Set <i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub>. Then <i>a</i><sub>c</sub> = (30/(1.12 &times; 160))<sup>2</sup>/&pi; = 0.00892 m = <strong>8.92 mm</strong>.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Fracture Mechanics &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>

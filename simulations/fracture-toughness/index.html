@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Run a virtual fracture toughness test on a compact tension or single-edge bend specimen and calculate conditional Mode I toughness.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Fracture Toughness Testing | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/teaching-intro.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="app.js?v=1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the fracture toughness lab</a>
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Experiment navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#lab">&larr; Virtual experiments</a>
+    </nav>
+  </header>
+
+  <main class="teaching-shell toughness-lab" id="lesson">
+    <header class="teaching-intro">
+      <div>
+        <p class="eyebrow">Virtual experiment</p>
+        <h1>Fracture Toughness Testing</h1>
+      </div>
+      <div class="teaching-intro-copy">
+        <p>Load a fatigue-precracked specimen, measure force and crack-mouth opening, and use the 95% secant to calculate conditional fracture toughness. Change the specimen size or the shape of the loading record to see what affects qualification.</p>
+        <p class="teaching-intro-note"><a href="../../teaching/fracture-mechanics/index.html">Review Fracture Mechanics &rarr;</a></p>
+      </div>
+    </header>
+
+    <section class="lab-panel setup-panel" aria-labelledby="setup-heading">
+      <h2 id="setup-heading">Set up the test</h2>
+      <div class="setup-fields">
+        <label for="specimen">Specimen geometry
+          <select id="specimen">
+            <option value="compact">Compact tension C(T)</option>
+            <option value="bend">Single-edge bend SE(B)</option>
+          </select>
+        </label>
+        <label for="size">Specimen dimensions
+          <select id="size">
+            <option value="40">W = 40 mm, B = 20 mm</option>
+            <option value="20">W = 20 mm, B = 10 mm</option>
+          </select>
+        </label>
+        <label for="response">Force–opening response
+          <select id="response">
+            <option value="small">Limited curvature</option>
+            <option value="large">Pronounced curvature</option>
+          </select>
+        </label>
+      </div>
+      <p class="muted">The model uses a 0.2% proof strength &sigma;<sub>py, 0.2</sub> of 450 MPa, a crack ratio <i>a</i>/<i>W</i> of 0.50, and plain-sided specimens. The force records are synthetic.</p>
+      <div class="lab-controls" aria-label="Test controls">
+        <button class="button primary" id="mount" type="button">Mount specimen</button>
+        <button class="button secondary" id="run" type="button" disabled>Run test</button>
+        <button class="quiet-action" id="reset" type="button" disabled>Reset apparatus</button>
+      </div>
+      <p class="lab-status" id="lab-status" role="status">Choose your settings and mount the precracked specimen.</p>
+      <noscript><p class="muted">Enable JavaScript to run the virtual test and calculate the specimen’s conditional toughness.</p></noscript>
+    </section>
+
+    <section class="workbench" aria-label="Specimen and force-opening trace">
+      <article class="lab-panel fixture-panel">
+        <header class="panel-head">
+          <h2 id="fixture-name">Compact tension</h2>
+          <span class="tag" id="fixture-code">C(T)</span>
+        </header>
+        <p class="muted" id="fixture-caption">Two pins pull the specimen apart and open the crack in Mode I.</p>
+        <svg class="specimen-view" viewBox="0 0 466 310" role="img" aria-labelledby="specimen-title specimen-desc">
+          <title id="specimen-title">Precracked compact tension specimen</title>
+          <desc id="specimen-desc">The width and crack length are measured from the pin load line. The thickness extends into the page.</desc>
+          <defs>
+            <marker id="load-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0 0 L10 5 L0 10Z" fill="#bd472a"/>
+            </marker>
+          </defs>
+          <rect x="1" y="1" width="464" height="308" rx="14" fill="#f8f7fc"/>
+          <g id="compact-fixture">
+            <path class="coupon" d="M82 43 H312 V255 H82 V156 L205 152 V146 L82 142 Z"/>
+            <circle class="pin" cx="136" cy="103" r="22"/>
+            <circle class="pin" cx="136" cy="195" r="22"/>
+            <path class="guide" d="M136 67 V233"/>
+            <path class="crack" d="M205 149 H224"/>
+            <path class="force" d="M136 97 V48" marker-end="url(#load-arrow)"/>
+            <path class="force" d="M136 201 V250" marker-end="url(#load-arrow)"/>
+            <text class="force-text" x="150" y="60">P</text>
+            <text class="force-text" x="150" y="245">P</text>
+            <path class="guide" d="M224 149 L274 132 H331"/>
+            <text x="337" y="136">Precrack</text>
+            <path class="measure" d="M136 155 V170 M224 155 V170 M136 165 H224"/>
+            <text x="178" y="186" text-anchor="middle" id="compact-a">a = 20 mm</text>
+            <path class="measure" d="M136 263 V284 M312 263 V284 M136 278 H312"/>
+            <text x="224" y="299" text-anchor="middle" id="compact-w">W = 40 mm</text>
+          </g>
+          <g id="bend-fixture" hidden>
+            <path class="coupon" d="M45 97 H405 V177 H232 L228 152 H222 L218 177 H45 Z"/>
+            <path class="crack" d="M225 152 V137"/>
+            <circle class="pin" cx="225" cy="85" r="12"/>
+            <circle class="pin" cx="65" cy="189" r="12"/>
+            <circle class="pin" cx="385" cy="189" r="12"/>
+            <path class="force" d="M225 27 V71" marker-end="url(#load-arrow)"/>
+            <text class="force-text" x="242" y="45">P</text>
+            <path class="guide" d="M225 138 L267 121 H314"/>
+            <text x="318" y="125">Precrack</text>
+            <path class="measure" d="M246 137 H263 M245 177 H265 M255 137 V177"/>
+            <text x="266" y="160" id="bend-a">a = 20 mm</text>
+            <path class="measure" d="M410 97 H429 M410 177 H429 M422 97 V177"/>
+            <text x="445" y="137" text-anchor="middle" transform="rotate(90 445 137)" id="bend-w">W = 40 mm</text>
+            <path class="measure" d="M65 211 V234 M385 211 V234 M65 228 H385"/>
+            <text x="225" y="252" text-anchor="middle" id="bend-span">S = 160 mm</text>
+          </g>
+        </svg>
+        <dl class="dimensions">
+          <div><dt>Thickness <i>B</i></dt><dd id="dim-b">20 mm</dd></div>
+          <div><dt>Crack length <i>a</i></dt><dd id="dim-a">20 mm</dd></div>
+          <div><dt>Ligament <i>W</i> &minus; <i>a</i></dt><dd id="dim-ligament">20 mm</dd></div>
+        </dl>
+        <p class="muted">Illustrated section. Thickness extends into the page. The orange segment is the fatigue crack grown from the machined notch.</p>
+      </article>
+
+      <article class="lab-panel plot-panel" aria-labelledby="plot-heading">
+        <header class="panel-head"><h2 id="plot-heading">Force–opening record</h2></header>
+        <p class="muted">A clip gauge measures crack-mouth opening displacement (CMOD) as the load rises.</p>
+        <svg id="curve-plot" class="curve-plot" viewBox="0 0 560 376" role="img" aria-labelledby="curve-title curve-desc">
+          <title id="curve-title">Force versus crack-mouth opening displacement</title>
+          <desc id="curve-desc">Run the test to show the force–opening record and the 95% secant.</desc>
+          <g id="plot-grid" aria-hidden="true"></g>
+          <path id="elastic-line" class="elastic-line" hidden/>
+          <path id="secant-line" class="secant-line" hidden/>
+          <path id="record-line" class="record-line"/>
+          <g id="plot-markers" hidden>
+            <path id="pq-guide" class="guide"/>
+            <circle id="pq-dot" class="pq-dot" r="5"/>
+            <text id="pq-label" class="pq-label">P<tspan baseline-shift="sub">Q</tspan></text>
+            <circle id="max-dot" class="max-dot" r="4"/>
+            <text id="max-label" class="max-label">P<tspan baseline-shift="sub">max</tspan></text>
+          </g>
+        </svg>
+        <div class="plot-legend" aria-label="Plot legend">
+          <span class="key record-key">Force record</span>
+          <span class="key elastic-key">Initial elastic slope</span>
+          <span class="key secant-key">95% secant</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="lab-panel analysis-panel" aria-labelledby="analysis-heading">
+      <div class="panel-head">
+        <h2 id="analysis-heading">Calculate and assess <i>K</i><sub>Q</sub></h2>
+        <button class="button secondary" id="record" type="button" disabled>Record result</button>
+      </div>
+      <p>The secant has 95% of the initial elastic slope. These records rise smoothly to the secant intersection, so its force is <i>P</i><sub>Q</sub>. Records with earlier peaks need the full standard’s interpretation rules.</p>
+      <dl class="readings">
+        <div><dt>Conditional force <i>P</i><sub>Q</sub></dt><dd id="reading-pq">&mdash;</dd></div>
+        <div><dt>Maximum force <i>P</i><sub>max</sub></dt><dd id="reading-max">&mdash;</dd></div>
+        <div><dt>Shape factor <i>f</i>(<i>a</i>/<i>W</i>)</dt><dd id="reading-factor">&mdash;</dd></div>
+        <div><dt>Conditional toughness <i>K</i><sub>Q</sub></dt><dd id="reading-kq">&mdash;</dd></div>
+      </dl>
+      <div class="screen-grid">
+        <div class="screen"><h3>Force ratio</h3><p><i>P</i><sub>max</sub>/<i>P</i><sub>Q</sub> &le; 1.10</p><strong id="ratio-screen">Run a test to check.</strong></div>
+        <div class="screen"><h3>Remaining ligament</h3><p><i>W</i> &minus; <i>a</i> &ge; 2.5(<i>K</i><sub>Q</sub>/&sigma;<sub>py, 0.2</sub>)<sup>2</sup></p><strong id="size-screen">Run a test to check.</strong></div>
+      </div>
+      <p class="lab-status" id="qualification" role="status">Two qualification checks are illustrated here. A real <i>K</i><sub>Ic</sub> result also has to meet the standard’s requirements for specimen proportions, loading rate and precrack geometry.</p>
+      <details>
+        <summary>Geometry factors and units</summary>
+        <p>Use <i>P</i><sub>Q</sub> in newtons and dimensions in metres, then divide the result in Pa&radic;m by 10<sup>6</sup> for MPa&radic;m. Let <i>x</i> = <i>a</i>/<i>W</i>.</p>
+        <p class="formula"><strong>C(T)</strong> <i>K</i><sub>Q</sub> = [<i>P</i><sub>Q</sub>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(<i>x</i>)</p>
+        <p><i>f</i>(<i>x</i>) = (2 + <i>x</i>)(0.886 + 4.64<i>x</i> &minus; 13.32<i>x</i><sup>2</sup> + 14.72<i>x</i><sup>3</sup> &minus; 5.6<i>x</i><sup>4</sup>)/(1 &minus; <i>x</i>)<sup>3/2</sup></p>
+        <p class="formula"><strong>SE(B)</strong> <i>K</i><sub>Q</sub> = [<i>P</i><sub>Q</sub><i>S</i>/(<i>B</i><i>W</i><sup>3/2</sup>)] <i>f</i>(<i>x</i>)</p>
+        <p><i>f</i>(<i>x</i>) = 3&radic;<i>x</i>[1.99 &minus; <i>x</i>(1 &minus; <i>x</i>)(2.15 &minus; 3.93<i>x</i> + 2.7<i>x</i><sup>2</sup>)]/[2(1 + 2<i>x</i>)(1 &minus; <i>x</i>)<sup>3/2</sup>]</p>
+        <p><i>S</i> is the support span in the three-point bend fixture and equals 4<i>W</i> in this experiment. The synthetic records give the same <i>K</i><sub>Q</sub> so you can compare the effect of size and record shape on the qualification checks.</p>
+      </details>
+      <form id="calculation-check" class="calculation-check">
+        <label for="answer">Calculate <i>K</i><sub>Q</sub> from this run (MPa&radic;m)</label>
+        <div class="check-input">
+          <input id="answer" type="number" min="0" step="any" inputmode="decimal" disabled required>
+          <button class="button secondary" id="check" type="submit" disabled>Check calculation</button>
+        </div>
+        <p class="muted" id="check-status" role="status">Run a test first.</p>
+      </form>
+    </section>
+
+    <section class="lab-panel results-panel" aria-labelledby="results-heading">
+      <h2 id="results-heading">Recorded trials</h2>
+      <p class="muted" id="results-empty">Record a completed test, then repeat it with different settings.</p>
+      <div id="results-wrap" class="table-wrap" role="region" aria-label="Recorded results" tabindex="0" hidden>
+        <table>
+          <thead><tr>
+            <th scope="col">Specimen</th><th scope="col"><i>W</i> (mm)</th><th scope="col"><i>P</i><sub>Q</sub> (kN)</th><th scope="col"><i>K</i><sub>Q</sub> (MPa&radic;m)</th><th scope="col">Force check</th><th scope="col">Size check</th>
+          </tr></thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="standards" aria-labelledby="standards-heading">
+      <h2 id="standards-heading">Test standards</h2>
+      <p>Use ASTM E399 for linear-elastic plane-strain fracture toughness. ASTM E1820 covers fracture resistance using <i>J</i> and crack-tip opening displacement (CTOD), among other Mode I parameters. ISO 12135 covers quasistatic fracture toughness in terms of <i>K</i>, <i>J</i> and CTOD. <a href="https://store.astm.org/e0399-24.html">ASTM E399-24</a> &middot; <a href="https://store.astm.org/e1820-25de02.html">ASTM E1820</a> &middot; <a href="https://www.iso.org/standard/78208.html">ISO 12135:2021</a></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><a href="../../index.html">MSE Learning Lab home</a></p>
+    <p>Fracture toughness testing &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

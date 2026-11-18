@@ -1,0 +1,256 @@
+.fracture-route {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  padding: .8rem;
+  border: 1px solid var(--line);
+  border-radius: .85rem;
+  background: rgba(255, 255, 255, .68);
+}
+
+.fracture-route a {
+  padding: .35rem .65rem;
+  border-radius: .45rem;
+  background: var(--lavender-light);
+  font-size: .82rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.fracture-route a:hover {
+  background: #e2dcf1;
+}
+
+.fracture-section {
+  margin-top: clamp(2.8rem, 6vw, 4.5rem);
+  scroll-margin-top: 1rem;
+}
+
+.fracture-section h2 {
+  margin: 0 0 .9rem;
+  font-size: clamp(1.65rem, 3.2vw, 2.75rem);
+  line-height: 1.08;
+  letter-spacing: -.035em;
+}
+
+.fracture-section h3 {
+  margin: 0;
+  font-size: 1.17rem;
+  line-height: 1.25;
+}
+
+.fracture-section p {
+  color: var(--ink-soft);
+}
+
+.section-lead {
+  max-width: 54rem;
+  margin: 0 0 1.1rem;
+}
+
+.two-up,
+.figure-pair,
+.specimen-example {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.figure-pair {
+  align-items: start;
+}
+
+.figure-pair > div > p:first-child {
+  margin-top: 0;
+}
+
+.fracture-card {
+  min-width: 0;
+  margin: 0;
+  padding: clamp(1rem, 2.5vw, 1.5rem);
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.fracture-card p:last-child {
+  margin-bottom: 0;
+}
+
+.fracture-card > p:first-child {
+  margin-top: 0;
+}
+
+.photo-card img,
+.technical-figure img,
+.technical-figure svg,
+.case-figure img,
+.specimen-example img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: .5rem;
+}
+
+.photo-card figcaption,
+.technical-figure figcaption {
+  margin-top: .8rem;
+}
+
+.photo-card figcaption a,
+.technical-figure figcaption,
+.case-figure figcaption,
+.source-line,
+.specimen-example figcaption > a {
+  color: var(--muted);
+  font-size: .88rem;
+}
+
+.photo-card figcaption p,
+.case-figure figcaption {
+  margin: .45rem 0 .2rem;
+}
+
+.case-figure {
+  margin: .8rem 0;
+}
+
+.case-figure img {
+  max-width: 24rem;
+}
+
+.section-note {
+  margin: .85rem 0 0;
+  padding: .65rem .85rem;
+  border-left: 3px solid var(--coral);
+  background: #f4effa;
+}
+
+.test-methods {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin: 1rem 0;
+}
+
+.test-methods dt {
+  font-weight: 850;
+}
+
+.test-methods dd {
+  margin: .4rem 0 0;
+  color: var(--ink-soft);
+}
+
+.specimen-example {
+  grid-template-columns: minmax(0, 15rem) 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.formula-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+}
+
+.fracture-section .formula {
+  margin: .45rem 0;
+  padding: .55rem .8rem;
+  color: var(--ink);
+  background: var(--lavender-light);
+  border-radius: .5rem;
+  font: 700 clamp(1.1rem, 2.25vw, 1.4rem)/1.35 Georgia, serif;
+}
+
+.crack-demo label {
+  display: flex;
+  justify-content: space-between;
+  gap: .5rem;
+  margin: 1rem 0 .3rem;
+  font-weight: 750;
+}
+
+.crack-demo input {
+  width: 100%;
+  accent-color: var(--coral);
+}
+
+.crack-demo input:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.intensity-scale {
+  position: relative;
+  height: .7rem;
+  margin-top: 1rem;
+  background: var(--lavender-light);
+  border-radius: 1rem;
+}
+
+.intensity-bar,
+.intensity-limit {
+  position: absolute;
+  top: 0;
+}
+
+.intensity-bar {
+  width: 39.6%;
+  height: 100%;
+  background: var(--navy);
+  border-radius: inherit;
+}
+
+.intensity-bar.is-critical {
+  background: var(--coral);
+}
+
+.intensity-limit {
+  bottom: 0;
+  left: 66.67%;
+  border-left: 2px solid var(--ink);
+}
+
+.scale-labels {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: .4rem;
+  margin-top: .35rem;
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.scale-labels span:nth-child(2) {
+  position: absolute;
+  left: 66.67%;
+  transform: translateX(-50%);
+}
+
+.crack-readout {
+  font-variant-numeric: tabular-nums;
+}
+
+.solutions article {
+  border-top: 3px solid var(--lavender);
+}
+
+@media (max-width: 700px) {
+  .two-up,
+  .figure-pair,
+  .test-methods {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .specimen-example {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .specimen-example img {
+    max-width: 15rem;
+    margin-inline: auto;
+  }
+}
