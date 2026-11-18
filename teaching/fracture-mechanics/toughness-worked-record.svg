@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 370" role="img" aria-labelledby="record-title record-desc">
+  <title id="record-title">Synthetic compact tension force versus CMOD record</title>
+  <desc id="record-desc">An illustrative force record has an initial slope of 131.579 kilonewtons per millimetre. The 95 percent secant has a slope of 125 kilonewtons per millimetre. It intersects the record at CMOD 0.120 millimetres and F Q of 15.0 kilonewtons. The record then reaches a maximum of 16.05 kilonewtons before falling. This smooth record has no earlier force peak.</desc>
+  <rect x="1" y="1" width="438" height="368" rx="12" fill="#f7f5fb" stroke="#d9d3ec" stroke-width="2"/>
+  <g fill="none" stroke="#e0ddeb" stroke-width="1">
+    <path d="M65 201.89H413M65 145.78H413M65 89.67H413M181 56V258M297 56V258M413 56V258"/>
+  </g>
+  <path d="M65 56V258H413" fill="none" stroke="#554f82" stroke-width="2"/>
+  <path d="M65 258L316.33 66.04" fill="none" stroke="#549096" stroke-width="2" stroke-dasharray="3 4"/>
+  <path d="M65 258L335.67 61.61" fill="none" stroke="#c93b1f" stroke-width="2" stroke-dasharray="7 5"/>
+  <path d="M65.00 258.00 L70.80 253.57 L76.60 249.14 L82.40 244.71 L88.20 240.28 L94.00 235.85 L99.80 231.42 L105.60 226.99 L111.40 222.56 L117.20 218.13 L123.00 213.70 L128.80 209.27 L134.60 204.84 L140.40 200.41 L146.20 195.98 L152.00 191.55 L157.80 187.12 L163.60 182.71 L169.40 178.32 L175.20 173.97 L181.00 169.65 L186.80 165.36 L192.60 161.10 L198.40 156.87 L204.20 152.67 L210.00 148.50 L215.80 144.36 L221.60 140.26 L227.40 136.18 L233.20 132.13 L239.00 128.12 L244.80 124.14 L250.60 120.18 L256.40 116.26 L262.20 112.37 L268.00 108.51 L273.80 104.68 L279.60 100.88 L285.40 97.11 L291.20 93.37 L297.00 89.67 L300.09 87.78 L303.17 86.07 L306.26 84.51 L309.34 83.12 L312.43 81.89 L315.51 80.83 L318.60 79.93 L321.68 79.19 L324.77 78.62 L327.86 78.21 L330.94 77.97 L334.03 77.88 L338.67 113.91 L343.31 149.93 L347.95 185.95 L352.59 221.98 L357.23 258.00" fill="none" stroke="#2e2a74" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="none" stroke="#554f82" stroke-width="1.4">
+    <path d="M297.00 89.67H82M297.00 89.67V258" stroke-dasharray="3 4"/>
+    <path d="M334.03 77.88V54H289M297.00 89.67 316 126H337"/>
+  </g>
+  <circle cx="297.00" cy="89.67" r="5" fill="#c93b1f" stroke="#fff" stroke-width="1.5"/>
+  <circle cx="334.03" cy="77.88" r="5" fill="#2e2a74" stroke="#fff" stroke-width="1.5"/>
+  <g font-family="system-ui, sans-serif" fill="#2e2a74" font-size="16">
+    <text x="20" y="29" font-size="18">Force F (kN)</text>
+    <text x="52" y="264" text-anchor="end">0</text>
+    <text x="52" y="207" text-anchor="end">5</text>
+    <text x="52" y="151" text-anchor="end">10</text>
+    <text x="52" y="95" text-anchor="end">15</text>
+    <text x="65" y="282" text-anchor="middle">0</text>
+    <text x="181" y="282" text-anchor="middle">0.06</text>
+    <text x="297" y="282" text-anchor="middle">0.12</text>
+    <text x="413" y="282" text-anchor="middle">0.18</text>
+    <text x="239" y="306" text-anchor="middle" font-size="18">CMOD (mm)</text>
+    <text x="280" y="43" text-anchor="middle" font-size="18">F<tspan dy="4" font-size="12">max</tspan><tspan dy="-4"> = 16.05 kN</tspan></text>
+    <text x="86" y="81" font-size="18">F<tspan dy="4" font-size="12">Q</tspan><tspan dy="-4"> = 15.0 kN</tspan></text>
+    <text x="340" y="126" font-size="16">Secant</text><text x="340" y="145" font-size="16">crossing</text>
+    <text x="220" y="356" text-anchor="middle" font-size="16" fill="#554f82">Synthetic illustrative record</text>
+  </g>
+  <g font-family="system-ui, sans-serif" font-size="15">
+    <path d="M24 327H51" stroke="#549096" stroke-width="2" stroke-dasharray="3 4"/><text x="59" y="332" fill="#554f82">Initial slope</text>
+    <path d="M240 327H267" stroke="#c93b1f" stroke-width="2" stroke-dasharray="7 5"/><text x="275" y="332" fill="#554f82">95% secant</text>
+  </g>
+</svg>

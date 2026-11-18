@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 510" role="img" aria-labelledby="constraint-title constraint-desc">
+  <title id="constraint-title">Thickness and crack-tip constraint</title>
+  <desc id="constraint-desc">Schematic sections viewed along the direction of crack advance. Thickness B lies along z and the crack front runs across the thickness. A thin specimen has approximately plane stress through most of its thickness. In a sufficiently thick specimen, plane stress occurs near the free surfaces and approximately plane strain can develop in the constrained interior. Orange regions are qualitative projections of plastic zones, which are larger near the surfaces than in the constrained interior. Zone shapes and proportions are schematic.</desc>
+  <defs>
+    <marker id="axis-tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#2e2a74"/></marker>
+    <marker id="dim-tip" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M8 0 0 4 8 8" fill="none" stroke="#554f82" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="1" y="1" width="438" height="508" rx="12" fill="#f7f5fb" stroke="#d9d3ec" stroke-width="2"/>
+  <g font-family="system-ui, sans-serif" fill="#2e2a74">
+    <text x="220" y="30" text-anchor="middle" font-size="18">View along crack advance, +x</text>
+    <text x="23" y="64" font-size="21" font-weight="700">Thin specimen</text>
+    <text x="23" y="88" font-size="17">Plane stress through most of B</text>
+    <text x="23" y="284" font-size="21" font-weight="700">Sufficiently thick specimen</text>
+  </g>
+  <rect x="160" y="112" width="120" height="86" fill="#dbe8ef" stroke="#6757a8" stroke-width="2"/>
+  <path d="M160 130Q220 105 280 130V180Q220 205 160 180Z" fill="#efba8e" opacity=".9"/>
+  <g stroke="#2e2a74" stroke-width="3" stroke-dasharray="5 4"><path d="M160 155H280"/></g>
+  <g fill="none" stroke="#554f82" stroke-width="1.4">
+    <path d="M160 204V225M280 204V225"/>
+    <path d="M163 218H277" marker-start="url(#dim-tip)" marker-end="url(#dim-tip)"/>
+    <path d="M124 122 156 122M285 122H316"/>
+  </g>
+  <g font-family="system-ui, sans-serif" fill="#2e2a74" font-size="17">
+    <text x="220" y="241" text-anchor="middle" font-style="italic">B</text>
+    <text x="25" y="126">Free surface</text>
+    <text x="317" y="116">Free</text><text x="317" y="136">surface</text>
+  </g>
+  <rect x="56" y="320" width="328" height="86" fill="#e9e2f4" stroke="#6757a8" stroke-width="2"/>
+  <path d="M56 320H104V406H56ZM336 320H384V406H336Z" fill="#dbe8ef"/>
+  <path d="M56 337Q77 329 98 346C130 355 161 354 220 354S310 355 342 346Q363 329 384 337V389Q363 397 342 380C310 371 279 372 220 372S130 371 98 380Q77 397 56 389Z" fill="#efba8e" opacity=".9"/>
+  <path d="M56 363H384" fill="none" stroke="#2e2a74" stroke-width="3" stroke-dasharray="5 4"/>
+  <g fill="none" stroke="#554f82" stroke-width="1.4">
+    <path d="M78 314V303M220 314V303M362 314V303M56 413V434M384 413V434"/>
+    <path d="M59 428H381" marker-start="url(#dim-tip)" marker-end="url(#dim-tip)"/>
+  </g>
+  <g font-family="system-ui, sans-serif" fill="#2e2a74" font-size="16" text-anchor="middle">
+    <text x="78" y="305">Plane stress</text>
+    <text x="220" y="305">≈ Plane strain</text>
+    <text x="362" y="305">Plane stress</text>
+    <text x="220" y="448" font-style="italic" font-size="18">B</text>
+  </g>
+  <g fill="none" stroke="#2e2a74" stroke-width="2" marker-end="url(#axis-tip)"><path d="M303 455H359"/></g>
+  <text x="367" y="461" font-family="system-ui, sans-serif" fill="#2e2a74" font-size="18" font-style="italic">z</text>
+  <g font-family="system-ui, sans-serif" fill="#554f82" font-size="16">
+    <path d="M23 475H57" stroke="#2e2a74" stroke-width="3" stroke-dasharray="5 4"/>
+    <text x="65" y="480">Crack front</text>
+    <rect x="193" y="466" width="21" height="16" rx="3" fill="#efba8e"/>
+    <text x="222" y="480">Plastic zone projection</text>
+    <text x="220" y="500" text-anchor="middle">Qualitative · same material and K<tspan dy="3" font-size="11">I</tspan></text>
+  </g>
+</svg>

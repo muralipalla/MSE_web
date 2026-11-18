@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 300" role="img" aria-labelledby="bend-title bend-desc">
+  <title id="bend-title">Single-edge bend SE(B) specimen dimensions</title>
+  <desc id="bend-desc">A loading roller pushes down at mid-span above a notch while two lower rollers support the specimen. Width W is the beam depth. Crack length a extends from the tensile surface through the machined notch to the fatigue crack tip. Span S is measured between support centers and equals four times W in the laboratory. Thickness B extends perpendicular to the drawing and appears in the end view.</desc>
+  <defs>
+    <marker id="bend-force" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#c93b1f"/></marker>
+    <marker id="bend-dim" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M8 0 0 4 8 8" fill="none" stroke="#554f82" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="1" y="1" width="438" height="298" rx="12" fill="#f7f5fb" stroke="#d9d3ec" stroke-width="2"/>
+  <path d="M22 114H337V184H185.6L182.1 162H176.9L173.4 184H22Z" fill="#e9e2f4" stroke="#6757a8" stroke-width="2.3" stroke-linejoin="round"/>
+  <path d="M179.5 162V149" fill="none" stroke="#c93b1f" stroke-width="3.5"/>
+  <g fill="#fff" stroke="#6757a8" stroke-width="2"><circle cx="179.5" cy="102" r="12"/><circle cx="39.5" cy="196" r="12"/><circle cx="319.5" cy="196" r="12"/></g>
+  <g fill="none" stroke="#c93b1f" stroke-width="2.7" marker-end="url(#bend-force)"><path d="M179.5 43V85"/></g>
+  <g fill="none" stroke="#554f82" stroke-width="1.4">
+    <path d="M39.5 212V239M319.5 212V239M195 149H214M194 184H214M337 114H359M337 184H359M386 107V98M413 107V98"/>
+    <path d="M42.5 233H316.5M207 152V181M352 117V181M389 102H410" marker-start="url(#bend-dim)" marker-end="url(#bend-dim)"/>
+    <path d="M179.5 149 227 94H276M179.5 173 138 98H94"/>
+  </g>
+  <rect x="386" y="114" width="27" height="70" fill="#e9e2f4" stroke="#6757a8" stroke-width="2"/>
+  <g font-family="system-ui, sans-serif" fill="#2e2a74" font-size="18">
+    <text x="194" y="61" fill="#a93420" font-style="italic">F</text>
+    <text x="219" y="171" font-style="italic">a</text>
+    <text x="361" y="156" font-style="italic">W</text>
+    <text x="399.5" y="91" text-anchor="middle" font-style="italic">B</text>
+    <text x="179.5" y="259" text-anchor="middle" font-style="italic">S = 4W</text>
+    <text x="270" y="78" text-anchor="middle">Fatigue precrack</text>
+    <text x="22" y="89">Machined notch</text>
+    <text x="399.5" y="205" text-anchor="middle" font-size="15">End</text><text x="399.5" y="222" text-anchor="middle" font-size="15">view</text>
+    <text x="220" y="286" text-anchor="middle" font-size="16">Load plane through notch and precrack</text>
+  </g>
+</svg>

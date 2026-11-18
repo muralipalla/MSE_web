@@ -127,22 +127,6 @@
   background: #f4effa;
 }
 
-.test-methods {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.2rem;
-  margin: 1rem 0;
-}
-
-.test-methods dt {
-  font-weight: 850;
-}
-
-.test-methods dd {
-  margin: .4rem 0 0;
-  color: var(--ink-soft);
-}
-
 .specimen-example {
   grid-template-columns: minmax(0, 15rem) 1fr;
   gap: clamp(1rem, 3vw, 2rem);
@@ -265,10 +249,137 @@
   background: #fff;
 }
 
+.annotated-fractograph {
+  position: relative;
+}
+
+.annotated-fractograph > svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.fracture-macro {
+  max-width: 58rem;
+  margin-bottom: 1rem;
+}
+
+.fracture-data,
+.fracture-quantity-table {
+  width: 100%;
+  margin: 1.2rem 0;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-size: .95rem;
+  line-height: 1.5;
+}
+
+.fracture-data caption,
+.fracture-quantity-table caption {
+  margin-bottom: .65rem;
+  text-align: left;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.fracture-data th,
+.fracture-data td,
+.fracture-quantity-table th,
+.fracture-quantity-table td {
+  padding: clamp(.45rem, 1.5vw, .85rem);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.fracture-data th,
+.fracture-quantity-table th {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.fracture-data td,
+.fracture-quantity-table td {
+  color: var(--ink-soft);
+}
+
+.fracture-data thead,
+.fracture-quantity-table thead {
+  background: var(--lavender-light);
+}
+
+.fracture-data th:first-child,
+.fracture-quantity-table th:first-child {
+  width: 32%;
+}
+
+.fracture-data th:nth-child(2) {
+  width: 24%;
+}
+
+.fracture-quantity-table th:nth-child(2) {
+  width: 17%;
+}
+
+.test-selection,
+.supporting-figure {
+  margin-top: 1rem;
+}
+
+.supporting-figure summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.comet-roof-panel {
+  margin-top: 1rem;
+}
+
+.comet-roof-panel summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.comet-roof-panel > figure {
+  margin: .8rem 0 0;
+}
+
+.constraint-model {
+  margin-bottom: 1.2rem;
+}
+
+.fracture-section .subsection-heading {
+  margin-top: 1.5rem;
+}
+
+.test-workflow,
+.solution-steps {
+  padding-left: 1.4rem;
+  color: var(--ink-soft);
+}
+
+.test-workflow li,
+.solution-steps li {
+  padding-left: .25rem;
+  margin-block: .7rem;
+}
+
+.worked-record {
+  min-width: 0;
+  margin: .75rem 0;
+}
+
+.technical-figure > h3 {
+  margin-bottom: .8rem;
+}
+
 @media (max-width: 700px) {
   .two-up,
-  .figure-pair,
-  .test-methods {
+  .figure-pair {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -279,5 +390,65 @@
   .specimen-example img {
     max-width: 15rem;
     margin-inline: auto;
+  }
+
+  .fracture-data,
+  .fracture-quantity-table,
+  .fracture-data tbody,
+  .fracture-quantity-table tbody {
+    display: block;
+  }
+
+  .fracture-data thead,
+  .fracture-quantity-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .fracture-data caption,
+  .fracture-quantity-table caption {
+    display: block;
+  }
+
+  .fracture-data tbody tr,
+  .fracture-quantity-table tbody tr {
+    display: block;
+    margin-bottom: .85rem;
+    border: 1px solid var(--line);
+    border-radius: .5rem;
+    overflow: hidden;
+  }
+
+  .fracture-data tbody tr > th:first-child,
+  .fracture-data tbody tr > td,
+  .fracture-quantity-table tbody tr > th:first-child,
+  .fracture-quantity-table tbody tr > td {
+    display: block;
+    width: auto;
+    padding: .65rem .75rem;
+    overflow-wrap: normal;
+  }
+
+  .fracture-data tbody th,
+  .fracture-quantity-table tbody th {
+    background: var(--lavender-light);
+  }
+
+  .fracture-data td::before,
+  .fracture-quantity-table td::before {
+    display: block;
+    margin-bottom: .2rem;
+    color: var(--muted);
+    content: attr(data-label);
+    font-size: .8rem;
+    font-weight: 750;
+  }
+
+  .fracture-data td:last-child,
+  .fracture-quantity-table td:last-child {
+    border-bottom: 0;
   }
 }

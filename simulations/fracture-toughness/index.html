@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="style.css?v=1">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="app.js?v=1" defer></script>
+  <script src="app.js?v=2" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the fracture toughness lab</a>
@@ -92,8 +92,8 @@
             <path class="crack" d="M205 149 H224"/>
             <path class="force" d="M136 97 V48" marker-end="url(#load-arrow)"/>
             <path class="force" d="M136 201 V250" marker-end="url(#load-arrow)"/>
-            <text class="force-text" x="150" y="60">P</text>
-            <text class="force-text" x="150" y="245">P</text>
+            <text class="force-text" x="150" y="60">F</text>
+            <text class="force-text" x="150" y="245">F</text>
             <path class="guide" d="M224 149 L274 132 H331"/>
             <text x="337" y="136">Precrack</text>
             <path class="measure" d="M136 155 V170 M224 155 V170 M136 165 H224"/>
@@ -108,7 +108,7 @@
             <circle class="pin" cx="65" cy="189" r="12"/>
             <circle class="pin" cx="385" cy="189" r="12"/>
             <path class="force" d="M225 27 V71" marker-end="url(#load-arrow)"/>
-            <text class="force-text" x="242" y="45">P</text>
+            <text class="force-text" x="242" y="45">F</text>
             <path class="guide" d="M225 138 L267 121 H314"/>
             <text x="318" y="125">Precrack</text>
             <path class="measure" d="M246 137 H263 M245 177 H265 M255 137 V177"/>
@@ -124,7 +124,7 @@
           <div><dt>Crack length <i>a</i></dt><dd id="dim-a">20 mm</dd></div>
           <div><dt>Ligament <i>W</i> &minus; <i>a</i></dt><dd id="dim-ligament">20 mm</dd></div>
         </dl>
-        <p class="muted">Illustrated section. Thickness extends into the page. The orange segment is the fatigue crack grown from the machined notch.</p>
+        <p class="muted">Illustrated section. Thickness extends into the page. The orange segment is the sharp fatigue precrack grown from the rounded root of the machined notch.</p>
       </article>
 
       <article class="lab-panel plot-panel" aria-labelledby="plot-heading">
@@ -140,9 +140,9 @@
           <g id="plot-markers" hidden>
             <path id="pq-guide" class="guide"/>
             <circle id="pq-dot" class="pq-dot" r="5"/>
-            <text id="pq-label" class="pq-label">P<tspan baseline-shift="sub">Q</tspan></text>
+            <text id="pq-label" class="pq-label">F<tspan baseline-shift="sub">Q</tspan></text>
             <circle id="max-dot" class="max-dot" r="4"/>
-            <text id="max-label" class="max-label">P<tspan baseline-shift="sub">max</tspan></text>
+            <text id="max-label" class="max-label">F<tspan baseline-shift="sub">max</tspan></text>
           </g>
         </svg>
         <div class="plot-legend" aria-label="Plot legend">
@@ -158,24 +158,35 @@
         <h2 id="analysis-heading">Calculate and assess <i>K</i><sub>Q</sub></h2>
         <button class="button secondary" id="record" type="button" disabled>Record result</button>
       </div>
-      <p>The secant has 95% of the initial elastic slope. These records rise smoothly to the secant intersection, so its force is <i>P</i><sub>Q</sub>. Records with earlier peaks need the full standard’s interpretation rules.</p>
+      <p>The secant has 95% of the initial elastic slope. These records rise smoothly to the secant intersection, so its force is <i>F</i><sub>Q</sub>. The secant is a prescribed evaluation of the force record. Microscopic crack extension may begin before that point. Records with earlier peaks need the full standard&rsquo;s interpretation rules.</p>
       <dl class="readings">
-        <div><dt>Conditional force <i>P</i><sub>Q</sub></dt><dd id="reading-pq">&mdash;</dd></div>
-        <div><dt>Maximum force <i>P</i><sub>max</sub></dt><dd id="reading-max">&mdash;</dd></div>
+        <div><dt>Conditional force <i>F</i><sub>Q</sub></dt><dd id="reading-pq">&mdash;</dd></div>
+        <div><dt>Maximum force <i>F</i><sub>max</sub></dt><dd id="reading-max">&mdash;</dd></div>
         <div><dt>Shape factor <i>f</i>(<i>a</i>/<i>W</i>)</dt><dd id="reading-factor">&mdash;</dd></div>
         <div><dt>Conditional toughness <i>K</i><sub>Q</sub></dt><dd id="reading-kq">&mdash;</dd></div>
       </dl>
       <div class="screen-grid">
-        <div class="screen"><h3>Force ratio</h3><p><i>P</i><sub>max</sub>/<i>P</i><sub>Q</sub> &le; 1.10</p><strong id="ratio-screen">Run a test to check.</strong></div>
+        <div class="screen"><h3>Force ratio</h3><p><i>F</i><sub>max</sub>/<i>F</i><sub>Q</sub> &le; 1.10</p><strong id="ratio-screen">Run a test to check.</strong></div>
         <div class="screen"><h3>Remaining ligament</h3><p><i>W</i> &minus; <i>a</i> &ge; 2.5(<i>K</i><sub>Q</sub>/&sigma;<sub>py, 0.2</sub>)<sup>2</sup></p><strong id="size-screen">Run a test to check.</strong></div>
       </div>
-      <p class="lab-status" id="qualification" role="status">Two qualification checks are illustrated here. A real <i>K</i><sub>Ic</sub> result also has to meet the standard’s requirements for specimen proportions, loading rate and precrack geometry.</p>
+      <p class="lab-status" id="qualification" role="status">Two qualification checks are illustrated here. Reporting <i>K</i><sub>Ic</sub> from a real test also requires the applicable ASTM E399 checks for specimen proportions, loading rate, and precrack geometry.</p>
+      <p>A sufficiently thick specimen restricts deformation through its thickness, producing severe tensile constraint near the interior crack front. The size and force-record requirements help keep crack-tip plasticity small relative to specimen dimensions. <a href="../../teaching/fracture-mechanics/index.html#constraint-model">See the plane-stress and plane-strain comparison</a>.</p>
+      <details>
+        <summary>From precrack to a qualified test result</summary>
+        <ol>
+          <li>Choose an applicable test method, specimen geometry, orientation, and temperature. Machine the starter notch and grow a sharp fatigue precrack within the method&rsquo;s prescribed limits.</li>
+          <li>Measure the specimen dimensions, align the fixture, and load at the specified rate while recording force and displacement.</li>
+          <li>Examine the exposed fracture surface to measure the initial fatigue-crack front and check its geometry. Use that measured crack length in the geometry calibration.</li>
+          <li>Determine <i>F</i><sub>Q</sub> from the force record and calculate <i>K</i><sub>Q</sub>. Assess the force ratio, ligament size, and the remaining requirements before reporting <i>K</i><sub>Ic</sub>.</li>
+        </ol>
+        <p>This lab supplies the initial crack length and illustrates the force-ratio and ligament checks using synthetic records.</p>
+      </details>
       <details>
         <summary>Geometry factors and units</summary>
-        <p>Use <i>P</i><sub>Q</sub> in newtons and dimensions in metres, then divide the result in Pa&radic;m by 10<sup>6</sup> for MPa&radic;m. Let <i>x</i> = <i>a</i>/<i>W</i>.</p>
-        <p class="formula"><strong>C(T)</strong> <i>K</i><sub>Q</sub> = [<i>P</i><sub>Q</sub>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(<i>x</i>)</p>
+        <p>Use <i>F</i><sub>Q</sub> in newtons and dimensions in metres, then divide the result in Pa&radic;m by 10<sup>6</sup> for MPa&radic;m. Let <i>x</i> = <i>a</i>/<i>W</i>.</p>
+        <p class="formula"><strong>C(T)</strong> <i>K</i><sub>Q</sub> = [<i>F</i><sub>Q</sub>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(<i>x</i>)</p>
         <p><i>f</i>(<i>x</i>) = (2 + <i>x</i>)(0.886 + 4.64<i>x</i> &minus; 13.32<i>x</i><sup>2</sup> + 14.72<i>x</i><sup>3</sup> &minus; 5.6<i>x</i><sup>4</sup>)/(1 &minus; <i>x</i>)<sup>3/2</sup></p>
-        <p class="formula"><strong>SE(B)</strong> <i>K</i><sub>Q</sub> = [<i>P</i><sub>Q</sub><i>S</i>/(<i>B</i><i>W</i><sup>3/2</sup>)] <i>f</i>(<i>x</i>)</p>
+        <p class="formula"><strong>SE(B)</strong> <i>K</i><sub>Q</sub> = [<i>F</i><sub>Q</sub><i>S</i>/(<i>B</i><i>W</i><sup>3/2</sup>)] <i>f</i>(<i>x</i>)</p>
         <p><i>f</i>(<i>x</i>) = 3&radic;<i>x</i>[1.99 &minus; <i>x</i>(1 &minus; <i>x</i>)(2.15 &minus; 3.93<i>x</i> + 2.7<i>x</i><sup>2</sup>)]/[2(1 + 2<i>x</i>)(1 &minus; <i>x</i>)<sup>3/2</sup>]</p>
         <p><i>S</i> is the support span in the three-point bend fixture and equals 4<i>W</i> in this experiment. The synthetic records give the same <i>K</i><sub>Q</sub> so you can compare the effect of size and record shape on the qualification checks.</p>
       </details>
@@ -195,7 +206,7 @@
       <div id="results-wrap" class="table-wrap" role="region" aria-label="Recorded results" tabindex="0" hidden>
         <table>
           <thead><tr>
-            <th scope="col">Specimen</th><th scope="col"><i>W</i> (mm)</th><th scope="col"><i>P</i><sub>Q</sub> (kN)</th><th scope="col"><i>K</i><sub>Q</sub> (MPa&radic;m)</th><th scope="col">Force check</th><th scope="col">Size check</th>
+            <th scope="col">Specimen</th><th scope="col"><i>W</i> (mm)</th><th scope="col"><i>F</i><sub>Q</sub> (kN)</th><th scope="col"><i>K</i><sub>Q</sub> (MPa&radic;m)</th><th scope="col">Force check</th><th scope="col">Size check</th>
           </tr></thead>
           <tbody id="results-body"></tbody>
         </table>
@@ -203,8 +214,13 @@
     </section>
 
     <section class="standards" aria-labelledby="standards-heading">
-      <h2 id="standards-heading">Test standards</h2>
-      <p>Use ASTM E399 for linear-elastic plane-strain fracture toughness. ASTM E1820 covers fracture resistance using <i>J</i> and crack-tip opening displacement (CTOD), among other Mode I parameters. ISO 12135 covers quasistatic fracture toughness in terms of <i>K</i>, <i>J</i> and CTOD. <a href="https://store.astm.org/e0399-24.html">ASTM E399-24</a> &middot; <a href="https://store.astm.org/e1820-25de02.html">ASTM E1820</a> &middot; <a href="https://www.iso.org/standard/78208.html">ISO 12135:2021</a></p>
+      <h2 id="standards-heading">Choose the test method</h2>
+      <ul>
+        <li><strong>Predominantly linear elastic response under high constraint.</strong> ASTM E399 evaluates Mode I plane-strain fracture toughness with its prescribed validity checks. It directs cleavage-fracture testing to E1921 or E1820. <a href="https://store.astm.org/standards/e399">ASTM E399</a></li>
+        <li><strong>Appreciable plastic deformation or stable tearing.</strong> ASTM E1820 evaluates Mode I fracture resistance using <i>J</i> and crack-tip opening displacement (CTOD), including resistance curves. <a href="https://store.astm.org/standards/e1820">ASTM E1820</a></li>
+        <li><strong>Ferritic steel undergoing cleavage in the transition range.</strong> ASTM E1921 uses a set of toughness tests and statistical analysis to determine the reference temperature <i>T</i><sub>0</sub>, within its material and test limits. Its procedure builds on E1820 with additional requirements. <a href="https://store.astm.org/standards/e1921">ASTM E1921</a></li>
+        <li><strong>Quasistatic testing of metallic materials.</strong> ISO 12135 provides methods using <i>K</i>, <i>J</i>, CTOD, and resistance curves for precracked specimens. <a href="https://www.iso.org/standard/78208.html">ISO 12135:2021</a></li>
+      </ul>
     </section>
   </main>
 

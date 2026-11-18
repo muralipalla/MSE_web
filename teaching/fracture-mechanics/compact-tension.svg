@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 338" role="img" aria-labelledby="ct-title ct-desc">
+  <title id="ct-title">Compact tension C(T) specimen dimensions</title>
+  <desc id="ct-desc">Two pins load a compact tension specimen in opening. Width W extends from the pin load line to the back edge. Crack length a extends from the same load line through the machined starter notch to the fatigue crack tip. Thickness B is perpendicular to the drawing and is shown by a thickness inset. Drawing proportions follow the laboratory specimen schematic.</desc>
+  <defs>
+    <marker id="ct-force" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#c93b1f"/></marker>
+    <marker id="ct-dim" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M8 0 0 4 8 8" fill="none" stroke="#554f82" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="1" y="1" width="438" height="336" rx="12" fill="#f7f5fb" stroke="#d9d3ec" stroke-width="2"/>
+  <path d="M58 58H284V266H58V169L179 165V159L58 155Z" fill="#e9e2f4" stroke="#6757a8" stroke-width="2.3" stroke-linejoin="round"/>
+  <g fill="#fff" stroke="#6757a8" stroke-width="2"><circle cx="111" cy="117" r="21.6"/><circle cx="111" cy="207" r="21.6"/></g>
+  <path d="M111 68V256" fill="none" stroke="#554f82" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <path d="M179 162H197.5" fill="none" stroke="#c93b1f" stroke-width="3.5"/>
+  <g fill="none" stroke="#c93b1f" stroke-width="2.7" marker-end="url(#ct-force)"><path d="M111 107V38"/><path d="M111 218V277"/></g>
+  <g fill="none" stroke="#554f82" stroke-width="1.4">
+    <path d="M111 172V195M197.5 172V195M111 274V306M284 274V306M330 220V208M357 220V208"/>
+    <path d="M114 188H194.5M114 299H281M333 213H354" marker-start="url(#ct-dim)" marker-end="url(#ct-dim)"/>
+    <path d="M197.5 162 252 180H298M170 160 204 108H243M111 78 145 49H186"/>
+  </g>
+  <rect x="330" y="224" width="27" height="57" fill="#e9e2f4" stroke="#6757a8" stroke-width="2"/>
+  <g font-family="system-ui, sans-serif" fill="#2e2a74" font-size="18">
+    <text x="127" y="41" fill="#a93420" font-style="italic">F</text>
+    <text x="127" y="276" fill="#a93420" font-style="italic">F</text>
+    <text x="153" y="211" text-anchor="middle" font-style="italic">a</text>
+    <text x="198" y="323" text-anchor="middle" font-style="italic">W</text>
+    <text x="343.5" y="204" text-anchor="middle" font-style="italic">B</text>
+    <text x="190" y="54">Load line</text>
+    <text x="211" y="87">Machined</text><text x="211" y="106">notch</text>
+    <text x="304" y="164">Fatigue</text><text x="304" y="183">precrack</text>
+    <text x="343.5" y="302" text-anchor="middle" font-size="16">Thickness</text>
+    <text x="343.5" y="320" text-anchor="middle" font-size="16">inset</text>
+  </g>
+</svg>

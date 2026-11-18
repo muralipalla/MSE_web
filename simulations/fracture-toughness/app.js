@@ -150,7 +150,7 @@
     showScreen('ratio-screen', forcePass, `${trial.ratio.toFixed(2)} ${forcePass ? '≤' : '>'} 1.10`);
     showScreen('size-screen', sizePass, `${trial.ligament} mm ${sizePass ? '≥' : '<'} ${trial.minimumLigament.toFixed(2)} mm`);
     get('qualification').textContent = forcePass && sizePass
-      ? 'Both illustrated checks pass. An experimental K_Ic value requires the remaining ASTM E399 checks, including specimen proportions, loading rate and precrack geometry.'
+      ? 'Both illustrated checks pass. Reporting K_Ic from a real test also requires the applicable ASTM E399 checks for specimen proportions, loading rate, and precrack geometry.'
       : 'At least one illustrated check fails. The reported value remains conditional K_Q.';
   }
 
@@ -191,7 +191,7 @@
       get(id).className = '';
       get(id).textContent = 'Run a test to check.';
     }
-    get('qualification').textContent = 'Two qualification checks are illustrated here. A real K_Ic result also has to meet the standard’s requirements for specimen proportions, loading rate and precrack geometry.';
+    get('qualification').textContent = 'Two qualification checks are illustrated here. Reporting K_Ic from a real test also requires the applicable ASTM E399 checks for specimen proportions, loading rate, and precrack geometry.';
     get('lab-status').textContent = 'Choose your settings and mount the precracked specimen.';
     get('check-status').textContent = 'Run a test first.';
     get('answer').value = '';

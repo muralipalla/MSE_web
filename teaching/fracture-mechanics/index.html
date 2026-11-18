@@ -8,7 +8,7 @@
   <title>Fracture Mechanics | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="app.js?v=2" defer></script>
 </head>
@@ -52,27 +52,52 @@
       <div class="two-up">
         <article class="fracture-card">
           <h3>Ductile fracture</h3>
-          <p>Substantial plastic deformation accompanies tearing. In many metals, voids nucleate near particles or inclusions, grow, and join to form a crack. A round tensile bar may neck and leave a cup-and-cone fracture with a fibrous center and inclined shear lips.</p>
+          <p>Plastic deformation near the crack accompanies ductile tearing. In many metals, voids nucleate near particles or inclusions, grow, and join to form a crack. A round tensile bar may neck and leave a cup-and-cone fracture with a fibrous center and inclined shear lips. The amount of visible overall deformation also depends on specimen geometry and constraint.</p>
         </article>
         <article class="fracture-card">
           <h3>Brittle fracture</h3>
-          <p>A crack can travel rapidly with little overall plastic deformation. Cleavage in ferritic steel typically runs through grains along crystallographic planes. Cracks can also follow weakened grain boundaries, producing an intergranular fracture surface.</p>
+          <p>A crack can travel rapidly with little overall plastic deformation. Cleavage in ferritic steel typically runs through grains along crystallographic planes. Brittle separation can also occur along weakened grain boundaries.</p>
         </article>
       </div>
       <p class="section-note">Ductile tearing and brittle fracture can occur in different regions of one surface. Temperature, loading rate, and constraint around the crack tip influence which mechanism dominates.</p>
+      <p>A <strong>Charpy impact test</strong> strikes a notched bar with a pendulum and measures the absorbed energy. Repeating the test at different temperatures helps characterize how the fracture response changes. This is the test used in the historical investigations below.</p>
     </section>
 
     <section id="fractography" class="fracture-section" aria-labelledby="fractography-title">
       <h2 id="fractography-title">Read the fracture surfaces (fractography)</h2>
       <p class="section-lead">Start at low magnification to locate the likely origin and trace the crack path. Use higher magnification to look for dimples, cleavage facets, or exposed grain boundaries.</p>
+      <figure class="fracture-card technical-figure fracture-macro">
+        <img src="propeller-fracture-origin.jpg" width="748" height="206" alt="Two matching propeller-blade spar fracture faces with the investigators' O labels at origins near the bore, R labels at ratchet marks, arrowheads showing fatigue propagation, and dashed fatigue-region boundaries" loading="lazy">
+        <figcaption><h3>Locate an origin on the fracture face</h3><p>These are opposite faces of the propeller-blade spar fracture from Atlantic Southeast Airlines Flight 529. Fatigue is progressive crack extension under repeated loading. The investigators marked origin areas with <strong>O</strong> and a ratchet mark from multiple fatigue origins with <strong>R</strong>. Arrowheads show fatigue propagation direction. Dashed lines bound the fatigue-cracked region. Follow these features back toward the origin before inspecting its local mechanism.</p><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/N256AS">NTSB docket photographs and investigator annotations, via FAA</a> &middot; <a href="https://www-s.ntsb.gov/about/pages/website-policies.aspx">U.S. Government work, public domain</a></figcaption>
+      </figure>
+      <p class="section-note"><strong>Describe the crack path and mechanism.</strong> A transgranular crack crosses grains. An intergranular crack follows grain boundaries. Dimples indicate local plastic rupture, while cleavage facets indicate crystallographic separation. Grain-boundary surfaces can also contain dimples. <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nbsir74-468.pdf">NBS fracture-surface investigation</a></p>
       <div id="fractography-figures" class="two-up">
         <figure class="fracture-card photo-card">
-          <img src="ductile-dimples.jpg" width="680" height="510" alt="Scanning electron micrograph of a steel fracture surface with small dimples and several larger dark cavities" loading="lazy">
-          <figcaption><h3>Dimples in steel</h3><p>Rounded depressions mark where voids grew and joined in a Charpy specimen from steel column N8-C1M1.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=159">NIST NCSTAR 1-3D, Figure 5-10(c), cropped</a></figcaption>
+          <div class="annotated-fractograph">
+            <img src="ductile-dimples.jpg" width="680" height="510" alt="Scanning electron micrograph of steel with annotations pointing to a large dark dimple cavity and a raised dimple rim; the original 10 micrometre scale remains visible" loading="lazy">
+            <svg viewBox="0 0 680 510" aria-hidden="true" focusable="false">
+              <g fill="none" stroke="#ffcd73" stroke-width="3" stroke-linecap="round">
+                <path d="M480 60 510 110 515 321"/>
+                <path d="M104 60 106 153 83 278"/>
+              </g>
+              <g fill="#ffcd73" stroke="#302775" stroke-width="1.5"><circle cx="515" cy="321" r="5"/><circle cx="83" cy="278" r="5"/></g>
+              <g fill="#fff8e9" fill-opacity=".96" stroke="#302775" stroke-width="1.5"><rect x="371" y="19" width="208" height="41" rx="7"/><rect x="18" y="19" width="171" height="41" rx="7"/></g>
+              <g fill="#252044" font-family="system-ui,sans-serif" font-size="23" font-weight="650"><text x="389" y="47">Dimple cavity</text><text x="36" y="47">Dimple rim</text></g>
+            </svg>
+          </div>
+          <figcaption><h3>Dimples in steel</h3><p>Rounded depressions mark where voids grew and joined in a Charpy specimen from steel column N8-C1M1. The highlighted cavity and raised rim show the local relief of a ductile fracture surface.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=159">NIST NCSTAR 1-3D, Figure 5-10(c), cropped; teaching labels overlaid</a></figcaption>
         </figure>
         <figure class="fracture-card photo-card">
-          <img src="brittle-cleavage.jpg" width="1057" height="788" alt="Scanning electron micrograph showing flat cleavage facets and bright steps, with a 10 micrometre scale bar" loading="lazy">
-          <figcaption><h3>Cleavage facets in steel</h3><p>Flat facets and branching markings indicate cleavage across grains in a room-temperature impact specimen from steel truss seat N13-C3B1.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=161">NIST NCSTAR 1-3D, Figure 5-14, cropped</a></figcaption>
+          <div class="annotated-fractograph">
+            <img src="brittle-cleavage.jpg" width="1057" height="788" alt="Scanning electron micrograph annotated to identify a broad cleavage facet and a bright cleavage step in steel; the original 10 micrometre scale remains visible" loading="lazy">
+            <svg viewBox="0 0 1057 788" aria-hidden="true" focusable="false">
+              <g fill="none" stroke="#ffcd73" stroke-width="4.5" stroke-linecap="round"><path d="M682 88 704 170 706 325"/><path d="M255 701 296 647 286 557"/></g>
+              <g fill="#ffcd73" stroke="#302775" stroke-width="2"><circle cx="706" cy="325" r="7"/><circle cx="286" cy="557" r="7"/></g>
+              <g fill="#fff8e9" fill-opacity=".96" stroke="#302775" stroke-width="2"><rect x="477" y="23" width="330" height="65" rx="10"/><rect x="30" y="701" width="338" height="65" rx="10"/></g>
+              <g fill="#252044" font-family="system-ui,sans-serif" font-size="36" font-weight="650"><text x="501" y="68">Cleavage facet</text><text x="54" y="746">Cleavage step</text></g>
+            </svg>
+          </div>
+          <figcaption><h3>Cleavage facets in steel</h3><p>Flat facets and steps indicate cleavage across grains in a room-temperature impact specimen from steel truss seat N13-C3B1. The labels identify surface features within this field of view.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=161">NIST NCSTAR 1-3D, Figure 5-14, cropped; teaching labels overlaid</a></figcaption>
         </figure>
       </div>
       <article class="fracture-card worked-example">
@@ -112,17 +137,18 @@
       <div class="figure-pair">
         <div>
           <p>Many ferritic steels absorb little impact energy on the cold <strong>lower shelf</strong> and much more on the warm <strong>upper shelf</strong>. In between, ductile tearing and cleavage can appear on the same fracture surface. Cooling increases the stress required for plastic flow, making cleavage more competitive at a loaded notch.</p>
-          <p>The <strong>ductile-to-brittle transition temperature</strong> (DBTT) depends on the criterion. A temperature at 27 J, the midpoint between the energy shelves, and the temperature at 50% shear fracture appearance may differ. Report the criterion, specimen, and test conditions with the result.</p>
+          <p>A pronounced transition is characteristic of many body-centered-cubic (BCC) metals, including ferritic steels. Common face-centered-cubic (FCC) alloys, including austenitic stainless steels and aluminium alloys, generally retain substantial ductility on cooling.</p>
+          <p>The <strong>ductile-to-brittle transition temperature</strong> (DBTT) depends on the criterion. A temperature at 27 J, the midpoint between the energy shelves, and the temperature at 50% shear fracture appearance may differ. Use multiple specimens and temperatures to fit a transition curve, particularly where results scatter widely. Report the criterion, specimen, test conditions, and uncertainty with the result.</p>
         </div>
         <figure id="transition-figure" class="fracture-card technical-figure">
           <img src="nist-charpy-transition.png" width="1757" height="1069" alt="Charpy absorbed energy rises from a low-energy shelf to a high-energy shelf as temperature rises, with a transition temperature marked between them" loading="lazy">
-          <figcaption>Charpy absorbed energy versus test temperature for a low-strength ferritic steel. <a href="https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2158.pdf#page=8">NIST Technical Note 2158, Figure 1</a></figcaption>
+          <figcaption>Charpy absorbed energy versus test temperature for a low-strength ferritic steel. <a href="https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2158.pdf#page=8">NIST Technical Note 2158, Figures 1&ndash;2 and transition-curve fitting</a></figcaption>
         </figure>
       </div>
       <article class="fracture-card worked-example">
         <h3>Find a 27 J transition temperature</h3>
         <p>A Charpy series gives 20 J at &minus;40 &deg;C and 50 J at &minus;20 &deg;C. Estimate <i>T</i><sub>27 J</sub> by linear interpolation between those points.</p>
-        <p>The fraction of the interval is (27 &minus; 20)/(50 &minus; 20) = 7/30. Therefore <i>T</i><sub>27 J</sub> = &minus;40 + (7/30)(20) = <strong>&minus;35.3 &deg;C</strong>.</p>
+        <p>The fraction of the interval is (27 &minus; 20)/(50 &minus; 20) = 7/30. Therefore <i>T</i><sub>27 J</sub> = &minus;40 + (7/30)(20) = &minus;35.3 &deg;C, or <strong>about &minus;35 &deg;C</strong>. This is a local interpolation estimate. Experimental uncertainty requires additional test results.</p>
       </article>
     </section>
 
@@ -131,14 +157,25 @@
       <div class="figure-pair">
         <div>
           <p><strong>Charpy</strong> supports a notched bar on two anvils and strikes opposite the notch. <strong>Izod</strong> clamps one end and strikes the free part above the notch on the notched side. For metallic specimens, the absorbed energy in joules is the drop in pendulum potential energy from the release height to the peak after impact, corrected for machine losses.</p>
-          <p>The absorbed energy reflects the specimen&rsquo;s response to impact, including plastic deformation and fracture. Use Charpy data at multiple temperatures to study a steel&rsquo;s transition. The measured energy is specific to the setup. Compare results at matched method, specimen dimensions, notch geometry, orientation, and temperature.</p>
-          <p class="source-line"><a href="https://store.astm.org/standards/e23">ASTM E23, metals</a> &middot; <a href="https://www.iso.org/standard/63802.html">ISO 148-1, metallic Charpy</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2158.pdf#page=9">NIST pendulum energy measurement</a></p>
+          <p>The absorbed energy reflects the specimen&rsquo;s response to impact, including plastic deformation and fracture. Use Charpy data at multiple temperatures to study a steel&rsquo;s transition. The measured energy is specific to the setup. Compare results at matched method, specimen dimensions, notch geometry, orientation, temperature, striker geometry, and impact speed.</p>
+          <p class="source-line"><a href="https://store.astm.org/standards/e23">ASTM E23, metals</a> &middot; <a href="https://www.iso.org/standard/63802.html">ISO 148-1, metallic Charpy</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2158.pdf#page=9">NIST pendulum energy measurement</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/jres/123/jres.123.016.pdf">NIST striker-geometry study</a></p>
         </div>
         <figure class="fracture-card technical-figure">
           <img src="impact-fixtures.svg" width="420" height="224" alt="Charpy strikes a horizontal bar opposite its notch between two anvils. Izod strikes a vertical bar above the notch on the notched side, with its lower end clamped." loading="lazy">
           <figcaption>Fixture schematics for metallic specimens. <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication260-164.pdf">NIST comparison of the two setups</a></figcaption>
         </figure>
       </div>
+      <table class="fracture-quantity-table">
+        <caption>Quantities used to describe fracture</caption>
+        <thead><tr><th scope="col">Quantity</th><th scope="col">Unit</th><th scope="col">What it measures</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Absorbed impact energy, <i>E</i><sub>abs</sub></th><td data-label="Unit">J</td><td data-label="What it measures">Energy absorbed in a specimen tested with a specified impact setup.</td></tr>
+          <tr><th scope="row">Energy release rate, <i>G</i></th><td data-label="Unit">J/m<sup>2</sup></td><td data-label="What it measures">Mechanical energy available per increase in projected crack area. Its critical value is <i>G</i><sub>c</sub>.</td></tr>
+          <tr><th scope="row"><i>J</i>-integral</th><td data-label="Unit">J/m<sup>2</sup></td><td data-label="What it measures">A crack-driving parameter used for elastic-plastic fracture under the applicable test conditions. A qualified initiation value is <i>J</i><sub>Ic</sub>.</td></tr>
+          <tr><th scope="row">Stress intensity, <i>K</i><sub>I</sub></th><td data-label="Unit">MPa&radic;m</td><td data-label="What it measures">Amplitude of the Mode I elastic crack-tip field. A qualified plane-strain critical value is <i>K</i><sub>Ic</sub>.</td></tr>
+        </tbody>
+      </table>
+      <p>Impact energy includes deformation of the specimen as well as fracture. Estimating fracture toughness from impact energy requires an empirical correlation validated for the material and test conditions. The following sections introduce crack area, crack-tip stresses, and the corresponding toughness parameters. <a href="https://www.nist.gov/publications/cost-effective-alternatives-conventional-charpy-tests-measuring-impact-toughness-very">NIST investigation of impact-energy limitations</a></p>
       <article class="fracture-card worked-example">
         <h3>Calculate the absorbed impact energy</h3>
         <p>The pendulum loses 110 J between release and the peak after fracture. The correction for machine losses over this swing is 2 J. The specimen&rsquo;s reported absorbed energy is 110 &minus; 2 = <strong>108 J</strong>.</p>
@@ -150,14 +187,25 @@
       <h2 id="comet-title">The Comet failures</h2>
       <div class="figure-pair">
         <div>
+          <p>The Comet investigation showed how <strong>small-radius corners in nearly rectangular cabin windows and other openings concentrate tensile stress</strong>. The local stresses were higher than designers had anticipated. Countersunk fastener holes near a corner could raise the stress further. These details made the pressure cabin vulnerable to fatigue under repeated pressurization.</p>
           <p>In 1954, the de Havilland Comet G-ALYP broke up near Elba. Investigators found fatigue cracking near the rear roof opening for a direction-finding antenna. They identified the edge of a nearby countersunk bolt hole as the probable crack origin. A second breakup near Naples that year was consistent with a similar failure, although too little wreckage was recovered to establish the cause.</p>
-          <p>In a separate full-scale test, investigators repeatedly pressurized Comet G-ALYU in a water tank. The cabin ruptured at a corner of the forward escape hatch. As an aircraft climbs and descends, the changing cabin pressure differential cycles the stress in the skin. Repeated cycles can initiate and grow a fatigue crack where a cutout raises the local stress. As the crack grows, the cabin can fracture at a pressure differential it had previously carried.</p>
-          <p class="source-line"><a href="https://www.faa.gov/sites/faa.gov/files/2022-10/G-ALYP_Report_0.pdf">1955 Court of Inquiry, paragraphs 75&ndash;78 and Appendix VI</a> &middot; <a href="https://collection.sciencemuseumgroup.org.uk/objects/co202453/section-of-upper-fuselage-of-comet-g-alyp-showing-fatigue-cracks">Science Museum fuselage record</a></p>
+          <p>In a separate full-scale test, investigators repeatedly pressurized Comet G-ALYU in a water tank. The cabin ruptured at a corner of the forward escape-hatch window. As an aircraft climbs and descends, the changing cabin pressure differential cycles the stress in the skin. Repeated cycles can initiate and grow a fatigue crack at a highly stressed detail. As the crack grows, the cabin can fracture at a pressure differential it had previously carried.</p>
+          <p>This case connects <strong>fatigue crack growth under repeated loading</strong> with <strong>final fracture at a critical flaw size</strong>. The next section examines how opening shape and corner radius affect stress concentration. Crack-tip stresses and fracture toughness then connect the applied stress with the critical crack size.</p>
+          <p class="source-line"><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/G-ALYV">FAA, stress concentrations at window corners</a> &middot; <a href="https://www.faa.gov/sites/faa.gov/files/2022-10/G-ALYP_Report_0.pdf">1955 Court of Inquiry, paragraphs 75&ndash;79 and Appendix VI</a> &middot; <a href="https://collection.sciencemuseumgroup.org.uk/objects/co202453/section-of-upper-fuselage-of-comet-g-alyp-showing-fatigue-cracks">Science Museum fuselage record</a></p>
         </div>
-        <figure class="fracture-card technical-figure">
-          <img src="comet-g-alyp-fuselage.jpg" width="1280" height="568" alt="Recovered upper fuselage panel from Comet G-ALYP with two antenna openings on display at the Science Museum" loading="lazy">
-          <figcaption>Recovered upper fuselage from G-ALYP, with openings for the automatic direction-finding antennas. <a href="https://commons.wikimedia.org/wiki/File:Fuselage_of_de_Havilland_Comet_Airliner_G-ALYP.JPG">Krelnik, Wikimedia Commons, resized</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></figcaption>
-        </figure>
+        <div class="comet-evidence">
+          <figure class="fracture-card technical-figure">
+            <img src="comet-hatch-failure.png" width="615" height="505" alt="Photograph taken inside Comet G-ALYU after the pressure test, showing the forward port-side escape-hatch window and torn fuselage skin extending from its lower corners" loading="lazy">
+            <figcaption><h3>Window-corner failure in the pressure test</h3><p>The cabin skin tore at the forward port-side escape hatch of G-ALYU. This view from inside the airframe shows the window opening and the ruptured skin below it.</p><a href="https://www.faa.gov/sites/faa.gov/files/2022-10/G-ALYP_Report_0.pdf">1955 Court of Inquiry, Figure 7, HM Stationery Office</a> &middot; <a href="https://commons.wikimedia.org/wiki/File:Comet_G-ALYU_escape_hatch_failure.png">Completeaerogeek digitization, Wikimedia Commons</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></figcaption>
+          </figure>
+          <details class="fracture-card comet-roof-panel">
+            <summary>View the recovered G-ALYP roof panel</summary>
+            <figure class="technical-figure">
+              <img src="comet-g-alyp-fuselage.jpg" width="1280" height="568" alt="Recovered upper fuselage panel from Comet G-ALYP with two antenna openings on display at the Science Museum" loading="lazy">
+              <figcaption>Recovered upper fuselage from G-ALYP, with openings for the automatic direction-finding antennas. <a href="https://commons.wikimedia.org/wiki/File:Fuselage_of_de_Havilland_Comet_Airliner_G-ALYP.JPG">Krelnik, Wikimedia Commons, resized</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></figcaption>
+            </figure>
+          </details>
+        </div>
       </div>
     </section>
 
@@ -202,16 +250,17 @@
       <h2 id="griffith-title">Griffith&rsquo;s energy balance</h2>
       <div class="figure-pair">
         <div class="fracture-card">
-          <p>A growing crack releases mechanical energy and requires energy to create new surfaces. The energy release rate <i>G</i> is the decrease in total potential energy per unit increase in projected crack area. In the ideally brittle Griffith model, two surfaces cost <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub>, where &gamma;<sub>s</sub> is the energy per unit area of one surface.</p>
+          <p>A growing crack releases mechanical energy and creates new surfaces. The energy release rate <i>G</i> is the decrease in mechanical potential energy, comprising elastic strain energy minus the work of external loads, per unit increase in projected crack area. That area counts the advancing crack once. Two opposing surfaces are created, so the ideally brittle Griffith model has a resistance <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub>, where &gamma;<sub>s</sub> is the energy per unit area of one surface.</p>
           <p>For a central through crack of total length <strong>2<i>a</i></strong> in an effectively infinite plate under uniform tension &sigma;, the energy release rate and critical tensile stress are</p>
           <div class="formula-row">
             <p class="formula"><i>G</i> = &pi;<i>a</i>&sigma;<sup>2</sup>/<i>E</i>&prime;</p>
             <p class="formula">&sigma;<sub>c</sub> = &radic;(<i>E</i>&prime;<i>G</i><sub>c</sub>/(&pi;<i>a</i>))</p>
           </div>
-          <p><i>E</i>&prime; = <i>E</i> in plane stress and <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>) in plane strain. At the onset of crack growth, <i>G</i> reaches <i>G</i><sub>c</sub>. A longer flaw needs a smaller applied stress to reach that condition. In metals, crack-tip deformation can add substantially to the surface energy cost.</p>
+          <p><i>E</i>&prime; = <i>E</i> in plane stress and <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>) in plane strain, where &nu; is Poisson&rsquo;s ratio. Plane stress allows deformation through the thickness. Plane strain approximates a constrained interior with very little strain in that direction. The <a href="#constraint-model">thickness comparison</a> below illustrates both conditions.</p>
+          <p>Crack extension becomes energetically possible when <i>G</i> reaches the resistance. At fixed remote stress in this ideal model, <i>G</i> increases as the crack extends while <i>G</i><sub>c</sub> stays constant, allowing unstable growth. In metals, plastic deformation dissipates additional energy, so the measured fracture resistance can greatly exceed 2&gamma;<sub>s</sub>.</p>
           <p class="source-line"><a href="https://doi.org/10.1098/rsta.1921.0006">Griffith&rsquo;s original paper</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.960-16e2.pdf">NIST fractography and fracture mechanics guide</a></p>
         </div>
-          <figure class="fracture-card technical-figure">
+        <figure class="fracture-card technical-figure">
           <svg viewBox="0 0 430 250" role="img" aria-labelledby="griffith-graph-title griffith-graph-desc">
             <title id="griffith-graph-title">Energy release rate and fracture resistance against crack half-length</title>
             <desc id="griffith-graph-desc">At fixed applied stress, the energy release rate G increases linearly with crack half-length a. It reaches the constant resistance G c at the critical half-length a c.</desc>
@@ -245,7 +294,7 @@
       <div class="figure-pair">
         <div>
           <p>Measure distance <i>r</i> from the tip and angle &theta; from the direction straight ahead of the crack. In linear elasticity, stresses near a sharp crack have a leading term proportional to 1/&radic;<i>r</i>. Its angular variation depends on the stress component and how the crack is loaded.</p>
-          <p>For a symmetrically opening crack (Mode I), the leading tensile stress normal to the crack plane directly ahead of the tip is</p>
+          <p>Mode I loading separates the two faces normal to the crack plane. For this opening mode, the leading tensile stress directly ahead of the tip is</p>
           <p class="formula">&sigma;<sub>yy</sub>(<i>r</i>, 0) &asymp; <i>K</i><sub>I</sub>/&radic;(2&pi;<i>r</i>)</p>
           <p><i>K</i><sub>I</sub> is the amplitude of the opening field. The approximation applies in the elastic region where this term dominates, outside the crack-tip process zone and close to the tip relative to crack length and specimen dimensions. The elastic formula diverges as <i>r</i> approaches zero. In a metal, local yielding limits its applicability near the tip.</p>
         </div>
@@ -306,12 +355,25 @@
     <section id="toughness" class="fracture-section" aria-labelledby="toughness-title">
       <h2 id="toughness-title">Fracture toughness</h2>
       <p class="section-lead">Fracture toughness measures a material&rsquo;s resistance to extension of an existing crack under specified conditions.</p>
+      <div class="figure-pair constraint-model" aria-labelledby="constraint-model">
+        <div>
+          <h3 id="constraint-model">Thickness and crack-tip constraint</h3>
+          <p>Take <i>z</i> along the crack front, through the specimen thickness <i>B</i>. At a traction-free face, stress normal to that face is zero. A thin specimen is often approximated by <strong>plane stress</strong>, with &sigma;<sub>zz</sub> &asymp; 0. Material near its tip can contract and deform through the thickness.</p>
+          <p>In a sufficiently thick specimen, the surrounding material restrains that deformation in the interior. <strong>Plane strain</strong> approximates this region with &epsilon;<sub>zz</sub> &asymp; 0. Tensile stress develops along <i>z</i>, increasing constraint on plastic flow. Surface regions still have lower constraint.</p>
+          <p>Small-scale yielding requires a plastic zone small compared with the crack size and remaining ligament, so an elastic stress intensity factor can characterize the surrounding field. A plane-strain <i>K</i><sub>Ic</sub> test also needs sufficient thickness to maintain high constraint in the interior. The method&rsquo;s size and geometry requirements help establish these conditions.</p>
+          <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19920021173">NASA primer, &sect;&sect;2.3 and 4.1</a> &middot; <a href="https://store.astm.org/e0399-24.html">ASTM E399</a></p>
+        </div>
+        <figure class="fracture-card technical-figure">
+          <img src="constraint-comparison.svg" alt="Schematic comparing a thin cracked specimen with low through-thickness constraint and a thick specimen with a constrained interior" loading="lazy">
+          <figcaption>Conceptual thickness comparison. Plastic-zone shapes and relative sizes are illustrative. The stress state varies along a real crack front.</figcaption>
+        </figure>
+      </div>
       <div class="two-up">
         <article class="fracture-card">
           <h3>Compare the applied intensity with toughness</h3>
           <p><i>K</i><sub>Ic</sub> is the Mode I plane-strain fracture toughness measured under conditions of predominantly linear elastic response. Under matching conditions, the fracture criterion is</p>
           <p class="formula"><i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub></p>
-          <p>Toughness can depend on temperature, loading rate, and crack orientation. With appreciable crack-tip plasticity, toughness can be characterized by the <i>J</i>-integral or crack-tip opening displacement (CTOD), subject to the limits of the test method. For stable tearing, a resistance curve describes how resistance changes as the crack extends.</p>
+          <p>Toughness can depend on temperature, loading rate, crack orientation, and environment. When the plastic zone grows too large for small-scale yielding, use an elastic-plastic parameter such as the <i>J</i>-integral or crack-tip opening displacement (CTOD), within the chosen method&rsquo;s limits. A resistance curve records how resistance changes during stable tearing. Whether extension becomes unstable also depends on how the applied driving force changes as the crack grows.</p>
         </article>
         <article class="fracture-card crack-demo" aria-labelledby="crack-demo-title">
           <h3 id="crack-demo-title">Vary the crack length</h3>
@@ -329,7 +391,7 @@
       <p class="section-note">The toughness comparison addresses fracture under the stated load. Under cyclic loading, fatigue can extend a crack at peak stress intensities below <i>K</i><sub>Ic</sub>, as the <a href="#comet">Comet investigation</a> illustrates.</p>
       <article class="fracture-card worked-example">
         <h3>Find a critical edge-crack depth</h3>
-        <p>A wide plate in tension has &sigma; = 160 MPa and <i>K</i><sub>Ic</sub> = 30 MPa&radic;m. Assume Mode I, small-scale yielding, and <i>Y</i> = 1.12 over the relevant crack sizes.</p>
+        <p>A wide plate in tension has &sigma; = 160 MPa and <i>K</i><sub>Ic</sub> = 30 MPa&radic;m. Assume Mode I, plane strain, small-scale yielding, and <i>Y</i> = 1.12 over the relevant crack sizes.</p>
         <p>Set <i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub>. Then <i>a</i><sub>c</sub> = (30/(1.12 &times; 160))<sup>2</sup>/&pi; = 0.00892 m = <strong>8.92 mm</strong>.</p>
       </article>
     </section>
@@ -338,26 +400,71 @@
       <h2 id="testing-title">Fracture toughness testing</h2>
       <p class="section-lead">Grow a sharp fatigue precrack from a machined starter notch. Load the specimen so the crack opens in Mode I, and record force and displacement. Use the measured crack length and specimen geometry to determine resistance to crack extension.</p>
       <div class="two-up">
-        <article class="fracture-card"><h3>Compact tension, C(T)</h3><p>Two pins pull through holes in the specimen. The resulting moment opens the crack. Measure crack length from the load line and use the C(T) geometry calibration.</p></article>
-        <article class="fracture-card"><h3>Single-edge bend, SE(B)</h3><p>A loading roller bends a notched bar over two supports. The precrack lies on the tensile side, opposite the loading roller. The calibration includes the support span.</p></article>
+        <figure class="fracture-card technical-figure">
+          <h3>Compact tension, C(T)</h3>
+          <img src="compact-tension.svg" width="440" height="338" alt="Compact tension specimen with pin forces F, load line, total crack length a, width W, thickness B, starter notch and fatigue precrack" loading="lazy">
+          <figcaption>Two pins pull through the holes and open the crack. Measure both <i>a</i> and <i>W</i> from the pin load line. The total crack length includes the starter notch and fatigue precrack.</figcaption>
+        </figure>
+        <figure class="fracture-card technical-figure">
+          <h3>Single-edge bend, SE(B)</h3>
+          <img src="bend-specimen.svg" width="440" height="300" alt="Single-edge bend specimen with central force F, two supports separated by S, crack length a, width W, thickness B, starter notch and fatigue precrack" loading="lazy">
+          <figcaption>The center roller bends the bar over two supports. The crack is on the tensile side. Measure <i>a</i> from the notched surface to the fatigue crack tip. This example uses span <i>S</i> = 4<i>W</i>.</figcaption>
+        </figure>
       </div>
-      <dl class="test-methods fracture-card">
-        <div><dt><a href="https://store.astm.org/standards/e399">ASTM E399</a></dt><dd>Mode I plane-strain <i>K</i><sub>Ic</sub> when the response is predominantly linear elastic and the result passes the prescribed validity checks.</dd></div>
-        <div><dt><a href="https://store.astm.org/standards/e1820">ASTM E1820</a></dt><dd>Mode I toughness using <i>J</i> or crack-tip opening displacement (CTOD), including resistance curves for stable crack extension.</dd></div>
-        <div><dt><a href="https://www.iso.org/standard/78208.html">ISO 12135</a></dt><dd>Quasistatic fracture toughness of metallic materials using precracked specimens.</dd></div>
-      </dl>
-      <figure class="fracture-card specimen-example">
-        <img src="disk-compact-specimen.jpg" width="664" height="794" alt="Published disk compact tension specimen sketch with two loading holes, starter notch, remaining ligament, width, and thickness labeled" loading="lazy">
-        <figcaption>
-          <h3>A published disk compact specimen</h3>
-          <p>The disk compact DC(T) specimen is a variation on the compact tension geometry. This research drawing shows the starter notch, remaining ligament, thickness, and width. The lab below shows rectangular C(T) and SE(B) sketches.</p>
-          <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6981386/#materials-13-00244-f002">Kong et al., <i>Materials</i> (2020), Figure 2</a> &middot; <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
-        </figcaption>
-      </figure>
+      <p class="section-note">These schematics show the dimensional conventions. The selected standard supplies the permitted proportions, tolerances, notch preparation, and precrack requirements.</p>
+      <div class="fracture-card test-selection">
+        <h3>Choose the test from the material response</h3>
+        <table class="fracture-data">
+          <caption>Mode I fracture toughness methods for metallic materials</caption>
+          <thead><tr><th scope="col">Response or purpose</th><th scope="col">Method</th><th scope="col">Reported result</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Predominantly elastic response with sufficient plane-strain constraint</th><td data-label="Method"><a href="https://store.astm.org/e0399-24.html">ASTM E399</a></td><td data-label="Reported result">Qualified <i>K</i><sub>Ic</sub>. Use the method within its scope and assess every validity requirement.</td></tr>
+            <tr><th scope="row">Elastic-plastic response or stable ductile tearing</th><td data-label="Method"><a href="https://store.astm.org/standards/e1820">ASTM E1820</a></td><td data-label="Reported result"><i>J</i> or CTOD toughness, including resistance curves and the applicable initiation or instability measure.</td></tr>
+            <tr><th scope="row">Ferritic-steel cleavage in the transition range</th><td data-label="Method"><a href="https://store.astm.org/standards/e1921/">ASTM E1921</a>, using its prescribed testing procedures</td><td data-label="Reported result">Master Curve reference temperature <i>T</i><sub>0</sub> from a population of cleavage-toughness results, with statistical treatment of scatter.</td></tr>
+            <tr><th scope="row">Unified quasistatic characterization</th><td data-label="Method"><a href="https://www.iso.org/standard/78208.html">ISO 12135</a></td><td data-label="Reported result"><i>K</i>, <i>J</i>, CTOD, and resistance curves under the applicable procedures.</td></tr>
+          </tbody>
+        </table>
+        <p>ASTM E399 directs cleavage-fracture testing to E1921 and E1820. This connects the earlier ferritic-steel transition discussion to an appropriate precracked-specimen test. A Charpy transition temperature and the Master Curve reference temperature characterize different test responses.</p>
+      </div>
+      <h3 class="subsection-heading">From the specimen to a qualified result</h3>
+      <ol class="test-workflow">
+        <li>Document the material, crack orientation, temperature, loading rate, and specimen dimensions. Produce and measure a fatigue precrack meeting the chosen method.</li>
+        <li>Record force <i>F</i> against the prescribed displacement. For the E399 procedure, evaluate the record with its initial elastic slope and 95% secant construction to determine <i>F</i><sub>Q</sub>.</li>
+        <li>Calculate conditional toughness <i>K</i><sub>Q</sub> from <i>F</i><sub>Q</sub> and the measured geometry. Apply the force-record, size, precrack, and other prescribed checks.</li>
+        <li>Report <i>K</i><sub>Ic</sub> only when qualification succeeds. Otherwise retain the conditional result and select a suitable size or test procedure.</li>
+      </ol>
+      <p>The 95% secant has 95% of the initial elastic slope. It is a prescribed evaluation construction. Microscopic damage or crack extension can begin before its intersection with the record. Records containing earlier peaks require the full selection rules for <i>F</i><sub>Q</sub>.</p>
       <article class="fracture-card worked-example">
-        <h3>Check whether a test qualifies</h3>
-        <p>A compact tension test gives a conditional result <i>K</i><sub>Q</sub> = 32 MPa&radic;m. The force record gives <i>P</i><sub>Q</sub> = 10.0 kN and a maximum force <i>P</i><sub>max</sub> = 11.8 kN. The ratio <i>P</i><sub>max</sub>/<i>P</i><sub>Q</sub> = 1.18 exceeds the ASTM E399 limit of 1.10. The result remains conditional <i>K</i><sub>Q</sub>. Qualification requires the force-record check and all other applicable checks.</p>
+        <h3>Evaluate a compact tension test</h3>
+        <p>A hypothetical C(T) test has <i>W</i> = 40 mm, <i>B</i> = 20 mm, <i>a</i> = 20 mm, and 0.2% proof strength &sigma;<sub>py, 0.2</sub> = 450 MPa at the test temperature. Use the synthetic force&ndash;CMOD record below and the C(T) shape factor <i>f</i>(0.5) = 9.659. Assume the remaining specimen, precrack, temperature, and loading requirements have been documented as satisfied for an E399 test.</p>
+        <div class="figure-pair">
+          <div>
+            <ol class="solution-steps">
+              <li><strong>Read the conditional force.</strong> The smoothly rising record intersects the 95% secant at <i>F</i><sub>Q</sub> = 15.00 kN. Its maximum is <i>F</i><sub>max</sub> = 16.05 kN.</li>
+              <li><strong>Calculate toughness.</strong> With force in N and lengths in m, <i>K</i><sub>Q</sub> = [<i>F</i><sub>Q</sub>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(<i>a</i>/<i>W</i>). Substitution gives [15,000/(0.020&radic;0.040)] &times; 9.659 = 36.22 &times; 10<sup>6</sup> Pa&radic;m = <strong>36.2 MPa&radic;m</strong>.</li>
+              <li><strong>Check the force ratio.</strong> <i>F</i><sub>max</sub>/<i>F</i><sub>Q</sub> = 16.05/15.00 = <strong>1.07 &le; 1.10</strong>.</li>
+              <li><strong>Check the remaining ligament.</strong> <i>W</i> &minus; <i>a</i> = 20 mm. The required minimum is 2.5(<i>K</i><sub>Q</sub>/&sigma;<sub>py, 0.2</sub>)<sup>2</sup> = 2.5(36.22/450)<sup>2</sup> m = <strong>16.2 mm</strong>. The ligament passes.</li>
+            </ol>
+          </div>
+          <figure class="technical-figure worked-record">
+            <img src="toughness-worked-record.svg" width="440" height="370" alt="Synthetic force versus crack-mouth opening record with initial elastic slope, 95 percent secant, F Q at 15.00 kilonewtons and F max at 16.05 kilonewtons" loading="lazy">
+            <figcaption>The original slope is 131.58 kN/mm and the secant slope is 125.00 kN/mm. The secant crosses at 0.120 mm and 15.00 kN.</figcaption>
+          </figure>
+        </div>
+        <p><strong>Interpretation.</strong> Both calculated checks pass. Together with the stated assumption that all remaining requirements are satisfied, this hypothetical test yields <i>K</i><sub>Ic</sub> = 36.2 MPa&radic;m. An experimental report must substantiate those remaining requirements.</p>
+        <p class="source-line"><a href="https://store.astm.org/e0399-24.html">ASTM E399 test scope and evaluation requirements</a> &middot; <a href="https://ntrs.nasa.gov/citations/20180007964">NASA discussion of the secant procedure</a></p>
       </article>
+      <article class="fracture-card worked-example">
+        <h3>Interpret a failed force check</h3>
+        <p>A second record gives <i>F</i><sub>Q</sub> = 10.0 kN and <i>F</i><sub>max</sub> = 11.8 kN. The ratio is 1.18, above 1.10. The result remains conditional <i>K</i><sub>Q</sub>. Meeting a size requirement cannot compensate for this failed force-record check.</p>
+      </article>
+      <details class="fracture-card supporting-figure">
+        <summary>A published disk compact specimen</summary>
+        <figure class="specimen-example">
+          <img src="disk-compact-specimen.jpg" width="664" height="794" alt="Published disk compact tension specimen sketch with loading holes, starter notch, remaining ligament, width and thickness" loading="lazy">
+          <figcaption><p>The disk compact DC(T) specimen provides another standardized geometry. Its calibration follows its own dimensions and loading arrangement.</p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6981386/#materials-13-00244-f002">Kong et al., <i>Materials</i> (2020), Figure 2</a> &middot; <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></figcaption>
+        </figure>
+      </details>
       <p><a class="button secondary" href="../../simulations/fracture-toughness/index.html">Run the fracture toughness lab and see specimen sketches</a></p>
     </section>
   </main>
