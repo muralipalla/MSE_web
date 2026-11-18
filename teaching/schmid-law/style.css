@@ -1,7 +1,7 @@
-.shell { width: min(74rem, calc(100% - 2rem)); margin: 2.5rem auto 5rem; }
-.hero { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; padding: 2rem 0 3rem; }
-.hero h1 { font-size: clamp(3.4rem, 7vw, 6rem); line-height: .98; letter-spacing: -.055em; margin: .3rem 0; }
-.lead { font-size: 1.14rem; color: var(--ink-soft); }
+.shell { width: min(74rem, calc(100% - 2rem)); margin: 1.5rem auto 5rem; }
+.hero { padding: .5rem 0 1.5rem; }
+.hero h1 { font-size: clamp(2.6rem, 5.2vw, 4.5rem); line-height: 1.05; letter-spacing: -.045em; margin: .3rem 0; }
+.lead { max-width: 52rem; font-size: 1.05rem; color: var(--ink-soft); margin: .7rem 0; }
 .start, .references a { color: var(--coral); font-weight: 800; text-underline-offset: 4px; }
 .intro { display: grid; grid-template-columns: 1fr .9fr; gap: 2rem; align-items: center; border-top: 1px solid var(--line); padding: 3rem 0; }
 h2 { font-size: clamp(1.8rem, 3vw, 2.7rem); line-height: 1.12; letter-spacing: -.03em; margin: .35rem 0 1rem; }
@@ -43,4 +43,4 @@ input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 .example { margin-top: 1rem; border-top: 4px solid var(--coral); }
 .example li { margin: .6rem 0; color: var(--ink-soft); }
 .references { margin-top: 3rem; background: #eeeaf7; }
-@media(max-width: 750px) { .hero, .intro, .workbench, .concepts { grid-template-columns: 1fr; } .hero { gap: .5rem; padding: 1rem 0 2rem; } .scene { height: 380px; } .concepts { padding-top: 2rem; } }
+@media(max-width: 750px) { .intro, .workbench, .concepts { grid-template-columns: 1fr; } .hero { padding: .5rem 0 1.5rem; } .scene { height: 380px; } .concepts { padding-top: 2rem; } }

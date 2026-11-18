@@ -54,13 +54,15 @@
     const cylinder = new THREE.Mesh(new THREE.CylinderGeometry(.75, .75, 4, 64, 1, false),
       new THREE.MeshPhongMaterial({ color: 0x8f9fc7, transparent: true, opacity: .25, side: THREE.DoubleSide, depthWrite: false }));
     model.add(cylinder);
-    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.CylinderGeometry(.75, .75, 4, 48)),
-      new THREE.LineBasicMaterial({ color: 0x5b6a95, transparent: true, opacity: .55 }));
-    model.add(edges);
-    const axis = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, -2.45, 0), new THREE.Vector3(0, 2.45, 0)]),
-      new THREE.LineDashedMaterial({ color: 0x777190, dashSize: .12, gapSize: .09 }));
-    axis.computeLineDistances();
-    model.add(axis);
+    const rimMaterial = new THREE.LineBasicMaterial({ color: 0x5b6a95, transparent: true, opacity: .55 });
+    for (const height of [-2, 2]) {
+      const points = [];
+      for (let i = 0; i < 64; i += 1) {
+        const angle = i * 2 * Math.PI / 64;
+        points.push(new THREE.Vector3(.75 * Math.cos(angle), height, .75 * Math.sin(angle)));
+      }
+      model.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), rimMaterial));
+    }
     function arrow(direction, origin, length, color) {
       const item = new THREE.ArrowHelper(direction, origin, length, color, .22, .12);
       model.add(item);
