@@ -150,6 +150,33 @@
         <p>A Charpy series gives 20 J at &minus;40 &deg;C and 50 J at &minus;20 &deg;C. Estimate <i>T</i><sub>27 J</sub> by linear interpolation between those points.</p>
         <p>The fraction of the interval is (27 &minus; 20)/(50 &minus; 20) = 7/30. Therefore <i>T</i><sub>27 J</sub> = &minus;40 + (7/30)(20) = &minus;35.3 &deg;C, or <strong>about &minus;35 &deg;C</strong>. This is a local interpolation estimate. Experimental uncertainty requires additional test results.</p>
       </article>
+      <article id="raghavan-transition-example" class="fracture-card worked-example" aria-labelledby="raghavan-transition-title">
+        <h3 id="raghavan-transition-title">Estimate how strain rate shifts the transition in molybdenum</h3>
+        <p>Molybdenum contains sharp cracks of half-length <i>a</i> = 2 &micro;m. Take Young&rsquo;s modulus <i>E</i> = 350 GPa and the energy per unit area of one new fracture surface &gamma;<sub>s</sub> = 2 J/m<sup>2</sup>. Its empirical yield-stress relation is</p>
+        <p class="formula">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>[&epsilon;&#775;/(1 s<sup>&minus;1</sup>)]</p>
+        <p>Here &sigma;<sub>y</sub> is in MPa, <i>T</i> is the numerical temperature in kelvin, and &epsilon;&#775; = d&epsilon;/dt is the imposed strain rate. The reference rate of 1 s<sup>&minus;1</sup> makes the logarithm&rsquo;s argument dimensionless. Estimate the transition temperature at (i) 10<sup>&minus;2</sup> s<sup>&minus;1</sup> and (ii) 10<sup>&minus;5</sup> s<sup>&minus;1</sup>.</p>
+        <p><strong>Model.</strong> Assume a central through crack in a large plate under plane stress, and hold <i>E</i>, &gamma;<sub>s</sub>, and <i>a</i> constant. Estimate the transition by equating the yield stress with the ideally brittle fracture stress. The <a href="#griffith">Griffith energy balance</a> below gives the fracture stress used here.</p>
+        <ol class="solution-steps">
+          <li><strong>Calculate the fracture stress.</strong> Two new surfaces require <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub> = 4 J/m<sup>2</sup>. Use the half-length <i>a</i> = 2 &times; 10<sup>&minus;6</sup> m and <i>E</i> = 350 &times; 10<sup>9</sup> Pa.
+            <p class="formula">&sigma;<sub>c</sub> = &radic;[2<i>E</i>&gamma;<sub>s</sub>/(&pi;<i>a</i>)] &asymp; 472.0 MPa</p>
+          </li>
+          <li><strong>Apply the crossover condition.</strong> Set &sigma;<sub>y</sub>(<i>T</i>, &epsilon;&#775;) = &sigma;<sub>c</sub>. Rearranging the supplied relation gives
+            <p class="formula"><i>T</i> = 173600 / {472.0349 &minus; 20.6 &minus; 61.3 log<sub>10</sub>[&epsilon;&#775;/(1 s<sup>&minus;1</sup>)]}</p>
+            <p>The result is in kelvin. Additional digits in the fracture stress are retained when evaluating the denominator.</p>
+          </li>
+          <li><strong>Substitute each strain rate.</strong> At 10<sup>&minus;2</sup> s<sup>&minus;1</sup>, the yield law becomes &sigma;<sub>y</sub> = &minus;102.0 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 102.0). At 10<sup>&minus;5</sup> s<sup>&minus;1</sup>, it becomes &sigma;<sub>y</sub> = &minus;285.9 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 285.9).</li>
+        </ol>
+        <table class="fracture-data">
+          <caption>Predicted yielding&ndash;fracture crossover temperatures</caption>
+          <thead><tr><th scope="col">Strain rate &epsilon;&#775;</th><th scope="col">Temperature (K)</th><th scope="col">Temperature (&deg;C)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">10<sup>&minus;2</sup> s<sup>&minus;1</sup></th><td data-label="Temperature (K)"><strong>&asymp; 302 K</strong></td><td data-label="Temperature (°C)">&asymp; 29 &deg;C</td></tr>
+            <tr><th scope="row">10<sup>&minus;5</sup> s<sup>&minus;1</sup></th><td data-label="Temperature (K)"><strong>&asymp; 229 K</strong></td><td data-label="Temperature (°C)">&asymp; &minus;44 &deg;C</td></tr>
+          </tbody>
+        </table>
+        <p>The higher strain rate raises the yield stress at a given temperature, so the crossover with the fixed fracture stress occurs at a higher temperature. In this model, yielding occurs first on the warmer side of the crossover and ideally brittle fracture occurs first on the colder side. The estimates depend on the assumed flaw size and fracture model. A measured Charpy transition temperature additionally depends on its chosen energy or fracture-appearance criterion.</p>
+        <p class="source-line">Adapted from V. Raghavan, <i>Materials Science and Engineering: A First Course</i>, Example 12.3, PHI Learning. The source&rsquo;s Young&rsquo;s modulus <i>Y</i> is written <i>E</i>, with yield stress &sigma;<sub>y</sub>, fracture stress &sigma;<sub>c</sub>, crack half-length <i>a</i>, and surface energy &gamma;<sub>s</sub> following this lesson&rsquo;s notation. <a href="https://www.phindia.com/Books/BookDetail/9788120350922/MATERIALS-SCIENCE-AND-ENGINEERING-A-First-Course-RAGHAVAN">Publisher reference</a></p>
+      </article>
     </section>
 
     <section id="impact" class="fracture-section" aria-labelledby="impact-title">
