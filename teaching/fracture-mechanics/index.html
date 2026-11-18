@@ -158,33 +158,7 @@
         <p>A Charpy series gives 20 J at &minus;40 &deg;C and 50 J at &minus;20 &deg;C. Estimate <i>T</i><sub>27 J</sub> by linear interpolation between those points.</p>
         <p>The fraction of the interval is (27 &minus; 20)/(50 &minus; 20) = 7/30. Therefore <i>T</i><sub>27 J</sub> = &minus;40 + (7/30)(20) = &minus;35.3 &deg;C, or <strong>about &minus;35 &deg;C</strong>. This is a local interpolation estimate. Experimental uncertainty requires additional test results.</p>
       </article>
-      <article id="raghavan-transition-example" class="fracture-card worked-example" aria-labelledby="raghavan-transition-title">
-        <h3 id="raghavan-transition-title">Estimate how strain rate shifts the transition in molybdenum</h3>
-        <p>Molybdenum contains sharp cracks of half-length <i>a</i> = 2 &micro;m. Take Young&rsquo;s modulus <i>E</i> = 350 GPa and the energy per unit area of one new fracture surface &gamma;<sub>s</sub> = 2 J/m<sup>2</sup>. Its empirical yield-stress relation is</p>
-        <p class="formula">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>(&epsilon;&#775;)</p>
-        <p>Use numerical values with &sigma;<sub>y</sub> in MPa, <i>T</i> in kelvin, and the imposed strain rate &epsilon;&#775; = d&epsilon;/dt in s<sup>&minus;1</sup>. Estimate the transition temperature at (i) 10<sup>&minus;2</sup> s<sup>&minus;1</sup> and (ii) 10<sup>&minus;5</sup> s<sup>&minus;1</sup>.</p>
-        <p><strong>Model.</strong> Assume a central through crack in a large plate under plane stress, and hold <i>E</i>, &gamma;<sub>s</sub>, and <i>a</i> constant. Estimate the transition by equating the yield stress with the ideally brittle fracture stress. The <a href="#griffith">Griffith energy balance</a> below gives the fracture stress used here.</p>
-        <ol class="solution-steps">
-          <li><strong>Calculate the fracture stress.</strong> Two new surfaces require <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub> = 4 J/m<sup>2</sup>. Use the half-length <i>a</i> = 2 &times; 10<sup>&minus;6</sup> m and <i>E</i> = 350 &times; 10<sup>9</sup> Pa.
-            <p class="formula">&sigma;<sub>c</sub> = &radic;[2<i>E</i>&gamma;<sub>s</sub>/(&pi;<i>a</i>)] &asymp; 472.0 MPa</p>
-          </li>
-          <li><strong>Apply the crossover condition.</strong> Set &sigma;<sub>y</sub>(<i>T</i>, &epsilon;&#775;) = &sigma;<sub>c</sub>. Rearranging the supplied relation gives
-            <p class="formula"><i>T</i> = 173600 / {472.0349 &minus; 20.6 &minus; 61.3 log<sub>10</sub>(&epsilon;&#775;)}</p>
-            <p>The result is in kelvin. Additional digits in the fracture stress are retained when evaluating the denominator.</p>
-          </li>
-          <li><strong>Substitute each strain rate.</strong> At 10<sup>&minus;2</sup> s<sup>&minus;1</sup>, the yield law becomes &sigma;<sub>y</sub> = &minus;102.0 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 102.0). At 10<sup>&minus;5</sup> s<sup>&minus;1</sup>, it becomes &sigma;<sub>y</sub> = &minus;285.9 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 285.9).</li>
-        </ol>
-        <table class="fracture-data">
-          <caption>Predicted yielding&ndash;fracture crossover temperatures</caption>
-          <thead><tr><th scope="col">Strain rate &epsilon;&#775;</th><th scope="col">Temperature (K)</th><th scope="col">Temperature (&deg;C)</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">10<sup>&minus;2</sup> s<sup>&minus;1</sup></th><td data-label="Temperature (K)"><strong>&asymp; 302 K</strong></td><td data-label="Temperature (°C)">&asymp; 29 &deg;C</td></tr>
-            <tr><th scope="row">10<sup>&minus;5</sup> s<sup>&minus;1</sup></th><td data-label="Temperature (K)"><strong>&asymp; 229 K</strong></td><td data-label="Temperature (°C)">&asymp; &minus;44 &deg;C</td></tr>
-          </tbody>
-        </table>
-        <p>The higher strain rate raises the yield stress at a given temperature, so the crossover with the fixed fracture stress occurs at a higher temperature. In this model, yielding occurs first on the warmer side of the crossover and ideally brittle fracture occurs first on the colder side. The estimates depend on the assumed flaw size and fracture model. A measured Charpy transition temperature additionally depends on its chosen energy or fracture-appearance criterion.</p>
-        <p class="source-line">Adapted from V. Raghavan, <i>Materials Science and Engineering: A First Course</i>, Example 12.3, PHI Learning. The source&rsquo;s Young&rsquo;s modulus <i>Y</i> is written <i>E</i>, with yield stress &sigma;<sub>y</sub>, fracture stress &sigma;<sub>c</sub>, crack half-length <i>a</i>, and surface energy &gamma;<sub>s</sub> following this lesson&rsquo;s notation. <a href="https://www.phindia.com/Books/BookDetail/9788120350922/MATERIALS-SCIENCE-AND-ENGINEERING-A-First-Course-RAGHAVAN">Publisher reference</a></p>
-      </article>
+      <p><a href="#raghavan-transition-example">Apply Griffith theory to the strain-rate dependence of the transition in the worked example near the end.</a></p>
     </section>
 
     <section id="impact" class="fracture-section" aria-labelledby="impact-title">
@@ -200,17 +174,7 @@
           <figcaption>Fixture schematics for metallic specimens. <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication260-164.pdf">NIST comparison of the two setups</a></figcaption>
         </figure>
       </div>
-      <table class="fracture-quantity-table">
-        <caption>Quantities used to describe fracture</caption>
-        <thead><tr><th scope="col">Quantity</th><th scope="col">Unit</th><th scope="col">What it measures</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Absorbed impact energy, <i>E</i><sub>abs</sub></th><td data-label="Unit">J</td><td data-label="What it measures">Energy absorbed in a specimen tested with a specified impact setup.</td></tr>
-          <tr><th scope="row">Energy release rate, <i>G</i></th><td data-label="Unit">J/m<sup>2</sup></td><td data-label="What it measures">Mechanical energy available per increase in projected crack area. Its critical value is <i>G</i><sub>c</sub>.</td></tr>
-          <tr><th scope="row"><i>J</i>-integral</th><td data-label="Unit">J/m<sup>2</sup></td><td data-label="What it measures">A crack-driving parameter used for elastic-plastic fracture under the applicable test conditions. A qualified initiation value is <i>J</i><sub>Ic</sub>.</td></tr>
-          <tr><th scope="row">Stress intensity, <i>K</i><sub>I</sub></th><td data-label="Unit">MPa&radic;m</td><td data-label="What it measures">Amplitude of the Mode I elastic crack-tip field. A qualified plane-strain critical value is <i>K</i><sub>Ic</sub>.</td></tr>
-        </tbody>
-      </table>
-      <p>Impact energy includes deformation of the specimen as well as fracture. Estimating fracture toughness from impact energy requires an empirical correlation validated for the material and test conditions. The following sections introduce crack area, crack-tip stresses, and the corresponding toughness parameters. <a href="https://www.nist.gov/publications/cost-effective-alternatives-conventional-charpy-tests-measuring-impact-toughness-very">NIST investigation of impact-energy limitations</a></p>
+      <p>Impact energy includes deformation of the specimen as well as fracture. Estimating fracture toughness from impact energy requires an empirical correlation validated for the material and test conditions. The <a href="#fracture-quantities">comparison of energy and toughness quantities</a> follows their definitions later in the lesson. <a href="https://www.nist.gov/publications/cost-effective-alternatives-conventional-charpy-tests-measuring-impact-toughness-very">NIST investigation of impact-energy limitations</a></p>
       <article class="fracture-card worked-example">
         <h3>Calculate the absorbed impact energy</h3>
         <p>The pendulum loses 110 J between release and the peak after fracture. The correction for machine losses over this swing is 2 J. The specimen&rsquo;s reported absorbed energy is 110 &minus; 2 = <strong>108 J</strong>.</p>
@@ -286,12 +250,12 @@
       <div class="figure-pair">
         <div class="fracture-card">
           <p>A growing crack releases mechanical energy and creates new surfaces. The energy release rate <i>G</i> is the decrease in mechanical potential energy, comprising elastic strain energy minus the work of external loads, per unit increase in projected crack area. That area counts the advancing crack once. Two opposing surfaces are created, so the ideally brittle Griffith model has a resistance <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub>, where &gamma;<sub>s</sub> is the energy per unit area of one surface.</p>
+          <p><i>E</i>&prime; = <i>E</i> in plane stress and <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>) in plane strain, where &nu; is Poisson&rsquo;s ratio. Plane stress allows deformation through the thickness. Plane strain approximates a constrained interior with very little strain in that direction. The <a href="#constraint-model">thickness comparison</a> below illustrates both conditions.</p>
           <p>For a central through crack of total length <strong>2<i>a</i></strong> in an effectively infinite plate under uniform tension &sigma;, the energy release rate and critical tensile stress are</p>
           <div class="formula-row">
             <p class="formula"><i>G</i> = &pi;<i>a</i>&sigma;<sup>2</sup>/<i>E</i>&prime;</p>
             <p class="formula">&sigma;<sub>c</sub> = &radic;(<i>E</i>&prime;<i>G</i><sub>c</sub>/(&pi;<i>a</i>))</p>
           </div>
-          <p><i>E</i>&prime; = <i>E</i> in plane stress and <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>) in plane strain, where &nu; is Poisson&rsquo;s ratio. Plane stress allows deformation through the thickness. Plane strain approximates a constrained interior with very little strain in that direction. The <a href="#constraint-model">thickness comparison</a> below illustrates both conditions.</p>
           <p>Crack extension becomes energetically possible when <i>G</i> reaches the resistance. At fixed remote stress in this ideal model, <i>G</i> increases as the crack extends while <i>G</i><sub>c</sub> stays constant, allowing unstable growth. In metals, plastic deformation dissipates additional energy, so the measured fracture resistance can greatly exceed 2&gamma;<sub>s</sub>.</p>
           <p class="source-line"><a href="https://doi.org/10.1098/rsta.1921.0006">Griffith&rsquo;s original paper</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.960-16e2.pdf">NIST fractography and fracture mechanics guide</a></p>
         </div>
@@ -424,10 +388,47 @@
         </article>
       </div>
       <p class="section-note">The toughness comparison addresses fracture under the stated load. Under cyclic loading, fatigue can extend a crack at peak stress intensities below <i>K</i><sub>Ic</sub>, as the <a href="#comet">Comet investigation</a> illustrates.</p>
+      <table class="fracture-quantity-table" id="fracture-quantities">
+        <caption>Quantities used to describe fracture</caption>
+        <thead><tr><th scope="col">Quantity</th><th scope="col">Unit</th><th scope="col">What it measures</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Absorbed impact energy, <i>E</i><sub>abs</sub></th><td data-label="Unit">J</td><td data-label="What it measures">Energy absorbed in a specimen tested with a specified impact setup.</td></tr>
+          <tr><th scope="row">Energy release rate, <i>G</i></th><td data-label="Unit">J/m<sup>2</sup></td><td data-label="What it measures">Mechanical energy available per increase in projected crack area. Its critical value is <i>G</i><sub>c</sub>.</td></tr>
+          <tr><th scope="row"><i>J</i>-integral</th><td data-label="Unit">J/m<sup>2</sup></td><td data-label="What it measures">A crack-driving parameter used for elastic-plastic fracture under the applicable test conditions. A qualified initiation value is <i>J</i><sub>Ic</sub>.</td></tr>
+          <tr><th scope="row">Stress intensity, <i>K</i><sub>I</sub></th><td data-label="Unit">MPa&radic;m</td><td data-label="What it measures">Amplitude of the Mode I elastic crack-tip field. A qualified plane-strain critical value is <i>K</i><sub>Ic</sub>.</td></tr>
+        </tbody>
+      </table>
       <article class="fracture-card worked-example">
         <h3>Find a critical edge-crack depth</h3>
         <p>A wide plate in tension has &sigma; = 160 MPa and <i>K</i><sub>Ic</sub> = 30 MPa&radic;m. Assume Mode I, plane strain, small-scale yielding, and <i>Y</i> = 1.12 over the relevant crack sizes.</p>
         <p>Set <i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub>. Then <i>a</i><sub>c</sub> = (30/(1.12 &times; 160))<sup>2</sup>/&pi; = 0.00892 m = <strong>8.92 mm</strong>.</p>
+      </article>
+      <article id="raghavan-transition-example" class="fracture-card worked-example" aria-labelledby="raghavan-transition-title">
+        <h3 id="raghavan-transition-title">Estimate how strain rate shifts the transition in molybdenum</h3>
+        <p>Molybdenum contains sharp cracks of half-length <i>a</i> = 2 &micro;m. Take Young&rsquo;s modulus <i>E</i> = 350 GPa and the energy per unit area of one new fracture surface &gamma;<sub>s</sub> = 2 J/m<sup>2</sup>. Its empirical yield-stress relation is</p>
+        <p class="formula">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>(&epsilon;&#775;)</p>
+        <p>Use numerical values with &sigma;<sub>y</sub> in MPa, <i>T</i> in kelvin, and the imposed strain rate &epsilon;&#775; = d&epsilon;/dt in s<sup>&minus;1</sup>. Estimate the transition temperature at (i) 10<sup>&minus;2</sup> s<sup>&minus;1</sup> and (ii) 10<sup>&minus;5</sup> s<sup>&minus;1</sup>.</p>
+        <p><strong>Model.</strong> Assume a central through crack in a large plate under plane stress, and hold <i>E</i>, &gamma;<sub>s</sub>, and <i>a</i> constant. Estimate the transition by equating the yield stress with the ideally brittle fracture stress. The <a href="#griffith">Griffith energy balance</a> introduced above gives the fracture stress used here.</p>
+        <ol class="solution-steps">
+          <li><strong>Calculate the fracture stress.</strong> Two new surfaces require <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub> = 4 J/m<sup>2</sup>. Use the half-length <i>a</i> = 2 &times; 10<sup>&minus;6</sup> m and <i>E</i> = 350 &times; 10<sup>9</sup> Pa.
+            <p class="formula">&sigma;<sub>c</sub> = &radic;[2<i>E</i>&gamma;<sub>s</sub>/(&pi;<i>a</i>)] &asymp; 472.0 MPa</p>
+          </li>
+          <li><strong>Apply the crossover condition.</strong> Set &sigma;<sub>y</sub>(<i>T</i>, &epsilon;&#775;) = &sigma;<sub>c</sub>. Rearranging the supplied relation gives
+            <p class="formula"><i>T</i> = 173600 / {472.0349 &minus; 20.6 &minus; 61.3 log<sub>10</sub>(&epsilon;&#775;)}</p>
+            <p>The result is in kelvin. Additional digits in the fracture stress are retained when evaluating the denominator.</p>
+          </li>
+          <li><strong>Substitute each strain rate.</strong> At 10<sup>&minus;2</sup> s<sup>&minus;1</sup>, the yield law becomes &sigma;<sub>y</sub> = &minus;102.0 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 102.0). At 10<sup>&minus;5</sup> s<sup>&minus;1</sup>, it becomes &sigma;<sub>y</sub> = &minus;285.9 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 285.9).</li>
+        </ol>
+        <table class="fracture-data">
+          <caption>Predicted yielding&ndash;fracture crossover temperatures</caption>
+          <thead><tr><th scope="col">Strain rate &epsilon;&#775;</th><th scope="col">Temperature (K)</th><th scope="col">Temperature (&deg;C)</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">10<sup>&minus;2</sup> s<sup>&minus;1</sup></th><td data-label="Temperature (K)"><strong>&asymp; 302 K</strong></td><td data-label="Temperature (°C)">&asymp; 29 &deg;C</td></tr>
+            <tr><th scope="row">10<sup>&minus;5</sup> s<sup>&minus;1</sup></th><td data-label="Temperature (K)"><strong>&asymp; 229 K</strong></td><td data-label="Temperature (°C)">&asymp; &minus;44 &deg;C</td></tr>
+          </tbody>
+        </table>
+        <p>The higher strain rate raises the yield stress at a given temperature, so the crossover with the fixed fracture stress occurs at a higher temperature. In this model, yielding occurs first on the warmer side of the crossover and ideally brittle fracture occurs first on the colder side. The estimates depend on the assumed flaw size and fracture model. A measured Charpy transition temperature additionally depends on its chosen energy or fracture-appearance criterion.</p>
+        <p class="source-line">Adapted from V. Raghavan, <i>Materials Science and Engineering: A First Course</i>, Example 12.3, PHI Learning. The source&rsquo;s Young&rsquo;s modulus <i>Y</i> is written <i>E</i>, with yield stress &sigma;<sub>y</sub>, fracture stress &sigma;<sub>c</sub>, crack half-length <i>a</i>, and surface energy &gamma;<sub>s</sub> following this lesson&rsquo;s notation. <a href="https://www.phindia.com/Books/BookDetail/9788120350922/MATERIALS-SCIENCE-AND-ENGINEERING-A-First-Course-RAGHAVAN">Publisher reference</a></p>
       </article>
     </section>
 
