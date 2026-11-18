@@ -161,15 +161,15 @@
       <article id="raghavan-transition-example" class="fracture-card worked-example" aria-labelledby="raghavan-transition-title">
         <h3 id="raghavan-transition-title">Estimate how strain rate shifts the transition in molybdenum</h3>
         <p>Molybdenum contains sharp cracks of half-length <i>a</i> = 2 &micro;m. Take Young&rsquo;s modulus <i>E</i> = 350 GPa and the energy per unit area of one new fracture surface &gamma;<sub>s</sub> = 2 J/m<sup>2</sup>. Its empirical yield-stress relation is</p>
-        <p class="formula">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>[&epsilon;&#775;/(1 s<sup>&minus;1</sup>)]</p>
-        <p>Here &sigma;<sub>y</sub> is in MPa, <i>T</i> is the numerical temperature in kelvin, and &epsilon;&#775; = d&epsilon;/dt is the imposed strain rate. The reference rate of 1 s<sup>&minus;1</sup> makes the logarithm&rsquo;s argument dimensionless. Estimate the transition temperature at (i) 10<sup>&minus;2</sup> s<sup>&minus;1</sup> and (ii) 10<sup>&minus;5</sup> s<sup>&minus;1</sup>.</p>
+        <p class="formula">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>(&epsilon;&#775;)</p>
+        <p>Use numerical values with &sigma;<sub>y</sub> in MPa, <i>T</i> in kelvin, and the imposed strain rate &epsilon;&#775; = d&epsilon;/dt in s<sup>&minus;1</sup>. Estimate the transition temperature at (i) 10<sup>&minus;2</sup> s<sup>&minus;1</sup> and (ii) 10<sup>&minus;5</sup> s<sup>&minus;1</sup>.</p>
         <p><strong>Model.</strong> Assume a central through crack in a large plate under plane stress, and hold <i>E</i>, &gamma;<sub>s</sub>, and <i>a</i> constant. Estimate the transition by equating the yield stress with the ideally brittle fracture stress. The <a href="#griffith">Griffith energy balance</a> below gives the fracture stress used here.</p>
         <ol class="solution-steps">
           <li><strong>Calculate the fracture stress.</strong> Two new surfaces require <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub> = 4 J/m<sup>2</sup>. Use the half-length <i>a</i> = 2 &times; 10<sup>&minus;6</sup> m and <i>E</i> = 350 &times; 10<sup>9</sup> Pa.
             <p class="formula">&sigma;<sub>c</sub> = &radic;[2<i>E</i>&gamma;<sub>s</sub>/(&pi;<i>a</i>)] &asymp; 472.0 MPa</p>
           </li>
           <li><strong>Apply the crossover condition.</strong> Set &sigma;<sub>y</sub>(<i>T</i>, &epsilon;&#775;) = &sigma;<sub>c</sub>. Rearranging the supplied relation gives
-            <p class="formula"><i>T</i> = 173600 / {472.0349 &minus; 20.6 &minus; 61.3 log<sub>10</sub>[&epsilon;&#775;/(1 s<sup>&minus;1</sup>)]}</p>
+            <p class="formula"><i>T</i> = 173600 / {472.0349 &minus; 20.6 &minus; 61.3 log<sub>10</sub>(&epsilon;&#775;)}</p>
             <p>The result is in kelvin. Additional digits in the fracture stress are retained when evaluating the denominator.</p>
           </li>
           <li><strong>Substitute each strain rate.</strong> At 10<sup>&minus;2</sup> s<sup>&minus;1</sup>, the yield law becomes &sigma;<sub>y</sub> = &minus;102.0 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 102.0). At 10<sup>&minus;5</sup> s<sup>&minus;1</sup>, it becomes &sigma;<sub>y</sub> = &minus;285.9 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 285.9).</li>
