@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 224" role="img" aria-labelledby="crack-tip-title crack-tip-desc">
+  <title id="crack-tip-title">Polar coordinates at a crack tip</title>
+  <desc id="crack-tip-desc">Two crack faces extend left of the crack tip, which is the origin. The positive x axis points to the right along the crack extension and the positive y axis points up. The radial distance r runs from the tip to the point P. The positive angle theta is measured counterclockwise from the positive x axis to the radial line.</desc>
+  <defs>
+    <marker id="axis-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#2e2a74"/>
+    </marker>
+    <marker id="angle-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#c93b1f"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="398" height="222" rx="12" fill="#eeeaf7" stroke="#d9d3ec" stroke-width="2"/>
+  <path d="M2 130 175 147 2 164Z" fill="#fff"/>
+  <path d="M2 130 175 147 2 164" fill="none" stroke="#2e2a74" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="none" stroke="#2e2a74" stroke-width="2.4" marker-end="url(#axis-arrow)">
+    <path d="M175 147H350"/>
+    <path d="M175 147V32"/>
+  </g>
+  <g fill="none" stroke="#c93b1f" stroke-width="2.6" stroke-linecap="round">
+    <path d="M175 147 294 61"/>
+    <path d="M237 147A62 62 0 0 0 225.25 110.7" marker-end="url(#angle-arrow)"/>
+  </g>
+  <g fill="none" stroke="#554f82" stroke-width="1.5" stroke-linecap="round">
+    <path d="M55 182 55 159"/>
+    <path d="M188 183 178 154"/>
+  </g>
+  <circle cx="175" cy="147" r="4.5" fill="#2e2a74"/>
+  <circle cx="294" cy="61" r="4.5" fill="#c93b1f"/>
+  <g fill="#2e2a74" font-family="system-ui, sans-serif" font-size="19">
+    <text x="144" y="33">+<tspan font-style="italic">y</tspan></text>
+    <text x="355" y="153">+<tspan font-style="italic">x</tspan></text>
+    <text x="305" y="63" font-style="italic">P(r, θ)</text>
+    <text x="24" y="204">Crack faces</text>
+    <text x="153" y="204">Crack tip</text>
+  </g>
+  <g fill="#a93420" font-family="system-ui, sans-serif" font-size="21" font-style="italic" font-weight="600">
+    <text x="237" y="91">r</text>
+    <text x="247" y="131">θ</text>
+  </g>
+</svg>

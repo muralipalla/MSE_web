@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 224" role="img" aria-labelledby="fixture-title fixture-desc">
+  <title id="fixture-title">Metallic Charpy and Izod impact fixtures</title>
+  <desc id="fixture-desc">In Charpy plan view, a horizontal bar bears against two anvils. The striker hits the middle of the bar on the face opposite the V-notch. In Izod side view, a vise grips the lower end of a vertical bar. The V-notch aligns with the vise top. The striker hits above the notch on the notched face.</desc>
+  <defs>
+    <marker id="strike-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+      <path d="M0 0 8 4 0 8Z" fill="#c93b1f"/>
+    </marker>
+  </defs>
+  <g fill="#eeeaf7" stroke="#d9d3ec" stroke-width="2">
+    <rect x="1" y="1" width="203" height="222" rx="12"/>
+    <rect x="216" y="1" width="203" height="222" rx="12"/>
+  </g>
+  <g fill="#2e2a74" font-family="system-ui, sans-serif" text-anchor="middle">
+    <g font-size="22" font-weight="700">
+      <text x="102" y="29">Charpy</text>
+      <text x="317" y="29">Izod</text>
+    </g>
+    <g fill="#554f82" font-size="15">
+      <text x="102" y="49">Plan view</text>
+      <text x="317" y="49">Side view</text>
+    </g>
+  </g>
+  <g fill="#b4a9d7" stroke="#6757a8" stroke-width="2" stroke-linejoin="round">
+    <path d="M34 129H57V157H34Z M147 129H170V157H147Z"/>
+    <path d="M271 136H313V185H271Z M335 136H377V185H335Z"/>
+  </g>
+  <g fill="#fff" stroke="#2e2a74" stroke-width="2.4" stroke-linejoin="round">
+    <path d="M20 109H184V129H108L102 120L96 129H20Z"/>
+    <path d="M313 63H335V185H313V142L322 136L313 130Z"/>
+  </g>
+  <g fill="none" stroke="#c93b1f" stroke-width="2.9" stroke-linecap="round" marker-end="url(#strike-arrow)">
+    <path d="M102 79V104"/>
+    <path d="M241 94H308"/>
+  </g>
+  <g fill="none" stroke="#554f82" stroke-width="1.5" stroke-linecap="round">
+    <path d="M102 129V144M46 157 67 172M158 157 137 172"/>
+    <path d="M293 123 315 135"/>
+  </g>
+  <g fill="#2e2a74" font-family="system-ui, sans-serif" font-size="17">
+    <g fill="#a93420" font-weight="700">
+      <text x="102" y="72" text-anchor="middle">Strike</text>
+      <text x="241" y="84">Strike</text>
+    </g>
+    <text x="102" y="163" text-anchor="middle">V-notch</text>
+    <text x="102" y="187" text-anchor="middle">Anvils</text>
+    <text x="229" y="126">V-notch</text>
+    <text x="342" y="77">Free end</text>
+    <text x="324" y="208" text-anchor="middle">Vise</text>
+  </g>
+</svg>

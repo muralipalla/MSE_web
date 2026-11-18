@@ -19,7 +19,7 @@
     intensityValue.textContent = intensity.toFixed(1);
     bar.style.width = `${Math.min(100, 100 * intensity / scaleMaximum)}%`;
     bar.classList.toggle("is-critical", critical);
-    status.textContent = critical ? "Crack growth predicted." : "Below the fracture threshold.";
+    status.textContent = critical ? "Mode I fracture criterion reached." : "Below the Mode I fracture threshold.";
   }
 
   size.addEventListener("input", describeCrack);

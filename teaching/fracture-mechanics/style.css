@@ -234,8 +234,35 @@
   font-variant-numeric: tabular-nums;
 }
 
-.solutions article {
+.worked-example {
+  margin-top: 1rem;
   border-top: 3px solid var(--lavender);
+}
+
+.stress-components {
+  margin-top: 1rem;
+}
+
+.stress-components summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.mode-definitions > div + div {
+  margin-top: .85rem;
+}
+
+.mode-definitions dt {
+  font-weight: 850;
+}
+
+.mode-definitions dd {
+  margin: .2rem 0 0;
+  color: var(--ink-soft);
+}
+
+.loading-modes-image {
+  background: #fff;
 }
 
 @media (max-width: 700px) {
