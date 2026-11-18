@@ -38,3 +38,138 @@ input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 .example { margin-top: 1rem; border-top: 4px solid var(--coral); }
 .example li { margin: .6rem 0; color: var(--ink-soft); }
 @media(max-width: 750px) { .intro, .workbench, .concepts { grid-template-columns: 1fr; } .scene { height: 380px; } .concepts { padding-top: 2rem; } }
+
+.slip-systems {
+  margin-top: clamp(2.8rem, 6vw, 4.5rem);
+  scroll-margin-top: 1rem;
+}
+
+.slip-systems > p {
+  max-width: 65rem;
+}
+
+.slip-table-wrap {
+  margin: 1.2rem 0 .65rem;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: var(--paper);
+}
+
+.slip-table-wrap:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.slip-family-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.slip-family-table caption {
+  padding: .85rem 1rem;
+  text-align: left;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.slip-family-table th,
+.slip-family-table td {
+  padding: .75rem 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.slip-family-table thead {
+  background: var(--lavender-light);
+}
+
+.slip-family-table tbody th {
+  width: 35%;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.slip-family-table td {
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.slip-negative {
+  text-decoration: overline;
+}
+
+.slip-index {
+  white-space: nowrap;
+}
+
+.slip-count-note,
+.slip-sources {
+  color: var(--muted);
+  font-size: .86rem;
+}
+
+.slip-structure-notes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.3rem 0;
+}
+
+.slip-structure-notes article {
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: .9rem;
+  background: var(--paper);
+}
+
+.slip-structure-notes h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.slip-structure-notes p {
+  margin: .5rem 0 0;
+  font-size: .94rem;
+}
+
+@media (max-width: 750px) {
+  .slip-structure-notes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .slip-family-table thead {
+    display: none;
+  }
+
+  .slip-family-table tr,
+  .slip-family-table th,
+  .slip-family-table td {
+    display: block;
+    width: auto;
+  }
+
+  .slip-family-table tbody th {
+    width: auto;
+    background: var(--lavender-light);
+  }
+
+  .slip-family-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 0;
+    padding-block: .4rem;
+  }
+
+  .slip-family-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: .85rem;
+    font-weight: 650;
+  }
+
+  .slip-family-table td:last-child {
+    padding-bottom: .8rem;
+  }
+}

@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore resolved shear stress, Schmid factor, and critical resolved shear stress in an interactive single-crystal tension test.">
+  <meta name="description" content="Explore resolved shear stress, Schmid factor, and critical resolved shear stress in an interactive single-crystal tension test, then compare FCC, BCC, and HCP slip systems.">
   <title>Slip &amp; Schmid&rsquo;s Law | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
   <script src="app.js?v=4" defer></script>
@@ -26,7 +26,7 @@
       <p class="teaching-intro-note"><a href="#explore">Explore the specimen &darr;</a></p>
     </div>
   </header>
-  <section class="intro" aria-labelledby="system-title"><div><p class="section-kicker">From tension to slip</p><h2 id="system-title">One plane, one direction</h2><p>A <strong>slip system</strong> consists of a crystallographic slip plane and a slip direction lying in that plane. A uniaxial tensile stress &sigma; produces a shear stress resolved along that direction. A dislocation can glide when the magnitude of this resolved shear stress reaches the critical value for the system.</p></div><div class="equation-card"><span>Schmid&rsquo;s law</span><p>&tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;</p><p>m = |cos &phi; cos &lambda;|</p><small>&phi; is the angle between the tensile axis and the plane normal. &lambda; is the angle between the tensile axis and the slip direction. m is the non-negative Schmid factor.</small></div></section>
+  <section class="intro" aria-labelledby="system-title"><div><p class="section-kicker">From tension to slip</p><h2 id="system-title">One plane, one direction</h2><p>A <strong>slip system</strong> consists of a crystallographic slip plane and a slip direction lying in that plane. A uniaxial tensile stress &sigma; produces a shear stress resolved along that direction. Under Schmid&rsquo;s onset criterion, slip begins when the magnitude of this resolved shear stress reaches the critical value for the system.</p></div><div class="equation-card"><span>Schmid&rsquo;s law</span><p>&tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;</p><p>m = |cos &phi; cos &lambda;|</p><small>&phi; is the angle between the tensile axis and the plane normal. &lambda; is the angle between the tensile axis and the slip direction. m is the non-negative Schmid factor.</small></div></section>
   <section id="explore" class="explore"><div class="heading"><p class="section-kicker">Interactive specimen</p><h2>Orient the slip system</h2><p>Adjust the plane normal and rotate the slip direction within that plane. The dotted line is the tensile axis. The arcs show &phi; to the plane normal and &lambda; to the slip direction. The force arrows scale with applied stress for a fixed area. Drag the figure to view the geometry from another angle.</p></div><div class="workbench">
     <div class="visual"><div id="scene" class="scene" role="img" aria-label="Interactive three-dimensional cylinder under tension, showing a slip plane, its normal and slip direction."><p class="fallback">The 3D view requires WebGL. The calculated values remain available below.</p></div><div class="legend"><span><i class="force"></i>Tensile force</span><span><i class="plane"></i>Slip plane</span><span><i class="normal"></i>Plane normal</span><span><i class="slip"></i>Slip direction</span></div><div class="view-controls" aria-label="3D view controls"><button id="rotate-left" type="button">Rotate left</button><button id="rotate-right" type="button">Rotate right</button><button id="reset-view" type="button">Reset view</button></div></div>
     <div class="controls">
@@ -36,10 +36,51 @@
       <label for="crss">Critical resolved shear stress, &tau;<sub>CRSS</sub> <output id="crss-value">30 MPa</output></label><input id="crss" type="range" min="5" max="100" value="30" step="5">
       <div class="readings" aria-live="polite"><div><span>Slip-direction angle &lambda;</span><strong id="lambda-value">45.0&deg;</strong></div><div><span>Schmid factor m</span><strong id="factor-value">0.500</strong></div><div><span>Resolved shear magnitude</span><strong id="rss-value">50.0 MPa</strong></div><div><span>Predicted slip onset</span><strong id="threshold-value">60.0 MPa</strong></div></div>
       <p class="status" id="status">The resolved shear stress reaches the critical value.</p>
-      <p class="hint">The sliders show a selected idealized single-crystal system. The figure shows orientation, not specimen deformation.</p>
+      <p class="hint">The sliders explore the orientation of one idealized plane&ndash;direction pair. The <a href="#slip-systems">crystallographic families below</a> identify the pairs available in FCC, BCC, and HCP crystals.</p>
     </div>
   </div></section>
   <section class="concepts"><article><p class="section-kicker">01 / Geometry</p><h2>What the factor means</h2><p>The factor m measures the effectiveness of the applied tensile stress in producing shear on a particular slip system. For perpendicular plane normal and slip direction, 0 &le; m &le; 0.5. The maximum occurs when both angles are 45&deg;.</p><p>In three dimensions &phi; and &lambda; do not generally add to 90&deg;. The slip direction must remain in the plane, so the two angles cannot be selected independently without respecting that constraint.</p></article><article><p class="section-kicker">02 / Slip onset</p><h2>Critical resolved shear stress</h2><p>&tau;<sub>CRSS</sub> is the magnitude of resolved shear stress required to initiate slip on a particular system under the specified conditions. It depends on material, temperature, strain rate, and microstructure.</p><p>For the chosen system, onset is predicted when |&tau;<sub>RSS</sub>| &ge; &tau;<sub>CRSS</sub>. For m &gt; 0, the corresponding tensile stress is &sigma;<sub>yield</sub> = &tau;<sub>CRSS</sub>/m. If m = 0, this loading produces no resolved shear on that system.</p></article></section>
-  <section class="example"><p class="section-kicker">Worked example</p><h2>Predict the tensile stress for slip</h2><p>A single crystal is pulled in tension. For one slip system, the plane normal makes 45&deg; with the tensile axis and the slip direction also makes 45&deg; with it. The critical resolved shear stress is 30 MPa. Find the Schmid factor and tensile stress at slip onset for this system.</p><ol><li>Calculate the orientation factor: m = cos 45&deg; cos 45&deg; = <strong>0.5</strong>.</li><li>Apply the critical condition: &sigma;<sub>yield</sub> = &tau;<sub>CRSS</sub>/m = 30/0.5 = <strong>60 MPa</strong>.</li><li>At 60 MPa, |&tau;<sub>RSS</sub>| = 60 &times; 0.5 = 30 MPa, the specified critical value.</li></ol><p class="hint">This predicts onset on the specified system. Other systems may reach their critical values first.</p></section>
+  <section class="example"><p class="section-kicker">Worked example</p><h2>Predict the tensile stress for slip</h2><p>A single crystal is pulled in tension. For one slip system, the plane normal makes 45&deg; with the tensile axis and the slip direction also makes 45&deg; with it. The critical resolved shear stress is 30 MPa. Find the Schmid factor and tensile stress at slip onset for this system.</p><ol><li>Calculate the orientation factor: m = cos 45&deg; cos 45&deg; = <strong>0.5</strong>.</li><li>Apply the critical condition: &sigma;<sub>yield</sub> = &tau;<sub>CRSS</sub>/m = 30/0.5 = <strong>60 MPa</strong>.</li><li>At 60 MPa, |&tau;<sub>RSS</sub>| = 60 &times; 0.5 = 30 MPa, the specified critical value.</li></ol><p class="hint">This predicts onset on the specified system. Under this idealized criterion, compare &tau;<sub>CRSS</sub>/m across the available systems with m &gt; 0 to find which reaches onset first. The crystal&rsquo;s slip families provide those candidate systems.</p></section>
+  <section class="slip-systems" id="slip-systems" aria-labelledby="slip-systems-title">
+    <h2 id="slip-systems-title">Slip systems in crystals</h2>
+    <p>To apply the worked example to a particular crystal, identify its available plane&ndash;direction pairs. Dislocations glide on the slip plane, and their Burgers vector <strong>b</strong> is parallel to the slip direction. Crystal structure determines the available pairs.</p>
+    <p>Parentheses (hkl) identify a particular plane, and square brackets [uvw] identify a particular direction. Braces {hkl} and angle brackets &lang;uvw&rang; denote families of symmetry-related planes and directions. Hexagonal crystals commonly use four indices, (hkil) and [uvtw], with <i>i</i> = &minus;(<i>h</i> + <i>k</i>) and <i>t</i> = &minus;(<i>u</i> + <i>v</i>). An overbar denotes a negative index. For HCP, determine plane normals and angles using the hexagonal lattice geometry.</p>
+
+    <p>In HCP, &lang;a&rang; slip has a Burgers vector in the basal plane, while &lang;c+a&rang; slip has both basal and <i>c</i>-axis components.</p>
+    <div class="slip-table-wrap" role="region" aria-label="Common crystallographic slip families" tabindex="0">
+      <table class="slip-family-table">
+        <caption>Common slip families and their geometrical counts</caption>
+        <thead><tr><th scope="col">Crystal structure</th><th scope="col">Plane family</th><th scope="col">Direction family</th><th scope="col">Systems in this family</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">FCC</th><td data-label="Plane family"><span class="slip-index">{111}</span></td><td data-label="Direction family"><span class="slip-index">&lang;110&rang;</span></td><td data-label="Systems">12</td></tr>
+          <tr><th scope="row">BCC</th><td data-label="Plane family"><span class="slip-index">{110}</span></td><td data-label="Direction family"><span class="slip-index">&lang;111&rang;</span></td><td data-label="Systems">12</td></tr>
+          <tr><th scope="row">BCC</th><td data-label="Plane family"><span class="slip-index">{112}</span></td><td data-label="Direction family"><span class="slip-index">&lang;111&rang;</span></td><td data-label="Systems">12</td></tr>
+          <tr><th scope="row">BCC</th><td data-label="Plane family"><span class="slip-index">{123}</span></td><td data-label="Direction family"><span class="slip-index">&lang;111&rang;</span></td><td data-label="Systems">24</td></tr>
+          <tr><th scope="row">HCP basal &lang;a&rang;</th><td data-label="Plane family"><span class="slip-index">{0001}</span></td><td data-label="Direction family"><span class="slip-index">&lang;11<span class="slip-negative">2</span>0&rang;</span></td><td data-label="Systems">3</td></tr>
+          <tr><th scope="row">HCP prismatic &lang;a&rang;</th><td data-label="Plane family"><span class="slip-index">{10<span class="slip-negative">1</span>0}</span></td><td data-label="Direction family"><span class="slip-index">&lang;11<span class="slip-negative">2</span>0&rang;</span></td><td data-label="Systems">3</td></tr>
+          <tr><th scope="row">HCP first-order pyramidal &lang;c+a&rang;</th><td data-label="Plane family"><span class="slip-index">{10<span class="slip-negative">1</span>1}</span></td><td data-label="Direction family"><span class="slip-index">&lang;11<span class="slip-negative">2</span>3&rang;</span></td><td data-label="Systems">12</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="slip-count-note">Each count includes only directions that lie in the selected planes. Opposite slip senses count as one system, and reversing a plane normal gives the same plane orientation.</p>
+
+    <div class="slip-structure-notes">
+      <article>
+        <h3>FCC</h3>
+        <p>Aluminium, copper, and nickel commonly slip on their close-packed {111} planes along close-packed &lang;110&rang; directions. Four plane orientations, each containing three slip directions, give 4 &times; 3 = 12 systems.</p>
+      </article>
+      <article>
+        <h3>BCC</h3>
+        <p>Ferritic iron, molybdenum, and tungsten have &lang;111&rang; slip directions. The three plane families listed give 48 geometrical candidates. Which systems carry slip depends on their resistance, temperature, strain rate, and loading orientation. Other stress components can also affect screw-dislocation glide in BCC metals, producing departures from the simple Schmid onset criterion. <a href="https://www.nature.com/articles/s41524-019-0247-3">BCC dislocation study</a></p>
+      </article>
+      <article>
+        <h3>HCP</h3>
+        <p>Magnesium, zinc, and &alpha;-titanium have hexagonal structures. Basal &lang;a&rang; slip produces no normal plastic strain along the <i>c</i> axis. Pyramidal &lang;c+a&rang; slip can accommodate this strain. The activity of basal, prismatic, and pyramidal systems, and of deformation twinning, depends on the material and test conditions.</p>
+      </article>
+    </div>
+
+    <p>For each permitted plane&ndash;direction pair, the resolved shear stress is &tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;. The angles describe that particular system. In the Schmid onset model, assess its resolved shear stress against its own critical resolved shear stress. Activation depends on orientation and resistance under the test conditions.</p>
+    <p class="slip-sources"><a href="https://dictionary.iucr.org/Miller_indices">IUCr crystallographic indices</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9793464/">FCC systems, Appendix C</a> &middot; <a href="https://doi.org/10.1007/s10659-023-10034-9">Ball, BCC slip families</a> &middot; <a href="https://www.frontiersin.org/journals/materials/articles/10.3389/fmats.2022.897998/full">Zhang, Liu &amp; Oskay, HCP families, Table 5</a></p>
+  </section>
 </main><footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Slip &amp; Schmid&rsquo;s Law &middot; <span data-year>2026</span></p></footer>
 </body></html>

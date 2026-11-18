@@ -12,13 +12,15 @@
   </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Run virtual Brinell and Vickers hardness tests, measure microscopic indentations, calculate hardness, and estimate repeatability uncertainty.">
+  <meta name="description" content="Run Brinell, Vickers, and Rockwell hardness experiments. Measure optical indentations or penetration depth, compare Rockwell A, B, and C scales, and calculate hardness.">
   <meta name="theme-color" content="#fdf6ec">
-  <title>Brinell and Vickers Hardness Test | MSE Learning Lab</title>
+  <title>Brinell, Vickers and Rockwell Hardness Tests | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="rockwell.css?v=1">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="app.js?v=1" defer></script>
+  <script src="rockwell.js?v=1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#hardness-lab">Skip to hardness test</a>
@@ -43,18 +45,19 @@
       <div>
         <p class="eyebrow">Interactive simulation 02</p>
         <h1>Hardness Test</h1>
-        <p class="method-title">Brinell &amp; Vickers indentation</p>
+        <p class="method-title">Brinell, Vickers &amp; Rockwell</p>
       </div>
       <div class="intro-copy">
         <p>
-          Produce an indentation, inspect it under a virtual microscope, position
+          For Brinell and Vickers, produce an indentation, inspect it under a virtual microscope, position
           calibrated graduated scales, and calculate hardness from your own
           recorded dimensions.
         </p>
         <p class="accuracy-note">
-          Each specimen contains small, repeatable local variations. Complete
+          The Brinell and Vickers specimens contain small, repeatable local variations. Complete
           at least three locations to estimate mean hardness and repeatability uncertainty.
         </p>
+        <p class="rockwell-jump"><a href="#rockwell-lab">Go to the Rockwell A, B and C module &darr;</a></p>
       </div>
     </header>
 
@@ -538,11 +541,124 @@
         Consult the current purchased standard for laboratory work.
       </p>
     </section>
+    <section class="rockwell-module" id="rockwell-lab" aria-labelledby="rw-title">
+      <h2 id="rw-title">Rockwell Hardness Test</h2>
+      <p>Measure the permanent increase in indentation depth after a loading cycle. Both depth readings are taken under the same preliminary force. Choose an A, B, or C scale to explore its indenter, force, and typical material applications.</p>
+
+      <div class="rw-scale-cards">
+        <article class="rw-scale-card">
+          <h3>A scale · HRA</h3>
+          <p>Rounded diamond cone, 60 kgf total force. Common applications include cemented carbides and shallow case-hardened steel.</p>
+        </article>
+        <article class="rw-scale-card">
+          <h3>B scale · HRB</h3>
+          <p>1/16 in. tungsten-carbide ball, 100 kgf total force. Used for suitable softer steels, copper alloys, and aluminium alloys.</p>
+        </article>
+        <article class="rw-scale-card">
+          <h3>C scale · HRC</h3>
+          <p>Rounded diamond cone, 150 kgf total force. Common applications include hardened steels and sufficiently deep hardened cases.</p>
+        </article>
+      </div>
+
+      <div class="lab-panel">
+        <div class="rw-setup">
+          <label class="field-label" for="rw-scale"><span>Rockwell scale</span>
+            <select id="rw-scale"><option value="A">A · HRA</option><option value="B">B · HRB</option><option value="C" selected>C · HRC</option></select>
+          </label>
+          <label class="field-label" for="rw-specimen"><span>Illustrative specimen condition</span>
+            <select id="rw-specimen"></select>
+          </label>
+        </div>
+        <dl class="rw-conditions">
+          <div><dt>Indenter</dt><dd id="rw-indenter">120° diamond cone with a 0.2 mm tip radius</dd></div>
+          <div><dt>Total force F</dt><dd id="rw-total-force">1471.0 N (150 kgf)</dd></div>
+          <div><dt>Additional force F₁</dt><dd id="rw-additional-force">1372.9 N (140 kgf)</dd></div>
+        </dl>
+        <p class="rw-note">Every scale here uses preliminary force F₀ = 98.07 N (10 kgf). Total force is F = F₀ + F₁. All specimen hardness and recovery values are synthetic teaching presets for the stated condition. The B scale uses a tungsten-carbide ball, so its full result designation is HRBW, with W identifying the ball material.</p>
+      </div>
+
+      <div class="rw-workbench">
+        <figure class="lab-panel rw-machine">
+          <h3>Depth reference and elastic recovery</h3>
+          <svg viewBox="0 0 560 420" role="img" aria-labelledby="rw-diagram-title rw-diagram-description">
+            <title id="rw-diagram-title">Rockwell loading cycle and indentation depth</title>
+            <desc id="rw-diagram-description">Apply the preliminary force to establish the initial depth reference.</desc>
+            <defs>
+              <marker id="rw-force-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#bd472a"/></marker>
+            </defs>
+            <rect x="1" y="1" width="558" height="400" rx="14" fill="#f8f6fc"/>
+            <path id="rw-surface" d="M92 230H322V365H92Z" fill="#cfdbdf" stroke="#547f83" stroke-width="2"/>
+            <path d="M73 366H340V380H73Z" fill="#675b89"/>
+            <g id="rw-indenter-position" transform="translate(0 220)">
+              <g id="rw-diamond">
+                <rect x="194" y="-145" width="32" height="65" rx="5" fill="#b5b3cb" stroke="#5a537e" stroke-width="2"/>
+                <path d="M68.22 -80H351.78L216 -1.608Q210 1.608 204 -1.608Z" fill="#ddf1f3" stroke="#4b657f" stroke-width="2"/>
+              </g>
+              <g id="rw-ball" hidden>
+                <rect x="194" y="-220" width="32" height="60" rx="5" fill="#b5b3cb" stroke="#5a537e" stroke-width="2"/>
+                <circle cx="210" cy="-80" r="80" fill="#cbd2de" stroke="#4b657f" stroke-width="2"/>
+              </g>
+            </g>
+            <g id="rw-force-arrow" hidden><path d="M210 10V80" stroke="#bd472a" stroke-width="3" marker-end="url(#rw-force-head)" fill="none"/><text x="232" y="64" fill="#a7361e" font-style="italic">F</text></g>
+            <g id="rw-initial-reference" hidden>
+              <path d="M82 240H520" stroke="#19756d" stroke-width="2" stroke-dasharray="7 5" fill="none"/>
+              <text x="365" y="231" fill="#125b55">Initial at F₀</text>
+            </g>
+            <g id="rw-peak-reference" hidden>
+              <line id="rw-peak-line" x1="320" x2="520" y1="280" y2="280" stroke="#8b7b99" stroke-width="1.6" stroke-dasharray="3 5"/>
+              <text id="rw-peak-label" x="402" y="285" fill="#72647c">Peak depth</text>
+            </g>
+            <g id="rw-final-reference" hidden>
+              <line id="rw-final-line" x1="82" x2="520" y1="264" y2="264" stroke="#bd472a" stroke-width="2"/>
+              <text id="rw-final-label" x="365" y="256" fill="#a7361e">Final at F₀</text>
+              <path id="rw-depth-bracket" d="M351 240h12M357 240V264M351 264h12" fill="none" stroke="#302775" stroke-width="2"/>
+              <text id="rw-depth-symbol" x="331" y="257" fill="#302775" font-style="italic">h</text>
+            </g>
+            <text x="110" y="343" fill="#304454">Specimen</text>
+            <text x="210" y="400" text-anchor="middle" fill="#675b89">Anvil</text>
+          </svg>
+          <figcaption>Penetration is exaggerated for visibility. The initial reference is set under F₀. Only the depth increase relative to that reference enters the hardness calculation.</figcaption>
+        </figure>
+
+        <article class="lab-panel rw-analysis">
+          <h3>Run the loading cycle</h3>
+          <div class="rw-controls">
+            <button class="button primary" id="rw-advance" type="button">Apply preliminary force</button>
+            <button class="button secondary" id="rw-reset" type="button" disabled>Repeat or change specimen</button>
+          </div>
+          <div class="rw-stage" role="status">
+            <strong id="rw-stage-name">Ready</strong>
+            <p id="rw-stage-help">Apply the preliminary force, establish its depth reference, and then apply the total force.</p>
+          </div>
+          <dl class="rw-readings">
+            <div><dt>Current force</dt><dd id="rw-current-force">0.00 N</dd></div>
+            <div><dt>Measured depth increase h</dt><dd id="rw-depth-reading">Reference pending</dd></div>
+            <div><dt>Rockwell result</dt><dd id="rw-result">Complete the loading cycle</dd></div>
+          </dl>
+          <p class="rw-formula" id="rw-calculation">H = N − h/0.002, with h in mm. N is 100 for A and C, and 130 for B.</p>
+          <form id="rw-calculation-check">
+            <div class="rw-answer-row">
+              <label for="rw-answer">Calculate the Rockwell value<input type="number" id="rw-answer" min="0" max="130" step="any" inputmode="decimal" required disabled></label>
+              <button class="button secondary" id="rw-check" type="submit" disabled>Check calculation</button>
+            </div>
+            <p class="rw-feedback" id="rw-feedback" role="status">Complete the cycle, then use h to check the hardness calculation.</p>
+          </form>
+        </article>
+      </div>
+
+      <article class="rw-example">
+        <h3>Worked example</h3>
+        <p>For the C scale, the final depth under F₀ exceeds the initial depth under F₀ by h = 0.080 mm. The hardness is HRC = 100 − 0.080/0.002 = <strong>60 HRC</strong>. Each additional 0.002 mm of permanent depth increase reduces the reading by one Rockwell point.</p>
+      </article>
+      <p class="rw-note">Use the scale suited to the material condition, available thickness, surface preparation, and support. Dwell and recovery timing, force and indenter verification, minimum thickness, and indentation spacing are controlled by the selected standard. Stages are advanced manually in this teaching model. Hardness comparisons across scales require an applicable material-specific conversion.</p>
+      <p class="rw-sources"><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication960-5.pdf">NIST Rockwell hardness measurement guide</a> · <a href="https://www.zwickroell.com/industries/metals/metals-standards/rockwell-test-iso-6508/">ZwickRoell scale and material guidance</a> · <a href="https://store.astm.org/standards/e18">ASTM E18</a> · <a href="https://www.iso.org/standard/84343.html">ISO 6508-1</a></p>
+      <noscript><p>Enable JavaScript to run the loading cycle. The scale descriptions, equations, and worked example remain available.</p></noscript>
+    </section>
   </main>
 
   <footer class="site-footer">
     <p><a href="../../index.html">MSE Learning Lab home</a></p>
-    <p>Illustrative Brinell and Vickers hardness test &middot; <span data-year>2026</span></p>
+    <p>Brinell, Vickers and Rockwell hardness tests &middot; <span data-year>2026</span></p>
   </footer>
 </body>
 </html>
