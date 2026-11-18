@@ -40,9 +40,9 @@
       <a href="#comet">Comet failures</a>
       <a href="#concentration">Stress concentration</a>
       <a href="#griffith">Griffith&rsquo;s energy balance</a>
-      <a href="#stress-field">Crack-tip stress field</a>
       <a href="#loading-modes">Modes of fracture</a>
       <a href="#stress-intensity">Stress intensity factor</a>
+      <a href="#stress-field">Crack-tip stress field</a>
       <a href="#toughness">Fracture toughness</a>
       <a href="#testing">Fracture toughness testing</a>
     </nav>
@@ -288,6 +288,41 @@
       </article>
     </section>
 
+    <section id="loading-modes" class="fracture-section" aria-labelledby="loading-modes-title">
+      <h2 id="loading-modes-title">Modes of fracture</h2>
+      <p class="section-lead">The three loading modes describe the relative motion of the two crack faces. The crack front is the line where the faces meet the intact material.</p>
+      <div class="figure-pair">
+        <dl class="fracture-card mode-definitions">
+          <div><dt>Mode I &middot; Opening</dt><dd>The faces separate normal to the crack plane.</dd></div>
+          <div><dt>Mode II &middot; Sliding</dt><dd>The faces slide within the crack plane, perpendicular to the crack front.</dd></div>
+          <div><dt>Mode III &middot; Tearing</dt><dd>The faces slide within the crack plane, parallel to the crack front.</dd></div>
+        </dl>
+        <figure class="fracture-card technical-figure">
+          <img class="loading-modes-image" src="fracture-modes.svg" width="850" height="425" alt="Three cracked blocks showing opening in Mode I, in-plane sliding in Mode II, and tearing in Mode III" loading="lazy">
+          <figcaption>Arrows show relative displacement. In Mode III, &ldquo;out-of-plane&rdquo; means motion out of a cross-section perpendicular to the crack front. <a href="https://commons.wikimedia.org/wiki/File:Fracture_modes_v2.svg">Twisp, Wikimedia Commons, public domain</a></figcaption>
+        </figure>
+      </div>
+      <p class="section-note">If a load both opens a crack and slides its faces perpendicular to the crack front, the crack experiences mixed Mode I and Mode II loading.</p>
+    </section>
+
+    <section id="stress-intensity" class="fracture-section" aria-labelledby="stress-intensity-title">
+      <h2 id="stress-intensity-title">Stress intensity factor</h2>
+      <p class="section-lead">A stress intensity factor sets the amplitude of the leading near-tip elastic stress field for its loading mode. The three amplitudes are <i>K</i><sub>I</sub>, <i>K</i><sub>II</sub>, and <i>K</i><sub>III</sub>. Each depends on the applied loads, crack size, and geometry.</p>
+      <div class="fracture-card">
+        <h3>Mode I under remote tension</h3>
+        <div class="formula-row">
+          <p class="formula"><i>K</i><sub>I</sub> = <i>Y</i>&sigma;&radic;(&pi;<i>a</i>)</p>
+          <p class="formula"><i>G</i> = <i>K</i><sub>I</sub><sup>2</sup>/<i>E</i>&prime;</p>
+        </div>
+        <p>The dimensionless factor <i>Y</i> accounts for geometry and loading. Use <i>Y</i> = 1 for a central through crack in an effectively infinite plate under uniform tension. Here <i>a</i> is half the total crack length. For an edge crack, <i>a</i> is its depth and a different <i>Y</i> applies. Use metres for <i>a</i> with &sigma; in MPa to obtain MPa&radic;m.</p>
+        <p>The second equation relates the Mode I elastic field to <a href="#griffith">Griffith&rsquo;s energy release rate</a>. In plane stress, <i>E</i>&prime; = <i>E</i>. In plane strain, <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>).</p>
+      </div>
+      <article class="fracture-card worked-example">
+        <h3>Calculate stress intensity for a central crack</h3>
+        <p>A central through crack is 4.0 mm long in a wide plate under 150 MPa tension. With <i>a</i> = 0.0020 m and <i>Y</i> &asymp; 1, the stress intensity is 150&radic;(&pi; &times; 0.0020) = <strong>11.9 MPa&radic;m</strong>. If the total length increases to 16.0 mm under the same stress and <i>Y</i> is still approximately 1, <i>K</i><sub>I</sub> doubles to <strong>23.8 MPa&radic;m</strong>.</p>
+      </article>
+    </section>
+
     <section id="stress-field" class="fracture-section" aria-labelledby="stress-field-title">
       <h2 id="stress-field-title">Stress field near the crack tip</h2>
       <div class="figure-pair">
@@ -313,41 +348,6 @@
       <article class="fracture-card worked-example">
         <h3>Compare stress at two distances</h3>
         <p>Compare &sigma;<sub>yy</sub> at 0.25 mm and 1.00 mm directly ahead of the same fixed crack. If both points lie in the region where the leading term dominates, the ratio is &radic;(1.00/0.25) = <strong>2</strong>. The point four times closer has twice the opening stress.</p>
-      </article>
-    </section>
-
-    <section id="loading-modes" class="fracture-section" aria-labelledby="loading-modes-title">
-      <h2 id="loading-modes-title">Modes of fracture</h2>
-      <p class="section-lead">The three loading modes describe the relative motion of the two crack faces. The crack front is the line where the faces meet the intact material.</p>
-      <div class="figure-pair">
-        <dl class="fracture-card mode-definitions">
-          <div><dt>Mode I &middot; Opening</dt><dd>The faces separate normal to the crack plane.</dd></div>
-          <div><dt>Mode II &middot; Sliding</dt><dd>The faces slide within the crack plane, perpendicular to the crack front.</dd></div>
-          <div><dt>Mode III &middot; Tearing</dt><dd>The faces slide within the crack plane, parallel to the crack front.</dd></div>
-        </dl>
-        <figure class="fracture-card technical-figure">
-          <img class="loading-modes-image" src="fracture-modes.svg" width="850" height="425" alt="Three cracked blocks showing opening in Mode I, in-plane sliding in Mode II, and tearing in Mode III" loading="lazy">
-          <figcaption>Arrows show relative displacement. In Mode III, &ldquo;out-of-plane&rdquo; means out of the <i>x</i>&ndash;<i>y</i> crack-tip cross-section. <a href="https://commons.wikimedia.org/wiki/File:Fracture_modes_v2.svg">Twisp, Wikimedia Commons, public domain</a></figcaption>
-        </figure>
-      </div>
-      <p class="section-note">If a load both opens a crack and slides its faces perpendicular to the crack front, the crack experiences mixed Mode I and Mode II loading.</p>
-    </section>
-
-    <section id="stress-intensity" class="fracture-section" aria-labelledby="stress-intensity-title">
-      <h2 id="stress-intensity-title">Stress intensity factor</h2>
-      <p class="section-lead">A stress intensity factor sets the amplitude of the leading near-tip elastic stress field for its loading mode. The three amplitudes are <i>K</i><sub>I</sub>, <i>K</i><sub>II</sub>, and <i>K</i><sub>III</sub>. Each depends on the applied loads, crack size, and geometry.</p>
-      <div class="fracture-card">
-        <h3>Mode I under remote tension</h3>
-        <div class="formula-row">
-          <p class="formula"><i>K</i><sub>I</sub> = <i>Y</i>&sigma;&radic;(&pi;<i>a</i>)</p>
-          <p class="formula"><i>G</i> = <i>K</i><sub>I</sub><sup>2</sup>/<i>E</i>&prime;</p>
-        </div>
-        <p>The dimensionless factor <i>Y</i> accounts for geometry and loading. Use <i>Y</i> = 1 for a central through crack in an effectively infinite plate under uniform tension. Here <i>a</i> is half the total crack length. For an edge crack, <i>a</i> is its depth and a different <i>Y</i> applies. Use metres for <i>a</i> with &sigma; in MPa to obtain MPa&radic;m.</p>
-        <p>The second equation relates the Mode I elastic field to <a href="#griffith">Griffith&rsquo;s energy release rate</a>. In plane stress, <i>E</i>&prime; = <i>E</i>. In plane strain, <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>).</p>
-      </div>
-      <article class="fracture-card worked-example">
-        <h3>Calculate stress intensity for a central crack</h3>
-        <p>A central through crack is 4.0 mm long in a wide plate under 150 MPa tension. With <i>a</i> = 0.0020 m and <i>Y</i> &asymp; 1, the stress intensity is 150&radic;(&pi; &times; 0.0020) = <strong>11.9 MPa&radic;m</strong>. If the total length increases to 16.0 mm under the same stress and <i>Y</i> is still approximately 1, <i>K</i><sub>I</sub> doubles to <strong>23.8 MPa&radic;m</strong>.</p>
       </article>
     </section>
 
