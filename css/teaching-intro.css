@@ -1,0 +1,46 @@
+/* Teaching-page heading, with the title and overview on the page background. */
+.teaching-shell {
+  width: min(calc(100% - 2rem), var(--page-width));
+  margin: clamp(1.5rem, 3vw, 2.5rem) auto 5rem;
+}
+
+.teaching-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: end;
+  margin-bottom: 1.5rem;
+}
+
+.teaching-intro h1 {
+  margin: 0;
+  font-size: clamp(2.6rem, 6vw, 5.25rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+
+.teaching-intro-copy p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 1.06rem;
+}
+
+.teaching-intro-copy .teaching-intro-note {
+  margin-top: 0.9rem;
+  padding-left: 0.9rem;
+  border-left: 3px solid var(--coral);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.teaching-intro-note a {
+  text-underline-offset: 0.18em;
+}
+
+@media (max-width: 760px) {
+  .teaching-intro {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+}

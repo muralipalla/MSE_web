@@ -1,9 +1,3 @@
-.shell { width: min(74rem, calc(100% - 2rem)); margin: .75rem auto 5rem; }
-.hero { padding: 0 0 .85rem; }
-.hero .eyebrow { margin: 0 0 .25rem; }
-.hero h1 { font-size: clamp(2.25rem, 4.2vw, 3.5rem); line-height: 1.08; letter-spacing: -.04em; margin: 0; }
-.lead { max-width: 60rem; font-size: 1rem; color: var(--ink-soft); margin: .4rem 0; }
-.start { color: var(--coral); font-weight: 800; text-underline-offset: 4px; }
 .intro { display: grid; grid-template-columns: 1fr .9fr; gap: 2rem; align-items: center; border-top: 1px solid var(--line); padding: 1.5rem 0; }
 h2 { font-size: clamp(1.8rem, 3vw, 2.7rem); line-height: 1.12; letter-spacing: -.03em; margin: .35rem 0 1rem; }
 p { color: var(--ink-soft); }
@@ -43,4 +37,4 @@ input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 .concepts article, .example { padding: 2rem; }
 .example { margin-top: 1rem; border-top: 4px solid var(--coral); }
 .example li { margin: .6rem 0; color: var(--ink-soft); }
-@media(max-width: 750px) { .intro, .workbench, .concepts { grid-template-columns: 1fr; } .hero { padding: 0 0 1rem; } .scene { height: 380px; } .concepts { padding-top: 2rem; } }
+@media(max-width: 750px) { .intro, .workbench, .concepts { grid-template-columns: 1fr; } .scene { height: 380px; } .concepts { padding-top: 2rem; } }
