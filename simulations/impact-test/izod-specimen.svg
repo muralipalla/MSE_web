@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 216" aria-labelledby="title desc">
+  <title id="title">Full-size Izod V-notch metal specimen</title>
+  <desc id="desc">Side and end views of a 75 millimetre long bar with a 10 by 10 millimetre section. The notch is 28 millimetres from the free end. Dimensions are nominal.</desc>
+  <rect width="540" height="216" rx="14" fill="#f2f1f9"/>
+  <g fill="#dbdfef" stroke="#393469" stroke-width="2">
+    <path d="M24 82H244.8L248.6 91Q249.6 92.2 250.6 91L254.4 82H384V130H24Z"/>
+    <rect x="459" y="82" width="48" height="48"/>
+  </g>
+  <g fill="none" stroke="#625b83" stroke-width="1.3">
+    <path d="M249.6 47V78M384 47V75M249.6 54H384M255.6 50L249.6 54L255.6 58M378 50L384 54L378 58"/>
+    <path d="M24 137V181M384 137V181M24 173H384M30 169L24 173L30 177M378 169L384 173L378 177"/>
+    <path d="M459 136V162M507 136V162M459 154H507M464 150L459 154L464 158M502 150L507 154L502 158"/>
+    <path d="M430 82H451M430 130H451M437 82V130M433 88L437 82L441 88M433 124L437 130L441 124"/>
+    <path d="M249.6 64V80" stroke="#a63b25" stroke-dasharray="3 3"/>
+  </g>
+  <g fill="#302959" font-family="system-ui,sans-serif" font-size="17" font-weight="650" text-anchor="middle">
+    <text x="317" y="43">28</text>
+    <text x="380" y="74" text-anchor="end" font-size="14">Free end</text>
+    <text x="204" y="164">75</text>
+    <text x="483" y="177">10</text>
+    <text x="417" y="112">10</text>
+    <text x="204" y="201" font-size="14">Side view · mm</text>
+    <text x="483" y="201" font-size="14">End view</text>
+  </g>
+</svg>

@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Run virtual Charpy and Izod pendulum tests on V-notched metal specimens. Compare both fixtures, read dimensioned specimen drawings, and calculate absorbed energy.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Charpy &amp; Izod Impact Tests | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/teaching-intro.css">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="app.js?v=1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the impact lab</a>
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Experiment navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#lab">&larr; Virtual experiments</a>
+    </nav>
+  </header>
+
+  <main class="teaching-shell impact-lab" id="lesson">
+    <header class="teaching-intro">
+      <div>
+        <p class="eyebrow">Virtual experiment</p>
+        <h1>Charpy &amp; Izod Impact Tests</h1>
+      </div>
+      <div class="teaching-intro-copy">
+        <p>Break a V-notched metal bar with a pendulum. Compare how Charpy and Izod mount the bar, then use the pendulum&rsquo;s rebound to find the energy absorbed in the impact.</p>
+        <p class="teaching-intro-note"><a href="#specimens">See standard specimens and dimensions &darr;</a></p>
+      </div>
+    </header>
+
+    <section class="lab-card-panel setup-panel" aria-labelledby="setup-title">
+      <h2 id="setup-title">Set up the impact test</h2>
+      <div class="setup-fields">
+        <fieldset class="method-picker">
+          <legend>Test method</legend>
+          <div class="segmented">
+            <label><input type="radio" name="method" value="charpy" checked><span>Charpy</span></label>
+            <label><input type="radio" name="method" value="izod"><span>Izod</span></label>
+          </div>
+        </fieldset>
+        <label class="field" for="material">
+          <span>Steel model</span>
+          <select id="material">
+            <option value="ferritic">Ferritic steel</option>
+            <option value="austenitic">Austenitic stainless steel</option>
+          </select>
+        </label>
+        <label class="field" for="temperature">
+          <span>Specimen temperature</span>
+          <select id="temperature">
+            <option value="-100">&minus;100 &deg;C</option>
+            <option value="-80">&minus;80 &deg;C</option>
+            <option value="-60">&minus;60 &deg;C</option>
+            <option value="-40">&minus;40 &deg;C</option>
+            <option value="-20">&minus;20 &deg;C</option>
+            <option value="0">0 &deg;C</option>
+            <option value="23" selected>23 &deg;C</option>
+            <option value="40">40 &deg;C</option>
+            <option value="60">60 &deg;C</option>
+          </select>
+        </label>
+      </div>
+      <p class="muted setup-note" id="setup-note">Vary temperature in Charpy mode to break specimens from the same steel model at different temperatures.</p>
+      <div class="lab-controls" aria-label="Pendulum controls">
+        <button class="button primary" id="empty-swing" type="button">Run empty swing</button>
+        <button class="button secondary" id="load-bar" type="button" disabled>Load specimen</button>
+        <button class="button secondary" id="release" type="button" disabled>Release pendulum</button>
+        <button class="quiet-action" id="reset-apparatus" type="button" disabled>Reset apparatus</button>
+      </div>
+      <p class="machine-status" id="machine-status" role="status">Run an empty swing to measure the pendulum&rsquo;s energy loss with no specimen.</p>
+      <noscript><p class="muted">Enable JavaScript to run the pendulum and record measurements. The specimen drawings and worked example are available below.</p></noscript>
+    </section>
+
+    <section class="workbench" aria-label="Impact apparatus and specimen mounting">
+      <figure class="lab-card-panel machine-panel">
+        <figcaption class="panel-heading">
+          <div><h2>Pendulum impact tester</h2><p>Angles are measured from the downward vertical.</p></div>
+          <output id="swing-angle" aria-label="Current pendulum angle" aria-live="off">150.00&deg;</output>
+        </figcaption>
+        <svg id="machine" class="machine-view" viewBox="0 0 560 406" role="img" aria-labelledby="machine-title machine-desc">
+          <title id="machine-title">Side view of a pendulum impact tester</title>
+          <desc id="machine-desc">The arm swings from its release position at the upper left, passes the specimen at its lowest point and rises on the right.</desc>
+          <defs>
+            <linearGradient id="frame-metal" x1="0" x2="1" y1="0" y2="0">
+              <stop stop-color="#e8e9f4"/>
+              <stop offset="1" stop-color="#c6cce2"/>
+            </linearGradient>
+            <linearGradient id="striker-metal" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#5e5e96"/>
+              <stop offset="1" stop-color="#292658"/>
+            </linearGradient>
+          </defs>
+          <rect x="9" y="9" width="542" height="388" rx="18" class="view-bg"/>
+          <path d="M86 350V157Q86 132 110 132H440Q474 132 474 163V350M102 350V165Q102 148 122 148H437Q458 148 458 168V350"
+            fill="url(#frame-metal)" fill-rule="evenodd" stroke="#c9cce0" stroke-width="1.5"/>
+          <path d="M280 153V329" class="machine-datum"/>
+          <path d="M205 23.096A150 150 0 1 0 355 23.096" class="swing-track"/>
+          <path d="M205 23.096V39H113" class="leader"/>
+          <text x="106" y="44" class="svg-label" text-anchor="end">Release</text>
+          <path d="M355 23.096V39H442" class="leader"/>
+          <text x="449" y="44" class="svg-label">Rebound</text>
+          <path d="M280 306L330 328H400" class="leader"/>
+          <text x="407" y="333" class="svg-label">Impact</text>
+          <circle cx="205" cy="23.096" r="4" class="release-dot"/>
+          <path id="charpy-supports" d="M244 345V321H266V345Z M294 345V321H316V345Z" class="fixture-base"/>
+          <path id="izod-vise" d="M244 345V322H267V345Z M293 345V322H316V345Z" class="fixture-base" hidden/>
+          <path id="mounted-bar" d="M267 299H293V321H267Z" class="loaded-bar" hidden/>
+          <g id="fracture-pieces" hidden>
+            <path d="M293 318L305 308L313 322L301 333Z" class="loaded-bar"/>
+            <path id="second-fragment" d="M310 338L321 332L327 344L315 349Z" class="loaded-bar"/>
+            <path id="clamped-fragment" d="M267 322L275 324L283 320L293 324V345H267Z" class="loaded-bar" hidden/>
+          </g>
+          <rect x="60" y="345" width="440" height="21" rx="6" class="machine-base"/>
+          <path d="M79 370H481" class="leader"/>
+          <path id="rebound-track" class="rebound-track" hidden/>
+          <circle id="rebound-dot" r="5" class="rebound-dot" hidden/>
+          <g id="pendulum-arm" transform="rotate(150 280 153)">
+            <path d="M280 153V289" class="pendulum-rod"/>
+            <rect x="264" y="281" width="33" height="36" rx="7" fill="url(#striker-metal)"/>
+            <path d="M298 291V314" class="strike-edge"/>
+          </g>
+          <circle cx="280" cy="153" r="14" class="pivot-outer"/>
+          <circle cx="280" cy="153" r="5" class="pivot-inner"/>
+        </svg>
+      </figure>
+
+      <article class="lab-card-panel fixture-panel" aria-labelledby="fixture-title">
+        <header class="panel-heading"><div><h2 id="fixture-title">Charpy mounting</h2><p id="fixture-view">Plan view &middot; simply supported</p></div></header>
+        <svg id="charpy-fixture" class="fixture-view" viewBox="0 0 382 204" role="img" aria-labelledby="charpy-fixture-title charpy-fixture-desc">
+          <title id="charpy-fixture-title">Charpy specimen mounting in plan view</title>
+          <desc id="charpy-fixture-desc">A horizontal bar rests against two anvils 40 millimetres apart. The striker contacts the face opposite the centered V-notch.</desc>
+          <rect width="382" height="204" rx="13" class="view-bg"/>
+          <path d="M88 124H122V158H88Z M260 124H294V158H260Z" class="fixture-base"/>
+          <path d="M64 98H318V124H197L191 114L185 124H64Z" class="loaded-bar"/>
+          <path d="M191 44V91 M185 82L191 91L197 82" class="force-arrow"/>
+          <text x="191" y="32" class="svg-label" text-anchor="middle">Strike opposite notch</text>
+          <path d="M191 121L214 146H242" class="leader"/>
+          <text x="239" y="164" class="svg-label" text-anchor="end">V-notch</text>
+          <path d="M105 164V182 M277 164V182 M105 176H277 M111 172L105 176L111 180 M271 172L277 176L271 180" class="dim-line"/>
+          <text x="191" y="194" class="svg-label" text-anchor="middle">40 mm span</text>
+        </svg>
+        <svg id="izod-fixture" class="fixture-view" viewBox="0 0 382 204" role="img" aria-labelledby="izod-fixture-title izod-fixture-desc" hidden>
+          <title id="izod-fixture-title">Izod specimen mounting in side elevation</title>
+          <desc id="izod-fixture-desc">A vertical bar is clamped on its lower end with the notch aligned to the top of the vise. The striker hits the free end above the notch on the notched side.</desc>
+          <rect width="382" height="204" rx="13" class="view-bg"/>
+          <path d="M66 113H171V173H66Z M203 113H301V173H203Z" class="fixture-base"/>
+          <path d="M171 22H203V169H171V120L181 113L171 106Z" class="loaded-bar"/>
+          <path d="M80 62H164 M155 56L164 62L155 68" class="force-arrow"/>
+          <text x="28" y="49" class="svg-label">Strike above notch</text>
+          <path d="M178 113L142 94H101" class="leader"/>
+          <text x="94" y="98" class="svg-label" text-anchor="end">V-notch</text>
+          <path d="M203 30H221" class="leader"/>
+          <text x="227" y="35" class="svg-label">Free end</text>
+          <path d="M235 168V185H249" class="leader"/>
+          <text x="256" y="190" class="svg-label">Vise</text>
+        </svg>
+        <p id="fixture-explanation">Rest the bar against two anvils, center the notch between them, and strike the face opposite the notch.</p>
+        <p id="method-standard" class="muted">Metallic Charpy V-notch &middot; ASTM E23-25 / ISO 148-1:2016</p>
+      </article>
+    </section>
+
+    <section class="lab-card-panel measurement-panel" aria-labelledby="measure-title">
+      <div class="panel-heading">
+        <div><h2 id="measure-title">Read the energy</h2><p>A specimen that absorbs more energy leaves the pendulum with a smaller rebound angle.</p></div>
+        <button class="button secondary" id="record" type="button" disabled>Record result</button>
+      </div>
+      <dl class="readings">
+        <div><dt>Release angle, &alpha;</dt><dd>150.00&deg;</dd></div>
+        <div><dt>Pendulum factor, C</dt><dd id="factor">160 J</dd></div>
+        <div><dt>Empty rebound, &beta;<sub>0</sub></dt><dd id="empty-angle">&mdash;</dd></div>
+        <div><dt>Specimen rebound, &beta;</dt><dd id="specimen-angle">&mdash;</dd></div>
+        <div><dt>Gross energy loss</dt><dd id="gross-energy">&mdash;</dd></div>
+        <div><dt>Empty-swing correction</dt><dd id="empty-loss">&mdash;</dd></div>
+        <div class="key-reading"><dt>Absorbed energy</dt><dd id="absorbed-energy">&mdash;</dd></div>
+      </dl>
+      <p class="muted">The teaching model uses the empty swing as a fixed correction for machine losses. The energy readings and fracture motion are illustrative.</p>
+    </section>
+
+    <section class="lab-card-panel results-panel" aria-labelledby="results-title">
+      <div class="panel-heading">
+        <div><h2 id="results-title">Recorded results</h2><p id="plot-caption">Charpy &middot; Ferritic steel &middot; Absorbed energy against temperature</p></div>
+        <button class="button secondary" id="export-data" type="button" disabled>Download CSV</button>
+      </div>
+      <svg id="result-plot" class="result-plot" viewBox="0 0 640 270" role="img" aria-label="No recorded results for the selected method and steel model"></svg>
+      <p id="table-empty" class="muted">Run a specimen and record the result to build the data table.</p>
+      <div id="table-wrap" class="table-wrap" tabindex="0" role="region" aria-label="Scrollable impact data table" hidden>
+        <table>
+          <caption>All recorded trials</caption>
+          <thead><tr><th scope="col">Trial</th><th scope="col">Method</th><th scope="col">Steel model</th><th scope="col">Temp. (&deg;C)</th><th scope="col">&beta;<sub>0</sub> (&deg;)</th><th scope="col">&beta; (&deg;)</th><th scope="col">Absorbed (J)</th></tr></thead>
+          <tbody id="recorded-runs"></tbody>
+        </table>
+      </div>
+      <p class="muted">To explore the ductile-to-brittle transition, compare Charpy points for the same ferritic steel model at low and high temperatures. Interpret comparisons within the same method and specimen geometry.</p>
+    </section>
+
+    <section class="specimens-section" id="specimens" aria-labelledby="specimens-title">
+      <h2 id="specimens-title">Standard metal specimens</h2>
+      <p>The drawings show nominal dimensions for full-size V-notch bars. Consult the applicable standard for tolerances, surface finish, specimen orientation, apparatus verification, and reporting.</p>
+      <div class="specimen-grid">
+        <figure class="lab-card-panel specimen-card">
+          <figcaption><h3>Charpy V-notch</h3><p>ASTM E23-25 and ISO 148-1:2016</p></figcaption>
+          <img src="charpy-specimen.svg" width="540" height="216" alt="Charpy bar with side and end views. Overall length 55 millimetres, square section 10 by 10 millimetres, V-notch centered 27.5 millimetres from either end.">
+          <p><strong>55 &times; 10 &times; 10 mm.</strong> The notch is centered at mid-length with an 8 mm ligament beneath it.</p>
+        </figure>
+        <figure class="lab-card-panel specimen-card">
+          <figcaption><h3>Izod V-notch</h3><p>ASTM E23-25, metallic cantilever specimen</p></figcaption>
+          <img src="izod-specimen.svg" width="540" height="216" alt="Metal Izod bar with side and end views. Overall length 75 millimetres, square section 10 by 10 millimetres, V-notch centerline 28 millimetres from the free end.">
+          <p><strong>75 &times; 10 &times; 10 mm.</strong> The notch centerline is 28 mm from the free end and aligns with the top of the vise when mounted.</p>
+        </figure>
+      </div>
+      <figure class="lab-card-panel notch-card">
+        <img src="v-notch-detail.svg" width="480" height="238" alt="Enlarged V-notch section showing a 45 degree included angle, 2 millimetre depth and 0.25 millimetre root radius.">
+        <figcaption><h3>V-notch detail</h3><p>Both bars here use a <strong>45&deg; included angle</strong>, <strong>2 mm depth</strong>, and <strong>0.25 mm root radius</strong>. The remaining ligament is 8 mm. Notch geometry changes the stress concentration and can change the measured energy.</p></figcaption>
+      </figure>
+      <div class="standards-list">
+        <p><strong>Metal standards.</strong> <a href="https://store.astm.org/standards/e23">ASTM E23-25</a> covers Charpy and Izod. <a href="https://www.iso.org/standard/63802.html">ISO 148-1:2016</a> covers the non-instrumented Charpy test for metals, including V- and U-notch specimens. Charpy reports should identify the striker edge radius (2 mm or 8 mm) separately from the specimen&rsquo;s notch geometry.</p>
+        <p><strong>Plastic standards.</strong> Charpy uses <a href="https://store.astm.org/standards/d6110">ASTM D6110</a> or <a href="https://www.iso.org/standard/91071.html">ISO 179-1</a>. Izod uses <a href="https://store.astm.org/standards/d256">ASTM D256</a> or <a href="https://www.iso.org/standard/84394.html">ISO 180</a>. This lab uses metal specimens and reports absorbed energy in joules.</p>
+      </div>
+    </section>
+
+    <section class="lab-card-panel calculation-panel" aria-labelledby="calculation-title">
+      <h2 id="calculation-title">Calculate absorbed energy</h2>
+      <p>Let C = MgR, where M is the pendulum mass and R is the distance from the pivot to its center of mass. With angles measured from the downward vertical, the loss in gravitational potential energy between release and rebound is C(cos &beta; &minus; cos &alpha;).</p>
+      <div class="energy-equation"><strong>Absorbed energy</strong> = C(cos &beta; &minus; cos &alpha;) &minus; C(cos &beta;<sub>0</sub> &minus; cos &alpha;) = C(cos &beta; &minus; cos &beta;<sub>0</sub>)</div>
+      <h3>Worked example</h3>
+      <p>A Charpy pendulum with C = 160 J is released from 150.00&deg;. It rebounds to 148.60&deg; on the empty swing and 100.00&deg; after breaking a bar. Using degrees, the gross loss is about 110.8 J and the empty-swing loss is about 2.0 J. The specimen absorbs <strong>108.8 J</strong>.</p>
+      <p class="muted">Impact absorbed energy characterizes a particular notched specimen and test condition. Plane-strain fracture toughness is measured by a separate test on a precracked specimen.</p>
+    </section>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Charpy &amp; Izod &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>

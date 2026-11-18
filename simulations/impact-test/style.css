@@ -1,0 +1,388 @@
+.impact-lab [hidden] {
+  display: none;
+}
+
+.impact-lab h2,
+.impact-lab h3 {
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.impact-lab h2 {
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.impact-lab h3 {
+  font-size: 1.2rem;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.lab-card-panel {
+  min-width: 0;
+  padding: clamp(1rem, 2.4vw, 1.65rem);
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.setup-fields {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 1rem;
+  margin-top: 1.05rem;
+  align-items: end;
+}
+
+.method-picker {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+.method-picker legend,
+.field > span {
+  margin-bottom: 0.35rem;
+  padding: 0;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  border-radius: 0.7rem;
+  background: var(--lavender-light);
+}
+
+.segmented label {
+  position: relative;
+}
+
+.segmented input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.segmented span {
+  display: block;
+  padding: 0.4rem 0.8rem;
+  min-height: 2.35rem;
+  border-radius: 0.52rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.segmented input:checked + span {
+  color: #fff;
+  background: var(--ink);
+}
+
+.segmented input:focus-visible + span,
+.impact-lab :is(button, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.segmented input:disabled {
+  cursor: default;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.field select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #bfb9d6;
+  border-radius: 0.65rem;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+
+.setup-note {
+  margin: 0.65rem 0 1rem;
+}
+
+.lab-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.impact-lab button {
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.impact-lab .button {
+  min-height: 2.75rem;
+  padding: 0.42rem 0.95rem;
+}
+
+.impact-lab button:disabled {
+  opacity: 0.54;
+  cursor: default;
+}
+
+.quiet-action {
+  padding: 0.35rem 0.6rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.machine-status {
+  min-height: 2.5rem;
+  margin: 0.8rem 0 0;
+  padding: 0.55rem 0.8rem;
+  border-left: 3px solid var(--coral);
+  border-radius: 0.25rem;
+  background: #f9f4fc;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.workbench,
+.specimen-grid,
+.notch-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.workbench {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: start;
+  margin-top: 1rem;
+}
+
+.panel-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  align-items: start;
+  margin-bottom: 0.85rem;
+}
+
+.panel-heading p,
+.specimen-card figcaption p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.91rem;
+}
+
+#swing-angle {
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.5rem;
+  background: var(--lavender-light);
+  font-variant-numeric: tabular-nums;
+  font-weight: 850;
+}
+
+.machine-view,
+.fixture-view,
+.result-plot,
+.specimen-card img,
+.notch-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.view-bg { fill: #f3f3fa; }
+.machine-datum { stroke: #9288b9; stroke-width: 1.2; stroke-dasharray: 4 5; }
+.swing-track { fill: none; stroke: #a39abf; stroke-width: 1.8; stroke-dasharray: 4 4; }
+.leader, .dim-line { fill: none; stroke: #6d6493; stroke-width: 1.4; }
+.svg-label { fill: #3c366b; font-size: 14px; font-weight: 700; }
+.release-dot, .rebound-dot { fill: var(--coral); }
+.rebound-track { fill: none; stroke: var(--coral); stroke-width: 2.5; }
+.fixture-base, .machine-base { fill: #b8b5d6; stroke: #70658e; stroke-width: 1.25; }
+.loaded-bar { fill: #7165a7; stroke: #473967; stroke-width: 1.5; }
+.pendulum-rod { fill: none; stroke: #484275; stroke-width: 9; stroke-linecap: round; }
+.strike-edge { fill: none; stroke: #de593b; stroke-width: 4; stroke-linecap: round; }
+.pivot-outer { fill: #8e81ba; stroke: #4f467a; stroke-width: 2; }
+.pivot-inner { fill: #312b62; }
+.force-arrow { fill: none; stroke: var(--coral); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+.fixture-panel > p {
+  margin: 0.75rem 0 0;
+}
+
+.measurement-panel,
+.results-panel,
+.calculation-panel {
+  margin-top: 1rem;
+}
+
+.readings {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  margin: 0;
+}
+
+.readings div {
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.65rem;
+  background: #f3f1f9;
+}
+
+.readings .key-reading {
+  background: #fceee7;
+  color: #9c321b;
+}
+
+.readings dt {
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.readings dd {
+  margin: 0;
+  font-size: 1.28rem;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-plot {
+  max-width: 46rem;
+  margin-inline: auto;
+  border-radius: 0.65rem;
+  background: #f8f7fc;
+}
+
+.plot-axis { stroke: #5a507e; stroke-width: 1.4; }
+.plot-grid { stroke: #e2dded; stroke-width: 1; }
+.plot-label { fill: var(--ink-soft); font-size: 15px; }
+.plot-title { fill: var(--ink); font-size: 15px; font-weight: 750; }
+.plot-point { fill: var(--coral); stroke: #fff; stroke-width: 1.5; }
+.plot-empty { fill: var(--muted); font-size: 19px; font-weight: 700; }
+
+.table-wrap {
+  margin-top: 1rem;
+  overflow-x: auto;
+}
+
+.table-wrap table {
+  width: 100%;
+  min-width: 42rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table-wrap caption {
+  padding: 0.45rem 0;
+  font-weight: 800;
+  text-align: left;
+}
+
+.table-wrap th,
+.table-wrap td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.table-wrap th {
+  background: var(--lavender-light);
+}
+
+.specimens-section {
+  padding-top: 2.5rem;
+  scroll-margin-top: 1rem;
+}
+
+.specimens-section > p {
+  max-width: 54rem;
+  color: var(--ink-soft);
+}
+
+.specimen-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.specimen-card img {
+  margin-top: 1rem;
+}
+
+.specimen-card p:last-child {
+  margin-bottom: 0;
+}
+
+.notch-card {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.notch-card p,
+.standards-list p {
+  margin: 0.5rem 0 0;
+}
+
+.standards-list {
+  padding: 0.7rem 0 1rem;
+  color: var(--ink-soft);
+}
+
+.standards-list a {
+  font-weight: 800;
+  text-underline-offset: 0.16em;
+}
+
+.energy-equation {
+  margin: 1rem 0 1.25rem;
+  padding: 0.65rem 0.9rem;
+  border-left: 3px solid var(--coral);
+  background: var(--lavender-light);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 840px) {
+  .workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 620px) {
+  .setup-fields,
+  .specimen-grid,
+  .notch-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .readings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lab-controls > button {
+    flex: 1 1 10rem;
+  }
+
+  .plot-label,
+  .plot-title {
+    font-size: 19px;
+  }
+}
