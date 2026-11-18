@@ -173,3 +173,273 @@ input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
     padding-bottom: .8rem;
   }
 }
+
+.crystal-explorer {
+  margin: 2.3rem 0 2rem;
+  scroll-margin-top: 1rem;
+}
+
+.crystal-heading h3 {
+  margin: .3rem 0 .65rem;
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+
+.crystal-heading > p:last-child {
+  max-width: 58rem;
+  margin: 0 0 1.1rem;
+}
+
+.crystal-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .65rem;
+  margin-bottom: .85rem;
+}
+
+.crystal-tabs button {
+  padding: .75rem 1rem;
+  border: 1px solid #c9c3df;
+  border-radius: .7rem;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+}
+
+.crystal-tabs button span {
+  display: block;
+  margin-top: .08rem;
+  font-size: .78rem;
+  font-weight: 600;
+}
+
+.crystal-tabs button[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: white;
+}
+
+.crystal-tabs button:hover,
+.crystal-view-controls button:hover {
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
+.crystal-explorer button:focus-visible,
+.crystal-explorer select:focus-visible,
+.crystal-scene:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.crystal-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(17rem, .8fr);
+  align-items: start;
+  gap: 1rem;
+}
+
+.crystal-figure,
+.crystal-controls {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: white;
+}
+
+.crystal-figure {
+  padding: .8rem;
+}
+
+.crystal-scene {
+  height: 490px;
+  border-radius: .65rem;
+  overflow: hidden;
+  background: linear-gradient(150deg, #f3f1fa, #ecf4f4);
+  touch-action: none;
+  cursor: grab;
+}
+
+.crystal-scene:active {
+  cursor: grabbing;
+}
+
+.crystal-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.crystal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem 1rem;
+  margin: .85rem .2rem .65rem;
+  color: var(--ink);
+  font-size: .8rem;
+  font-weight: 750;
+}
+
+.crystal-legend i {
+  display: inline-block;
+  width: .75rem;
+  height: .75rem;
+  margin-right: .3rem;
+  border-radius: .15rem;
+}
+
+.crystal-key-plane { background: #dc8e40; }
+.crystal-key-direction { background: #7546a8; }
+.crystal-key-normal { background: #2873ae; }
+
+.crystal-view-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.crystal-view-controls button {
+  padding: .45rem .65rem;
+  border: 1px solid #c9c3df;
+  border-radius: .45rem;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.crystal-figure figcaption {
+  margin: .65rem .2rem .1rem;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.crystal-controls {
+  padding: 1.2rem;
+}
+
+.crystal-controls > label {
+  display: block;
+  margin: .85rem 0 .35rem;
+  color: var(--ink);
+  font-size: .87rem;
+  font-weight: 800;
+}
+
+.crystal-controls > label:first-child {
+  margin-top: 0;
+}
+
+.crystal-controls select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 2.75rem;
+  padding: .5rem .6rem;
+  border: 1px solid #c9c3df;
+  border-radius: .45rem;
+  background: white;
+  color: var(--ink);
+  font: inherit;
+  font-size: .87rem;
+}
+
+.crystal-controls > .crystal-atom-toggle {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  margin: 1rem 0;
+  cursor: pointer;
+}
+
+.crystal-atom-toggle input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+.crystal-readings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: .55rem;
+  margin: 1rem 0 .65rem;
+}
+
+.crystal-readings > div {
+  padding: .7rem;
+  border-radius: .5rem;
+  background: var(--lavender-light);
+}
+
+.crystal-readings .crystal-burgers-row {
+  grid-column: 1 / -1;
+}
+
+.crystal-readings dt {
+  color: var(--muted);
+  font-size: .76rem;
+}
+
+.crystal-readings dd {
+  margin: .2rem 0 0;
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.crystal-controls p {
+  font-size: .88rem;
+}
+
+.crystal-controls .crystal-count {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.crystal-controls .crystal-geometry-note {
+  margin-bottom: 0;
+  padding-top: .85rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+@media (max-width: 850px) {
+  .crystal-workbench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .crystal-scene {
+    height: 420px;
+  }
+}
+
+@media (max-width: 480px) {
+  .crystal-tabs {
+    gap: .4rem;
+  }
+
+  .crystal-tabs button {
+    padding: .65rem .55rem;
+  }
+
+  .crystal-tabs button span {
+    font-size: .67rem;
+  }
+
+  .crystal-figure {
+    padding: .55rem;
+  }
+
+  .crystal-scene {
+    height: 350px;
+  }
+}

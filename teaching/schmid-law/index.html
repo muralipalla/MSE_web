@@ -7,10 +7,12 @@
   <title>Slip &amp; Schmid&rsquo;s Law | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
   <script src="app.js?v=4" defer></script>
+  <script src="slip-crystal-data.js?v=1" defer></script>
+  <script src="slip-crystals.js?v=1" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#lesson">Skip to lesson</a>
@@ -64,6 +66,53 @@
     </div>
     <p class="slip-count-note">Each count includes only directions that lie in the selected planes. Opposite slip senses count as one system, and reversing a plane normal gives the same plane orientation.</p>
 
+    <div class="crystal-explorer" id="crystal-explorer" aria-labelledby="crystal-explorer-title">
+      <div class="crystal-heading">
+        <p class="section-kicker">Interactive crystal geometry</p>
+        <h3 id="crystal-explorer-title">See the plane and direction</h3>
+        <p>Choose a crystal structure and slip family, then rotate the crystal to see how a slip direction lies in its plane. The purple arrow shows one slip sense; its reverse belongs to the same geometrical system.</p>
+      </div>
+      <div class="crystal-tabs" role="group" aria-label="Crystal structure">
+        <button type="button" data-crystal="fcc" aria-pressed="true">FCC <span>Face-centred cubic</span></button>
+        <button type="button" data-crystal="bcc" aria-pressed="false">BCC <span>Body-centred cubic</span></button>
+        <button type="button" data-crystal="hcp" aria-pressed="false">HCP <span>Hexagonal close-packed</span></button>
+      </div>
+      <div class="crystal-workbench">
+        <figure class="crystal-figure">
+          <div class="crystal-scene" id="crystal-scene" tabindex="0" role="img" aria-label="Interactive FCC crystal showing a slip plane, an in-plane slip direction, and the plane normal." aria-describedby="crystal-view-help">
+            <p class="fallback">The interactive crystal view requires JavaScript and WebGL. The slip families, equations, and selected-system description remain available on this page.</p>
+          </div>
+          <div class="crystal-legend" aria-label="Crystal figure legend">
+            <span><i class="crystal-key-plane" aria-hidden="true"></i>Slip plane</span>
+            <span><i class="crystal-key-direction" aria-hidden="true"></i>Slip direction</span>
+            <span><i class="crystal-key-normal" aria-hidden="true"></i>Plane normal</span>
+          </div>
+          <div class="crystal-view-controls" role="group" aria-label="Crystal view controls">
+            <button type="button" data-crystal-view="rotate-left">Rotate left</button>
+            <button type="button" data-crystal-view="rotate-right">Rotate right</button>
+            <button type="button" data-crystal-view="plane">Look at plane</button>
+            <button type="button" data-crystal-view="reset">Reset view</button>
+          </div>
+            <figcaption id="crystal-view-help">Drag to rotate, use the view buttons, or focus the figure and use the arrow keys (Home resets the view). Orange atoms have their centres in the selected plane. Atom sizes and arrow lengths are schematic; arrows show crystallographic orientations.</figcaption>
+        </figure>
+        <div class="crystal-controls">
+          <label for="crystal-family">Slip family</label>
+          <select id="crystal-family"><option value="111">{111} &lang;110&rang;</option></select>
+          <label for="crystal-system">Plane&ndash;direction pair</label>
+          <select id="crystal-system"><option value="0">(111) [1 &minus;1 0]</option></select>
+          <label class="crystal-atom-toggle" for="crystal-show-atoms"><input type="checkbox" id="crystal-show-atoms" checked> Show atoms</label>
+          <dl class="crystal-readings" aria-live="polite">
+            <div><dt>Selected plane</dt><dd id="crystal-plane">(111)</dd></div>
+            <div><dt>Slip direction</dt><dd id="crystal-direction">[1 &minus;1 0]</dd></div>
+            <div class="crystal-burgers-row"><dt>Burgers vector</dt><dd id="crystal-burgers"><i>a</i>/2 [1 &minus;1 0]</dd></div>
+          </dl>
+          <p class="crystal-count" id="crystal-count">12 geometrical slip systems in this family.</p>
+          <p id="crystal-description">In FCC, the close-packed {111} planes contain the &lang;110&rang; slip directions.</p>
+          <p class="crystal-geometry-note" id="crystal-geometry-note">The cubic cell edge is <i>a</i>. The blue normal is perpendicular to the orange plane, and the purple direction lies in that plane.</p>
+        </div>
+      </div>
+    </div>
+
     <div class="slip-structure-notes">
       <article>
         <h3>FCC</h3>
@@ -80,7 +129,7 @@
     </div>
 
     <p>For each permitted plane&ndash;direction pair, the resolved shear stress is &tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;. The angles describe that particular system. In the Schmid onset model, assess its resolved shear stress against its own critical resolved shear stress. Activation depends on orientation and resistance under the test conditions.</p>
-    <p class="slip-sources"><a href="https://dictionary.iucr.org/Miller_indices">IUCr crystallographic indices</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9793464/">FCC systems, Appendix C</a> &middot; <a href="https://doi.org/10.1007/s10659-023-10034-9">Ball, BCC slip families</a> &middot; <a href="https://www.frontiersin.org/journals/materials/articles/10.3389/fmats.2022.897998/full">Zhang, Liu &amp; Oskay, HCP families, Table 5</a></p>
+    <p class="slip-sources"><a href="https://dictionary.iucr.org/Miller_indices">IUCr crystallographic indices</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9793464/">FCC systems, Appendix C</a> &middot; <a href="https://doi.org/10.1007/s10659-023-10034-9">Ball, BCC slip families</a> &middot; <a href="https://www.frontiersin.org/journals/materials/articles/10.3389/fmats.2022.897998/full">Zhang, Liu &amp; Oskay, HCP families, Table 5</a> &middot; <a href="https://mtex-toolbox.github.io/CrystalDirections.html">MTEX direct and reciprocal crystal coordinates</a></p>
   </section>
 </main><footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Slip &amp; Schmid&rsquo;s Law &middot; <span data-year>2026</span></p></footer>
 </body></html>
