@@ -82,6 +82,29 @@
   margin-top: 0;
 }
 
+.fracture-overview-figure {
+  margin: 1rem 0;
+}
+
+.fracture-overview-figure img {
+  display: block;
+  width: 100%;
+  height: clamp(18rem, 32vw, 23rem);
+  object-fit: contain;
+  border-radius: .5rem;
+  background: #f5f2fa;
+}
+
+.fracture-overview-figure figcaption {
+  margin-top: .7rem;
+  color: var(--ink-soft);
+  font-size: .95rem;
+}
+
+.fracture-overview-figure figcaption p {
+  margin: .45rem 0;
+}
+
 .photo-card img,
 .technical-figure img,
 .technical-figure svg,
