@@ -29,7 +29,7 @@
     const reached = resolved >= critical;
     status.textContent = reached ? "The resolved shear stress reaches the critical value." : "The resolved shear stress is below the critical value.";
     status.classList.toggle("below", !reached);
-    updateScene(phi * radians, beta * radians);
+    updateScene(phi * radians, beta * radians, stress);
   }
 
   Object.values(controls).forEach(control => control.addEventListener("input", update));
@@ -77,8 +77,28 @@
       model.add(item);
       return item;
     }
-    arrow(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 2.04, 0), .65, 0xc93b1f);
-    arrow(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, -2.04, 0), .65, 0xc93b1f);
+    const forceArrows = [
+      arrow(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 2.04, 0), .65, 0xc93b1f),
+      arrow(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, -2.04, 0), .65, 0xc93b1f)
+    ];
+    const forceCanvas = document.createElement("canvas");
+    forceCanvas.width = 64;
+    forceCanvas.height = 64;
+    const forceContext = forceCanvas.getContext("2d");
+    forceContext.font = "bold 44px sans-serif";
+    forceContext.textAlign = "center";
+    forceContext.textBaseline = "middle";
+    forceContext.fillStyle = "#a9311c";
+    forceContext.fillText("F", 32, 32);
+    const forceLabelMaterial = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(forceCanvas), transparent: true, depthTest: false });
+    const forceLabels = [1, -1].map(sign => {
+      const label = new THREE.Sprite(forceLabelMaterial);
+      label.scale.set(.3, .3, 1);
+      label.position.set(.23, sign * 2.23, 0);
+      label.renderOrder = 5;
+      model.add(label);
+      return label;
+    });
     const planeMaterial = new THREE.MeshPhongMaterial({ color: 0xe48d37, side: THREE.DoubleSide, transparent: true, opacity: .66, depthWrite: false });
     let plane;
     const normalArrow = arrow(new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 0), 1.4, 0x2873ae);
@@ -116,7 +136,17 @@
       marker.line.geometry = new THREE.BufferGeometry().setFromPoints(points);
       marker.sprite.position.copy(axisDirection).applyAxisAngle(rotationAxis, angle / 2).multiplyScalar(radius + .16);
     }
-    updateScene = (phi, beta) => {
+    updateScene = (phi, beta, stress) => {
+      const forceLength = .65 * stress / 300;
+      forceArrows.forEach((forceArrow, index) => {
+        const visible = stress > 0;
+        forceArrow.visible = visible;
+        forceLabels[index].visible = visible;
+        if (visible) {
+          forceArrow.setLength(forceLength, forceLength * .32, forceLength * .18);
+          forceLabels[index].position.y = (index === 0 ? 1 : -1) * (2.04 + forceLength / 2);
+        }
+      });
       const normal = new THREE.Vector3(Math.sin(phi), Math.cos(phi), 0);
       const inPlane = new THREE.Vector3(Math.cos(phi), -Math.sin(phi), 0);
       const direction = inPlane.clone().multiplyScalar(-Math.cos(beta)).add(new THREE.Vector3(0, 0, -Math.sin(beta)));

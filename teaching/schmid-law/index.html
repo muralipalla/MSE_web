@@ -6,10 +6,10 @@
   <meta name="description" content="Explore resolved shear stress, Schmid factor, and critical resolved shear stress in an interactive single-crystal tension test.">
   <title>Slip &amp; Schmid&rsquo;s Law | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
-  <script src="app.js?v=3" defer></script>
+  <script src="app.js?v=4" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#lesson">Skip to lesson</a>
@@ -17,7 +17,7 @@
 <main class="shell" id="lesson">
   <header class="hero"><p class="eyebrow">Core module 10 &middot; Crystal plasticity</p><h1>Slip &amp; Schmid&rsquo;s Law</h1><p class="lead">A tensile force can drive shear on an inclined crystal plane. Its orientation and slip direction determine the stress available to move dislocations.</p><a class="start" href="#explore">Explore the specimen &darr;</a></header>
   <section class="intro" aria-labelledby="system-title"><div><p class="section-kicker">From tension to slip</p><h2 id="system-title">One plane, one direction</h2><p>A <strong>slip system</strong> consists of a crystallographic slip plane and a slip direction lying in that plane. A uniaxial tensile stress &sigma; produces a shear stress resolved along that direction. A dislocation can glide when the magnitude of this resolved shear stress reaches the critical value for the system.</p></div><div class="equation-card"><span>Schmid&rsquo;s law</span><p>&tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;</p><p>m = |cos &phi; cos &lambda;|</p><small>&phi; is the angle between the tensile axis and the plane normal. &lambda; is the angle between the tensile axis and the slip direction. m is the non-negative Schmid factor.</small></div></section>
-  <section id="explore" class="explore"><div class="heading"><p class="section-kicker">Interactive specimen</p><h2>Orient the slip system</h2><p>Adjust the plane normal and rotate the slip direction within that plane. The dotted line is the tensile axis. The arcs show &phi; to the plane normal and &lambda; to the slip direction. Drag the figure to view the geometry from another angle.</p></div><div class="workbench">
+  <section id="explore" class="explore"><div class="heading"><p class="section-kicker">Interactive specimen</p><h2>Orient the slip system</h2><p>Adjust the plane normal and rotate the slip direction within that plane. The dotted line is the tensile axis. The arcs show &phi; to the plane normal and &lambda; to the slip direction. The force arrows scale with applied stress for a fixed area. Drag the figure to view the geometry from another angle.</p></div><div class="workbench">
     <div class="visual"><div id="scene" class="scene" role="img" aria-label="Interactive three-dimensional cylinder under tension, showing a slip plane, its normal and slip direction."><p class="fallback">The 3D view requires WebGL. The calculated values remain available below.</p></div><div class="legend"><span><i class="force"></i>Tensile force</span><span><i class="plane"></i>Slip plane</span><span><i class="normal"></i>Plane normal</span><span><i class="slip"></i>Slip direction</span></div><div class="view-controls" aria-label="3D view controls"><button id="rotate-left" type="button">Rotate left</button><button id="rotate-right" type="button">Rotate right</button><button id="reset-view" type="button">Reset view</button></div></div>
     <div class="controls">
       <label for="phi">Plane-normal angle, &phi; <output id="phi-value">45&deg;</output></label><input id="phi" type="range" min="15" max="65" value="45" step="1"><p class="hint">Angle between tensile axis and plane normal.</p>
