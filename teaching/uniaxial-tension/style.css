@@ -1,7 +1,10 @@
 .lesson-shell { width: min(74rem, calc(100% - 2rem)); margin: 3rem auto 5rem; }
-.hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 3rem; align-items: end; padding: 2rem 0 3rem; }
-.hero h1 { margin: .3rem 0; font-size: clamp(3.1rem, 7vw, 6rem); line-height: .98; letter-spacing: -.055em; }
-.hero-copy { max-width: 34rem; color: var(--ink-soft); font-size: 1.12rem; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); gap: 2rem; align-items: center; padding: 1rem 0 2rem; }
+.hero h1 { margin: .3rem 0; font-size: clamp(3.1rem, 6vw, 5.3rem); line-height: .98; letter-spacing: -.055em; }
+.hero-copy { max-width: 40rem; color: var(--ink-soft); font-size: 1.05rem; }
+.hero-figure { margin: 0; text-align: center; }
+.hero-figure svg { display: block; width: 100%; max-width: 360px; margin: auto; }
+.hero-figure figcaption { color: var(--muted); font-size: .8rem; margin-top: .3rem; }
 .hero-link { display: inline-block; color: var(--coral); font-weight: 800; text-decoration-thickness: 2px; text-underline-offset: 4px; }
 .route { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; background: rgba(255,255,255,.7); }
 .route a { padding: .35rem .65rem; border-radius: .5rem; background: #f1edf8; font-size: .8rem; font-weight: 750; text-decoration: none; }
