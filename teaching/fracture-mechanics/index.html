@@ -8,8 +8,11 @@
   <title>Fracture Mechanics | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
+  <link rel="stylesheet" href="style.css?v=5">
   <script src="../../js/main.js?v=2" defer></script>
+  <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
+  <script src="../../js/math-render.js?v=1" defer></script>
   <script src="app.js?v=2" defer></script>
 </head>
 <body>
@@ -214,7 +217,7 @@
         <div>
           <p>A hole or rounded notch raises the local elastic stress above the nominal stress. The elastic stress concentration factor is <i>K</i><sub>t</sub> = &sigma;<sub>max</sub>/&sigma;<sub>nom</sub>. It is dimensionless.</p>
           <p>The Inglis solution applies to an effectively infinite elastic plate under remote tension perpendicular to the long axis of an elliptical hole. The semi-axes are <i>a</i> and <i>b</i>, with tip radius &rho; = <i>b</i><sup>2</sup>/<i>a</i>.</p>
-          <p class="formula"><i>K</i><sub>t</sub> = 1 + 2<i>a</i>/<i>b</i> = 1 + 2&radic;(<i>a</i>/&rho;)</p>
+          <p class="formula" data-tex="K_t = 1 + \frac{2a}{b} = 1 + 2\sqrt{\frac{a}{\rho}}"><i>K</i><sub>t</sub> = 1 + 2<i>a</i>/<i>b</i> = 1 + 2&radic;(<i>a</i>/&rho;)</p>
           <p>A circular hole gives <i>K</i><sub>t</sub> = 3. As the ellipse sharpens toward a crack, the elastic peak stress grows without bound. A sharp crack is described by the stress intensity factor <i>K</i><sub>I</sub>, which sets the magnitude of the near-tip stress field.</p>
         </div>
         <figure class="fracture-card technical-figure">
@@ -253,8 +256,8 @@
           <p><i>E</i>&prime; = <i>E</i> in plane stress and <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>) in plane strain, where &nu; is Poisson&rsquo;s ratio. Plane stress allows deformation through the thickness. Plane strain approximates a constrained interior with very little strain in that direction. The <a href="#constraint-model">thickness comparison</a> below illustrates both conditions.</p>
           <p>For a central through crack of total length <strong>2<i>a</i></strong> in an effectively infinite plate under uniform tension &sigma;, the energy release rate and critical tensile stress are</p>
           <div class="formula-row">
-            <p class="formula"><i>G</i> = &pi;<i>a</i>&sigma;<sup>2</sup>/<i>E</i>&prime;</p>
-            <p class="formula">&sigma;<sub>c</sub> = &radic;(<i>E</i>&prime;<i>G</i><sub>c</sub>/(&pi;<i>a</i>))</p>
+            <p class="formula" data-tex="G = \frac{\pi a \sigma^2}{E'}"><i>G</i> = &pi;<i>a</i>&sigma;<sup>2</sup>/<i>E</i>&prime;</p>
+            <p class="formula" data-tex="\sigma_c = \sqrt{\frac{E'G_c}{\pi a}}">&sigma;<sub>c</sub> = &radic;(<i>E</i>&prime;<i>G</i><sub>c</sub>/(&pi;<i>a</i>))</p>
           </div>
           <p>Crack extension becomes energetically possible when <i>G</i> reaches the resistance. At fixed remote stress in this ideal model, <i>G</i> increases as the crack extends while <i>G</i><sub>c</sub> stays constant, allowing unstable growth. In metals, plastic deformation dissipates additional energy, so the measured fracture resistance can greatly exceed 2&gamma;<sub>s</sub>.</p>
           <p class="source-line"><a href="https://doi.org/10.1098/rsta.1921.0006">Griffith&rsquo;s original paper</a> &middot; <a href="https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.960-16e2.pdf">NIST fractography and fracture mechanics guide</a></p>
@@ -311,8 +314,8 @@
       <div class="fracture-card">
         <h3>Mode I under remote tension</h3>
         <div class="formula-row">
-          <p class="formula"><i>K</i><sub>I</sub> = <i>Y</i>&sigma;&radic;(&pi;<i>a</i>)</p>
-          <p class="formula"><i>G</i> = <i>K</i><sub>I</sub><sup>2</sup>/<i>E</i>&prime;</p>
+          <p class="formula" data-tex="K_{\mathrm{I}} = Y\sigma\sqrt{\pi a}"><i>K</i><sub>I</sub> = <i>Y</i>&sigma;&radic;(&pi;<i>a</i>)</p>
+          <p class="formula" data-tex="G = \frac{K_{\mathrm{I}}^2}{E'}"><i>G</i> = <i>K</i><sub>I</sub><sup>2</sup>/<i>E</i>&prime;</p>
         </div>
         <p>The dimensionless factor <i>Y</i> accounts for geometry and loading. Use <i>Y</i> = 1 for a central through crack in an effectively infinite plate under uniform tension. Here <i>a</i> is half the total crack length. For an edge crack, <i>a</i> is its depth and a different <i>Y</i> applies. Use metres for <i>a</i> with &sigma; in MPa to obtain MPa&radic;m.</p>
         <p>The second equation relates the Mode I elastic field to <a href="#griffith">Griffith&rsquo;s energy release rate</a>. In plane stress, <i>E</i>&prime; = <i>E</i>. In plane strain, <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>).</p>
@@ -327,24 +330,33 @@
       <h2 id="stress-field-title">Stress field near the crack tip</h2>
       <div class="figure-pair">
         <div>
-          <p>Measure distance <i>r</i> from the tip and angle &theta; from the direction straight ahead of the crack. In linear elasticity, stresses near a sharp crack have a leading term proportional to 1/&radic;<i>r</i>. Its angular variation depends on the stress component and how the crack is loaded.</p>
-          <p>Mode I loading separates the two faces normal to the crack plane. For this opening mode, the leading tensile stress directly ahead of the tip is</p>
-          <p class="formula">&sigma;<sub>yy</sub>(<i>r</i>, 0) &asymp; <i>K</i><sub>I</sub>/&radic;(2&pi;<i>r</i>)</p>
-          <p><i>K</i><sub>I</sub> is the amplitude of the opening field. The approximation applies in the elastic region where this term dominates, outside the crack-tip process zone and close to the tip relative to crack length and specimen dimensions. The elastic formula diverges as <i>r</i> approaches zero. In a metal, local yielding limits its applicability near the tip.</p>
+          <p>Place the origin at the crack tip, with <i>x</i> pointing straight ahead and <i>y</i> normal to the crack plane. Measure distance <i>r</i> from the tip and angle &theta; counterclockwise from positive <i>x</i>. The crack faces lie behind the tip at &theta; = &plusmn;&pi;.</p>
+          <p>Mode I loading opens the crack. In an isotropic, linearly elastic material, the leading crack-tip stresses vary as 1/&radic;<i>r</i>. The stress intensity factor <i>K</i><sub>I</sub> sets their amplitude; the angular functions below describe how each component varies around the tip.</p>
         </div>
         <figure class="fracture-card technical-figure">
           <img src="crack-tip-coordinates.svg" width="400" height="224" alt="Crack-tip polar coordinates with the crack faces behind the tip, x pointing forward, and angle theta measured from positive x toward the ray r" loading="lazy">
-          <figcaption>The origin lies at the tip. Along &theta; = 0, &sigma;<sub>yy</sub> acts normal to the crack plane.</figcaption>
+          <figcaption>The origin lies at the tip. Positive <i>x</i> points ahead of the crack; <i>y</i> is the opening direction. Angle &theta; is measured from positive <i>x</i> toward positive <i>y</i>.</figcaption>
         </figure>
       </div>
-      <details class="fracture-card stress-components">
-        <summary>Angular variation of the Mode I stresses</summary>
-        <p>For an isotropic elastic solid, let <i>C</i> = <i>K</i><sub>I</sub>/&radic;(2&pi;<i>r</i>). The leading in-plane terms are</p>
-        <p class="formula">&sigma;<sub>xx</sub> = <i>C</i> cos(&theta;/2)[1 &minus; sin(&theta;/2) sin(3&theta;/2)]</p>
-        <p class="formula">&sigma;<sub>yy</sub> = <i>C</i> cos(&theta;/2)[1 + sin(&theta;/2) sin(3&theta;/2)]</p>
-        <p class="formula">&tau;<sub>xy</sub> = <i>C</i> sin(&theta;/2) cos(&theta;/2) cos(3&theta;/2)</p>
+      <div class="fracture-card stress-components" id="mode-i-stresses">
+        <h3>Mode I stress components</h3>
+        <p>The leading (singular) in-plane stress terms are</p>
+        <div class="stress-equations" tabindex="0" role="region" aria-label="Mode I crack-tip stress equations">
+          <div class="stress-equation-list">
+          <p class="formula" data-tex="\sigma_{xx} = \frac{K_{\mathrm{I}}}{\sqrt{2\pi r}} \cos\!\left(\frac{\theta}{2}\right)\!\left[1-\sin\!\left(\frac{\theta}{2}\right)\sin\!\left(\frac{3\theta}{2}\right)\right]">&sigma;<sub>xx</sub> = [<i>K</i><sub>I</sub>/&radic;(2&pi;<i>r</i>)] cos(&theta;/2)[1 &minus; sin(&theta;/2) sin(3&theta;/2)]</p>
+          <p class="formula" data-tex="\sigma_{yy} = \frac{K_{\mathrm{I}}}{\sqrt{2\pi r}} \cos\!\left(\frac{\theta}{2}\right)\!\left[1+\sin\!\left(\frac{\theta}{2}\right)\sin\!\left(\frac{3\theta}{2}\right)\right]">&sigma;<sub>yy</sub> = [<i>K</i><sub>I</sub>/&radic;(2&pi;<i>r</i>)] cos(&theta;/2)[1 + sin(&theta;/2) sin(3&theta;/2)]</p>
+          <p class="formula" data-tex="\tau_{xy} = \frac{K_{\mathrm{I}}}{\sqrt{2\pi r}} \sin\!\left(\frac{\theta}{2}\right)\cos\!\left(\frac{\theta}{2}\right)\cos\!\left(\frac{3\theta}{2}\right)">&tau;<sub>xy</sub> = [<i>K</i><sub>I</sub>/&radic;(2&pi;<i>r</i>)] sin(&theta;/2) cos(&theta;/2) cos(3&theta;/2)</p>
+          </div>
+        </div>
+        <p>Higher-order terms are omitted. These in-plane terms apply in both plane stress and plane strain; the out-of-plane stress differs between those conditions.</p>
+        <p>The approximation applies outside the crack-tip process or plastic zone, in the elastic region where the leading term dominates. This region must also be close to the tip relative to crack length and specimen dimensions. The elastic formula diverges as <i>r</i> approaches zero; local yielding or other process-zone mechanisms limit its applicability there.</p>
+        <p>Directly ahead of the tip (&theta; = 0), the leading terms reduce to</p>
+        <div class="formula-row">
+          <p class="formula" data-tex="\sigma_{xx}(r,0)=\sigma_{yy}(r,0)=\frac{K_{\mathrm{I}}}{\sqrt{2\pi r}}">&sigma;<sub>xx</sub>(<i>r</i>, 0) = &sigma;<sub>yy</sub>(<i>r</i>, 0) = <i>K</i><sub>I</sub>/&radic;(2&pi;<i>r</i>)</p>
+          <p class="formula" data-tex="\tau_{xy}(r,0)=0">&tau;<sub>xy</sub>(<i>r</i>, 0) = 0</p>
+        </div>
         <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19920021173">NASA Linear Elastic Fracture Mechanics Primer, &sect;2.2</a></p>
-      </details>
+      </div>
       <article class="fracture-card worked-example">
         <h3>Compare stress at two distances</h3>
         <p>Compare &sigma;<sub>yy</sub> at 0.25 mm and 1.00 mm directly ahead of the same fixed crack. If both points lie in the region where the leading term dominates, the ratio is &radic;(1.00/0.25) = <strong>2</strong>. The point four times closer has twice the opening stress.</p>
@@ -371,7 +383,7 @@
         <article class="fracture-card">
           <h3>Compare the applied intensity with toughness</h3>
           <p><i>K</i><sub>Ic</sub> is the Mode I plane-strain fracture toughness measured under conditions of predominantly linear elastic response. Under matching conditions, the fracture criterion is</p>
-          <p class="formula"><i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub></p>
+          <p class="formula" data-tex="K_{\mathrm{I}} = K_{\mathrm{Ic}}"><i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub></p>
           <p>Toughness can depend on temperature, loading rate, crack orientation, and environment. When the plastic zone grows too large for small-scale yielding, use an elastic-plastic parameter such as the <i>J</i>-integral or crack-tip opening displacement (CTOD), within the chosen method&rsquo;s limits. A resistance curve records how resistance changes during stable tearing. Whether extension becomes unstable also depends on how the applied driving force changes as the crack grows.</p>
         </article>
         <article class="fracture-card crack-demo" aria-labelledby="crack-demo-title">
@@ -406,15 +418,15 @@
       <article id="raghavan-transition-example" class="fracture-card worked-example" aria-labelledby="raghavan-transition-title">
         <h3 id="raghavan-transition-title">Estimate how strain rate shifts the transition in molybdenum</h3>
         <p>Molybdenum contains sharp cracks of half-length <i>a</i> = 2 &micro;m. Take Young&rsquo;s modulus <i>E</i> = 350 GPa and the energy per unit area of one new fracture surface &gamma;<sub>s</sub> = 2 J/m<sup>2</sup>. Its empirical yield-stress relation is</p>
-        <p class="formula">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>(&epsilon;&#775;)</p>
+        <p class="formula" data-tex="\sigma_y = 20.6 + \frac{173600}{T} + 61.3\log_{10}(\dot{\epsilon})">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>(&epsilon;&#775;)</p>
         <p>Use numerical values with &sigma;<sub>y</sub> in MPa, <i>T</i> in kelvin, and the imposed strain rate &epsilon;&#775; = d&epsilon;/dt in s<sup>&minus;1</sup>. Estimate the transition temperature at (i) 10<sup>&minus;2</sup> s<sup>&minus;1</sup> and (ii) 10<sup>&minus;5</sup> s<sup>&minus;1</sup>.</p>
         <p><strong>Model.</strong> Assume a central through crack in a large plate under plane stress, and hold <i>E</i>, &gamma;<sub>s</sub>, and <i>a</i> constant. Estimate the transition by equating the yield stress with the ideally brittle fracture stress. The <a href="#griffith">Griffith energy balance</a> introduced above gives the fracture stress used here.</p>
         <ol class="solution-steps">
           <li><strong>Calculate the fracture stress.</strong> Two new surfaces require <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub> = 4 J/m<sup>2</sup>. Use the half-length <i>a</i> = 2 &times; 10<sup>&minus;6</sup> m and <i>E</i> = 350 &times; 10<sup>9</sup> Pa.
-            <p class="formula">&sigma;<sub>c</sub> = &radic;[2<i>E</i>&gamma;<sub>s</sub>/(&pi;<i>a</i>)] &asymp; 472.0 MPa</p>
+            <p class="formula" data-tex="\sigma_c = \sqrt{\frac{2E\gamma_s}{\pi a}} \approx 472.0\ \mathrm{MPa}">&sigma;<sub>c</sub> = &radic;[2<i>E</i>&gamma;<sub>s</sub>/(&pi;<i>a</i>)] &asymp; 472.0 MPa</p>
           </li>
           <li><strong>Apply the crossover condition.</strong> Set &sigma;<sub>y</sub>(<i>T</i>, &epsilon;&#775;) = &sigma;<sub>c</sub>. Rearranging the supplied relation gives
-            <p class="formula"><i>T</i> = 173600 / {472.0349 &minus; 20.6 &minus; 61.3 log<sub>10</sub>(&epsilon;&#775;)}</p>
+            <p class="formula" data-tex="T = \frac{173600}{472.0349 - 20.6 - 61.3\log_{10}(\dot{\epsilon})}"><i>T</i> = 173600 / {472.0349 &minus; 20.6 &minus; 61.3 log<sub>10</sub>(&epsilon;&#775;)}</p>
             <p>The result is in kelvin. Additional digits in the fracture stress are retained when evaluating the denominator.</p>
           </li>
           <li><strong>Substitute each strain rate.</strong> At 10<sup>&minus;2</sup> s<sup>&minus;1</sup>, the yield law becomes &sigma;<sub>y</sub> = &minus;102.0 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 102.0). At 10<sup>&minus;5</sup> s<sup>&minus;1</sup>, it becomes &sigma;<sub>y</sub> = &minus;285.9 + 173600/<i>T</i>, giving <i>T</i> = 173600/(472.0349 + 285.9).</li>
