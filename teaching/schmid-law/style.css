@@ -1,9 +1,17 @@
 .intro { display: grid; grid-template-columns: 1fr .9fr; gap: 2rem; align-items: center; border-top: 1px solid var(--line); padding: 1.5rem 0; }
 h2 { font-size: clamp(1.8rem, 3vw, 2.7rem); line-height: 1.12; letter-spacing: -.03em; margin: .35rem 0 1rem; }
 p { color: var(--ink-soft); }
+.teaching-shell [data-tex] .katex { font-size: 1.04em; font-weight: 400; }
+.teaching-shell .formula { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+.teaching-shell .formula .katex-display { margin: .3rem 0; text-align: left; }
+.teaching-shell .formula .katex-display > .katex { text-align: left; }
+.equation-card [data-tex] .katex { color: white; }
+.equation-card small [data-tex] .katex { color: inherit; }
+.controls label > span { min-width: 0; }
+.example [data-tex] { display: inline-block; max-width: 100%; overflow-x: auto; overflow-y: hidden; vertical-align: middle; }
 .equation-card { background: var(--ink); color: white; padding: 2rem; border-radius: 1.2rem; box-shadow: var(--shadow); }
-.equation-card span { text-transform: uppercase; font-size: .75rem; letter-spacing: .1em; font-weight: 800; color: #d7d0f2; }
-.equation-card p { color: white; font: 1.65rem Georgia, serif; margin: .8rem 0; }
+.equation-card > span { text-transform: uppercase; font-size: .75rem; letter-spacing: .1em; font-weight: 800; color: #d7d0f2; }
+.equation-card > p { color: white; font-family: "KaTeX_Main", "Cambria Math", serif; font-size: clamp(1.1rem, 2.1vw, 1.55rem); font-weight: 400; margin: .8rem 0; }
 .equation-card small { color: #e2dff1; }
 .explore { padding-top: 2rem; scroll-margin-top: 1rem; }
 .heading { max-width: 52rem; }
@@ -27,10 +35,10 @@ input[type=range] { width: 100%; accent-color: #c93b1f; }
 input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 .hint { font-size: .87rem; color: var(--muted); margin: .2rem 0 .75rem; }
 .readings { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: 1.2rem; }
-.readings div { background: #f3f0f9; border-radius: .7rem; padding: .7rem; }
-.readings span, .readings strong { display: block; }
-.readings span { font-size: .76rem; color: var(--muted); }
-.readings strong { font-size: 1.1rem; }
+.readings > div { background: #f3f0f9; border-radius: .7rem; padding: .7rem; }
+.readings > div > span, .readings > div > strong { display: block; }
+.readings > div > span { font-size: .76rem; color: var(--muted); }
+.readings > div > strong { font-size: 1.1rem; }
 .status { padding: .8rem; border-radius: .6rem; background: #e6f3e9; color: #245a39; font-weight: 750; }
 .status.below { background: #fff1e7; color: #8a3d21; }
 .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 4rem 0 1rem; }
@@ -346,8 +354,14 @@ input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
   border-radius: .45rem;
   background: white;
   color: var(--ink);
-  font: inherit;
+  font-family: "KaTeX_Main", "Cambria Math", "STIX Two Math", serif;
+  font-weight: 400;
+  font-style: normal;
   font-size: .87rem;
+}
+
+.crystal-controls option {
+  font: inherit;
 }
 
 .crystal-controls > .crystal-atom-toggle {

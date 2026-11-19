@@ -1,10 +1,20 @@
-(function () {
+(async function () {
   "use strict";
   const controls = ["phi", "beta", "stress", "crss"].reduce((items, id) => {
     items[id] = document.getElementById(id);
     return items;
   }, {});
-  const output = (id, value) => { document.getElementById(id).textContent = value; };
+  const output = (id, value, tex) => {
+    const element = document.getElementById(id);
+    if (element.dataset.mathValue === value) return;
+    element.textContent = value;
+    element.dataset.mathValue = value;
+    if (tex) window.MSEMath?.render(element, tex);
+    else {
+      delete element.dataset.tex;
+      delete element.dataset.mathRendered;
+    }
+  };
   let updateScene = () => {};
 
   function update() {
@@ -17,14 +27,14 @@
     const lambda = Math.acos(Math.max(-1, Math.min(1, cosLambda))) / radians;
     const factor = Math.abs(Math.cos(phi * radians) * cosLambda);
     const resolved = stress * factor;
-    output("phi-value", phi + "°");
-    output("beta-value", beta + "°");
-    output("stress-value", stress + " MPa");
-    output("crss-value", critical + " MPa");
-    output("lambda-value", lambda.toFixed(1) + "°");
-    output("factor-value", factor.toFixed(3));
-    output("rss-value", resolved.toFixed(1) + " MPa");
-    output("threshold-value", factor < 1e-10 ? "No finite value" : (critical / factor).toFixed(1) + " MPa");
+    output("phi-value", phi + "°", phi + "^\\circ");
+    output("beta-value", beta + "°", beta + "^\\circ");
+    output("stress-value", stress + " MPa", stress + "\\,\\mathrm{MPa}");
+    output("crss-value", critical + " MPa", critical + "\\,\\mathrm{MPa}");
+    output("lambda-value", lambda.toFixed(1) + "°", lambda.toFixed(1) + "^\\circ");
+    output("factor-value", factor.toFixed(3), factor.toFixed(3));
+    output("rss-value", resolved.toFixed(1) + " MPa", resolved.toFixed(1) + "\\,\\mathrm{MPa}");
+    output("threshold-value", factor < 1e-10 ? "No finite value" : (critical / factor).toFixed(1) + " MPa", factor < 1e-10 ? null : (critical / factor).toFixed(1) + "\\,\\mathrm{MPa}");
     const status = document.getElementById("status");
     const reached = resolved >= critical;
     status.textContent = reached ? "The resolved shear stress reaches the critical value." : "The resolved shear stress is below the critical value.";
@@ -33,6 +43,7 @@
   }
 
   Object.values(controls).forEach(control => control.addEventListener("input", update));
+  await window.MSEMath?.fontsReady();
   const host = document.getElementById("scene");
   try {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -85,7 +96,7 @@
     forceCanvas.width = 64;
     forceCanvas.height = 64;
     const forceContext = forceCanvas.getContext("2d");
-    forceContext.font = "bold 44px sans-serif";
+    forceContext.font = 'italic 44px KaTeX_Math, "Cambria Math", serif';
     forceContext.textAlign = "center";
     forceContext.textBaseline = "middle";
     forceContext.fillStyle = "#a9311c";
@@ -112,7 +123,7 @@
       canvas.width = 128;
       canvas.height = 64;
       const context = canvas.getContext("2d");
-      context.font = "bold 40px sans-serif";
+      context.font = 'italic 40px KaTeX_Math, "Cambria Math", serif';
       context.textAlign = "center";
       context.textBaseline = "middle";
       context.fillStyle = color === 0x2873ae ? "#155787" : "#593389";
@@ -123,7 +134,7 @@
       model.add(sprite);
       return { line, sprite };
     }
-    const phiMarker = angleMarker("φ", 0x2873ae);
+    const phiMarker = angleMarker("ϕ", 0x2873ae);
     const lambdaMarker = angleMarker("λ", 0x7546a8);
     function drawAngle(marker, direction, radius) {
       const angle = axisDirection.angleTo(direction);
