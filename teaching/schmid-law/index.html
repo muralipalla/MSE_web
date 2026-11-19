@@ -8,12 +8,12 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=2" defer></script>
   <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
-  <script src="app.js?v=5" defer></script>
+  <script src="app.js?v=6" defer></script>
   <script src="slip-crystal-data.js?v=1" defer></script>
   <script src="math-select.js?v=1" defer></script>
   <script src="slip-crystals.js?v=3" defer></script>
@@ -33,7 +33,7 @@
     </div>
   </header>
   <section class="intro" aria-labelledby="system-title"><div><p class="section-kicker">From tension to slip</p><h2 id="system-title">One plane, one direction</h2><p>A <strong>slip system</strong> consists of a crystallographic slip plane and a slip direction lying in that plane. A uniaxial tensile stress <span data-tex="\sigma">&sigma;</span> produces a shear stress resolved along that direction. Under Schmid&rsquo;s onset criterion, slip begins when the magnitude of this resolved shear stress reaches the critical value for the system.</p></div><div class="equation-card"><span>Schmid&rsquo;s law</span><p class="formula" data-tex="\tau_{\mathrm{RSS}} = \sigma\cos\phi\cos\lambda">&tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;</p><p class="formula" data-tex="m = \left|\cos\phi\cos\lambda\right|">m = |cos &phi; cos &lambda;|</p><small><span data-tex="\phi">&phi;</span> is the angle between the tensile axis and the plane normal. <span data-tex="\lambda">&lambda;</span> is the angle between the tensile axis and the slip direction. <span data-tex="m">m</span> is the non-negative Schmid factor.</small></div></section>
-  <section id="explore" class="explore"><div class="heading"><p class="section-kicker">Interactive specimen</p><h2>Orient the slip system</h2><p>Adjust the plane normal and rotate the slip direction within that plane. The dotted line is the tensile axis. The arcs show <span data-tex="\phi">&phi;</span> to the plane normal and <span data-tex="\lambda">&lambda;</span> to the slip direction. The force arrows scale with applied stress for a fixed area. Drag the figure to view the geometry from another angle.</p></div><div class="workbench">
+  <section id="explore" class="explore"><div class="heading"><p class="section-kicker">Interactive specimen</p><h2>Orient the slip system</h2><p>Adjust the plane normal and rotate the slip direction within that plane. The dotted line is the tensile axis. The arcs show <span data-tex="\phi">&phi;</span> to the plane normal and <span data-tex="\lambda">&lambda;</span> to the slip direction. The force arrows scale with applied stress for a fixed area. Use the buttons below the specimen to change the viewing angle.</p></div><div class="workbench">
     <div class="visual"><div id="scene" class="scene" role="img" aria-label="Interactive three-dimensional cylinder under tension, showing a slip plane, its normal and slip direction."><p class="fallback">The 3D view requires WebGL. The calculated values remain available below.</p></div><div class="legend"><span><i class="force"></i>Tensile force</span><span><i class="plane"></i>Slip plane</span><span><i class="normal"></i>Plane normal</span><span><i class="slip"></i>Slip direction</span></div><div class="view-controls" aria-label="3D view controls"><button id="rotate-left" type="button">Rotate left</button><button id="rotate-right" type="button">Rotate right</button><button id="reset-view" type="button">Reset view</button></div></div>
     <div class="controls">
       <label for="phi"><span>Plane-normal angle, <span data-tex="\phi">&phi;</span></span> <output id="phi-value">45&deg;</output></label><input id="phi" type="range" min="15" max="65" value="45" step="1"><p class="hint">Angle between tensile axis and plane normal.</p>

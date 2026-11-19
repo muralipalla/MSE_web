@@ -192,19 +192,6 @@
     }
     new ResizeObserver(resize).observe(host);
     resize();
-    let last = null;
-    renderer.domElement.addEventListener("pointerdown", event => {
-      last = [event.clientX, event.clientY];
-      renderer.domElement.setPointerCapture(event.pointerId);
-    });
-    renderer.domElement.addEventListener("pointermove", event => {
-      if (!last) return;
-      model.rotation.y += (event.clientX - last[0]) * .01;
-      model.rotation.x = Math.max(-1.1, Math.min(1.1, model.rotation.x + (event.clientY - last[1]) * .01));
-      last = [event.clientX, event.clientY];
-    });
-    renderer.domElement.addEventListener("pointerup", () => { last = null; });
-    renderer.domElement.addEventListener("pointercancel", () => { last = null; });
     function render() { renderer.render(scene, camera); requestAnimationFrame(render); }
     render();
   } catch (error) {
