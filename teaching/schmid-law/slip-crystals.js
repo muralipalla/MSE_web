@@ -21,6 +21,8 @@
   let draw = () => {};
   let changeView = () => {};
   let toggleAtoms = () => {};
+  let familyPicker;
+  let systemPicker;
 
   function updateSystem() {
     system = family.systems[Number(get('system').value)];
@@ -51,6 +53,7 @@
       option.setAttribute('aria-label','Plane (' + spokenIndices(item.plane) + '), direction [' + spokenIndices(item.direction) + ']');
       return option;
     }));
+    systemPicker?.sync();
     updateSystem();
   }
   function selectStructure(value) {
@@ -62,6 +65,7 @@
       option.setAttribute('aria-label',name + ', plane family (' + spokenIndices(item.seed) + ')');
       return option;
     }));
+    familyPicker?.sync();
     selectFamily();
     changeView('reset');
   }
@@ -71,6 +75,33 @@
   get('show-atoms').addEventListener('change', () => toggleAtoms());
   views.forEach(button => button.addEventListener('click', () => changeView(button.dataset.crystalView)));
   selectStructure('fcc');
+  function pickerMath(tex, fallback) {
+    const node = document.createElement('span');
+    node.textContent = fallback;
+    window.MSEMath?.render(node, tex);
+    return node;
+  }
+  // Full-width TeX rules make negative indices distinct from their positive
+  // counterparts, without relying on a font's combining-mark positioning.
+  const pickerIndices = (indices, brackets) => indexTeX(indices, brackets).replace(/\\bar\{/g, '\\overline{');
+  systemPicker = window.createMathSelect?.(get('system'), option => {
+    const pair = family.systems[Number(option.value)];
+    return pickerMath(pickerIndices(pair.plane, '()') + '\\;' + pickerIndices(pair.direction, '[]'), option.textContent);
+  });
+  familyPicker = window.createMathSelect?.(get('family'), option => {
+    const choice = data.families[structure].find(item => item.id === option.value);
+    const node = document.createElement('span');
+    const names = {basal:'Basal', prismatic:'Prismatic', pyramidal:'Pyramidal I'};
+    if (names[choice.id]) {
+      const name = document.createElement('span');
+      name.className = 'math-select-family-name';
+      name.append(names[choice.id] + ' ', pickerMath(choice.id === 'pyramidal' ? '\\langle c+a\\rangle' : '\\langle a\\rangle', choice.id === 'pyramidal' ? '⟨c+a⟩' : '⟨a⟩'));
+      node.append(name);
+    }
+    const direction = structure === 'hcp' ? [1,1,-2,choice.id === 'pyramidal' ? 3 : 0] : choice.directions;
+    node.append(pickerMath(pickerIndices(choice.seed, ['\\{','\\}']) + '\\;' + pickerIndices(direction, ['\\langle','\\rangle']), option.textContent));
+    return node;
+  });
   await window.MSEMath?.fontsReady();
 
   try {
