@@ -27,6 +27,8 @@
     const lambda = Math.acos(Math.max(-1, Math.min(1, cosLambda))) / radians;
     const factor = Math.abs(Math.cos(phi * radians) * cosLambda);
     const resolved = stress * factor;
+    const normalStress = stress * Math.cos(phi * radians) ** 2;
+    const planeShear = stress * Math.abs(Math.sin(phi * radians) * Math.cos(phi * radians));
     output("phi-value", phi + "°", phi + "^\\circ");
     output("beta-value", beta + "°", beta + "^\\circ");
     output("stress-value", stress + " MPa", stress + "\\,\\mathrm{MPa}");
@@ -34,10 +36,12 @@
     output("lambda-value", lambda.toFixed(1) + "°", lambda.toFixed(1) + "^\\circ");
     output("factor-value", factor.toFixed(3), factor.toFixed(3));
     output("rss-value", resolved.toFixed(1) + " MPa", resolved.toFixed(1) + "\\,\\mathrm{MPa}");
+    output("normal-value", normalStress.toFixed(1) + " MPa", normalStress.toFixed(1) + "\\,\\mathrm{MPa}");
+    output("plane-shear-value", planeShear.toFixed(1) + " MPa", planeShear.toFixed(1) + "\\,\\mathrm{MPa}");
     output("threshold-value", factor < 1e-10 ? "No finite value" : (critical / factor).toFixed(1) + " MPa", factor < 1e-10 ? null : (critical / factor).toFixed(1) + "\\,\\mathrm{MPa}");
     const status = document.getElementById("status");
     const reached = resolved >= critical;
-    status.textContent = reached ? "The resolved shear stress reaches the critical value." : "The resolved shear stress is below the critical value.";
+    status.textContent = reached ? "The resolved shear stress meets or exceeds the critical value." : "The resolved shear stress is below the critical value.";
     status.classList.toggle("below", !reached);
     updateScene(phi * radians, beta * radians, stress);
   }

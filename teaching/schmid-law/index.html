@@ -3,17 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore resolved shear stress, Schmid factor, and critical resolved shear stress in an interactive single-crystal tension test, then compare FCC, BCC, and HCP slip systems.">
+  <meta name="description" content="Resolve normal and shear stresses on crystal planes, calculate Schmid factors from Miller indices, and compare slip with cleavage using worked single-crystal examples.">
   <title>Slip &amp; Schmid&rsquo;s Law | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=2" defer></script>
   <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
-  <script src="app.js?v=6" defer></script>
+  <script src="app.js?v=7" defer></script>
   <script src="slip-crystal-data.js?v=1" defer></script>
   <script src="math-select.js?v=1" defer></script>
   <script src="slip-crystals.js?v=3" defer></script>
@@ -28,11 +28,59 @@
       <h1>Slip &amp; Schmid&rsquo;s Law</h1>
     </div>
     <div class="teaching-intro-copy">
-      <p>A tensile force can drive shear on an inclined crystal plane. The plane orientation and slip direction determine the resolved shear stress that drives dislocation glide.</p>
+      <p>A tensile load produces normal and shear stresses on inclined crystal planes. Use the crystal orientation to calculate these stresses and compare the conditions for slip and cleavage.</p>
       <p class="teaching-intro-note"><a href="#explore">Explore the specimen &darr;</a></p>
     </div>
   </header>
   <section class="intro" aria-labelledby="system-title"><div><p class="section-kicker">From tension to slip</p><h2 id="system-title">One plane, one direction</h2><p>A <strong>slip system</strong> consists of a crystallographic slip plane and a slip direction lying in that plane. A uniaxial tensile stress <span data-tex="\sigma">&sigma;</span> produces a shear stress resolved along that direction. Under Schmid&rsquo;s onset criterion, slip begins when the magnitude of this resolved shear stress reaches the critical value for the system.</p></div><div class="equation-card"><span>Schmid&rsquo;s law</span><p class="formula" data-tex="\tau_{\mathrm{RSS}} = \sigma\cos\phi\cos\lambda">&tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;</p><p class="formula" data-tex="m = \left|\cos\phi\cos\lambda\right|">m = |cos &phi; cos &lambda;|</p><small><span data-tex="\phi">&phi;</span> is the angle between the tensile axis and the plane normal. <span data-tex="\lambda">&lambda;</span> is the angle between the tensile axis and the slip direction. <span data-tex="m">m</span> is the non-negative Schmid factor.</small></div></section>
+  <section class="normal-stress-section" id="resolved-stresses" aria-labelledby="resolved-stresses-title">
+    <p class="section-kicker">Two components of traction</p>
+    <h2 id="resolved-stresses-title">Normal stress and shear stress on a plane</h2>
+    <div class="traction-grid">
+      <div>
+        <p><strong>Resolved normal stress</strong> acts perpendicular to a chosen plane. With tensile stress taken as positive, it tends to open that plane. Shear traction acts within the plane. Under uniaxial tensile stress <span data-tex="\sigma">&sigma;</span>, at angle <span data-tex="\phi">&phi;</span> between the tensile axis and plane normal,</p>
+        <p class="formula" data-tex="\sigma_n=\sigma\cos^2\phi">&sigma;<sub>n</sub> = &sigma; cos² &phi;</p>
+        <p>One cosine comes from resolving the force; the other comes from the inclined area. For an applied tensile force <span data-tex="F">F</span> and a section crossing the bar with <span data-tex="0\le\phi<90^\circ">0 &le; &phi; &lt; 90&deg;</span>, let <span data-tex="A_\perp">A<sub>⊥</sub></span> be the area perpendicular to the load and <span data-tex="A_\phi">Aφ</span> the inclined area, both measured in the same configuration. Then <span data-tex="\sigma=F/A_\perp">&sigma; = F/A<sub>⊥</sub></span>, <span data-tex="F_n=F\cos\phi">Fₙ = F cos &phi;</span>, <span data-tex="A_\phi=A_\perp/\cos\phi">Aφ = A<sub>⊥</sub>/cos &phi;</span>, and <span data-tex="\sigma_n=F_n/A_\phi=(F/A_\perp)\cos^2\phi">&sigma;ₙ = Fₙ/Aφ = (F/A<sub>⊥</sub>) cos² &phi;</span>.</p>
+        <p>The magnitude of the <strong>total in-plane shear traction</strong> is</p>
+        <p class="formula" data-tex="\tau_{\mathrm{plane}}=\sigma|\sin\phi\cos\phi|">&tau;<sub>plane</sub> = &sigma; |sin &phi; cos &phi;|</p>
+        <p><span data-tex="\tau_{\mathrm{RSS}}">&tau;<sub>RSS</sub></span> is the projection of this shear traction along a particular crystallographic slip direction. It can be zero even when <span data-tex="\tau_{\mathrm{plane}}>0">&tau;<sub>plane</sub> &gt; 0</span>. The normal stress depends on the plane orientation, independently of the slip direction chosen within it.</p>
+      </div>
+      <figure class="traction-figure">
+        <svg viewBox="0 0 440 330" role="img" aria-labelledby="traction-title traction-desc">
+          <title id="traction-title">Resolve the traction vector into normal and in-plane components</title>
+          <desc id="traction-desc">At a point on an inclined plane, the total traction points vertically along the loading direction. Its normal component points up and right; its in-plane shear component points up and left along the plane. Dashed lines form the vector-addition parallelogram. The illustrated normal makes 45 degrees with the loading direction.</desc>
+          <defs>
+            <marker id="traction-total-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#bd472a"/></marker>
+            <marker id="traction-normal-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#2873ae"/></marker>
+            <marker id="traction-shear-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 10 5 0 10Z" fill="#7546a8"/></marker>
+          </defs>
+          <rect x="1" y="1" width="438" height="328" rx="12" fill="#f3f0f9"/>
+          <path d="M52 93 276 317 293 300 69 76Z" fill="#f1d1a0" opacity=".65"/>
+          <path d="M60 85 284 309" stroke="#c27a2c" stroke-width="3"/>
+          <path d="M250 135 180 65 110 135" fill="none" stroke="#8d86a7" stroke-width="1.8" stroke-dasharray="5 5"/>
+          <g fill="none" stroke-width="3">
+            <path d="M180 205V65" stroke="#bd472a" marker-end="url(#traction-total-arrow)"/>
+            <path d="M180 205 250 135" stroke="#2873ae" marker-end="url(#traction-normal-arrow)"/>
+            <path d="M180 205 110 135" stroke="#7546a8" marker-end="url(#traction-shear-arrow)"/>
+          </g>
+          <path d="M180 160A45 45 0 0 1 211.82 173.18" fill="none" stroke="#2873ae" stroke-width="1.6"/>
+          <circle cx="180" cy="205" r="4.5" fill="#302775"/>
+          <g font-family="KaTeX_Math, Cambria Math, serif" font-style="italic" font-size="25">
+            <text x="188" y="58" fill="#a7361e">t</text>
+            <text x="260" y="136" fill="#155787">t<tspan dy="7" font-size="16">n</tspan></text>
+            <text x="72" y="137" fill="#633692">t<tspan dy="7" font-size="16">s</tspan></text>
+            <text x="193" y="157" fill="#155787">ϕ</text>
+          </g>
+          <g font-family="system-ui, sans-serif" fill="#514a6f" font-size="14">
+            <text x="180" y="29" text-anchor="middle">Loading direction</text>
+            <text x="285" y="287">Plane</text>
+          </g>
+        </svg>
+        <figcaption>This section contains the tensile axis and the unit plane normal <span data-tex="\hat{\mathbf n}">n̂</span>. The traction <span data-tex="\mathbf t"><strong>t</strong></span> is force per unit inclined area, with magnitude <span data-tex="|\mathbf t|=\sigma|\cos\phi|">|t| = &sigma; |cos &phi;|</span>. Its normal component is <span data-tex="\mathbf t_n=\sigma_n\hat{\mathbf n}">tₙ = &sigma;ₙ n̂</span> and its in-plane component is <span data-tex="\mathbf t_s">tₛ</span>, so <span data-tex="\mathbf t=\mathbf t_n+\mathbf t_s">t = tₙ + tₛ</span>. At the illustrated <span data-tex="\phi=45^\circ">&phi; = 45&deg;</span>, these two components have equal magnitude. A slip direction can make an additional angle within the plane.</figcaption>
+      </figure>
+    </div>
+    <p class="traction-note">A plane perpendicular to the tensile axis has <span data-tex="\phi=0">&phi; = 0</span>: <span data-tex="\sigma_n=\sigma">&sigma;ₙ = &sigma;</span> and zero shear. The total in-plane shear reaches its maximum <span data-tex="\sigma/2">&sigma;/2</span> at <span data-tex="\phi=45^\circ">&phi; = 45&deg;</span>. <a href="https://pkel015.connect.amazon.auckland.ac.nz/SolidMechanicsBooks/Part_III/Chapter_3_Stress_Mass_Momentum/Stress_Balance_Principles_04_Properties_of_the_Stress_Tensor.pdf">Kelly, normal and shear traction</a></p>
+  </section>
   <section id="explore" class="explore"><div class="heading"><p class="section-kicker">Interactive specimen</p><h2>Orient the slip system</h2><p>Adjust the plane normal and rotate the slip direction within that plane. The dotted line is the tensile axis. The arcs show <span data-tex="\phi">&phi;</span> to the plane normal and <span data-tex="\lambda">&lambda;</span> to the slip direction. The force arrows scale with applied stress for a fixed area. Use the buttons below the specimen to change the viewing angle.</p></div><div class="workbench">
     <div class="visual"><div id="scene" class="scene" role="img" aria-label="Interactive three-dimensional cylinder under tension, showing a slip plane, its normal and slip direction."><p class="fallback">The 3D view requires WebGL. The calculated values remain available below.</p></div><div class="legend"><span><i class="force"></i>Tensile force</span><span><i class="plane"></i>Slip plane</span><span><i class="normal"></i>Plane normal</span><span><i class="slip"></i>Slip direction</span></div><div class="view-controls" aria-label="3D view controls"><button id="rotate-left" type="button">Rotate left</button><button id="rotate-right" type="button">Rotate right</button><button id="reset-view" type="button">Reset view</button></div></div>
     <div class="controls">
@@ -40,8 +88,9 @@
       <label for="beta"><span>Direction rotation in plane, <span data-tex="\beta">&beta;</span></span> <output id="beta-value">0&deg;</output></label><input id="beta" type="range" min="0" max="90" value="0" step="1"><p class="hint">Rotates the slip direction within the plane; <span data-tex="\beta">&beta;</span> is not <span data-tex="\lambda">&lambda;</span>.</p>
       <label for="stress"><span>Applied tensile stress, <span data-tex="\sigma">&sigma;</span></span> <output id="stress-value">100 MPa</output></label><input id="stress" type="range" min="0" max="300" value="100" step="5">
       <label for="crss"><span>Critical resolved shear stress, <span data-tex="\tau_{\mathrm{CRSS}}">&tau;<sub>CRSS</sub></span></span> <output id="crss-value">30 MPa</output></label><input id="crss" type="range" min="5" max="100" value="30" step="5">
-      <div class="readings" aria-live="polite"><div><span>Slip-direction angle <span data-tex="\lambda">&lambda;</span></span><strong id="lambda-value">45.0&deg;</strong></div><div><span>Schmid factor <span data-tex="m">m</span></span><strong id="factor-value">0.500</strong></div><div><span>Resolved shear magnitude</span><strong id="rss-value">50.0 MPa</strong></div><div><span>Predicted slip onset</span><strong id="threshold-value">60.0 MPa</strong></div></div>
-      <p class="status" id="status">The resolved shear stress reaches the critical value.</p>
+      <div class="readings" aria-live="polite"><div><span>Slip-direction angle <span data-tex="\lambda">&lambda;</span></span><strong id="lambda-value">45.0&deg;</strong></div><div><span>Schmid factor <span data-tex="m">m</span></span><strong id="factor-value">0.500</strong></div><div><span>Resolved shear magnitude</span><strong id="rss-value">50.0 MPa</strong></div><div><span>Resolved normal stress <span data-tex="\sigma_n">&sigma;ₙ</span></span><strong id="normal-value">50.0 MPa</strong></div><div><span>Total in-plane shear</span><strong id="plane-shear-value">50.0 MPa</strong></div><div><span>Predicted slip onset</span><strong id="threshold-value">60.0 MPa</strong></div></div>
+      <p class="hint">At fixed stress and plane angle, changing <span data-tex="\beta">&beta;</span> changes the resolved shear along the slip direction while <span data-tex="\sigma_n">&sigma;ₙ</span> and <span data-tex="\tau_{\mathrm{plane}}">&tau;<sub>plane</sub></span> stay constant. A cleavage comparison uses the normal stress on a candidate cleavage plane and its own critical value in the <a href="#cleavage-competition">worked examples below</a>.</p>
+      <p class="status" id="status">The resolved shear stress meets or exceeds the critical value.</p>
       <p class="hint">The sliders explore the orientation of one idealized plane&ndash;direction pair. The <a href="#slip-systems">crystallographic families below</a> identify the pairs available in FCC, BCC, and HCP crystals.</p>
     </div>
   </div></section>
@@ -135,5 +184,128 @@
     <p>For each permitted plane&ndash;direction pair, the resolved shear stress is <span data-tex="\tau_{\mathrm{RSS}} = \sigma\cos\phi\cos\lambda">&tau;<sub>RSS</sub> = &sigma; cos &phi; cos &lambda;</span>. The angles describe that particular system. In the Schmid onset model, assess its resolved shear stress against its own critical resolved shear stress. Activation depends on orientation and resistance under the test conditions.</p>
     <p class="slip-sources"><a href="https://dictionary.iucr.org/Miller_indices">IUCr crystallographic indices</a> &middot; <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9793464/">FCC systems, Appendix C</a> &middot; <a href="https://doi.org/10.1007/s10659-023-10034-9">Ball, BCC slip families</a> &middot; <a href="https://www.frontiersin.org/journals/materials/articles/10.3389/fmats.2022.897998/full">Zhang, Liu &amp; Oskay, HCP families, Table 5</a> &middot; <a href="https://mtex-toolbox.github.io/CrystalDirections.html">MTEX direct and reciprocal crystal coordinates</a></p>
   </section>
+  <section class="resolved-examples" id="miller-examples" aria-labelledby="miller-examples-title">
+    <p class="section-kicker">From crystal indices to stresses</p>
+    <h2 id="miller-examples-title">Resolve stress from Miller indices</h2>
+    <p>Specify the cylinder&rsquo;s tensile axis relative to the crystal axes. Express the tensile axis, plane normal, and slip direction in the same crystal frame before calculating their angles.</p>
+    <div class="index-method">
+      <h3>A calculation route for cubic crystals</h3>
+      <p>Let the tensile axis be <span data-tex="[UVW]">[UVW]</span>, the slip plane be <span data-tex="(hkl)">(hkl)</span>, and the slip direction be <span data-tex="[uvw]">[uvw]</span>. For a cubic crystal, the plane normal is parallel to <span data-tex="[hkl]">[hkl]</span>. Normalize the index triples to obtain unit vectors:</p>
+      <p class="formula" data-tex="\hat{\mathbf L}=\frac{(U,V,W)}{\sqrt{U^2+V^2+W^2}},\quad \hat{\mathbf n}=\frac{(h,k,l)}{\sqrt{h^2+k^2+l^2}},\quad \hat{\mathbf d}=\frac{(u,v,w)}{\sqrt{u^2+v^2+w^2}}">L̂ = (U,V,W)/√(U² + V² + W²), n̂ = (h,k,l)/√(h² + k² + l²), d̂ = (u,v,w)/√(u² + v² + w²)</p>
+      <ol class="worked-step-list">
+        <li><strong>Check that the direction lies in the plane.</strong> In this cubic calculation, require <span data-tex="hu+kv+lw=0">hu + kv + lw = 0</span>.</li>
+        <li><strong>Calculate the two direction cosines.</strong>
+          <p class="formula" data-tex="\cos\phi=\hat{\mathbf L}\cdot\hat{\mathbf n}=\frac{Uh+Vk+Wl}{\sqrt{U^2+V^2+W^2}\sqrt{h^2+k^2+l^2}}">cos φ = L̂ · n̂ = (Uh + Vk + Wl)/[√(U² + V² + W²) √(h² + k² + l²)]</p>
+          <p class="formula" data-tex="\cos\lambda=\hat{\mathbf L}\cdot\hat{\mathbf d}=\frac{Uu+Vv+Ww}{\sqrt{U^2+V^2+W^2}\sqrt{u^2+v^2+w^2}}">cos λ = L̂ · d̂ = (Uu + Vv + Ww)/[√(U² + V² + W²) √(u² + v² + w²)]</p>
+        </li>
+        <li><strong>Resolve the applied tensile stress.</strong> Use <span data-tex="\tau_{\mathrm{RSS}}=\sigma\cos\phi\cos\lambda">τ<sub>RSS</sub> = σ cos φ cos λ</span>, <span data-tex="m=|\cos\phi\cos\lambda|">m = |cos φ cos λ|</span>, and <span data-tex="\sigma_n=\sigma\cos^2\phi">σ<sub>n</sub> = σ cos² φ</span>. The shear sign indicates slip sense; compare its magnitude with the CRSS.</li>
+      </ol>
+      <p class="worked-note">These component formulas use the orthogonal, equal-length cubic axes. HCP directions and plane normals require the hexagonal lattice metric; do not normalize their four-index tuples as Cartesian vectors.</p>
+      <p class="worked-sources"><a href="https://mtex-toolbox.github.io/SchmidFactor_py.html">MTEX: orientation, signed Schmid factors, and comparison across equivalent systems</a></p>
+    </div>
+
+    <article class="orientation-example" aria-labelledby="indices-example-title">
+      <p class="section-kicker">Worked example 1</p>
+      <h3 id="indices-example-title">A cylinder loaded along <span data-tex="[112]">[112]</span></h3>
+      <p>An FCC single-crystal cylinder has its tensile axis parallel to <span data-tex="[112]">[112]</span>. The applied tensile stress is <span data-tex="\sigma=180\ \mathrm{MPa}">σ = 180 MPa</span>. Assume the crystal remains elastic at this load. Compare the resolved shear and normal stresses for the three plane–direction pairs below.</p>
+      <p>FCC directions in the <span data-tex="\langle110\rangle">⟨110⟩</span> family can be slip directions on <span data-tex="\{111\}">{111}</span> planes when they satisfy the in-plane condition. On <span data-tex="(111)">(111)</span>, that condition becomes <span data-tex="u+v+w=0">u + v + w = 0</span>. Both <span data-tex="[\bar{1}10]">[<span class="slip-negative">1</span>10]</span> and <span data-tex="[\bar{1}01]">[<span class="slip-negative">1</span>01]</span> satisfy it.</p>
+      <ol class="worked-step-list">
+        <li><strong>Find the loading direction and the first plane normal.</strong>
+          <p class="formula" data-tex="\hat{\mathbf L}=\frac{(1,1,2)}{\sqrt6},\quad \hat{\mathbf n}_{(111)}=\frac{(1,1,1)}{\sqrt3},\quad \cos\phi=\frac{1+1+2}{\sqrt6\sqrt3}=\frac4{\sqrt{18}}">L̂ = (1,1,2)/√6, n̂<sub>(111)</sub> = (1,1,1)/√3, cos φ = (1 + 1 + 2)/(√6 √3) = 4/√18</p>
+          <p>Thus both systems on <span data-tex="(111)">(111)</span> have <span data-tex="\sigma_n=180(4/\sqrt{18})^2=160\ \mathrm{MPa}">σ<sub>n</sub> = 180(4/√18)² = 160 MPa</span>.</p>
+        </li>
+        <li><strong>Resolve along the requested direction.</strong> For system A, <span data-tex="(111)[\bar{1}10]">(111)[<span class="slip-negative">1</span>10]</span>, the loading-axis dot product is <span data-tex="-1+1+0=0">−1 + 1 + 0 = 0</span>. Hence <span data-tex="\cos\lambda=0">cos λ = 0</span>, <span data-tex="\lambda=90^\circ">λ = 90°</span>, and <span data-tex="\tau_{\mathrm{RSS}}=0">τ<sub>RSS</sub> = 0</span>.</li>
+        <li><strong>Choose a second direction in the same plane.</strong> For system B, <span data-tex="(111)[\bar{1}01]">(111)[<span class="slip-negative">1</span>01]</span>, the dot product is <span data-tex="-1+0+2=1">−1 + 0 + 2 = 1</span>, giving
+          <p class="formula" data-tex="\cos\lambda=\frac1{\sqrt{12}},\quad m_B=\frac4{\sqrt{18}}\frac1{\sqrt{12}}=\frac2{3\sqrt6}\approx0.2722,\quad |\tau_B|\approx49.0\ \mathrm{MPa}">cos λ = 1/√12, m<sub>B</sub> = 2/(3√6) ≈ 0.2722, |τ<sub>B</sub>| ≈ 49.0 MPa</p>
+        </li>
+        <li><strong>Compare a different plane.</strong> System C is <span data-tex="(1\bar{1}1)[011]">(1<span class="slip-negative">1</span>1)[011]</span>. Its in-plane check is <span data-tex="0-1+1=0">0 − 1 + 1 = 0</span>. The loading-axis dot products are <span data-tex="1-1+2=2">1 − 1 + 2 = 2</span> for the normal and <span data-tex="0+1+2=3">0 + 1 + 2 = 3</span> for the slip direction:
+          <p class="formula" data-tex="m_C=\frac2{\sqrt{18}}\frac3{\sqrt{12}}=\frac1{\sqrt6}\approx0.4082,\quad |\tau_C|\approx73.5\ \mathrm{MPa}">m<sub>C</sub> = (2/√18)(3/√12) = 1/√6 ≈ 0.4082, |τ<sub>C</sub>| ≈ 73.5 MPa</p>
+          <p>The normal stress is <span data-tex="\sigma_{n,C}=180(2/\sqrt{18})^2=40.0\ \mathrm{MPa}">σ<sub>n,C</sub> = 180(2/√18)² = 40.0 MPa</span>.</p>
+        </li>
+      </ol>
+      <table class="worked-table">
+        <caption>Resolved stresses at <span data-tex="\sigma=180\ \mathrm{MPa}">σ = 180 MPa</span>; each normal stress refers to the plane in its row</caption>
+        <thead><tr><th scope="col">Plane–direction pair</th><th scope="col"><span data-tex="m">m</span></th><th scope="col"><span data-tex="|\tau_{\mathrm{RSS}}|">|τ<sub>RSS</sub>|</span> (MPa)</th><th scope="col"><span data-tex="\sigma_n">σ<sub>n</sub></span> (MPa)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">A: <span data-tex="(111)[\bar{1}10]">(111)[<span class="slip-negative">1</span>10]</span></th><td data-label="Schmid factor">0</td><td data-label="Resolved shear (MPa)">0</td><td data-label="Normal stress (MPa)">160.0</td></tr>
+          <tr><th scope="row">B: <span data-tex="(111)[\bar{1}01]">(111)[<span class="slip-negative">1</span>01]</span></th><td data-label="Schmid factor">0.2722</td><td data-label="Resolved shear (MPa)">49.0</td><td data-label="Normal stress (MPa)">160.0</td></tr>
+          <tr><th scope="row">C: <span data-tex="(1\bar{1}1)[011]">(1<span class="slip-negative">1</span>1)[011]</span></th><td data-label="Schmid factor">0.4082</td><td data-label="Resolved shear (MPa)"><strong>73.5</strong></td><td data-label="Normal stress (MPa)">40.0</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Interpret the comparison.</strong> System C has the largest resolved shear among these three pairs. Systems A and B share one plane and its normal stress, yet receive different shear components because their slip directions differ. The total in-plane shear traction is <span data-tex="180|\sin\phi\cos\phi|=56.6\ \mathrm{MPa}">56.6 MPa</span> on <span data-tex="(111)">(111)</span> and <span data-tex="74.8\ \mathrm{MPa}">74.8 MPa</span> on <span data-tex="(1\bar{1}1)">(1<span class="slip-negative">1</span>1)</span>. Thus system A’s zero projection does not imply zero shear on the entire plane.</p>
+      <p>The next examples add material thresholds. For cleavage, evaluate normal stress on the candidate cleavage plane, which can differ from the slip plane.</p>
+    </article>
+  </section>
+
+  <section class="resolved-examples" id="cleavage-competition" aria-labelledby="cleavage-competition-title">
+    <p class="section-kicker">Compare two initiation criteria</p>
+    <h2 id="cleavage-competition-title">Slip or cleavage: which starts first?</h2>
+    <p>Slip responds to resolved shear along a slip direction. Cleavage opens a crack across a crystallographic plane. In a simple critical-normal-stress model, cleavage is predicted to initiate on a candidate plane when its resolved tensile normal stress reaches a prescribed threshold <span data-tex="\sigma_{\mathrm{cleav}}">σ<sub>cleav</sub></span>. This is an effective strength for stated material and flaw conditions. It is distinct from an ideal bond-breaking strength or a fracture-toughness value.</p>
+    <p>Let <span data-tex="\psi">ψ</span> be the angle between the tensile axis and a cleavage-plane normal. On that plane, <span data-tex="\sigma_{n,\mathrm{c}}=\sigma\cos^2\psi">σ<sub>n,c</sub> = σ cos² ψ</span>. Compare the applied tensile stresses needed to reach the two criteria, using every candidate system and plane. Here <span data-tex="i">i</span> labels slip systems and <span data-tex="j">j</span> labels candidate cleavage planes:</p>
+    <div class="index-method">
+      <p class="formula" data-tex="\sigma_{\mathrm{app,slip}}=\min_{i:\,m_i>0}\frac{\tau_{\mathrm{CRSS},i}}{m_i}">σ<sub>app,slip</sub> = min<sub>i: mᵢ &gt; 0</sub>(τ<sub>CRSS,i</sub>/mᵢ)</p>
+      <p class="formula" data-tex="\sigma_{\mathrm{app,cleav}}=\min_{j:\,\cos^2\psi_j>0}\frac{\sigma_{\mathrm{cleav},j}}{\cos^2\psi_j}">σ<sub>app,cleav</sub> = min<sub>j: cos² ψⱼ &gt; 0</sub>(σ<sub>cleav,j</sub>/cos² ψⱼ)</p>
+      <p>The smaller applied threshold identifies the first criterion reached in this elastic comparison. Zero orientation factors give no finite threshold on that system or plane under this loading.</p>
+    </div>
+    <p>In ferrite, <span data-tex="\{100\}">{100}</span> is the predominant cleavage family. The examples below use that family in a <strong>hypothetical BCC model</strong>, with equal <span data-tex="\tau_{\mathrm{CRSS}}=100\ \mathrm{MPa}">τ<sub>CRSS</sub> = 100 MPa</span> for all 48 listed slip systems and <span data-tex="\sigma_{\mathrm{cleav}}=180\ \mathrm{MPa}">σ<sub>cleav</sub> = 180 MPa</span> on every <span data-tex="\{100\}">{100}</span> plane. These are teaching inputs, not measured properties of a named alloy. <a href="https://doi.org/10.1016/j.msea.2023.145616">Ferritic-steel cleavage-plane study</a></p>
+    <p class="worked-note">The model compares initial events at fixed orientation under uniform uniaxial stress and uses Schmid’s slip criterion. A slip-first result denotes initial yielding. Subsequent cleavage depends on the evolving local stresses, flaws, constraint, and plastic deformation; the later elastic threshold is not a post-yield fracture prediction. Real BCC non-Schmid effects are outside this example. <a href="https://doi.org/10.1016/j.msea.2023.144660">Microstructure and critical cleavage stress</a></p>
+
+    <article class="orientation-example" aria-labelledby="orientation-competition-title">
+      <p class="section-kicker">Worked example 2</p>
+      <h3 id="orientation-competition-title">Change the tensile axis, keep the strengths</h3>
+      <p>Use the hypothetical BCC inputs above. Compare cylinders loaded along <span data-tex="[001]">[001]</span> and <span data-tex="[011]">[011]</span>. Find the first slip and cleavage thresholds.</p>
+      <ol class="worked-step-list">
+        <li><strong>Search all slip candidates.</strong> Enumerating the 12 <span data-tex="\{110\}\langle111\rangle">{110}⟨111⟩</span>, 12 <span data-tex="\{112\}\langle111\rangle">{112}⟨111⟩</span>, and 24 <span data-tex="\{123\}\langle111\rangle">{123}⟨111⟩</span> systems gives the same family maxima for each of these two tensile axes:</li>
+      </ol>
+      <table class="worked-table">
+        <caption>Family maxima for each loading axis, with equal CRSS of 100 MPa</caption>
+        <thead><tr><th scope="col">Slip family</th><th scope="col">Largest <span data-tex="m">m</span></th><th scope="col">Smallest applied slip threshold (MPa)</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><span data-tex="\{110\}\langle111\rangle">{110}⟨111⟩</span></th><td data-label="Largest Schmid factor">0.408248</td><td data-label="Applied slip threshold (MPa)">244.95</td></tr>
+          <tr><th scope="row"><span data-tex="\{112\}\langle111\rangle">{112}⟨111⟩</span></th><td data-label="Largest Schmid factor"><strong>0.471405</strong></td><td data-label="Applied slip threshold (MPa)"><strong>212.13</strong></td></tr>
+          <tr><th scope="row"><span data-tex="\{123\}\langle111\rangle">{123}⟨111⟩</span></th><td data-label="Largest Schmid factor">0.462910</td><td data-label="Applied slip threshold (MPa)">216.02</td></tr>
+        </tbody>
+      </table>
+      <p>One maximizing system for <span data-tex="[001]">[001]</span> is <span data-tex="(112)[11\bar{1}]">(112)[11<span class="slip-negative">1</span>]</span>, giving <span data-tex="m=|(2/\sqrt6)(-1/\sqrt3)|=\sqrt2/3">m = |(2/√6)(−1/√3)| = √2/3</span>. For <span data-tex="[011]">[011]</span>, <span data-tex="(211)[\bar{1}11]">(211)[<span class="slip-negative">1</span>11]</span> gives <span data-tex="m=(1/\sqrt3)\sqrt{2/3}=\sqrt2/3">m = (1/√3)√(2/3) = √2/3</span>. Several symmetry-related systems can tie.</p>
+      <p class="formula" data-tex="\sigma_{\mathrm{app,slip}}=\frac{100}{\sqrt2/3}=212.13\ \mathrm{MPa}">σ<sub>app,slip</sub> = 100/(√2/3) = 212.13 MPa</p>
+      <ol class="worked-step-list" start="2">
+        <li><strong>Resolve the cleavage-plane normal stress.</strong> For the <span data-tex="\{100\}">{100}</span> family, the largest normal orientation factor is the largest squared Cartesian component of <span data-tex="\hat{\mathbf L}">L̂</span>.
+          <p>Along <span data-tex="[001]">[001]</span>, the <span data-tex="(001)">(001)</span> normal is parallel to the load, so <span data-tex="\cos^2\psi=1">cos² ψ = 1</span> and the cleavage criterion is reached at <span data-tex="180/1=180\ \mathrm{MPa}">180/1 = 180 MPa</span>.</p>
+          <p>Along <span data-tex="[011]">[011]</span>, <span data-tex="\hat{\mathbf L}=(0,1,1)/\sqrt2">L̂ = (0,1,1)/√2</span>. The <span data-tex="(010)">(010)</span> and <span data-tex="(001)">(001)</span> planes both have <span data-tex="\cos^2\psi=1/2">cos² ψ = 1/2</span>, so their cleavage threshold is <span data-tex="180/(1/2)=360\ \mathrm{MPa}">180/(1/2) = 360 MPa</span>.</p>
+        </li>
+        <li><strong>Compare the criteria.</strong></li>
+      </ol>
+      <table class="worked-table">
+        <caption>Applied tensile thresholds from the elastic comparison</caption>
+        <thead><tr><th scope="col">Tensile axis</th><th scope="col">Slip criterion (MPa)</th><th scope="col">Cleavage criterion (MPa)</th><th scope="col">First criterion</th></tr></thead>
+        <tbody>
+          <tr><th scope="row"><span data-tex="[001]">[001]</span></th><td data-label="Slip criterion (MPa)">212.13</td><td data-label="Cleavage criterion (MPa)">180.00</td><td data-label="First criterion"><strong>Cleavage</strong></td></tr>
+          <tr><th scope="row"><span data-tex="[011]">[011]</span></th><td data-label="Slip criterion (MPa)">212.13</td><td data-label="Cleavage criterion (MPa)">360.00</td><td data-label="First criterion"><strong>Slip</strong></td></tr>
+        </tbody>
+      </table>
+      <p>At <span data-tex="180\ \mathrm{MPa}">180 MPa</span> along <span data-tex="[001]">[001]</span>, cleavage reaches its threshold while the largest resolved shear is only <span data-tex="180(\sqrt2/3)=84.85\ \mathrm{MPa}">180(√2/3) = 84.85 MPa</span>, below the 100 MPa CRSS. Along <span data-tex="[011]">[011]</span>, slip starts at 212.13 MPa while the largest cleavage-plane normal stress is <span data-tex="212.13/2=106.07\ \mathrm{MPa}">212.13/2 = 106.07 MPa</span>, below the 180 MPa cleavage threshold.</p>
+      <p><strong>Orientation changes the competition.</strong> The best slip factor is the same for these two axes, but their cleavage-plane normal factors differ. This is why comparing only the Schmid factors would miss the change in the first event.</p>
+    </article>
+
+    <article class="orientation-example" aria-labelledby="strength-competition-title">
+      <p class="section-kicker">Worked example 3</p>
+      <h3 id="strength-competition-title">Change slip resistance, keep the axis</h3>
+      <p>Keep the tensile axis <span data-tex="[001]">[001]</span> and the hypothetical <span data-tex="\{100\}">{100}</span> cleavage threshold at <span data-tex="\sigma_{\mathrm{cleav}}=180\ \mathrm{MPa}">σ<sub>cleav</sub> = 180 MPa</span>. Compare equal CRSS values of 60 MPa and 100 MPa on all 48 slip systems. Geometry is unchanged, so <span data-tex="m_{\max}=\sqrt2/3">m<sub>max</sub> = √2/3</span>.</p>
+      <table class="worked-table">
+        <caption>First-event comparison for the same crystal orientation</caption>
+        <thead><tr><th scope="col">CRSS (MPa)</th><th scope="col">Applied slip threshold (MPa)</th><th scope="col">Applied cleavage threshold (MPa)</th><th scope="col">First criterion</th></tr></thead>
+        <tbody>
+          <tr><th scope="row" data-label="CRSS (MPa)">60</th><td data-label="Applied slip threshold (MPa)"><span data-tex="60/(\sqrt2/3)=127.28">60/(√2/3) = 127.28</span></td><td data-label="Applied cleavage threshold (MPa)">180.00</td><td data-label="First criterion"><strong>Slip</strong></td></tr>
+          <tr><th scope="row" data-label="CRSS (MPa)">100</th><td data-label="Applied slip threshold (MPa)"><span data-tex="100/(\sqrt2/3)=212.13">100/(√2/3) = 212.13</span></td><td data-label="Applied cleavage threshold (MPa)">180.00</td><td data-label="First criterion"><strong>Cleavage</strong></td></tr>
+        </tbody>
+      </table>
+      <p>For the 60 MPa CRSS case, slip starts while the cleavage-plane normal stress is <span data-tex="\sigma_{n,\mathrm{c}}=127.28\ \mathrm{MPa}">σ<sub>n,c</sub> = 127.28 MPa</span>, below the 180 MPa cleavage threshold.</p>
+      <p>The crossover occurs when the two applied thresholds are equal:</p>
+      <p class="formula" data-tex="\tau_{\mathrm{CRSS}}^*=m_{\max}\sigma_{\mathrm{cleav}}=\frac{\sqrt2}{3}(180)=84.85\ \mathrm{MPa}">τ<sub>CRSS</sub>* = m<sub>max</sub> σ<sub>cleav</sub> = (√2/3)(180) = 84.85 MPa</p>
+      <p>Below this model CRSS, slip begins first; above it, cleavage reaches its criterion first. At equality, the scalar criteria are reached together, and this model does not resolve their subsequent interaction.</p>
+      <p>Increasing slip resistance can therefore favour cleavage in the competition. Temperature and strain rate can alter the resistance to slip in BCC metals. Here the cleavage threshold was deliberately held fixed to isolate that effect; these inputs do not predict a numerical ductile-to-brittle transition temperature.</p>
+    </article>
+  </section>
+
 </main><footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Slip &amp; Schmid&rsquo;s Law &middot; <span data-year>2026</span></p></footer>
 </body></html>
