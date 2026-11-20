@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive constitutional-supercooling and solid-liquid interface-stability explorer for binary alloys.">
+  <meta name="theme-color" content="#fdf6ec"><title>Interface Stability | Phase Transformations</title>
+  <link rel="stylesheet" href="../../css/style.css?v=20260827"><link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script><script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#submodule">Skip to the interface-stability experiment</a>
+  <header class="article-header"><nav class="article-nav" aria-label="Lesson navigation"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span><strong>MSE</strong><small>Learning Lab</small></span></a><a class="back-link" href="index.html">&larr; Module 8 overview</a></nav></header>
+
+  <main class="transformations-shell" id="submodule">
+    <header class="submodule-intro">
+      <div><p class="eyebrow">Module 8 &middot; Submodule 4 of 5</p><h1>Interface Stability</h1></div>
+      <div class="transformations-intro-copy"><p>Build the solute boundary layer ahead of a planar solidification front. Compare the imposed thermal gradient with the local liquidus gradient and reveal any constitutionally supercooled zone.</p><p class="transformations-intro-note"><strong>Question:</strong> when will a small interface perturbation find a thermodynamic advantage?</p></div>
+    </header>
+
+    <nav class="transformations-route" aria-label="Phase-transformations submodules"><a href="thermodynamics.html"><span>01</span> Driving force</a><a href="nucleation.html"><span>02</span> Nucleation</a><a href="kinetics.html"><span>03</span> Kinetics</a><a class="current" aria-current="page" href="interface-stability.html"><span>04</span> Interface stability</a><a href="microstructure.html"><span>05</span> Microstructure</a></nav>
+
+    <section class="transformation-card" aria-labelledby="interface-title">
+      <div class="transformation-heading">
+        <div><p class="section-kicker">Experiment 4 &middot; Alloy solidification</p><h2 id="interface-title">Solute rejection can destabilise a flat front</h2></div>
+        <p>For k<sub>p</sub> = C<sub>S</sub>/C<sub>L</sub> &lt; 1, the growing solid rejects solute. That boundary layer changes the equilibrium liquidus temperature ahead of the interface. Wherever the actual liquid is colder than its local liquidus, constitutional supercooling exists.</p>
+      </div>
+
+      <div class="interactive-grid interface-grid">
+        <figure class="visual-panel">
+          <div class="panel-toolbar"><div><strong>Thermal and solutal boundary layers</strong><span>The interface is at z = 0; liquid lies to the right.</span></div><span class="model-chip warning-chip" id="stability-chip">Supercooled zone present</span></div>
+          <div class="chart-frame chart-frame-tall"><canvas id="stability-chart" width="980" height="620" role="img" aria-label="Temperature, local liquidus, and solute concentration profiles ahead of a moving solid-liquid interface."></canvas></div>
+          <figcaption>The shaded interval is constitutionally supercooled: T(z) &lt; T<sub>L</sub>(z). The horizontal scale automatically follows five solutal boundary-layer lengths, 5D<sub>L</sub>/R.</figcaption>
+        </figure>
+
+        <aside class="control-panel" aria-labelledby="stability-controls-title">
+          <p class="panel-kicker">Alloy and processing controls</p><h3 id="stability-controls-title">Test the planar front</h3>
+          <div class="control-field"><label for="alloy-composition"><span>Bulk solute, C<sub>0</sub></span><output id="alloy-composition-value" for="alloy-composition">5.0 wt%</output></label><input id="alloy-composition" type="range" min="0" max="10" step="0.1" value="5"></div>
+          <div class="control-field"><label for="growth-rate"><span>Growth velocity, R</span><output id="growth-rate-value" for="growth-rate">20 &micro;m s<sup>&minus;1</sup></output></label><input id="growth-rate" type="range" min="0" max="100" step="1" value="20"></div>
+          <div class="control-field"><label for="thermal-gradient"><span>Liquid gradient, G<sub>L</sub></span><output id="thermal-gradient-value" for="thermal-gradient">25 K mm<sup>&minus;1</sup></output></label><input id="thermal-gradient" type="range" min="1" max="200" step="1" value="25"></div>
+          <div class="control-field"><label for="partition-coefficient"><span>Partition coefficient, k<sub>p</sub></span><output id="partition-coefficient-value" for="partition-coefficient">0.30</output></label><input id="partition-coefficient" type="range" min="0.1" max="1" step="0.01" value="0.3"></div>
+
+          <details class="advanced-controls">
+            <summary>Advanced material parameters</summary>
+            <div class="control-field"><label for="liquid-diffusivity"><span>Liquid diffusivity, D<sub>L</sub></span><output id="liquid-diffusivity-value" for="liquid-diffusivity">3.0 &times; 10<sup>&minus;9</sup> m<sup>2</sup> s<sup>&minus;1</sup></output></label><input id="liquid-diffusivity" type="range" min="0.5" max="8" step="0.1" value="3"></div>
+            <div class="control-field"><label for="liquidus-slope"><span>|Liquidus slope|, |m<sub>L</sub>|</span><output id="liquidus-slope-value" for="liquidus-slope">3.0 K (wt%)<sup>&minus;1</sup></output></label><input id="liquidus-slope" type="range" min="0.5" max="8" step="0.1" value="3"></div>
+          </details>
+
+          <dl class="metric-grid compact-metrics"><div><dt>G<sub>L</sub>/R</dt><dd id="actual-gr">1.25 &times; 10<sup>9</sup> K s m<sup>&minus;2</sup></dd></div><div><dt>Critical G<sub>L</sub>/R</dt><dd id="critical-gr">1.17 &times; 10<sup>10</sup> K s m<sup>&minus;2</sup></dd></div><div><dt>Stability index, S<sub>CS</sub></dt><dd id="stability-index">0.11</dd></div><div><dt>Criterion result</dt><dd id="front-label">Instability likely</dd></div></dl>
+          <figure class="front-card"><canvas id="front-canvas" width="560" height="260" role="img" aria-label="Teaching morphology cue for a strongly perturbed solid-liquid interface and rejected solute field."></canvas><figcaption id="front-caption">A dendrite-like cue illustrates strong constitutional supercooling; it is not a morphology prediction.</figcaption></figure>
+          <p class="status-line" id="stability-status" role="status" aria-live="polite">The imposed thermal gradient is too shallow for this velocity and solute boundary layer.</p>
+          <div class="try-strip"><strong>Stabilise it</strong><p>Raise G<sub>L</sub>, lower R or C<sub>0</sub>, increase k<sub>p</sub>, or increase D<sub>L</sub>. Watch S<sub>CS</sub> cross 1.</p></div>
+        </aside>
+      </div>
+
+      <details class="math-details">
+        <summary>Show the boundary-layer model and criterion</summary>
+        <div class="math-details-body">
+          <p>For steady planar growth with no liquid convection and negligible solid diffusion,</p>
+          <p class="equation">C<sub>L</sub>(z) = C<sub>0</sub>[1 + (1&minus;k<sub>p</sub>)exp(&minus;Rz/D<sub>L</sub>)/k<sub>p</sub>], &nbsp; T<sub>L</sub>(z) = T<sub>m</sub> + m<sub>L</sub>C<sub>L</sub>(z).</p>
+          <p>With m<sub>L</sub> &lt; 0, no constitutional supercooling at the interface requires</p>
+          <p class="equation">G<sub>L</sub>/R &ge; |m<sub>L</sub>|C<sub>0</sub>(1&minus;k<sub>p</sub>)/(k<sub>p</sub>D<sub>L</sub>), &nbsp; S<sub>CS</sub> = G<sub>L</sub>D<sub>L</sub>k<sub>p</sub> / [|m<sub>L</sub>|RC<sub>0</sub>(1&minus;k<sub>p</sub>)].</p>
+          <p>S<sub>CS</sub> &ge; 1 passes this simple stability test. At R = 0, C<sub>0</sub> = 0, or k<sub>p</sub> = 1, the solutal instability term vanishes.</p>
+        </div>
+      </details>
+
+      <div class="concept-check"><div><span>Large G<sub>L</sub>/R</span><strong>Planar front supported</strong><p>The actual temperature rises faster than the local liquidus.</p></div><div><span>S<sub>CS</sub> &asymp; 1</span><strong>Onset boundary</strong><p>A shallow supercooled zone begins to appear.</p></div><div><span>Small G<sub>L</sub>/R</span><strong>Instability likely</strong><p>Protrusions can enter supercooled liquid.</p></div></div>
+
+      <aside class="bridge-card"><span>Composition comes from equilibrium</span><p>C<sub>0</sub>, C<sub>S</sub>, C<sub>L</sub>, and the liquidus slope are read from an alloy phase diagram; kinetics determines how the interface responds.</p><a href="../phase-diagrams/index.html">Revisit Module 7: Phase Diagrams &rarr;</a></aside>
+    </section>
+
+    <details class="data-note"><summary>Scope and primary references</summary><p>The inequality is a constitutional-supercooling onset heuristic, not the full Mullins&ndash;Sekerka morphological-stability analysis. Capillarity, perturbation wavelength, thermal conductivities and fields, interface kinetics, anisotropy, and convection also matter. The changing front is therefore labelled a visual cue, not a deterministic planar&ndash;cellular&ndash;dendritic prediction.</p><p><a href="https://doi.org/10.1016/0001-6160(53)90126-6" target="_blank" rel="noopener noreferrer">Tiller et al. (1953)</a> &middot; <a href="https://doi.org/10.1063/1.1713333" target="_blank" rel="noopener noreferrer">Mullins &amp; Sekerka (1964)</a></p></details>
+    <nav class="transformation-lesson-nav" aria-label="Submodule sequence"><a href="kinetics.html"><span>Previous submodule</span><strong>&larr; Kinetics</strong></a><a href="microstructure.html"><span>Next submodule</span><strong>Microstructure &rarr;</strong></a></nav>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Phase transformations &middot; Interface stability &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>

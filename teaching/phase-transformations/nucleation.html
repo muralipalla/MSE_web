@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive classical and heterogeneous nucleation experiments for critical radius, energy barrier, and wetting angle.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Nucleation | Phase Transformations</title>
+  <link rel="stylesheet" href="../../css/style.css?v=20260827"><link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script><script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#submodule">Skip to the nucleation experiments</a>
+  <header class="article-header"><nav class="article-nav" aria-label="Lesson navigation"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span><strong>MSE</strong><small>Learning Lab</small></span></a><a class="back-link" href="index.html">&larr; Module 8 overview</a></nav></header>
+
+  <main class="transformations-shell" id="submodule">
+    <header class="submodule-intro">
+      <div><p class="eyebrow">Module 8 &middot; Submodule 2 of 5</p><h1>Classical Nucleation</h1></div>
+      <div class="transformations-intro-copy"><p>Build a solid embryo atom by atom, find its critical radius, and then place it on a substrate to see why real solidification usually begins heterogeneously.</p><p class="transformations-intro-note"><strong>Question:</strong> why do tiny clusters dissolve while larger ones can grow?</p></div>
+    </header>
+
+    <nav class="transformations-route" aria-label="Phase-transformations submodules">
+      <a href="thermodynamics.html"><span>01</span> Driving force</a><a class="current" aria-current="page" href="nucleation.html"><span>02</span> Nucleation</a><a href="kinetics.html"><span>03</span> Kinetics</a><a href="interface-stability.html"><span>04</span> Interface stability</a><a href="microstructure.html"><span>05</span> Microstructure</a>
+    </nav>
+
+    <section class="transformation-card" aria-labelledby="nucleation-title">
+      <div class="transformation-heading">
+        <div><p class="section-kicker">Experiment 2A &middot; Homogeneous CNT</p><h2 id="nucleation-title">Surface cost versus volume reward</h2></div>
+        <p>Creating a spherical embryo gains a negative volume free energy but costs positive solid&ndash;liquid interface. Their sum reaches an unstable maximum at r<sup>*</sup>.</p>
+      </div>
+
+      <div class="interactive-grid nucleation-grid">
+        <figure class="visual-panel">
+          <div class="panel-toolbar"><div><strong>Energy versus embryo radius</strong><span>Curves are normalised by r<sup>*</sup> and &Delta;G<sup>*</sup>; read dimensional values at right.</span></div><div class="legend-inline" aria-hidden="true"><span class="surface-key">Surface</span><span class="volume-key">Volume</span><span class="total-key">Total</span></div></div>
+          <div class="chart-frame"><canvas id="nucleation-chart" width="940" height="520" role="img" aria-label="Classical nucleation free-energy curves with critical-radius and selected-radius markers."></canvas></div>
+          <figcaption>Homogeneous spherical-nucleus model with a sharp interface and isotropic &gamma;<sub>SL</sub>. Normalisation preserves the universal curve while the calculated r<sup>*</sup> and &Delta;G<sup>*</sup> change.</figcaption>
+        </figure>
+
+        <aside class="control-panel" aria-labelledby="nucleation-controls-title">
+          <p class="panel-kicker">Build an embryo</p><h3 id="nucleation-controls-title">Change the competition</h3>
+          <div class="control-field"><label for="cnt-material-select">Material preset</label><select id="cnt-material-select"><option value="aluminium">Aluminium</option><option value="copper" selected>Copper</option><option value="iron">Iron</option></select></div>
+          <div class="control-field"><label for="cnt-undercooling"><span>Undercooling, &Delta;T</span><output id="cnt-undercooling-value" for="cnt-undercooling">100 K</output></label><input id="cnt-undercooling" type="range" min="15" max="300" step="1" value="100"></div>
+          <div class="control-field"><label for="cnt-gamma"><span>Interfacial energy, &gamma;<sub>SL</sub></span><output id="cnt-gamma-value" for="cnt-gamma">0.20 J m<sup>&minus;2</sup></output></label><input id="cnt-gamma" type="range" min="0.06" max="0.50" step="0.01" value="0.20"></div>
+          <div class="control-field"><label for="cnt-radius"><span>Relative embryo radius, r/r<sup>*</sup></span><output id="cnt-radius-value" for="cnt-radius">0.70</output></label><input id="cnt-radius" type="range" min="0" max="2.5" step="0.01" value="0.7"></div>
+
+          <figure class="cluster-card"><canvas id="cluster-canvas" width="500" height="260" role="img" aria-label="Atomic-scale teaching schematic of a selected solid embryo in liquid."></canvas><figcaption id="cluster-caption">The selected embryo is subcritical and tends to dissolve.</figcaption></figure>
+          <dl class="metric-grid compact-metrics">
+            <div><dt>Critical radius, r<sup>*</sup></dt><dd id="cnt-rstar">3.0 nm</dd></div><div><dt>Selected radius, r</dt><dd id="cnt-selected-radius">2.1 nm</dd></div><div><dt>Barrier, &Delta;G<sup>*</sup></dt><dd id="cnt-barrier">7.3 &times; 10<sup>&minus;18</sup> J</dd></div><div><dt>Barrier / k<sub>B</sub>T</dt><dd id="cnt-barrier-kt">421</dd></div><div class="metric-wide"><dt>Embryo state</dt><dd id="cnt-embryo-state">Subcritical &middot; shrinkage favoured</dd></div>
+          </dl>
+          <p class="status-line" id="cnt-status" role="status" aria-live="polite">Increase r/r* past 1 or increase undercooling to reduce the dimensional critical size.</p>
+        </aside>
+      </div>
+
+      <details class="math-details">
+        <summary>Show the spherical-nucleus derivation</summary>
+        <div class="math-details-body"><p class="equation">&Delta;G(r) = 4&pi;r<sup>2</sup>&gamma;<sub>SL</sub> + (4/3)&pi;r<sup>3</sup>&Delta;g<sub>v</sub>, &nbsp; &Delta;g<sub>v</sub> &lt; 0</p><p>Setting d&Delta;G/dr = 0 gives</p><p class="equation">r<sup>*</sup> = 2&gamma;<sub>SL</sub>/|&Delta;g<sub>v</sub>|, &nbsp; &Delta;G<sup>*</sup><sub>hom</sub> = 16&pi;&gamma;<sub>SL</sub><sup>3</sup>/(3&Delta;g<sub>v</sub><sup>2</sup>).</p><p>With x = r/r<sup>*</sup>: &Delta;G<sub>S</sub>/&Delta;G<sup>*</sup> = 3x<sup>2</sup>, &Delta;G<sub>V</sub>/&Delta;G<sup>*</sup> = &minus;2x<sup>3</sup>, and &Delta;G/&Delta;G<sup>*</sup> = 3x<sup>2</sup> &minus; 2x<sup>3</sup>.</p></div>
+      </details>
+
+      <div class="sublesson-heading"><div><p class="section-kicker">Experiment 2B &middot; Heterogeneous CNT</p><h2>Let a surface pay part of the cost</h2></div><p>A mould wall or inclusion replaces part of the costly interface. Move the contact angle measured through the nucleus; good wetting produces a smaller spherical cap and a lower barrier.</p></div>
+
+      <div class="heterogeneous-lab">
+        <figure class="visual-panel cap-panel">
+          <div class="panel-toolbar"><div><strong>Spherical-cap nucleus</strong><span>Vectors show the Young balance at the contact line.</span></div></div>
+          <div class="chart-frame cap-frame"><canvas id="heterogeneous-canvas" width="760" height="410" role="img" aria-label="Spherical-cap heterogeneous nucleus on a flat substrate with contact angle and interfacial-energy balance."></canvas></div>
+          <figcaption>Ideal capillarity model on a smooth, rigid, chemically uniform, flat substrate. Contact angle fixes only &gamma;<sub>WL</sub> &minus; &gamma;<sub>WS</sub> = &gamma;<sub>SL</sub> cos&theta;, not all three energies independently.</figcaption>
+        </figure>
+        <aside class="control-panel">
+          <p class="panel-kicker">Wetting control</p>
+          <div class="control-field"><label for="contact-angle"><span>Contact angle, &theta;</span><output id="contact-angle-value" for="contact-angle">60&deg;</output></label><input id="contact-angle" type="range" min="0" max="180" step="1" value="60"></div>
+          <div class="barrier-comparison" aria-label="Homogeneous and heterogeneous barrier comparison"><div><span>Homogeneous</span><i><b style="width:100%"></b></i><strong>100%</strong></div><div><span>Heterogeneous</span><i><b id="heterogeneous-bar" style="width:16%"></b></i><strong id="heterogeneous-percent">16%</strong></div></div>
+          <dl class="metric-grid compact-metrics"><div><dt>Shape factor, f(&theta;)</dt><dd id="shape-factor">0.156</dd></div><div><dt>&Delta;G<sup>*</sup><sub>het</sub></dt><dd id="heterogeneous-barrier">1.1 &times; 10<sup>&minus;18</sup> J</dd></div><div class="metric-wide"><dt>Critical curvature radius</dt><dd id="heterogeneous-rstar">Same r<sup>*</sup> as homogeneous CNT</dd></div></dl>
+          <p class="equation compact-equation">f(&theta;) = (2 + cos&theta;)(1 &minus; cos&theta;)<sup>2</sup>/4</p>
+          <p class="status-line" id="heterogeneous-status" role="status" aria-live="polite">Good wetting reduces the ideal barrier to about 16% of the homogeneous value.</p>
+        </aside>
+      </div>
+    </section>
+
+    <details class="data-note"><summary>Classical-model limits and references</summary><p>CNT becomes questionable for atomic-scale clusters, anisotropic or faceted nuclei, diffuse interfaces, strain-energy-dominated solid-state precipitation, and nonclassical pathways. Heterogeneous nucleation also depends on substrate size, roughness, lattice mismatch, chemistry, line tension, and active-site density. At r = r<sup>*</sup>, the embryo is at an unstable maximum—not a stable state.</p><p><a href="https://doi.org/10.1063/1.1747055" target="_blank" rel="noopener noreferrer">Turnbull &amp; Fisher (1949)</a> &middot; <a href="https://doi.org/10.1063/1.1699435" target="_blank" rel="noopener noreferrer">Turnbull (1950)</a> &middot; <a href="https://doi.org/10.1063/1.1744540" target="_blank" rel="noopener noreferrer">Fletcher (1958)</a></p></details>
+    <nav class="transformation-lesson-nav" aria-label="Submodule sequence"><a href="thermodynamics.html"><span>Previous submodule</span><strong>&larr; Driving Force</strong></a><a href="kinetics.html"><span>Next submodule</span><strong>Kinetics &rarr;</strong></a></nav>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Phase transformations &middot; Nucleation &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>

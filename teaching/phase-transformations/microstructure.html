@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive dendrite growth, SDAS measurement, and steel TTT/CCT transformation-path experiments.">
+  <meta name="theme-color" content="#fdf6ec"><title>Microstructure Evolution | Phase Transformations</title>
+  <link rel="stylesheet" href="../../css/style.css?v=20260827"><link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script><script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#submodule">Skip to the microstructure experiments</a>
+  <header class="article-header"><nav class="article-nav" aria-label="Lesson navigation"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span><strong>MSE</strong><small>Learning Lab</small></span></a><a class="back-link" href="index.html">&larr; Module 8 overview</a></nav></header>
+
+  <main class="transformations-shell" id="submodule">
+    <header class="submodule-intro">
+      <div><p class="eyebrow">Module 8 &middot; Submodule 5 of 5</p><h1>Microstructure Evolution</h1></div>
+      <div class="transformations-intro-copy"><p>Turn a cooling rate into a cast length scale, measure it, and then switch to steel to compare an isothermal TTT hold with a continuous-cooling CCT path.</p><p class="transformations-intro-note"><strong>Question:</strong> what microstructural record does a thermal path leave behind?</p></div>
+    </header>
+
+    <nav class="transformations-route" aria-label="Phase-transformations submodules"><a href="thermodynamics.html"><span>01</span> Driving force</a><a href="nucleation.html"><span>02</span> Nucleation</a><a href="kinetics.html"><span>03</span> Kinetics</a><a href="interface-stability.html"><span>04</span> Interface stability</a><a class="current" aria-current="page" href="microstructure.html"><span>05</span> Microstructure</a></nav>
+
+    <section class="transformation-card" aria-labelledby="microstructure-title">
+      <div class="transformation-heading"><div><p class="section-kicker">Experiment 5A &middot; Cast-alloy morphology</p><h2 id="microstructure-title">Grow, pause, and measure dendrites</h2></div><p>Faster cooling usually reduces the time for diffusion and coarsening, refining secondary dendrite arm spacing (SDAS). The simulation makes that empirical length-scale relation visible and measurable.</p></div>
+
+      <div class="dendrite-lab">
+        <figure class="visual-panel micrograph-panel">
+          <div class="panel-toolbar"><div><strong>Solutal dendrite growth</strong><span>Conceptual cellular-growth model &middot; field of view 400 &micro;m.</span></div><div class="simulation-actions" role="group" aria-label="Dendrite simulation controls"><button class="action-button primary-action" type="button" id="dendrite-toggle">Start growth</button><button class="action-button" type="button" id="dendrite-reset">Reset</button></div></div>
+          <div class="micrograph-frame"><canvas id="dendrite-canvas" width="1000" height="600" role="img" aria-label="Paused synthetic micrograph-style dendrite growth simulation with a 400 micrometre field of view."></canvas></div>
+          <figcaption><strong>Synthetic teaching microstructure&mdash;not an optical or SEM measurement.</strong> Branch spacing follows the displayed empirical relation; branch shape, solute colour, and impingement are qualitative.</figcaption>
+        </figure>
+
+        <aside class="control-panel dendrite-controls" aria-labelledby="dendrite-controls-title">
+          <p class="panel-kicker">Casting controls and measurement</p><h3 id="dendrite-controls-title">Change the scale, then measure it</h3>
+          <div class="control-field"><label for="cooling-rate"><span>Cooling rate, T&#775;</span><output id="cooling-rate-value" for="cooling-rate">10.0 K s<sup>&minus;1</sup></output></label><input id="cooling-rate" type="range" min="-2" max="2" step="0.01" value="1"></div>
+          <dl class="metric-grid compact-metrics"><div><dt>Model SDAS, &lambda;<sub>2</sub></dt><dd id="predicted-sdas">23.4 &micro;m</dd></div><div><dt>Relative cooling</dt><dd id="cooling-class">Moderate</dd></div><div class="metric-wide"><dt>Field of view</dt><dd>400 &micro;m wide</dd></div></dl>
+          <div class="measurement-tools"><strong>SDAS measurement tool</strong><p>Pause the image, select <em>Measure</em>, then choose two neighbouring secondary arms. Use several measurements on a real micrograph and report the mean.</p><div class="simulation-actions" role="group" aria-label="SDAS measurement controls"><button class="action-button" type="button" id="measure-toggle" aria-pressed="false">Measure</button><button class="action-button" type="button" id="measure-example">Place example points</button><button class="action-button" type="button" id="measure-clear">Clear points</button></div></div>
+          <dl class="metric-list"><div><dt>Measured spacing</dt><dd id="measured-sdas">Choose two points</dd></div><div><dt>Cooling rate inferred from spacing</dt><dd id="inferred-cooling">&mdash;</dd></div></dl>
+          <p class="status-line" id="dendrite-status" role="status" aria-live="polite">Simulation ready. Start growth, pause it, then measure between arms.</p>
+          <p class="caution-note">A finer SDAS can reduce segregation distance and refine interdendritic features. SDAS is not grain size, so this is not a direct Hall&ndash;Petch effect.</p>
+        </aside>
+      </div>
+
+      <details class="math-details">
+        <summary>Show the SDAS relation and calibration</summary>
+        <div class="math-details-body"><p class="equation">&lambda;<sub>2</sub>/&lambda;<sub>2,ref</sub> = (T&#775;/T&#775;<sub>ref</sub>)<sup>&minus;n</sup></p><p>This teaching calibration uses &lambda;<sub>2,ref</sub> = 50 &micro;m at T&#775;<sub>ref</sub> = 1 K s<sup>&minus;1</sup> and n = 0.33. Alloy chemistry, local solidification time, G<sub>L</sub>, interface speed, convection, anisotropy, and coarsening also affect spacing. Do not extrapolate one calibration across unrelated casting and additive-manufacturing regimes.</p></div>
+      </details>
+
+      <div class="sublesson-heading ttt-heading"><div><p class="section-kicker">Experiment 5B &middot; Steel paths</p><h2>Switch between TTT and CCT</h2></div><p>TTT data describe a rapid quench followed by an isothermal hold. CCT data describe continuous cooling. The experiment changes the curve family as well as the path, so the two diagram types are not conflated.</p></div>
+
+      <div class="interactive-grid ttt-grid">
+        <figure class="visual-panel">
+          <div class="panel-toolbar"><div><strong id="transformation-map-title">Schematic TTT map</strong><span>Drag the path on the chart or use the keyboard-accessible sliders.</span></div><span class="model-chip" id="ttt-mode-chip">Isothermal TTT path</span></div>
+          <div class="chart-frame chart-frame-tall"><canvas id="ttt-chart" width="980" height="610" role="img" aria-label="Schematic time-temperature-transformation chart for steel with an adjustable isothermal path."></canvas></div>
+          <figcaption>Instructional topology only. TTT and CCT curves depend on composition, prior-austenite grain size, austenitising history, and start/finish definitions. Do not use this schematic for heat-treatment schedules.</figcaption>
+        </figure>
+
+        <aside class="control-panel" aria-labelledby="ttt-controls-title">
+          <p class="panel-kicker">Thermal path</p><h3 id="ttt-controls-title">Cross&mdash;or miss&mdash;the curves</h3>
+          <div class="mode-buttons" role="group" aria-label="Transformation diagram and thermal path controls"><button type="button" data-ttt-mode="isothermal" aria-pressed="true">TTT &middot; isothermal</button><button type="button" data-ttt-mode="continuous" aria-pressed="false">CCT &middot; continuous</button><button type="button" id="ttt-reset">Reset path</button></div>
+          <div class="control-field"><label for="steel-carbon"><span>Steel carbon</span><output id="steel-carbon-value" for="steel-carbon">0.60 wt% C</output></label><input id="steel-carbon" type="range" min="0.2" max="1" step="0.05" value="0.6"></div>
+          <div id="isothermal-controls">
+            <div class="control-field"><label for="hold-temperature"><span>Hold temperature</span><output id="hold-temperature-value" for="hold-temperature">550 &deg;C</output></label><input id="hold-temperature" type="range" min="250" max="700" step="5" value="550"></div>
+            <div class="control-field"><label for="hold-time"><span>Hold time</span><output id="hold-time-value" for="hold-time">10 s</output></label><input id="hold-time" type="range" min="-1" max="5" step="0.02" value="1"></div>
+          </div>
+          <div id="continuous-controls" hidden><div class="control-field"><label for="steel-cooling-rate"><span>Cooling rate</span><output id="steel-cooling-rate-value" for="steel-cooling-rate">30 K s<sup>&minus;1</sup></output></label><input id="steel-cooling-rate" type="range" min="-1" max="2.7" step="0.02" value="1.48"></div></div>
+
+          <div class="product-card" id="product-card"><span>Illustrative dominant product</span><strong id="steel-product">Fine pearlite</strong><p id="steel-product-copy">The hold passes through the pearlite transformation window near its nose.</p></div>
+          <dl class="metric-grid compact-metrics"><div><dt>M<sub>s</sub> estimate</dt><dd id="ms-temperature">285 &deg;C</dd></div><div><dt>Hardness tendency</dt><dd id="steel-hardness">Moderate</dd></div></dl>
+          <div class="phase-fractions" aria-label="Illustrative product fractions"><div><span>Pearlite</span><i><b id="pearlite-fraction-bar"></b></i><strong id="pearlite-fraction">100%</strong></div><div><span>Bainite</span><i><b id="bainite-fraction-bar"></b></i><strong id="bainite-fraction">0%</strong></div><div><span>Martensite</span><i><b id="martensite-fraction-bar"></b></i><strong id="martensite-fraction">0%</strong></div><div><span>Austenite / other</span><i><b id="other-fraction-bar"></b></i><strong id="other-fraction">0%</strong></div></div>
+          <p class="status-line" id="ttt-status" role="status" aria-live="polite">At 550 &deg;C for 10 s, the schematic path reaches the pearlite finish curve.</p>
+          <p class="caution-note">The fractions and hardness tendency are qualitative outputs from this schematic. Numerical hardness requires calibrated kinetics, chemistry, morphology, tempering state, and measurement conditions.</p>
+        </aside>
+      </div>
+
+      <details class="math-details">
+        <summary>Show the steel-model extensions</summary>
+        <div class="math-details-body math-columns"><div><strong>Martensite start</strong><p class="equation">M<sub>s</sub> &asymp; 539 &minus; 423C &nbsp; (&deg;C)</p><p>The carbon-only Andrews form moves the M<sub>s</sub> line for this teaching chart. Alloying additions require the full relation and verified data.</p></div><div><strong>Athermal martensite fraction</strong><p class="equation">X<sub>M</sub> = 1 &minus; exp[&minus;0.011(M<sub>s</sub> &minus; T)], &nbsp; T &lt; M<sub>s</sub></p><p>The Koistinen&ndash;Marburger form is used only after the path reaches M<sub>s</sub>. Pearlite and bainite remain time-dependent diffusional products.</p></div></div>
+      </details>
+
+      <div class="concept-check"><div><span>Slow cooling</span><strong>More diffusional product</strong><p>Paths spend longer inside pearlite or bainite windows.</p></div><div><span>Rapid cooling</span><strong>Curves can be missed</strong><p>Austenite may survive to M<sub>s</sub>.</p></div><div><span>Below M<sub>s</sub></span><strong>Martensite forms athermally</strong><p>Fraction depends mainly on undercooling below M<sub>s</sub>.</p></div></div>
+    </section>
+
+    <details class="data-note"><summary>Model scope and references</summary><p>The dendrite simulation is a deterministic visual growth model, not a solved phase-field or quantitatively calibrated cellular automaton. The steel diagrams use separate schematic TTT and CCT curve families. Product fractions are generated only to explain path logic and sum to 100%; they are not metallurgical predictions.</p><p><a href="https://doi.org/10.2355/isijinternational.46.914" target="_blank" rel="noopener noreferrer">Louhenkilpi et al. (2006), dendritic solidification modelling</a> &middot; <a href="https://doi.org/10.1016/j.jmrt.2022.06.146" target="_blank" rel="noopener noreferrer">Alvarez et al. (2022), cooling rate and SDAS</a> &middot; <a href="https://doi.org/10.1016/0001-6160(59)90170-1" target="_blank" rel="noopener noreferrer">Koistinen &amp; Marburger (1959)</a></p></details>
+    <nav class="transformation-lesson-nav" aria-label="Submodule sequence"><a href="interface-stability.html"><span>Previous submodule</span><strong>&larr; Interface Stability</strong></a><a href="../../index.html#topics"><span>Module complete</span><strong>All Core Modules &rarr;</strong></a></nav>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Phase transformations &middot; Microstructure &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>

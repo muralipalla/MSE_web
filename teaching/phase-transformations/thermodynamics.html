@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive Gibbs free-energy and undercooling explorer for phase transformations.">
+  <meta name="theme-color" content="#fdf6ec">
+  <title>Driving Force | Phase Transformations</title>
+  <link rel="stylesheet" href="../../css/style.css?v=20260827">
+  <link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#submodule">Skip to the driving-force experiment</a>
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span><strong>MSE</strong><small>Learning Lab</small></span></a>
+      <a class="back-link" href="index.html">&larr; Module 8 overview</a>
+    </nav>
+  </header>
+
+  <main class="transformations-shell" id="submodule">
+    <header class="submodule-intro">
+      <div><p class="eyebrow">Module 8 &middot; Submodule 1 of 5</p><h1>Thermodynamic Driving Force</h1></div>
+      <div class="transformations-intro-copy"><p>Move a material through its equilibrium melting point and watch stability switch. The same free-energy separation becomes the volume driving force used in nucleation theory.</p><p class="transformations-intro-note"><strong>Question:</strong> when is solidification favourable, and how strongly?</p></div>
+    </header>
+
+    <nav class="transformations-route" aria-label="Phase-transformations submodules">
+      <a class="current" aria-current="page" href="thermodynamics.html"><span>01</span> Driving force</a>
+      <a href="nucleation.html"><span>02</span> Nucleation</a>
+      <a href="kinetics.html"><span>03</span> Kinetics</a>
+      <a href="interface-stability.html"><span>04</span> Interface stability</a>
+      <a href="microstructure.html"><span>05</span> Microstructure</a>
+    </nav>
+
+    <section class="transformation-card" aria-labelledby="thermodynamics-title">
+      <div class="transformation-heading">
+        <div><p class="section-kicker">Experiment 1 &middot; G&ndash;T</p><h2 id="thermodynamics-title">Undercooling separates G<sub>S</sub> from G<sub>L</sub></h2></div>
+        <p>Liquid and solid have equal Gibbs free energy at T<sub>m</sub>. Below T<sub>m</sub>, G<sub>S</sub> is lower. Near T<sub>m</sub>, the separation grows approximately in proportion to &Delta;T = T<sub>m</sub> &minus; T.</p>
+      </div>
+
+      <div class="interactive-grid thermodynamics-grid">
+        <figure class="visual-panel">
+          <div class="panel-toolbar">
+            <div><strong>G&ndash;T and driving-force explorer</strong><span>One temperature marker connects both plots.</span></div>
+            <span class="model-chip">Near-T<sub>m</sub> model</span>
+          </div>
+          <div class="chart-frame chart-frame-tall"><canvas id="thermo-chart" width="980" height="620" role="img" aria-label="Interactive Gibbs free-energy versus temperature and signed molar driving-force plots for solidification."></canvas></div>
+          <figcaption>The G baselines are relative; their separation is quantitative within the constant enthalpy-of-fusion approximation. The lower plot uses &Delta;G<sub>m</sub> = G<sub>S</sub> &minus; G<sub>L</sub>.</figcaption>
+        </figure>
+
+        <aside class="control-panel" aria-labelledby="thermo-controls-title">
+          <p class="panel-kicker">Experiment controls</p>
+          <h3 id="thermo-controls-title">Choose a material and temperature</h3>
+          <div class="control-field">
+            <label for="material-select">Material preset</label>
+            <select id="material-select"><option value="aluminium">Aluminium</option><option value="copper" selected>Copper</option><option value="iron">Iron</option></select>
+          </div>
+          <div class="control-field">
+            <label for="thermo-temperature"><span>Temperature, T</span><output id="thermo-temperature-value" for="thermo-temperature">1258 K</output></label>
+            <input id="thermo-temperature" type="range" min="1019" max="1426" step="1" value="1258">
+          </div>
+          <dl class="metric-grid">
+            <div><dt>Melting point</dt><dd id="thermo-tm">1358 K</dd></div>
+            <div><dt>Undercooling</dt><dd id="thermo-undercooling">100 K</dd></div>
+            <div><dt>Signed &Delta;G<sub>m</sub></dt><dd id="thermo-dgm">&minus;0.96 kJ mol<sup>&minus;1</sup></dd></div>
+            <div><dt>Driving force, |&Delta;g<sub>v</sub>|</dt><dd id="thermo-dgv">135 MJ m<sup>&minus;3</sup></dd></div>
+          </dl>
+          <div class="state-card favourable" id="thermo-state-card"><span id="thermo-state-label">Solidification is favourable</span><strong id="thermo-state-symbol">G<sub>S</sub> &lt; G<sub>L</sub></strong></div>
+          <p class="status-line" id="thermo-status" role="status" aria-live="polite">Copper is 100 K below its equilibrium melting point.</p>
+          <div class="try-strip"><strong>Try this</strong><p>Place T exactly at T<sub>m</sub>, then lower it by 10 K and 150 K. How do the sign and magnitude change?</p></div>
+        </aside>
+      </div>
+
+      <details class="math-details">
+        <summary>Show the near-T<sub>m</sub> derivation and sign convention</summary>
+        <div class="math-details-body">
+          <p>For L &rarr; S, define &Delta;G<sub>m</sub> = G<sub>S</sub> &minus; G<sub>L</sub>. With constant enthalpy of fusion, linearisation near T<sub>m</sub> gives</p>
+          <p class="equation">&Delta;G<sub>m</sub> &asymp; &minus;&Delta;H<sub>f,m</sub>(T<sub>m</sub> &minus; T) / T<sub>m</sub>, &nbsp; &Delta;g<sub>v</sub> = &Delta;G<sub>m</sub> / V<sub>m</sub>.</p>
+          <p>&Delta;g<sub>v</sub> is negative below T<sub>m</sub>. The positive quantity |&Delta;g<sub>v</sub>| is labelled <em>driving-force magnitude</em>. For &Delta;T/T<sub>m</sub> much above 0.1, heat-capacity corrections become increasingly important.</p>
+        </div>
+      </details>
+
+      <div class="concept-check"><div><span>At T = T<sub>m</sub></span><strong>&Delta;G<sub>m</sub> = 0</strong><p>Liquid and solid coexist in equilibrium.</p></div><div><span>Below T<sub>m</sub></span><strong>&Delta;G<sub>m</sub> &lt; 0</strong><p>Solidification lowers bulk free energy.</p></div><div><span>Above T<sub>m</sub></span><strong>&Delta;G<sub>m</sub> &gt; 0</strong><p>Melting is favoured instead.</p></div></div>
+
+      <aside class="bridge-card"><span>Connect the equilibrium map</span><p>A phase diagram identifies when a phase becomes stable; this experiment quantifies the pure-material driving force near T<sub>m</sub>.</p><a href="../phase-diagrams/index.html">Open Module 7: Phase Diagrams &rarr;</a></aside>
+    </section>
+
+    <details class="data-note">
+      <summary>Preset data and model scope</summary>
+      <p>Rounded presets: Al, T<sub>m</sub> = 933 K, &Delta;H<sub>f,m</sub> = 10.71 kJ mol<sup>&minus;1</sup>, V<sub>m</sub> = 10.00 cm<sup>3</sup> mol<sup>&minus;1</sup>; Cu, 1358 K, 13.05 kJ mol<sup>&minus;1</sup>, 7.11 cm<sup>3</sup> mol<sup>&minus;1</sup>; Fe, 1811 K, 13.81 kJ mol<sup>&minus;1</sup>, 7.09 cm<sup>3</sup> mol<sup>&minus;1</sup>. Properties are held constant for teaching.</p>
+      <p><a href="https://doi.org/10.1063/1.1699435" target="_blank" rel="noopener noreferrer">Turnbull (1950), Formation of Crystal Nuclei in Liquid Metals</a> &middot; <a href="https://webbook.nist.gov/chemistry/" target="_blank" rel="noopener noreferrer">NIST Chemistry WebBook</a></p>
+    </details>
+
+    <nav class="transformation-lesson-nav" aria-label="Submodule sequence"><a href="index.html"><span>Module overview</span><strong>&larr; Phase Transformations</strong></a><a href="nucleation.html"><span>Next submodule</span><strong>Nucleation &rarr;</strong></a></nav>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Phase transformations &middot; Driving force &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive nucleation-rate competition and JMAK transformation-kinetics experiments.">
+  <meta name="theme-color" content="#fdf6ec"><title>Kinetics | Phase Transformations</title>
+  <link rel="stylesheet" href="../../css/style.css?v=20260827"><link rel="stylesheet" href="style.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script><script type="module" src="app.js?v=1"></script>
+</head>
+<body>
+  <a class="skip-link" href="#submodule">Skip to the kinetics experiments</a>
+  <header class="article-header"><nav class="article-nav" aria-label="Lesson navigation"><a class="brand" href="../../index.html"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span><span><strong>MSE</strong><small>Learning Lab</small></span></a><a class="back-link" href="index.html">&larr; Module 8 overview</a></nav></header>
+
+  <main class="transformations-shell" id="submodule">
+    <header class="submodule-intro">
+      <div><p class="eyebrow">Module 8 &middot; Submodule 3 of 5</p><h1>Transformation Kinetics</h1></div>
+      <div class="transformations-intro-copy"><p>Cooling strengthens the thermodynamic incentive but weakens atomic mobility. Find their compromise, then turn a characteristic transformation time into a complete sigmoidal JMAK curve.</p><p class="transformations-intro-note"><strong>Question:</strong> why can a favourable transformation still be slow?</p></div>
+    </header>
+
+    <nav class="transformations-route" aria-label="Phase-transformations submodules"><a href="thermodynamics.html"><span>01</span> Driving force</a><a href="nucleation.html"><span>02</span> Nucleation</a><a class="current" aria-current="page" href="kinetics.html"><span>03</span> Kinetics</a><a href="interface-stability.html"><span>04</span> Interface stability</a><a href="microstructure.html"><span>05</span> Microstructure</a></nav>
+
+    <section class="transformation-card" aria-labelledby="kinetics-title">
+      <div class="transformation-heading"><div><p class="section-kicker">Two linked experiments</p><h2 id="kinetics-title">Nucleate, grow, and impinge</h2></div><p>The steady-state nucleation rate contains both an attachment term and a barrier-crossing term. JMAK then describes the fraction transformed when nucleation and growth proceed throughout a material.</p></div>
+
+      <div class="kinetics-grid">
+        <article class="lab-panel" aria-labelledby="rate-title">
+          <div class="panel-toolbar"><div><strong id="rate-title">Experiment 3A &middot; Nucleation-rate window</strong><span>Thermodynamic probability rises as mobility falls.</span></div><span class="model-chip">Normalised log scale</span></div>
+          <div class="chart-frame medium-chart-frame"><canvas id="rate-chart" width="760" height="430" role="img" aria-label="Relative atomic mobility, thermodynamic probability, and combined nucleation rate versus homologous temperature."></canvas></div>
+          <div class="inline-controls">
+            <div class="control-field"><label for="mobility-penalty"><span>Mobility penalty, q = Q<sub>D</sub>/RT<sub>m</sub></span><output id="mobility-penalty-value" for="mobility-penalty">14</output></label><input id="mobility-penalty" type="range" min="2" max="40" step="1" value="14"></div>
+            <div class="control-field"><label for="barrier-scale"><span>Barrier scale, A</span><output id="barrier-scale-value" for="barrier-scale">0.30</output></label><input id="barrier-scale" type="range" min="0.05" max="4" step="0.05" value="0.3"></div>
+          </div>
+          <div class="result-ribbon"><span>Peak relative rate</span><strong id="rate-peak-temperature">0.71 T<sub>m</sub></strong><small id="rate-peak-note">Intermediate temperature balances barrier crossing and attachment.</small></div>
+          <p class="status-line" id="rate-status" role="status" aria-live="polite">This bell-shaped J(T) is a rate window, not the C-shaped start curve of a TTT diagram.</p>
+        </article>
+
+        <article class="lab-panel" aria-labelledby="jmak-title">
+          <div class="panel-toolbar"><div><strong id="jmak-title">Experiment 3B &middot; JMAK transformation</strong><span>Temperature sets a teaching t<sub>50</sub>; n shapes the transition.</span></div><span class="model-chip">Isothermal</span></div>
+          <div class="chart-frame medium-chart-frame"><canvas id="jmak-chart" width="760" height="430" role="img" aria-label="Johnson-Mehl-Avrami-Kolmogorov transformed fraction versus logarithmic time."></canvas></div>
+          <div class="inline-controls">
+            <div class="control-field"><label for="jmak-temperature"><span>Hold temperature</span><output id="jmak-temperature-value" for="jmak-temperature">0.72 T<sub>m</sub></output></label><input id="jmak-temperature" type="range" min="0.50" max="0.95" step="0.01" value="0.72"></div>
+            <div class="control-field"><label for="jmak-exponent"><span>Avrami exponent, n</span><output id="jmak-exponent-value" for="jmak-exponent">2.5</output></label><input id="jmak-exponent" type="range" min="0.5" max="4" step="0.1" value="2.5"></div>
+            <div class="control-field control-field-wide"><label for="jmak-time"><span>Elapsed time</span><output id="jmak-time-value" for="jmak-time">10 s</output></label><input id="jmak-time" type="range" min="-3" max="6" step="0.02" value="1"></div>
+          </div>
+          <dl class="metric-grid compact-metrics"><div><dt>Fraction transformed</dt><dd id="jmak-fraction">50%</dd></div><div><dt>t<sub>50</sub></dt><dd id="jmak-t50">10 s</dd></div><div><dt>t<sub>90</sub></dt><dd id="jmak-t90">16 s</dd></div><div><dt>Stage</dt><dd id="jmak-stage">Rapid growth</dd></div></dl>
+          <p class="status-line" id="jmak-status" role="status" aria-live="polite">Nuclei are growing and beginning to impinge.</p>
+        </article>
+      </div>
+
+      <div class="concept-check"><div><span>Near T<sub>m</sub></span><strong>Weak driving force</strong><p>The barrier term suppresses nucleation.</p></div><div><span>Intermediate T</span><strong>Rate maximum</strong><p>Driving force and mobility overlap.</p></div><div><span>Low T</span><strong>Weak mobility</strong><p>Attachment and growth become slow.</p></div></div>
+
+      <details class="math-details">
+        <summary>Show the kinetic models and assumptions</summary>
+        <div class="math-details-body math-columns">
+          <div><strong>Steady-state CNT structure</strong><p class="equation">J<sub>ss</sub> = N<sub>s</sub>Z&beta;<sup>*</sup> exp(&minus;&Delta;G<sup>*</sup>/k<sub>B</sub>T)</p><p>With &tau; = T/T<sub>m</sub>, a schematic log rate is ln(J/J<sub>00</sub>) = &minus;A/[&tau;(1&minus;&tau;)<sup>2</sup>] &minus; q/&tau;. Absolute rate needs calibrated site density, Zeldovich factor, and attachment frequency.</p></div>
+          <div><strong>Unit-safe JMAK form</strong><p class="equation">X(t) = 1 &minus; exp[&minus;ln2(t/t<sub>50</sub>)<sup>n</sup>]</p><p>The isothermal model assumes a homogeneous medium, prescribed nucleation and growth laws, and random impingement. One fitted n does not uniquely identify a mechanism.</p></div>
+        </div>
+      </details>
+
+      <aside class="bridge-card"><span>Mobility comes from diffusion</span><p>The attachment term is the same thermally activated atomic motion explored through random walks, Fick&rsquo;s laws, and kinetic Monte Carlo.</p><a href="../diffusion/index.html">Revisit Module 6: Diffusion &rarr;</a></aside>
+    </section>
+
+    <details class="data-note"><summary>Rate normalisation and references</summary><p>Each factor is normalised independently so its shape remains visible; the vertical axis is not an absolute nucleation rate. The JMAK temperature control maps the same schematic rate window onto a chosen t<sub>50</sub> scale with a 10 s minimum. It demonstrates the kinetic nose but is not a fit to a specific alloy.</p><p><a href="https://doi.org/10.1063/1.1747055" target="_blank" rel="noopener noreferrer">Turnbull &amp; Fisher (1949)</a> &middot; Avrami: <a href="https://doi.org/10.1063/1.1750380" target="_blank" rel="noopener noreferrer">Part I</a>, <a href="https://doi.org/10.1063/1.1750631" target="_blank" rel="noopener noreferrer">Part II</a>, <a href="https://doi.org/10.1063/1.1750872" target="_blank" rel="noopener noreferrer">Part III</a></p></details>
+    <nav class="transformation-lesson-nav" aria-label="Submodule sequence"><a href="nucleation.html"><span>Previous submodule</span><strong>&larr; Nucleation</strong></a><a href="interface-stability.html"><span>Next submodule</span><strong>Interface Stability &rarr;</strong></a></nav>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Phase transformations &middot; Kinetics &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>
