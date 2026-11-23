@@ -383,6 +383,23 @@
         </div>
         <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19920021173">NASA Linear Elastic Fracture Mechanics Primer, &sect;2.2</a></p>
       </div>
+      <section id="small-scale-yielding" aria-labelledby="small-scale-yielding-title">
+        <h3 class="subsection-heading" id="small-scale-yielding-title">Small-scale yielding and plastic-zone size</h3>
+        <p>When stresses near the tip reach the yield condition, the material deforms plastically in a zone around the crack tip. Under <strong>small-scale yielding</strong>, the plastic zone is much smaller than the crack length and the remaining ligament ahead of the crack. This leaves an elastic region outside the zone, still close to the crack tip on the scale of the specimen, where <i>K</i><sub>I</sub> governs the stresses.</p>
+        <p>Let <i>r</i><sub>p</sub> be a characteristic plastic-zone radius and &sigma;<sub>ys</sub> the yield strength. In plane stress, setting the opening stress directly ahead of the tip equal to &sigma;<sub>ys</sub> gives a first estimate. The greater constraint in plane strain gives a smaller estimated radius.</p>
+        <div class="two-up">
+          <div>
+            <p><strong>Plane stress</strong></p>
+            <p class="formula" data-tex="r_p \approx \frac{1}{2\pi}\left(\frac{K_{\mathrm{I}}}{\sigma_{\mathrm{ys}}}\right)^2"><i>r</i><sub>p</sub> &asymp; [1/(2&pi;)](<i>K</i><sub>I</sub>/&sigma;<sub>ys</sub>)<sup>2</sup></p>
+          </div>
+          <div>
+            <p><strong>Plane strain</strong></p>
+            <p class="formula" data-tex="r_p \approx \frac{1}{6\pi}\left(\frac{K_{\mathrm{I}}}{\sigma_{\mathrm{ys}}}\right)^2"><i>r</i><sub>p</sub> &asymp; [1/(6&pi;)](<i>K</i><sub>I</sub>/&sigma;<sub>ys</sub>)<sup>2</sup></p>
+          </div>
+        </div>
+        <p>For <i>K</i><sub>I</sub> = 30 MPa&radic;m and &sigma;<sub>ys</sub> = 450 MPa, the estimates are <strong>0.71 mm in plane stress</strong> and <strong>0.24 mm in plane strain</strong>. Compare these length scales with the crack and ligament dimensions. Stress redistribution, hardening, and constraint affect the actual shape and extent of the zone.</p>
+        <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19740027167">NASA fracture mechanics assessment, equations 30&ndash;34</a></p>
+      </section>
       <article class="fracture-card worked-example">
         <h3>Compare stress at two distances</h3>
         <p>Compare &sigma;<sub>yy</sub> at 0.25 mm and 1.00 mm directly ahead of the same fixed crack. If both points lie in the region where the leading term dominates, the ratio is &radic;(1.00/0.25) = <strong>2</strong>. The point four times closer has twice the opening stress.</p>
@@ -397,7 +414,7 @@
           <h3 id="constraint-model">Thickness and crack-tip constraint</h3>
           <p>Take <i>z</i> along the crack front, through the specimen thickness <i>B</i>. At a traction-free face, stress normal to that face is zero. A thin specimen is often approximated by <strong>plane stress</strong>, with &sigma;<sub>zz</sub> &asymp; 0. Material near its tip can contract and deform through the thickness.</p>
           <p>In a sufficiently thick specimen, the surrounding material restrains that deformation in the interior. <strong>Plane strain</strong> approximates this region with &epsilon;<sub>zz</sub> &asymp; 0. Tensile stress develops along <i>z</i>, increasing constraint on plastic flow. Surface regions still have lower constraint.</p>
-          <p>Small-scale yielding requires a plastic zone small compared with the crack size and remaining ligament, so an elastic stress intensity factor can characterize the surrounding field. A plane-strain <i>K</i><sub>Ic</sub> test also needs sufficient thickness to maintain high constraint in the interior. The method&rsquo;s size and geometry requirements help establish these conditions.</p>
+          <p>A plane-strain <i>K</i><sub>Ic</sub> test needs both <a href="#small-scale-yielding">small-scale yielding</a> and enough thickness to maintain high constraint in the interior. The <a href="#specimen-size-check">specimen size check</a> relates the crack-tip length scale to the test dimensions.</p>
           <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19920021173">NASA primer, &sect;&sect;2.3 and 4.1</a> &middot; <a href="https://store.astm.org/e0399-24.html">ASTM E399</a></p>
         </div>
         <figure class="fracture-card technical-figure">
@@ -508,16 +525,24 @@
         <li>Report <i>K</i><sub>Ic</sub> only when qualification succeeds. Otherwise retain the conditional result and select a suitable size or test procedure.</li>
       </ol>
       <p>The 95% secant has 95% of the initial elastic slope. It is a prescribed evaluation construction. Microscopic damage or crack extension can begin before its intersection with the record. Records containing earlier peaks require the full selection rules for <i>F</i><sub>Q</sub>.</p>
+      <section id="specimen-size-check" aria-labelledby="specimen-size-check-title">
+        <h3 class="subsection-heading" id="specimen-size-check-title">Specimen size check</h3>
+        <p>In a conservative check for a plane-strain toughness specimen, each of the three dimensions must meet the same minimum. Compare the thickness <i>B</i>, measured total crack length <i>a</i>, and uncracked ligament <i>W</i> &minus; <i>a</i> with the length calculated from the conditional toughness <i>K</i><sub>Q</sub> and yield strength &sigma;<sub>ys</sub>.</p>
+        <p class="formula" data-tex="B,\ a,\ (W-a)\ \geq\ 2.5\left(\frac{K_{\mathrm{Q}}}{\sigma_{\mathrm{ys}}}\right)^2"><i>B</i>, <i>a</i>, (<i>W</i> &minus; <i>a</i>) &ge; 2.5(<i>K</i><sub>Q</sub>/&sigma;<sub>ys</sub>)<sup>2</sup></p>
+        <p>Here <i>W</i> is the specimen width for the selected geometry. Use the 0.2% offset yield strength at the test conditions. With <i>K</i><sub>Q</sub> in MPa&radic;m and &sigma;<sub>ys</sub> in MPa, the result is in metres.</p>
+        <p>For ASTM E399-24 qualification, apply the calculated minimum to the remaining ligament. Confirm the permitted specimen proportions, force-record limit, precrack, and other requirements before reporting <i>K</i><sub>Ic</sub>.</p>
+        <p class="source-line"><a href="https://store.astm.org/e0399-24.html">ASTM E399-24, &sect;&sect;7.1 and 9.1.4</a></p>
+      </section>
       <article class="fracture-card worked-example">
         <h3>Evaluate a compact tension test</h3>
-        <p>A hypothetical C(T) test has <i>W</i> = 40 mm, <i>B</i> = 20 mm, <i>a</i> = 20 mm, and 0.2% proof strength &sigma;<sub>py, 0.2</sub> = 450 MPa at the test temperature. Use the synthetic force&ndash;CMOD record below and the C(T) shape factor <i>f</i>(0.5) = 9.659. Assume the remaining specimen, precrack, temperature, and loading requirements have been documented as satisfied for an E399 test.</p>
+        <p>A hypothetical C(T) test has <i>W</i> = 40 mm, <i>B</i> = 20 mm, <i>a</i> = 20 mm, and 0.2% offset yield strength &sigma;<sub>ys</sub> = 450 MPa at the test temperature. Use the synthetic force&ndash;CMOD record below and the C(T) shape factor <i>f</i>(0.5) = 9.659. Assume the remaining specimen, precrack, temperature, and loading requirements have been documented as satisfied for an E399 test.</p>
         <div class="figure-pair">
           <div>
             <ol class="solution-steps">
               <li><strong>Read the conditional force.</strong> The smoothly rising record intersects the 95% secant at <i>F</i><sub>Q</sub> = 15.00 kN. Its maximum is <i>F</i><sub>max</sub> = 16.05 kN.</li>
               <li><strong>Calculate toughness.</strong> With force in N and lengths in m, <i>K</i><sub>Q</sub> = [<i>F</i><sub>Q</sub>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(<i>a</i>/<i>W</i>). Substitution gives [15,000/(0.020&radic;0.040)] &times; 9.659 = 36.22 &times; 10<sup>6</sup> Pa&radic;m = <strong>36.2 MPa&radic;m</strong>.</li>
               <li><strong>Check the force ratio.</strong> <i>F</i><sub>max</sub>/<i>F</i><sub>Q</sub> = 16.05/15.00 = <strong>1.07 &le; 1.10</strong>.</li>
-              <li><strong>Check the remaining ligament.</strong> <i>W</i> &minus; <i>a</i> = 20 mm. The required minimum is 2.5(<i>K</i><sub>Q</sub>/&sigma;<sub>py, 0.2</sub>)<sup>2</sup> = 2.5(36.22/450)<sup>2</sup> m = <strong>16.2 mm</strong>. The ligament passes.</li>
+              <li><strong>Check specimen size.</strong> The minimum is 2.5(36.22/450)<sup>2</sup> m = <strong>16.2 mm</strong>. Here <i>B</i> = <i>a</i> = <i>W</i> &minus; <i>a</i> = 20 mm, so all three dimensions pass the conservative check. The 20 mm ligament satisfies the E399 size limit.</li>
             </ol>
           </div>
           <figure class="technical-figure worked-record">
