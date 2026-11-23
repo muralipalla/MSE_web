@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=6">
+  <link rel="stylesheet" href="style.css?v=7">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
@@ -98,10 +98,32 @@
     <section id="fractography" class="fracture-section" aria-labelledby="fractography-title">
       <h2 id="fractography-title">Read the fracture surfaces (fractography)</h2>
       <p class="section-lead">Start at low magnification to locate the likely origin and trace the crack path. Use higher magnification to look for dimples, cleavage facets, or exposed grain boundaries.</p>
-      <figure class="fracture-card technical-figure fracture-macro">
-        <img src="propeller-fracture-origin.jpg" width="748" height="206" alt="Two matching propeller-blade spar fracture faces with the investigators' O labels at origins near the bore, R labels at ratchet marks, arrowheads showing fatigue propagation, and dashed fatigue-region boundaries" loading="lazy">
-        <figcaption><h3>Locate an origin on the fracture face</h3><p>These are opposite faces of the propeller-blade spar fracture from Atlantic Southeast Airlines Flight 529. Fatigue is progressive crack extension under repeated loading. The investigators marked origin areas with <strong>O</strong> and a ratchet mark from multiple fatigue origins with <strong>R</strong>. Arrowheads show fatigue propagation direction. Dashed lines bound the fatigue-cracked region. Follow these features back toward the origin before inspecting its local mechanism.</p><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/N256AS">NTSB docket photographs and investigator annotations, via FAA</a> &middot; <a href="https://www-s.ntsb.gov/about/pages/website-policies.aspx">U.S. Government work, public domain</a></figcaption>
-      </figure>
+      <article class="fracture-card fracture-origin" id="fracture-origin" aria-labelledby="fracture-origin-title">
+        <h3 id="fracture-origin-title">Locate an origin on the fracture face</h3>
+        <p>These scanning electron micrographs show a bulk metallic glass specimen fractured under repeated tension. Select either image to view it at full size.</p>
+        <div class="two-up">
+          <figure class="technical-figure">
+            <a href="metallic-glass-fracture-face.png" aria-label="Open the whole fracture face at full size">
+              <img src="metallic-glass-fracture-face.png" width="991" height="878" alt="Fracture face with the origin boxed in red at the upper-left edge, a black arrow pointing diagonally into the face, and a 1 millimetre scale bar" loading="lazy" decoding="async">
+            </a>
+            <figcaption>
+              <h4>Whole fracture face</h4>
+              <p>The red box marks the origin at the upper-left edge. The black arrow points in the direction of fatigue crack growth.</p>
+            </figcaption>
+          </figure>
+          <figure class="technical-figure">
+            <a href="metallic-glass-crack-origin.png" aria-label="Open the crack origin close-up at full size">
+              <img src="metallic-glass-crack-origin.png" width="1019" height="878" alt="Close-up of the boxed region with a step along the diagonal specimen edge and a 50 micrometre scale bar" loading="lazy" decoding="async">
+            </a>
+            <figcaption>
+              <h4>Crack origin close-up</h4>
+              <p>The close-up shows a shear offset at the edge. The authors used this step as evidence that the fatigue crack began along a shear band.</p>
+            </figcaption>
+          </figure>
+        </div>
+        <p class="source-line"><a href="https://www.mdpi.com/1996-1944/14/11/2815">Yang et al. (2021), Figure 3a&ndash;b</a>, cropped from the publisher&rsquo;s figure &middot; <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a></p>
+        <p>Compare <a href="https://doi.org/10.1016/j.actamat.2012.11.033">notch-root initiation in Tandaiya, Narasimhan and Ramamurty (2013)</a>, the <a href="https://doi.org/10.1016/j.actamat.2014.07.024">brittle metallic-glass initiation zone in Narayan et al. (2014), Figure 6</a>, and the <a href="https://madisongroup.com/fractography-a-key-component-of-a-failure-analysis/#:~:text=Photomicrograph%20showing%20the%20origin">circled polymer crack origin in The Madison Group, Figure 3</a>.</p>
+      </article>
       <p class="section-note"><strong>Describe the crack path and mechanism.</strong> A transgranular crack crosses grains. An intergranular crack follows grain boundaries. Dimples indicate local plastic rupture, while cleavage facets indicate crystallographic separation. Grain-boundary surfaces can also contain dimples. <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nbsir74-468.pdf">NBS fracture-surface investigation</a></p>
       <div id="fractography-figures" class="two-up">
         <figure class="fracture-card photo-card">
@@ -129,7 +151,12 @@
               <g fill="#252044" font-family="system-ui,sans-serif" font-size="36" font-weight="650"><text x="501" y="68">Cleavage facet</text><text x="54" y="746">Cleavage step</text></g>
             </svg>
           </div>
-          <figcaption><h3>Cleavage facets in steel</h3><p>Flat facets and steps indicate cleavage across grains in a room-temperature impact specimen from steel truss seat N13-C3B1. The labels identify surface features within this field of view.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=161">NIST NCSTAR 1-3D, Figure 5-14, cropped; teaching labels overlaid</a></figcaption>
+          <figcaption>
+            <h3>Cleavage facets in steel</h3>
+            <p>Flat facets and steps indicate cleavage across grains in a room-temperature impact specimen from steel truss seat N13-C3B1. The labels identify surface features within this field of view.</p>
+            <p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=161">NIST NCSTAR 1-3D, Figure 5-14, cropped with teaching labels</a></p>
+            <p><a href="https://www.linkedin.com/pulse/what-brittle-fracture-metal-randall-stremmel">Compare the cleavage facets in the cast-iron micrograph shared by Randall Stremmel.</a></p>
+          </figcaption>
         </figure>
       </div>
       <article class="fracture-card worked-example">

@@ -357,9 +357,30 @@
   pointer-events: none;
 }
 
-.fracture-macro {
-  max-width: 58rem;
+.fracture-origin {
   margin-bottom: 1rem;
+  scroll-margin-top: 1rem;
+}
+
+.fracture-origin figure {
+  margin: 0;
+}
+
+.fracture-origin figure > a {
+  display: block;
+  border-radius: .5rem;
+  cursor: zoom-in;
+}
+
+.fracture-origin h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.fracture-origin figcaption p {
+  margin: .35rem 0 0;
+  font-size: .95rem;
 }
 
 .fracture-data,
