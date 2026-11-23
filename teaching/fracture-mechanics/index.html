@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=10">
+  <link rel="stylesheet" href="style.css?v=11">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
@@ -331,7 +331,7 @@
           <figcaption>Arrows show relative displacement. In Mode III, &ldquo;out-of-plane&rdquo; means motion out of a cross-section perpendicular to the crack front. <a href="https://commons.wikimedia.org/wiki/File:Fracture_modes_v2.svg">Twisp, Wikimedia Commons, public domain</a></figcaption>
         </figure>
       </div>
-      <p class="section-note">If a load both opens a crack and slides its faces perpendicular to the crack front, the crack experiences mixed Mode I and Mode II loading.</p>
+      <p class="section-note">If a load both opens a crack and slides its faces perpendicular to the crack front, the crack experiences mixed Mode I and Mode II loading. <a href="#plastic-zone-shapes">Compare plastic zones for the three pure modes.</a></p>
     </section>
 
     <section id="stress-intensity" class="fracture-section" aria-labelledby="stress-intensity-title">
@@ -399,6 +399,26 @@
         </div>
         <p>For <i>K</i><sub>I</sub> = 30 MPa&radic;m and &sigma;<sub>ys</sub> = 450 MPa, the estimates are <strong>0.71 mm in plane stress</strong> and <strong>0.24 mm in plane strain</strong>. Compare these length scales with the crack and ligament dimensions. Stress redistribution, hardening, and constraint affect the actual shape and extent of the zone.</p>
         <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19740027167">NASA fracture mechanics assessment, equations 30&ndash;34</a></p>
+        <div class="plastic-zone-comparison" id="plastic-zone-shapes">
+          <h4>Crack-tip plastic zones in Modes I, II, and III</h4>
+          <p>The plots use the same millimetre scale for all three pure modes, with a stress intensity magnitude of 30 MPa&radic;m and a yield strength of 450 MPa. Each contour marks where the von Mises equivalent stress from the leading elastic field reaches the yield strength. The black line ends at the crack tip at (0, 0).</p>
+          <div class="plastic-zone-grid">
+            <figure class="fracture-card technical-figure">
+              <a href="plastic-zone-mode-i.png"><img src="plastic-zone-mode-i.png" width="1280" height="1148" loading="lazy" alt="Mode I opening. The compact shaded zone extends mainly ahead of the tip, with a smaller, two-lobed plane-strain contour."></a>
+              <figcaption>Directly ahead of the tip, first yield occurs at <strong>0.71 mm</strong> in plane stress and <strong>0.11 mm</strong> in plane strain.</figcaption>
+            </figure>
+            <figure class="fracture-card technical-figure">
+              <a href="plastic-zone-mode-ii.png"><img src="plastic-zone-mode-ii.png" width="1280" height="1148" loading="lazy" alt="Mode II sliding. The plane-stress zone extends farther behind the tip. Both contours meet on the axis ahead of the tip."></a>
+              <figcaption>Both contours reach <strong>2.12 mm</strong> directly ahead of the tip. The larger plane-stress lobe extends behind the tip.</figcaption>
+            </figure>
+            <figure class="fracture-card technical-figure">
+              <a href="plastic-zone-mode-iii.png"><img src="plastic-zone-mode-iii.png" width="1280" height="1148" loading="lazy" alt="Mode III tearing. The first-yield contour for antiplane shear is a circle centered on the crack tip."></a>
+              <figcaption>The antiplane shear field gives a circular first-yield contour with a radius of <strong>2.12 mm</strong>.</figcaption>
+            </figure>
+          </div>
+          <p>The plane-strain contours use the angular elastic field with &nu; = 0.30. The earlier 0.24 mm value for Mode I comes from the characteristic engineering estimate.</p>
+          <p class="source-line"><a href="https://www.techno-press.com/papers/14599">Ayatollahi and Sedighiani, Modes I and II</a> &middot; <a href="https://msp.org/jomms/2010/5-6/jomms-v5-n6-p10-s.pdf#page=9">Yi, Mode III elastic field, equation 33</a></p>
+        </div>
       </section>
       <article class="fracture-card worked-example">
         <h3>Compare stress at two distances</h3>

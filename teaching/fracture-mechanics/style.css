@@ -501,6 +501,34 @@
   margin-top: 1.5rem;
 }
 
+.plastic-zone-comparison {
+  margin-top: 1.5rem;
+  scroll-margin-top: 1rem;
+}
+
+.plastic-zone-comparison h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.plastic-zone-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18.5rem), 1fr));
+  gap: 1rem;
+}
+
+.plastic-zone-grid figure {
+  padding: .7rem .7rem .9rem;
+}
+
+.plastic-zone-grid a {
+  display: block;
+}
+
+.plastic-zone-grid figcaption {
+  margin: .45rem .2rem 0;
+}
+
 .test-workflow,
 .solution-steps {
   padding-left: 1.4rem;
