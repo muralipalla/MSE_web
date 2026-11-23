@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
@@ -106,7 +106,14 @@
       <p class="section-note"><strong>Describe the crack path and mechanism.</strong> A transgranular crack crosses grains. An intergranular crack follows grain boundaries. Dimples indicate local plastic rupture, while cleavage facets indicate crystallographic separation. Grain-boundary surfaces can also contain dimples. <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nbsir74-468.pdf">NBS fracture-surface investigation</a></p>
       <div id="fractography-figures" class="two-up">
         <figure class="fracture-card photo-card" id="ductile-fractograph">
-          <img src="ductile-fracture-dimples.jpg" width="1713" height="1577" alt="Scanning electron micrograph of ultrafine-grained interstitial-free steel with a large cup-shaped dimple surrounded by smaller dimples and a 10 micrometre scale bar" loading="lazy" decoding="async">
+          <div class="annotated-fractograph">
+            <img src="ductile-fracture-dimples.jpg" width="1713" height="1577" alt="Scanning electron micrograph of ultrafine-grained interstitial-free steel with arrows into a large dimple on the left and a smaller dimple on the right. The scale bar is 10 micrometres." loading="lazy" decoding="async">
+            <div class="fractograph-annotations" aria-hidden="true">
+              <span class="fractograph-arrow" style="--x: 46%; --y: 20.5%; --length: 32.79%; --angle: 128.7deg"></span>
+              <span class="fractograph-arrow" style="--x: 54%; --y: 20.5%; --length: 30.96%; --angle: 48.5deg"></span>
+              <span class="fractograph-label" style="--x: 50%; --y: 19%">Dimples</span>
+            </div>
+          </div>
           <figcaption>
             <h3>Ductile fracture dimples</h3>
             <p>These cup-shaped dimples mark where microscopic voids grew and joined. The large dimple on the left shows the deep cavity and raised rim.</p>
@@ -114,7 +121,15 @@
           </figcaption>
         </figure>
         <figure class="fracture-card photo-card" id="cast-iron-fractograph">
-          <img src="cast-iron-cleavage.jpg" width="1003" height="720" alt="Scanning electron micrograph of cast iron showing broad, flat cleavage facets with fine branching steps and a 50 micrometre scale bar" loading="lazy" decoding="async">
+          <div class="annotated-fractograph">
+            <img src="cast-iron-cleavage.jpg" width="1003" height="720" alt="Scanning electron micrograph of cast iron with arrows to a flat cleavage facet left of centre and branching river patterns below centre. The scale bar is 50 micrometres." loading="lazy" decoding="async">
+            <div class="fractograph-annotations" aria-hidden="true">
+              <span class="fractograph-arrow" style="--x: 24.5%; --y: 35.5%; --length: 16.56%; --angle: 68.8deg"></span>
+              <span class="fractograph-arrow" style="--x: 75%; --y: 68%; --length: 31.69%; --angle: 172.2deg"></span>
+              <span class="fractograph-label" style="--x: 24.5%; --y: 35.5%">Cleavage facet</span>
+              <span class="fractograph-label" style="--x: 75%; --y: 68%">River patterns</span>
+            </div>
+          </div>
           <figcaption>
             <h3>Brittle fracture in cast iron</h3>
             <p>Look for broad, flat cleavage facets. On some facets, fine cleavage steps merge into river patterns.</p>
