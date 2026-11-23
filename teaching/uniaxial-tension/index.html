@@ -8,9 +8,12 @@
   <title>Uniaxial Tension Test | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
+  <link rel="stylesheet" href="style.css?v=6">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="app.js?v=2" defer></script>
+  <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
+  <script src="../../js/math-render.js?v=1" defer></script>
+  <script src="app.js?v=3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to lesson</a>
@@ -36,7 +39,7 @@
         <div class="section-head">
           <p class="section-kicker">01 / Tensile measurements</p>
           <h2>Stress and strain</h2>
-          <p>The load cell measures tensile force <i>F</i>. An extensometer measures extension between two points on the specimen that define its gauge length. Axial stress is force per cross-sectional area. Axial strain measures the relative change in length.</p>
+          <p>The load cell measures tensile force <span data-tex="F"><i>F</i></span>. An extensometer measures extension between two points on the specimen that define its gauge length. Axial stress is force per cross-sectional area. Axial strain measures the relative change in length.</p>
         </div>
         <figure class="specimen-figure">
           <svg viewBox="0 0 360 260" role="img" aria-labelledby="specimen-figure-title specimen-figure-desc">
@@ -44,8 +47,8 @@
             <desc id="specimen-figure-desc">A flat dog-bone specimen is held in two grips and pulled outward by equal opposing forces. Gauge marks indicate the length over which extension is measured.</desc>
             <rect x="8" y="8" width="344" height="244" rx="22" fill="#f0ecf8"/>
             <path d="M180 24V62 M173 34L180 24 187 34 M180 236V198 M173 226L180 236 187 226" fill="none" stroke="#c93b1f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <text x="194" y="40" fill="#a9311c">F</text>
-            <text x="194" y="229" fill="#a9311c">F</text>
+            <text class="math-symbol" x="194" y="40" fill="#a9311c">F</text>
+            <text class="math-symbol" x="194" y="229" fill="#a9311c">F</text>
             <rect x="146" y="54" width="68" height="26" rx="5" fill="#384b70"/>
             <rect x="146" y="180" width="68" height="26" rx="5" fill="#384b70"/>
             <path d="M159 78H201V91C201 102 194 105 194 116V144C194 155 201 158 201 169V182H159V169C159 158 166 155 166 144V116C166 105 159 102 159 91Z" fill="#e5684b" stroke="#a9311c" stroke-width="2"/>
@@ -60,28 +63,28 @@
       <div class="two-columns measure-grid">
         <article class="text-card">
           <h3>Axial tensile stress</h3>
-          <p>Stress has units of pressure. In metals testing, MPa is convenient because 1 N/mm<sup>2</sup> = 1 MPa.</p>
+          <p>Stress has units of pressure. In metals testing, MPa is convenient because <span data-tex="1\,\mathrm{N}/\mathrm{mm}^{2}=1\,\mathrm{MPa}">1 N/mm<sup>2</sup> = 1 MPa</span>.</p>
           <h4>Engineering stress</h4>
-          <p class="formula">&sigma;<sub>E</sub> = F / A<sub>0</sub></p>
-          <p>Divide force by the <strong>original</strong> cross-sectional area A<sub>0</sub> of the gauge section.</p>
+          <p class="formula" data-tex="\sigma_{\mathrm{E}} = \frac{F}{A_0}">&sigma;<sub>E</sub> = F / A<sub>0</sub></p>
+          <p>Divide force by the <strong>original</strong> cross-sectional area <span data-tex="A_0">A<sub>0</sub></span> of the gauge section.</p>
           <h4>True stress</h4>
-          <p class="formula">&sigma;<sub>T</sub> = F / A</p>
-          <p>Divide force by the <strong>current</strong> cross-sectional area A to obtain the mean axial stress across that section.</p>
+          <p class="formula" data-tex="\sigma_{\mathrm{T}} = \frac{F}{A}">&sigma;<sub>T</sub> = F / A</p>
+          <p>Divide force by the <strong>current</strong> cross-sectional area <span data-tex="A">A</span> to obtain the mean axial stress across that section.</p>
         </article>
         <article class="text-card">
           <h3>Axial tensile strain</h3>
           <p>Strain is dimensionless. A strain of 0.10 can also be reported as 10%.</p>
           <h4>Engineering strain</h4>
-          <p class="formula">&epsilon;<sub>E</sub> = (L &minus; L<sub>0</sub>) / L<sub>0</sub></p>
-          <p>Divide the extension by the <strong>original</strong> gauge length L<sub>0</sub>.</p>
+          <p class="formula" data-tex="\varepsilon_{\mathrm{E}} = \frac{L-L_0}{L_0}">&epsilon;<sub>E</sub> = (L &minus; L<sub>0</sub>) / L<sub>0</sub></p>
+          <p>Divide the extension by the <strong>original</strong> gauge length <span data-tex="L_0">L<sub>0</sub></span>.</p>
           <h4>True (logarithmic) strain</h4>
-          <p class="formula">d&epsilon;<sub>T</sub> = dL / L &nbsp;&rarr;&nbsp; &epsilon;<sub>T</sub> = ln(L / L<sub>0</sub>)</p>
-          <p>Accumulate increments of extension relative to the <strong>current</strong> length L. Gauge-length and local axial strain coincide when the gauge deforms uniformly.</p>
+          <p class="formula" data-tex="\begin{aligned}\mathrm{d}\varepsilon_{\mathrm{T}} &amp;= \frac{\mathrm{d}L}{L}\\[.25em]\varepsilon_{\mathrm{T}} &amp;= \ln\left(\frac{L}{L_0}\right)\end{aligned}">d&epsilon;<sub>T</sub> = dL / L &nbsp;&rarr;&nbsp; &epsilon;<sub>T</sub> = ln(L / L<sub>0</sub>)</p>
+          <p>Accumulate increments of extension relative to the <strong>current</strong> length <span data-tex="L">L</span>. Gauge-length and local axial strain coincide when the gauge deforms uniformly.</p>
         </article>
       </div>
       <div class="note">
-        <p><strong>Converting the measurements.</strong> For the same marked length, &epsilon;<sub>T</sub> = ln(1 + &epsilon;<sub>E</sub>) follows directly from the definitions. For uniform deformation with approximately constant gauge volume (a useful approximation during plastic flow in dense metals), AL &asymp; A<sub>0</sub>L<sub>0</sub>, so &sigma;<sub>T</sub> &asymp; &sigma;<sub>E</sub>(1 + &epsilon;<sub>E</sub>).</p>
-        <p><strong>Example.</strong> With F = 6.00 kN, A<sub>0</sub> = 20.0 mm<sup>2</sup>, measured A = 18.2 mm<sup>2</sup>, and a gauge length increasing from 50.0 to 55.0 mm, the stresses are 300 MPa (engineering) and about 330 MPa (true). The strains are 0.100 (engineering) and about 0.0953 (true).</p>
+        <p><strong>Converting the measurements.</strong> For the same marked length, <span data-tex="\varepsilon_{\mathrm{T}}=\ln(1+\varepsilon_{\mathrm{E}})">&epsilon;<sub>T</sub> = ln(1 + &epsilon;<sub>E</sub>)</span> follows directly from the definitions. For uniform deformation with approximately constant gauge volume (a useful approximation during plastic flow in dense metals), <span data-tex="AL\approx A_0L_0">AL &asymp; A<sub>0</sub>L<sub>0</sub></span>, so <span data-tex="\sigma_{\mathrm T}\approx\sigma_{\mathrm E}(1+\varepsilon_{\mathrm E})">&sigma;<sub>T</sub> &asymp; &sigma;<sub>E</sub>(1 + &epsilon;<sub>E</sub>)</span>.</p>
+        <p><strong>Example.</strong> With <span data-tex="F=6.00\,\mathrm{kN}">F = 6.00 kN</span>, <span data-tex="A_0=20.0\,\mathrm{mm}^2">A<sub>0</sub> = 20.0 mm<sup>2</sup></span>, measured <span data-tex="A=18.2\,\mathrm{mm}^2">A = 18.2 mm<sup>2</sup></span>, and a gauge length increasing from 50.0 to 55.0 mm, the stresses are 300 MPa (engineering) and about 330 MPa (true). The strains are 0.100 (engineering) and about 0.0953 (true).</p>
       </div>
     </section>
 
@@ -89,24 +92,24 @@
       <div class="section-head">
         <p class="section-kicker">02 / Onset of plastic deformation</p>
         <h2>Yield stress and proof stress</h2>
-        <p>Yielding is the onset of plastic deformation. In a uniaxial test, the initial linear slope of the stress&ndash;strain curve gives Young&rsquo;s modulus E. A clear yield point and a gradual transition call for different ways of reporting yield strength.</p>
+        <p>Yielding is the onset of plastic deformation. In a uniaxial test, the initial linear slope of the stress&ndash;strain curve gives Young&rsquo;s modulus <span data-tex="E">E</span>. A clear yield point and a gradual transition call for different ways of reporting yield strength.</p>
       </div>
       <div class="two-columns">
         <article class="text-card">
           <h3>Distinct yield points</h3>
-          <p>Some low-carbon steels exhibit discontinuous yielding. The upper yield strength &sigma;<sub>y, upper</sub> is the engineering stress at the initial peak before the first yield drop. The lower yield strength &sigma;<sub>y, lower</sub> is the lowest engineering stress during the yielding stage, excluding any initial transient after the drop.</p>
+          <p>Some low-carbon steels exhibit discontinuous yielding. The upper yield strength <span data-tex="\sigma_{\mathrm{y,upper}}">&sigma;<sub>y, upper</sub></span> is the engineering stress at the initial peak before the first yield drop. The lower yield strength <span data-tex="\sigma_{\mathrm{y,lower}}">&sigma;<sub>y, lower</sub></span> is the lowest engineering stress during the yielding stage, excluding any initial transient after the drop.</p>
           <p>During the yield plateau, plastic deformation spreads along the gauge section in bands. The stress then rises as the specimen strain hardens.</p>
         </article>
         <article class="text-card">
           <h3>0.2% offset proof stress</h3>
-          <p>When the transition is gradual, draw a line parallel to the initial elastic line, starting at 0.2% engineering strain (0.002 as a fraction) on the strain axis. The engineering stress at its intersection with the measured curve is the 0.2% proof strength &sigma;<sub>py, 0.2</sub>.</p>
-          <p>The offset defines a specified plastic extension using the elastic slope. Plastic deformation may begin below &sigma;<sub>py, 0.2</sub>.</p>
+          <p>When the transition is gradual, draw a line parallel to the initial elastic line, starting at 0.2% engineering strain (0.002 as a fraction) on the strain axis. The engineering stress at its intersection with the measured curve is the 0.2% proof strength <span data-tex="\sigma_{\mathrm{py},\,0.2}">&sigma;<sub>py, 0.2</sub></span>.</p>
+          <p>The offset defines a specified plastic extension using the elastic slope. Plastic deformation may begin below <span data-tex="\sigma_{\mathrm{py},\,0.2}">&sigma;<sub>py, 0.2</sub></span>.</p>
         </article>
       </div>
       <figure class="strain-panel diagram-panel">
         <figcaption>
           <h3>Finding the 0.2% proof strength</h3>
-          <p>For E = 200 GPa, the offset line is &sigma;<sub>E</sub> = E(&epsilon;<sub>E</sub> &minus; 0.002). In this illustration it intersects the loading curve at 0.36% total strain, giving &sigma;<sub>py, 0.2</sub> = 320 MPa.</p>
+          <p>For <span data-tex="E=200\,\mathrm{GPa}">E = 200 GPa</span>, the offset line is <span data-tex="\sigma_{\mathrm E}=E(\varepsilon_{\mathrm E}-0.002)">&sigma;<sub>E</sub> = E(&epsilon;<sub>E</sub> &minus; 0.002)</span>. In this illustration it intersects the loading curve at 0.36% total strain, giving <span data-tex="\sigma_{\mathrm{py},\,0.2}=320\,\mathrm{MPa}">&sigma;<sub>py, 0.2</sub> = 320 MPa</span>.</p>
         </figcaption>
         <svg viewBox="0 0 480 300" role="img" aria-labelledby="proof-title proof-desc">
           <title id="proof-title">0.2% offset proof stress construction</title>
@@ -116,14 +119,14 @@
           <path class="curve" d="M55 244L130 154C155 124 245 111 325 100S402 89 435 85"/>
           <path class="unload" d="M205 244L370 46"/>
           <circle class="curve-point" cx="325" cy="100" r="5"/>
-          <text x="65" y="28">Engineering stress, &sigma;<tspan baseline-shift="sub" font-size="11">E</tspan> (MPa)</text>
+          <text x="65" y="28">Engineering stress, <tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="11">E</tspan> (MPa)</text>
           <text x="48" y="105" text-anchor="end">320</text>
           <text x="55" y="264" text-anchor="middle">0</text>
           <text x="205" y="264" text-anchor="middle">0.20%</text>
           <text x="325" y="264" text-anchor="middle">0.36%</text>
           <text x="255" y="291" text-anchor="middle">Engineering strain</text>
           <path class="leader" d="M331 105L348 125H357"/>
-          <text x="365" y="130">&sigma;<tspan baseline-shift="sub" font-size="11">py, 0.2</tspan></text>
+          <text x="365" y="130"><tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="11">py, 0.2</tspan></text>
           <text x="220" y="215" transform="rotate(-50 220 215)">Offset line</text>
         </svg>
       </figure>
@@ -137,9 +140,9 @@
       </div>
       <figure class="strain-panel diagram-panel">
         <figcaption>
-          <p class="formula">&epsilon;<sub>total</sub> = &epsilon;<sub>elastic</sub> + &epsilon;<sub>plastic</sub></p>
-          <p>Assume a straight unloading line with the same slope E as the initial elastic line. The recovered strain is &sigma;<sub>E</sub>/E. Subtract it from the total strain to find the plastic strain.</p>
-          <p class="example"><strong>Example.</strong> At 400 MPa and 1.2% total strain, a specimen with E = 200 GPa recovers 400/200,000 = 0.002 (0.2%) and retains 0.010 (1.0%) plastic strain.</p>
+          <p class="formula" data-tex="\varepsilon_{\mathrm{total}} = \varepsilon_{\mathrm{elastic}} + \varepsilon_{\mathrm{plastic}}">&epsilon;<sub>total</sub> = &epsilon;<sub>elastic</sub> + &epsilon;<sub>plastic</sub></p>
+          <p>Assume a straight unloading line with the same slope <span data-tex="E">E</span> as the initial elastic line. The recovered strain is <span data-tex="\sigma_{\mathrm E}/E">&sigma;<sub>E</sub>/E</span>. Subtract it from the total strain to find the plastic strain.</p>
+          <p class="example"><strong>Example.</strong> At 400 MPa and 1.2% total strain, a specimen with <span data-tex="E=200\,\mathrm{GPa}">E = 200 GPa</span> recovers <span data-tex="400/200{,}000=0.002">400/200,000 = 0.002</span> (0.2%) and retains 0.010 (1.0%) plastic strain.</p>
         </figcaption>
         <svg viewBox="0 0 480 328" role="img" aria-labelledby="unload-title unload-desc">
           <title id="unload-title">Elastic recovery and residual plastic strain</title>
@@ -149,7 +152,7 @@
           <path class="curve" d="M60 242L90 156C105 113 244 91 420 70"/>
           <path class="unload" d="M420 70L360 242"/>
           <circle class="curve-point" cx="420" cy="70" r="5"/>
-          <text x="70" y="25">Engineering stress, &sigma;<tspan baseline-shift="sub" font-size="11">E</tspan> (MPa)</text>
+          <text x="70" y="25">Engineering stress, <tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="11">E</tspan> (MPa)</text>
           <text x="53" y="75" text-anchor="end">400</text>
           <text x="405" y="58" text-anchor="end">Loaded point</text>
           <text x="365" y="181" transform="rotate(-71 365 181)">Unloading</text>
@@ -199,8 +202,8 @@
         </article>
       </div>
       <div class="note">
-        <p><strong>Why 45&deg;?</strong> Under uniaxial stress &sigma;, the shear stress resolved along a slip direction is &tau;<sub>R</sub> = &sigma; cos &phi; cos &lambda;, where &phi; and &lambda; are the angles between the tensile axis and, respectively, the slip-plane normal and the slip direction. Its maximum magnitude is &sigma;/2, attained when the two angles are 45&deg;. In a real crystal, slip begins on a crystallographic slip system when its critical resolved shear stress is reached. <a href="https://ocw.mit.edu/courses/3-40j-physical-metallurgy-fall-2009/resources/mit3_40jf09_lec06/">MIT OpenCourseWare: Slip systems and Schmid&rsquo;s law</a>.</p>
-        <p id="elastic-model"><strong>Model assumptions.</strong> The sketch uses E = 200 GPa and Poisson&rsquo;s ratio &nu; = 0.30. Elastic displacements are magnified 100 times. The block contains few lattice spacings, so the surface steps appear large relative to its size. The plastic view holds the tensile stress at an illustrative flow stress of 200 MPa and shows the offset after each dislocation has crossed the block. <a href="../dislocations/index.html#atomic-motion">See how a dislocation moves through a lattice</a>.</p>
+        <p><strong>Why 45&deg;?</strong> Under uniaxial stress <span data-tex="\sigma">&sigma;</span>, the shear stress resolved along a slip direction is <span data-tex="\tau_{\mathrm R}=\sigma\cos\phi\cos\lambda">&tau;<sub>R</sub> = &sigma; cos &phi; cos &lambda;</span>, where <span data-tex="\phi">&phi;</span> and <span data-tex="\lambda">&lambda;</span> are the angles between the tensile axis and, respectively, the slip-plane normal and the slip direction. Its maximum magnitude is <span data-tex="\sigma/2">&sigma;/2</span>, attained when the two angles are 45&deg;. In a real crystal, slip begins on a crystallographic slip system when its critical resolved shear stress is reached. <a href="https://ocw.mit.edu/courses/3-40j-physical-metallurgy-fall-2009/resources/mit3_40jf09_lec06/">MIT OpenCourseWare: Slip systems and Schmid&rsquo;s law</a>.</p>
+        <p id="elastic-model"><strong>Model assumptions.</strong> The sketch uses <span data-tex="E=200\,\mathrm{GPa}">E = 200 GPa</span> and Poisson&rsquo;s ratio <span data-tex="\nu=0.30">&nu; = 0.30</span>. Elastic displacements are magnified 100 times. The block contains few lattice spacings, so the surface steps appear large relative to its size. The plastic view holds the tensile stress at an illustrative flow stress of 200 MPa and shows the offset after each dislocation has crossed the block. <a href="../dislocations/index.html#atomic-motion">See how a dislocation moves through a lattice</a>.</p>
       </div>
     </section>
 
@@ -228,10 +231,10 @@
               <path class="graph-line" d="M60 288L61.95 158 64.5 173 93 173 135 135.5 210 95.5 285 69.5 360 58 412.5 68 480 100.5 540 135.5"/>
               <circle class="curve-point" cx="360" cy="58" r="5"/>
               <circle class="curve-point" cx="540" cy="135.5" r="5"/>
-              <text x="65" y="23">Engineering stress, &sigma;<tspan baseline-shift="sub" font-size="14">E</tspan> (MPa)</text>
+              <text x="65" y="23">Engineering stress, <tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="14">E</tspan> (MPa)</text>
               <text x="52" y="44" text-anchor="end">500</text>
               <text x="52" y="169" text-anchor="end">250</text>
-              <text x="351" y="130" text-anchor="end">&sigma;<tspan baseline-shift="sub" font-size="14">TS</tspan> = 460 MPa</text>
+              <text x="351" y="130" text-anchor="end"><tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="14">TS</tspan> = 460 MPa</text>
               <path class="leader" d="M357 118L360 66"/>
               <text x="542" y="158" text-anchor="end">Fracture</text>
               <text x="60" y="314" text-anchor="middle">0</text>
@@ -254,11 +257,11 @@
               <path class="leader" d="M86 80L112 67H122M120 104L153 136H163"/>
               <circle class="curve-point" cx="86" cy="80" r="5"/>
               <circle class="curve-point" cx="120" cy="104" r="5"/>
-              <text x="65" y="23">Engineering stress, &sigma;<tspan baseline-shift="sub" font-size="14">E</tspan> (MPa)</text>
+              <text x="65" y="23">Engineering stress, <tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="14">E</tspan> (MPa)</text>
               <text x="52" y="54" text-anchor="end">300</text>
               <text x="52" y="174" text-anchor="end">150</text>
-              <text x="129" y="73">Upper yield, &sigma;<tspan baseline-shift="sub" font-size="14">y, upper</tspan> = 260 MPa</text>
-              <text x="170" y="142">Lower yield, &sigma;<tspan baseline-shift="sub" font-size="14">y, lower</tspan> = 230 MPa</text>
+              <text x="129" y="73">Upper yield, <tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="14">y, upper</tspan> = 260 MPa</text>
+              <text x="170" y="142">Lower yield, <tspan class="math-symbol">&sigma;</tspan><tspan class="math-index" baseline-shift="sub" font-size="14">y, lower</tspan> = 230 MPa</text>
               <text x="60" y="314" text-anchor="middle">0</text>
               <text x="160" y="314" text-anchor="middle">0.5%</text>
               <text x="260" y="314" text-anchor="middle">1.0%</text>
@@ -274,12 +277,12 @@
       <div class="two-columns energy-definitions">
         <article class="text-card">
           <h3>Modulus of resilience</h3>
-          <p>The recoverable elastic energy per unit volume is the area under the curve up to the elastic limit. For linear elasticity, U<sub>r</sub> = &sigma;<sub>el</sub><sup>2</sup>/(2E), where &sigma;<sub>el</sub> is the stress at the elastic limit.</p>
-          <p>This model places the elastic limit at upper yield. Here E = 200 GPa and &sigma;<sub>el</sub> = 260 MPa, so U<sub>r</sub> = 0.169 MJ/m<sup>3</sup>.</p>
+          <p>The recoverable elastic energy per unit volume is the area under the curve up to the elastic limit. For linear elasticity, <span data-tex="U_{\mathrm r}=\frac{\sigma_{\mathrm{el}}^2}{2E}">U<sub>r</sub> = &sigma;<sub>el</sub><sup>2</sup>/(2E)</span>, where <span data-tex="\sigma_{\mathrm{el}}">&sigma;<sub>el</sub></span> is the stress at the elastic limit.</p>
+          <p>This model places the elastic limit at upper yield. Here <span data-tex="E=200\,\mathrm{GPa}">E = 200 GPa</span> and <span data-tex="\sigma_{\mathrm{el}}=260\,\mathrm{MPa}">&sigma;<sub>el</sub> = 260 MPa</span>, so <span data-tex="U_{\mathrm r}=0.169\,\mathrm{MJ}/\mathrm{m}^3">U<sub>r</sub> = 0.169 MJ/m<sup>3</sup></span>.</p>
         </article>
         <article class="text-card">
           <h3>Modulus of toughness</h3>
-          <p>The entire area under the engineering curve to fracture, &int;<sub>0</sub><sup>&epsilon;<sub>f</sub></sup> &sigma;<sub>E</sub> d&epsilon;<sub>E</sub>, is the tensile work per unit original gauge volume. It is about 120 MJ/m<sup>3</sup> for the piecewise linear curve shown.</p>
+          <p>The entire area under the engineering curve to fracture, <span data-tex="\int_0^{\varepsilon_{\mathrm f}}\sigma_{\mathrm E}\,\mathrm{d}\varepsilon_{\mathrm E}">&int;<sub>0</sub><sup>&epsilon;<sub>f</sub></sup> &sigma;<sub>E</sub> d&epsilon;<sub>E</sub></span>, is the tensile work per unit original gauge volume. It is about 120 MJ/m<sup>3</sup> for the piecewise linear curve shown.</p>
           <p>Use strain as a fraction in the integral. An area of 1 MPa on a fractional-strain axis equals 1 MJ/m<sup>3</sup>. Once deformation localizes, the work per original gauge volume can depend on the gauge length. Fracture toughness measures a material&rsquo;s resistance to crack extension.</p>
         </article>
       </div>
@@ -293,11 +296,11 @@
       </div>
       <div class="feature-card">
         <h3>Hollomon equation</h3>
-        <p class="formula">&sigma;<sub>T</sub> = K(&epsilon;<sub>T</sub>)<sup>n</sup></p>
-        <p><strong>Assumption.</strong> This form uses total true strain &epsilon;<sub>T</sub> and neglects elastic deformation.</p>
-        <p>The strength coefficient K has units of stress, and the strain-hardening exponent n is dimensionless. Fit the law over a suitable range of uniform plastic flow, after any yield plateau and before necking. Convert engineering test data to true stress and true strain before fitting.</p>
-        <p>On logarithmic axes, plot true stress against true strain. The fitted slope is n. Use strain as a fraction when calculating K.</p>
-        <p class="example"><strong>Example.</strong> If true stress increases from 400 to 500 MPa as true strain increases from 0.05 to 0.15, the two-point estimate is n = ln(500/400)/ln(0.15/0.05) &asymp; 0.203. Then K = 400/(0.05<sup>0.203</sup>) &asymp; 735 MPa. For measured data, fit all points in the selected strain range.</p>
+        <p class="formula" data-tex="\sigma_{\mathrm{T}} = K\left(\varepsilon_{\mathrm{T}}\right)^n">&sigma;<sub>T</sub> = K(&epsilon;<sub>T</sub>)<sup>n</sup></p>
+        <p><strong>Assumption.</strong> This form uses total true strain <span data-tex="\varepsilon_{\mathrm T}">&epsilon;<sub>T</sub></span> and neglects elastic deformation.</p>
+        <p>The strength coefficient <span data-tex="K">K</span> has units of stress, and the strain-hardening exponent <span data-tex="n">n</span> is dimensionless. Fit the law over a suitable range of uniform plastic flow, after any yield plateau and before necking. Convert engineering test data to true stress and true strain before fitting.</p>
+        <p>On logarithmic axes, plot true stress against true strain. The fitted slope is <span data-tex="n">n</span>. Use strain as a fraction when calculating <span data-tex="K">K</span>.</p>
+        <p class="example"><strong>Example.</strong> If true stress increases from 400 to 500 MPa as true strain increases from 0.05 to 0.15, the two-point estimate is <span data-tex="n=\frac{\ln(500/400)}{\ln(0.15/0.05)}\approx 0.203">n = ln(500/400)/ln(0.15/0.05) &asymp; 0.203</span>. Then <span data-tex="K=\frac{400}{0.05^{0.203}}\approx 735\,\mathrm{MPa}">K = 400/(0.05<sup>0.203</sup>) &asymp; 735 MPa</span>. For measured data, fit all points in the selected strain range.</p>
       </div>
     </section>
 
@@ -305,13 +308,13 @@
       <div class="section-head">
         <p class="section-kicker">07 / Localization</p>
         <h2>Onset of necking</h2>
-        <p>During uniform plastic elongation, the gauge section gets thinner as it gets longer. The tensile force F = &sigma;<sub>T</sub>A still rises while strain hardening offsets that loss of area. A diffuse neck starts to form when the uniform section can no longer sustain an increase in force.</p>
+        <p>During uniform plastic elongation, the gauge section gets thinner as it gets longer. The tensile force <span data-tex="F=\sigma_{\mathrm T}A">F = &sigma;<sub>T</sub>A</span> still rises while strain hardening offsets that loss of area. A diffuse neck starts to form when the uniform section can no longer sustain an increase in force.</p>
       </div>
       <div class="feature-card">
         <h3>Consid&egrave;re criterion</h3>
-        <p>Assume rate-independent plastic flow, uniform deformation up to the onset of necking, and approximately constant gauge volume. Then dA/A &asymp; &minus;d&epsilon;<sub>T</sub>. At maximum load, dF = A d&sigma;<sub>T</sub> + &sigma;<sub>T</sub> dA = 0, which gives the criterion:</p>
-        <p class="formula">d&sigma;<sub>T</sub>/d&epsilon;<sub>T</sub> = &sigma;<sub>T</sub></p>
-        <p>For a Hollomon material with negligible elastic strain, this gives &epsilon;<sub>T,neck</sub> &asymp; n. For example, n = 0.20 predicts about 0.20 true strain at the end of uniform elongation, or e<sup>0.20</sup> &minus; 1 &asymp; 22.1% engineering strain.</p>
+        <p>Assume rate-independent plastic flow, uniform deformation up to the onset of necking, and approximately constant gauge volume. Then <span data-tex="\mathrm{d}A/A\approx-\mathrm{d}\varepsilon_{\mathrm T}">dA/A &asymp; &minus;d&epsilon;<sub>T</sub></span>. At maximum load, <span data-tex="\mathrm{d}F=A\,\mathrm{d}\sigma_{\mathrm T}+\sigma_{\mathrm T}\,\mathrm{d}A=0">dF = A d&sigma;<sub>T</sub> + &sigma;<sub>T</sub> dA = 0</span>, which gives the criterion:</p>
+        <p class="formula" data-tex="\frac{\mathrm{d}\sigma_{\mathrm{T}}}{\mathrm{d}\varepsilon_{\mathrm{T}}} = \sigma_{\mathrm{T}}">d&sigma;<sub>T</sub>/d&epsilon;<sub>T</sub> = &sigma;<sub>T</sub></p>
+        <p>For a Hollomon material with negligible elastic strain, this gives <span data-tex="\varepsilon_{\mathrm{T,neck}}\approx n">&epsilon;<sub>T,neck</sub> &asymp; n</span>. For example, <span data-tex="n=0.20">n = 0.20</span> predicts about 0.20 true strain at the end of uniform elongation, or <span data-tex="\mathrm{e}^{0.20}-1\approx 22.1\%">e<sup>0.20</sup> &minus; 1 &asymp; 22.1%</span> engineering strain.</p>
       </div>
       <div class="note">
         <strong>After necking.</strong> Deformation concentrates in the neck. Gauge-length strain describes the overall extension, while a local strain measurement is needed to resolve deformation in the neck. Dividing force by the measured minimum area gives the mean axial stress on that section. The neck has a multiaxial stress state, so this average alone is insufficient to recover the uniaxial flow curve.
@@ -322,21 +325,21 @@
       <div class="section-head">
         <p class="section-kicker">08 / Maximum load</p>
         <h2>Ultimate tensile strength</h2>
-        <p>Ultimate tensile strength (UTS), &sigma;<sub>TS</sub>, is the engineering stress corresponding to the maximum tensile force F<sub>max</sub>. Calculate it using the original cross-sectional area A<sub>0</sub>.</p>
+        <p>Ultimate tensile strength (UTS), <span data-tex="\sigma_{\mathrm{TS}}">&sigma;<sub>TS</sub></span>, is the engineering stress corresponding to the maximum tensile force <span data-tex="F_{\max}">F<sub>max</sub></span>. Calculate it using the original cross-sectional area <span data-tex="A_0">A<sub>0</sub></span>.</p>
       </div>
       <div class="feature-card">
-        <p class="formula">&sigma;<sub>TS</sub> = F<sub>max</sub> / A<sub>0</sub></p>
+        <p class="formula" data-tex="\sigma_{\mathrm{TS}} = \frac{F_{\max}}{A_0}">&sigma;<sub>TS</sub> = F<sub>max</sub> / A<sub>0</sub></p>
         <p>For a typical ductile metal, this peak marks the onset of diffuse necking. As the force falls after the peak, engineering stress falls with it. The engineering fracture stress uses the force just before separation and is lower on such a curve. For a brittle specimen that fractures without necking, maximum force can occur at fracture.</p>
-        <p>For a specimen that yields discontinuously and then strain hardens, use the maximum force after the yield plateau to calculate &sigma;<sub>TS</sub>. In the <a href="#energy">illustrative curve</a>, &sigma;<sub>TS</sub> = 460 MPa, and the engineering fracture stress is 305 MPa.</p>
+        <p>For a specimen that yields discontinuously and then strain hardens, use the maximum force after the yield plateau to calculate <span data-tex="\sigma_{\mathrm{TS}}">&sigma;<sub>TS</sub></span>. In the <a href="#energy">illustrative curve</a>, <span data-tex="\sigma_{\mathrm{TS}}=460\,\mathrm{MPa}">&sigma;<sub>TS</sub> = 460 MPa</span>, and the engineering fracture stress is 305 MPa.</p>
         <a href="../../simulations/uniaxial-tension/index.html">Run the tensile test &rarr;</a>
       </div>
       <article class="note">
         <h3>Worked problem</h3>
-        <p>The true stress&ndash;strain curve of a material follows &sigma;<sub>T</sub> = 500&epsilon;<sub>T</sub><sup>0.3</sup>, where &sigma;<sub>T</sub> is in MPa and &epsilon;<sub>T</sub> is expressed as a fraction. Find the ultimate tensile strength. Assume the specimen deforms uniformly at constant volume up to the onset of necking.</p>
+        <p>The true stress&ndash;strain curve of a material follows <span data-tex="\sigma_{\mathrm T}=500\varepsilon_{\mathrm T}^{0.3}">&sigma;<sub>T</sub> = 500&epsilon;<sub>T</sub><sup>0.3</sup></span>, where <span data-tex="\sigma_{\mathrm T}">&sigma;<sub>T</sub></span> is in MPa and <span data-tex="\varepsilon_{\mathrm T}">&epsilon;<sub>T</sub></span> is expressed as a fraction. Find the ultimate tensile strength. Assume the specimen deforms uniformly at constant volume up to the onset of necking.</p>
         <h4>Solution</h4>
         <ol>
-          <li><strong>Find the true strain at maximum force.</strong> By the <a href="#necking">Consid&egrave;re criterion</a>, d&sigma;<sub>T</sub>/d&epsilon;<sub>T</sub> = &sigma;<sub>T</sub> at the onset of necking. Substituting the power law gives 500(0.3)&epsilon;<sub>T</sub><sup>&minus;0.7</sup> = 500&epsilon;<sub>T</sub><sup>0.3</sup>. Solving gives &epsilon;<sub>T</sub> = 0.30. The true stress there is 500(0.30)<sup>0.3</sup> &asymp; 348.4 MPa.</li>
-          <li><strong>Calculate the engineering stress at that strain.</strong> At constant volume, A/A<sub>0</sub> = e<sup>&minus;&epsilon;<sub>T</sub></sup>. Therefore &sigma;<sub>TS</sub> = F<sub>max</sub>/A<sub>0</sub> = &sigma;<sub>T</sub>(A/A<sub>0</sub>) = 500(0.30)<sup>0.3</sup>e<sup>&minus;0.30</sup> &asymp; <strong>258 MPa</strong>.</li>
+          <li><strong>Find the true strain at maximum force.</strong> By the <a href="#necking">Consid&egrave;re criterion</a>, <span data-tex="\mathrm{d}\sigma_{\mathrm T}/\mathrm{d}\varepsilon_{\mathrm T}=\sigma_{\mathrm T}">d&sigma;<sub>T</sub>/d&epsilon;<sub>T</sub> = &sigma;<sub>T</sub></span> at the onset of necking. Substituting the power law gives <span data-tex="500(0.3)\varepsilon_{\mathrm T}^{-0.7}=500\varepsilon_{\mathrm T}^{0.3}">500(0.3)&epsilon;<sub>T</sub><sup>&minus;0.7</sup> = 500&epsilon;<sub>T</sub><sup>0.3</sup></span>. Solving gives <span data-tex="\varepsilon_{\mathrm T}=0.30">&epsilon;<sub>T</sub> = 0.30</span>. The true stress there is <span data-tex="500(0.30)^{0.3}\approx348.4\,\mathrm{MPa}">500(0.30)<sup>0.3</sup> &asymp; 348.4 MPa</span>.</li>
+          <li><strong>Calculate the engineering stress at that strain.</strong> At constant volume, <span data-tex="A/A_0=\mathrm{e}^{-\varepsilon_{\mathrm T}}">A/A<sub>0</sub> = e<sup>&minus;&epsilon;<sub>T</sub></sup></span>. Therefore <span data-tex="\sigma_{\mathrm{TS}}=F_{\max}/A_0=\sigma_{\mathrm T}(A/A_0)">&sigma;<sub>TS</sub> = F<sub>max</sub>/A<sub>0</sub> = &sigma;<sub>T</sub>(A/A<sub>0</sub>)</span> = <span data-tex="500(0.30)^{0.3}\mathrm{e}^{-0.30}\approx\mathbf{258}\,\mathrm{MPa}">500(0.30)<sup>0.3</sup>e<sup>&minus;0.30</sup> &asymp; <strong>258 MPa</strong></span>.</li>
         </ol>
       </article>
     </section>

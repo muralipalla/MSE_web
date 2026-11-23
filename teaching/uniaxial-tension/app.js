@@ -115,7 +115,7 @@
         fill: "none", stroke: "#b53a20", "stroke-width": 2.5,
         "stroke-linecap": "round", "stroke-linejoin": "round"
       });
-      element(svg, "text", { x: centerX + 10, y: base + direction * 9 + 4 }, "F");
+      element(svg, "text", { class: "math-symbol", x: centerX + 10, y: base + direction * 9 + 4 }, "F");
     }
   }
 
