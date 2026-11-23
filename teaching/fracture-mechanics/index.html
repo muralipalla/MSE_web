@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=10">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
-  <script src="app.js?v=2" defer></script>
+  <script src="app.js?v=3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the fracture lesson</a>
@@ -422,24 +422,23 @@
           <figcaption>Conceptual thickness comparison. Plastic-zone shapes and relative sizes are illustrative. The stress state varies along a real crack front.</figcaption>
         </figure>
       </div>
-      <div class="two-up">
+      <div class="figure-pair">
         <article class="fracture-card">
           <h3>Compare the applied intensity with toughness</h3>
           <p><i>K</i><sub>Ic</sub> is the Mode I plane-strain fracture toughness measured under conditions of predominantly linear elastic response. Under matching conditions, the fracture criterion is</p>
           <p class="formula" data-tex="K_{\mathrm{I}} = K_{\mathrm{Ic}}"><i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub></p>
           <p>Toughness can depend on temperature, loading rate, crack orientation, and environment. When the plastic zone grows too large for small-scale yielding, use an elastic-plastic parameter such as the <i>J</i>-integral or crack-tip opening displacement (CTOD), within the chosen method&rsquo;s limits. A resistance curve records how resistance changes during stable tearing. Whether extension becomes unstable also depends on how the applied driving force changes as the crack grows.</p>
         </article>
-        <article class="fracture-card crack-demo" aria-labelledby="crack-demo-title">
+        <article class="fracture-card fracture-controls" id="crack-demo" aria-labelledby="crack-demo-title">
           <h3 id="crack-demo-title">Vary the crack length</h3>
           <p>Consider a wide plate with a central crack, <i>Y</i> = 1, &sigma; = 180 MPa, and <i>K</i><sub>Ic</sub> = 24 MPa&radic;m. Assume monotonic Mode I loading, plane strain, and small-scale yielding. Move the slider to compare the driving force with the toughness.</p>
           <label for="crack-size"><span>Crack half-length <i>a</i></span> <output id="crack-size-value" for="crack-size">2.0 mm</output></label>
           <input id="crack-size" type="range" min="0.5" max="12" step="0.1" value="2">
-          <div class="intensity-scale" aria-hidden="true">
-            <span class="intensity-bar" id="intensity-bar"></span>
-            <span class="intensity-limit"></span>
-          </div>
-          <div class="scale-labels" aria-hidden="true"><span>0</span><span>24</span><span>36 MPa&radic;m</span></div>
-          <p class="crack-readout" role="status"><i>K</i><sub>I</sub> = <strong id="intensity-value">14.3</strong> MPa&radic;m. <span id="crack-status">Below the Mode I fracture threshold.</span></p>
+          <figure class="fracture-plot">
+            <canvas id="crack-plot" width="520" height="270" role="img" aria-label="Mode I stress intensity against crack half-length. The dashed line is the fracture toughness."></canvas>
+            <figcaption><span class="plot-key"><span>Applied <i>K</i><sub>I</sub></span></span><span class="plot-key plot-key-reference"><span>Toughness <i>K</i><sub>Ic</sub></span></span></figcaption>
+          </figure>
+          <p class="fracture-readout" role="status"><i>K</i><sub>I</sub> = <strong id="intensity-value">14.3</strong> MPa&radic;m. <span id="crack-status">Below the Mode I fracture threshold.</span></p>
         </article>
       </div>
       <p class="section-note">The toughness comparison addresses fracture under the stated load. Under cyclic loading, fatigue can extend a crack at peak stress intensities below <i>K</i><sub>Ic</sub>, as the <a href="#comet">Comet investigation</a> illustrates.</p>
@@ -464,6 +463,18 @@
         <p class="formula" data-tex="\sigma_y = 20.6 + \frac{173600}{T} + 61.3\log_{10}(\dot{\epsilon})">&sigma;<sub>y</sub> = 20.6 + 173600/<i>T</i> + 61.3 log<sub>10</sub>(&epsilon;&#775;)</p>
         <p>Use numerical values with &sigma;<sub>y</sub> in MPa, <i>T</i> in kelvin, and the imposed strain rate &epsilon;&#775; = d&epsilon;/dt in s<sup>&minus;1</sup>. Estimate the transition temperature at (i) 10<sup>&minus;2</sup> s<sup>&minus;1</sup> and (ii) 10<sup>&minus;5</sup> s<sup>&minus;1</sup>.</p>
         <p><strong>Model.</strong> Assume a central through crack in a large plate under plane stress, and hold <i>E</i>, &gamma;<sub>s</sub>, and <i>a</i> constant. Estimate the transition by equating the yield stress with the ideally brittle fracture stress. The <a href="#griffith">Griffith energy balance</a> introduced above gives the fracture stress used here.</p>
+        <div class="figure-pair transition-demo">
+          <div class="fracture-controls">
+            <label for="transition-rate"><span>Strain rate &epsilon;&#775;</span><output for="transition-rate"><span id="transition-rate-mantissa">1.0</span> &times; 10<sup id="transition-rate-exponent">&minus;5</sup> s<sup>&minus;1</sup></output></label>
+            <input id="transition-rate" type="range" min="-5" max="-2" step="0.1" value="-5" aria-describedby="transition-rate-scale">
+            <p id="transition-rate-scale" class="source-line">Logarithmic scale from 10<sup>&minus;5</sup> to 10<sup>&minus;2</sup> s<sup>&minus;1</sup>.</p>
+            <p class="fracture-readout" role="status">Predicted crossover <strong id="transition-kelvin">229.0 K</strong> (<span id="transition-celsius">&minus;44.1&nbsp;&deg;C</span>).</p>
+          </div>
+          <figure class="fracture-plot">
+            <canvas id="transition-plot" width="520" height="270" role="img" aria-label="Yield strength against temperature. The point marks its crossover with the fixed brittle fracture stress."></canvas>
+            <figcaption><span class="plot-key"><span>Yield strength &sigma;<sub>y</sub></span></span><span class="plot-key plot-key-reference"><span>Fracture stress &sigma;<sub>c</sub></span></span></figcaption>
+          </figure>
+        </div>
         <ol class="solution-steps">
           <li><strong>Calculate the fracture stress.</strong> Two new surfaces require <i>G</i><sub>c</sub> = 2&gamma;<sub>s</sub> = 4 J/m<sup>2</sup>. Use the half-length <i>a</i> = 2 &times; 10<sup>&minus;6</sup> m and <i>E</i> = 350 &times; 10<sup>9</sup> Pa.
             <p class="formula" data-tex="\sigma_c = \sqrt{\frac{2E\gamma_s}{\pi a}} \approx 472.0\ \mathrm{MPa}">&sigma;<sub>c</sub> = &radic;[2<i>E</i>&gamma;<sub>s</sub>/(&pi;<i>a</i>)] &asymp; 472.0 MPa</p>
