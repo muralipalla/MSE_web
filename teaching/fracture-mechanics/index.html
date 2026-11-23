@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=8">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
@@ -100,46 +100,18 @@
       <p class="section-lead">Start at low magnification to locate the likely origin and trace the crack path. Use higher magnification to look for dimples, cleavage facets, or exposed grain boundaries.</p>
       <article class="fracture-card fracture-origin" id="fracture-origin" aria-labelledby="fracture-origin-title">
         <h3 id="fracture-origin-title">Locate an origin on the fracture face</h3>
-        <p>These scanning electron micrographs show a bulk metallic glass specimen fractured under repeated tension. Select either image to view it at full size.</p>
-        <div class="two-up">
-          <figure class="technical-figure">
-            <a href="metallic-glass-fracture-face.png" aria-label="Open the whole fracture face at full size">
-              <img src="metallic-glass-fracture-face.png" width="991" height="878" alt="Fracture face with the origin boxed in red at the upper-left edge, a black arrow pointing diagonally into the face, and a 1 millimetre scale bar" loading="lazy" decoding="async">
-            </a>
-            <figcaption>
-              <h4>Whole fracture face</h4>
-              <p>The red box marks the origin at the upper-left edge. The black arrow points in the direction of fatigue crack growth.</p>
-            </figcaption>
-          </figure>
-          <figure class="technical-figure">
-            <a href="metallic-glass-crack-origin.png" aria-label="Open the crack origin close-up at full size">
-              <img src="metallic-glass-crack-origin.png" width="1019" height="878" alt="Close-up of the boxed region with a step along the diagonal specimen edge and a 50 micrometre scale bar" loading="lazy" decoding="async">
-            </a>
-            <figcaption>
-              <h4>Crack origin close-up</h4>
-              <p>The close-up shows a shear offset at the edge. The authors used this step as evidence that the fatigue crack began along a shear band.</p>
-            </figcaption>
-          </figure>
-        </div>
-        <p class="source-line"><a href="https://www.mdpi.com/1996-1944/14/11/2815">Yang et al. (2021), Figure 3a&ndash;b</a>, cropped from the publisher&rsquo;s figure &middot; <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a></p>
+        <p>Use directional markings to trace crack growth backward. At the suspected origin, inspect the fracture face and specimen edge for a notch, inclusion, or other local defect.</p>
         <p>Compare <a href="https://doi.org/10.1016/j.actamat.2012.11.033">notch-root initiation in Tandaiya, Narasimhan and Ramamurty (2013)</a>, the <a href="https://doi.org/10.1016/j.actamat.2014.07.024">brittle metallic-glass initiation zone in Narayan et al. (2014), Figure 6</a>, and the <a href="https://madisongroup.com/fractography-a-key-component-of-a-failure-analysis/#:~:text=Photomicrograph%20showing%20the%20origin">circled polymer crack origin in The Madison Group, Figure 3</a>.</p>
       </article>
       <p class="section-note"><strong>Describe the crack path and mechanism.</strong> A transgranular crack crosses grains. An intergranular crack follows grain boundaries. Dimples indicate local plastic rupture, while cleavage facets indicate crystallographic separation. Grain-boundary surfaces can also contain dimples. <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nbsir74-468.pdf">NBS fracture-surface investigation</a></p>
       <div id="fractography-figures" class="two-up">
-        <figure class="fracture-card photo-card">
-          <div class="annotated-fractograph">
-            <img src="ductile-dimples.jpg" width="680" height="510" alt="Scanning electron micrograph of steel with annotations pointing to a large dark dimple cavity and a raised dimple rim; the original 10 micrometre scale remains visible" loading="lazy">
-            <svg viewBox="0 0 680 510" aria-hidden="true" focusable="false">
-              <g fill="none" stroke="#ffcd73" stroke-width="3" stroke-linecap="round">
-                <path d="M480 60 510 110 515 321"/>
-                <path d="M104 60 106 153 83 278"/>
-              </g>
-              <g fill="#ffcd73" stroke="#302775" stroke-width="1.5"><circle cx="515" cy="321" r="5"/><circle cx="83" cy="278" r="5"/></g>
-              <g fill="#fff8e9" fill-opacity=".96" stroke="#302775" stroke-width="1.5"><rect x="371" y="19" width="208" height="41" rx="7"/><rect x="18" y="19" width="171" height="41" rx="7"/></g>
-              <g fill="#252044" font-family="system-ui,sans-serif" font-size="23" font-weight="650"><text x="389" y="47">Dimple cavity</text><text x="36" y="47">Dimple rim</text></g>
-            </svg>
-          </div>
-          <figcaption><h3>Dimples in steel</h3><p>Rounded depressions mark where voids grew and joined in a Charpy specimen from steel column N8-C1M1. The highlighted cavity and raised rim show the local relief of a ductile fracture surface.</p><a href="https://nvlpubs.nist.gov/nistpubs/Legacy/NCSTAR/ncstar1-3d.pdf#page=159">NIST NCSTAR 1-3D, Figure 5-10(c), cropped; teaching labels overlaid</a></figcaption>
+        <figure class="fracture-card photo-card" id="ductile-fractograph">
+          <img src="ductile-fracture-dimples.jpg" width="1713" height="1577" alt="Scanning electron micrograph of ultrafine-grained interstitial-free steel with a large cup-shaped dimple surrounded by smaller dimples and a 10 micrometre scale bar" loading="lazy" decoding="async">
+          <figcaption>
+            <h3>Ductile fracture dimples</h3>
+            <p>These cup-shaped dimples mark where microscopic voids grew and joined. The large dimple on the left shows the deep cavity and raised rim.</p>
+            <a href="ductile-fracture-dimples.jpg">Full-size micrograph</a> &middot; <a href="https://doi.org/10.1016/j.actamat.2015.12.034">Pineau, Benzerga and Pardoen (2016), Figure 25</a>
+          </figcaption>
         </figure>
         <figure class="fracture-card photo-card" id="cast-iron-fractograph">
           <img src="cast-iron-cleavage.jpg" width="1003" height="720" alt="Scanning electron micrograph of cast iron showing broad, flat cleavage facets with fine branching steps and a 50 micrometre scale bar" loading="lazy" decoding="async">
