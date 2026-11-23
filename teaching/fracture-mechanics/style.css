@@ -105,6 +105,22 @@
   margin: .45rem 0;
 }
 
+.fracture-videos {
+  margin-top: 1.25rem;
+  scroll-margin-top: 1rem;
+}
+
+.fracture-videos > h3,
+.fracture-video h4 {
+  margin: 0 0 .8rem;
+}
+
+.fracture-video video {
+  aspect-ratio: 4 / 3;
+  background: #fff;
+}
+
+.fracture-video video,
 .photo-card img,
 .technical-figure img,
 .technical-figure svg,

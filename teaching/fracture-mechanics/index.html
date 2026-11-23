@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
@@ -70,6 +70,27 @@
           <p>A crack can travel rapidly with little overall plastic deformation. Cleavage in ferritic steel typically runs through grains along crystallographic planes. Brittle separation can also occur along weakened grain boundaries.</p>
         </article>
       </div>
+      <section class="fracture-videos" id="fracture-videos" aria-labelledby="fracture-videos-title">
+        <h3 id="fracture-videos-title">HEA fracture simulations</h3>
+        <div class="two-up">
+          <article class="fracture-card fracture-video">
+            <h4 id="ductile-video-title">Ductile fracture (Al case)</h4>
+            <video controls playsinline preload="none" width="1440" height="1080" poster="hea-ductile-al-poster.jpg" aria-labelledby="ductile-video-title" aria-describedby="ductile-video-description">
+              <source src="hea-ductile-al.mp4" type="video/mp4">
+              <a href="hea-ductile-al.mp4">Open the ductile fracture video</a>
+            </video>
+            <p id="ductile-video-description">As the crack opens, its tips blunt and bands of deformation spread into the surrounding material.</p>
+          </article>
+          <article class="fracture-card fracture-video">
+            <h4 id="brittle-video-title">Brittle fracture (Cu case)</h4>
+            <video controls playsinline preload="none" width="1440" height="1080" poster="hea-brittle-cu-poster.jpg" aria-labelledby="brittle-video-title" aria-describedby="brittle-video-description">
+              <source src="hea-brittle-cu.mp4" type="video/mp4">
+              <a href="hea-brittle-cu.mp4">Open the brittle fracture video</a>
+            </video>
+            <p id="brittle-video-description">The crack extends across the specimen, with deformation concentrated in narrow bands.</p>
+          </article>
+        </div>
+      </section>
       <p class="section-note">Ductile tearing and brittle fracture can occur in different regions of one surface. Temperature, loading rate, and constraint around the crack tip influence which mechanism dominates.</p>
       <p>A <strong>Charpy impact test</strong> strikes a notched bar with a pendulum and measures the absorbed energy. Repeating the test at different temperatures helps characterize how the fracture response changes. This is the test used in the historical investigations below.</p>
     </section>
