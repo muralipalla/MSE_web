@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -21,6 +22,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    env:
+      PAGES_ARTIFACT_NAME: github-pages-${{ github.run_attempt }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -37,10 +40,31 @@ jobs:
           touch _site/.nojekyll
 
       - name: Upload website artifact
+        id: upload
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
+          name: ${{ env.PAGES_ARTIFACT_NAME }}
+
+      - name: Wait for uploaded artifact metadata
+        timeout-minutes: 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGES_ARTIFACT_ID: ${{ steps.upload.outputs.artifact_id }}
+        run: |
+          artifact_list="repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=$PAGES_ARTIFACT_NAME"
+          for attempt in {1..10}; do
+            if artifact_id=$(gh api "$artifact_list" --jq '.artifacts[] | select(.expired == false) | .id') &&
+               [[ -n "$PAGES_ARTIFACT_ID" && "$artifact_id" == "$PAGES_ARTIFACT_ID" ]]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::The uploaded Pages artifact did not appear in the workflow artifact listing."
+          exit 1
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: ${{ env.PAGES_ARTIFACT_NAME }}
