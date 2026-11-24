@@ -25,7 +25,7 @@
   const referenceColour = theme.getPropertyValue("--coral").trim();
   const grid = theme.getPropertyValue("--line").trim();
 
-  function drawPlot(canvas, { xTicks, yTicks, xLabel, yLabel, curve, reference, point }) {
+  function preparePlot(canvas) {
     if (!canvas) return;
     const width = canvas.clientWidth;
     const height = canvas.clientHeight;
@@ -41,7 +41,13 @@
     }
     context.setTransform(pixelWidth / width, 0, 0, pixelHeight / height, 0, 0);
     context.clearRect(0, 0, width, height);
+    return { context, width, height };
+  }
 
+  function drawPlot(canvas, { xTicks, yTicks, xLabel, yLabel, curve, reference, point }) {
+    const plot = preparePlot(canvas);
+    if (!plot) return;
+    const { context, width, height } = plot;
     const left = 42;
     const right = width - 16;
     const top = 32;
@@ -168,16 +174,167 @@
     });
   }
 
+  function drawPlasticZone(canvas, contours, radiusScale) {
+    const plot = preparePlot(canvas);
+    if (!plot) return;
+    const { context, width, height } = plot;
+    const xLimit = 3.2;
+    const yLimit = 2.32;
+    const leftMargin = 35;
+    const rightMargin = 8;
+    const top = 8;
+    const availableWidth = width - leftMargin - rightMargin;
+    const scale = Math.min(availableWidth / (2 * xLimit), (height - top - 37) / (2 * yLimit));
+    if (scale <= 0) return;
+    const plotWidth = 2 * xLimit * scale;
+    const plotHeight = 2 * yLimit * scale;
+    const left = leftMargin + (availableWidth - plotWidth) / 2;
+    const right = left + plotWidth;
+    const bottom = top + plotHeight;
+    const x = value => left + (value + xLimit) * scale;
+    const y = value => top + (yLimit - value) * scale;
+
+    context.strokeStyle = grid;
+    context.lineWidth = 1;
+    context.fillStyle = muted;
+    context.font = "12px system-ui, sans-serif";
+    context.textAlign = "center";
+    context.textBaseline = "top";
+    context.beginPath();
+    for (let tick = -3; tick <= 3; tick += 1) {
+      context.moveTo(x(tick), top);
+      context.lineTo(x(tick), bottom);
+      context.fillText(String(tick).replace("-", "−"), x(tick), bottom + 4);
+    }
+    context.textAlign = "right";
+    context.textBaseline = "middle";
+    for (let tick = -2; tick <= 2; tick += 1) {
+      context.moveTo(left, y(tick));
+      context.lineTo(right, y(tick));
+      context.fillText(String(tick).replace("-", "−"), left - 5, y(tick));
+    }
+    context.stroke();
+    context.strokeStyle = "#a49db4";
+    context.strokeRect(left, top, plotWidth, plotHeight);
+    context.beginPath();
+    context.moveTo(left, y(0));
+    context.lineTo(right, y(0));
+    context.moveTo(x(0), top);
+    context.lineTo(x(0), bottom);
+    context.stroke();
+
+    context.textAlign = "center";
+    context.fillText("x (mm)", x(0), bottom + 28);
+    context.save();
+    context.translate(8, y(0));
+    context.rotate(-Math.PI / 2);
+    context.fillText("y (mm)", 0, 0);
+    context.restore();
+
+    if (radiusScale > 0) {
+      for (const { points, planeStrain } of contours) {
+        context.beginPath();
+        for (const [horizontal, vertical] of points) {
+          context.lineTo(x(horizontal * radiusScale), y(vertical * radiusScale));
+        }
+        context.closePath();
+        context.fillStyle = planeStrain ? "#cfeae6cc" : "#ece5f5bb";
+        context.fill();
+        context.strokeStyle = planeStrain ? "#086e6c" : "#544183";
+        context.lineWidth = planeStrain ? 1.8 : 2.5;
+        context.setLineDash(planeStrain ? [5, 3] : []);
+        context.stroke();
+      }
+    }
+
+    context.setLineDash([]);
+    context.strokeStyle = "#221d30";
+    context.lineWidth = 2.5;
+    context.beginPath();
+    context.moveTo(left, y(0));
+    context.lineTo(x(0), y(0));
+    context.stroke();
+    context.beginPath();
+    context.arc(x(0), y(0), 3, 0, 2 * Math.PI);
+    context.fillStyle = "#221d30";
+    context.fill();
+  }
+
+  function setupPlasticZones() {
+    const slider = document.getElementById("plastic-zone-k");
+    if (!slider) return;
+    const controls = document.getElementById("plastic-zone-control");
+    const intensityReadout = document.getElementById("plastic-zone-k-value");
+    const figures = Array.from(document.querySelectorAll("[data-plastic-zone-mode]"));
+    const canvases = figures.map(figure => figure.querySelector("canvas"));
+    if (!canvases.length || canvases.some(canvas => !canvas?.getContext("2d"))) return;
+
+    const yieldStrength = 450;
+    const poissonRatio = 0.30;
+    const planeStrainFactor = (1 - 2 * poissonRatio) ** 2;
+    // The von Mises first-yield radii are these angular factors times (K/sigma_ys)^2 / (2*pi).
+    const radiusFactors = {
+      i: (angle, constraint) => Math.cos(angle / 2) ** 2 * (constraint + 3 * Math.sin(angle / 2) ** 2),
+      ii: (angle, constraint) => 3 + constraint * Math.sin(angle / 2) ** 2 - 2.25 * Math.sin(angle) ** 2,
+      iii: () => 3,
+    };
+    const plots = figures.map((figure, index) => {
+      const mode = figure.dataset.plasticZoneMode;
+      const constraints = mode === "iii" ? [1] : [1, planeStrainFactor];
+      const contours = constraints.map((constraint, contourIndex) => ({
+        planeStrain: contourIndex === 1,
+        points: Array.from({ length: 360 }, (_, degree) => {
+          const angle = degree * Math.PI / 180;
+          const radiusFactor = radiusFactors[mode](angle, constraint);
+          return [radiusFactor * Math.cos(angle), radiusFactor * Math.sin(angle)];
+        }),
+      }));
+
+      figure.querySelector(".plastic-zone-original").hidden = true;
+      figure.querySelector(".plastic-zone-chart").hidden = false;
+      return {
+        canvas: canvases[index],
+        contours,
+        ahead: figure.querySelector("[data-zone-ahead]"),
+        strain: figure.querySelector("[data-zone-strain]"),
+      };
+    });
+    controls.hidden = false;
+    document.getElementById("plastic-zone-original-links").hidden = false;
+
+    function formatRadius(millimetres) {
+      return millimetres > 0 && millimetres < 0.01 ? "<0.01 mm" : `${millimetres.toFixed(2)} mm`;
+    }
+
+    function redrawPlasticZones() {
+      const intensity = slider.valueAsNumber;
+      const radiusScale = 1000 * (intensity / yieldStrength) ** 2 / (2 * Math.PI);
+      intensityReadout.value = `${intensity} MPa√m`;
+      slider.setAttribute("aria-valuetext", `${intensity} megapascal square root metres`);
+      for (const { canvas, contours, ahead, strain } of plots) {
+        drawPlasticZone(canvas, contours, radiusScale);
+        ahead.textContent = formatRadius(radiusScale * contours[0].points[0][0]);
+        if (strain) strain.textContent = formatRadius(radiusScale * contours[1].points[0][0]);
+      }
+    }
+
+    slider.addEventListener("input", redrawPlasticZones);
+    return { canvases, redraw: redrawPlasticZones };
+  }
+
+  const plasticZones = setupPlasticZones();
+
   function redraw() {
     describeCrack();
     if (rate) describeTransition();
+    plasticZones?.redraw();
   }
 
   size.addEventListener("input", describeCrack);
   rate?.addEventListener("input", describeTransition);
   if ("ResizeObserver" in window) {
     const observer = new ResizeObserver(redraw);
-    for (const plot of [crackPlot, transitionPlot].filter(Boolean)) observer.observe(plot);
+    for (const plot of [crackPlot, transitionPlot, ...(plasticZones?.canvases ?? [])].filter(Boolean)) observer.observe(plot);
   } else {
     window.addEventListener("resize", redraw);
   }

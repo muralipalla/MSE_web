@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 300" role="img" aria-labelledby="title description">
+  <title id="title">Griffith's center crack under remote tension</title>
+  <desc id="description">A wide plate has a horizontal crack of total length 2a at its center. Equal remote tensile stresses pull upward on the top and downward on the bottom.</desc>
+  <defs>
+    <marker id="force" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 8 4 0 8Z" fill="#c93b1f"/></marker>
+    <marker id="dimension" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M8 0 0 4 8 8" fill="none" stroke="#554f82" stroke-width="1.2"/></marker>
+  </defs>
+  <rect x="1" y="1" width="438" height="298" rx="12" fill="#f7f5fb" stroke="#d9d3ec" stroke-width="2"/>
+  <rect x="42" y="66" width="356" height="168" rx="3" fill="#e9e2f4" stroke="#6757a8" stroke-width="2.3"/>
+  <g fill="none" stroke="#c93b1f" stroke-width="2.7" marker-end="url(#force)">
+    <path d="M90 66V24"/><path d="M220 66V24"/><path d="M350 66V24"/>
+    <path d="M90 234v42"/><path d="M220 234v42"/><path d="M350 234v42"/>
+  </g>
+  <path d="M163 150H277" fill="none" stroke="#2e2a74" stroke-width="3.5"/>
+  <g fill="none" stroke="#554f82" stroke-width="1.4">
+    <path d="M163 157v32M277 157v32"/>
+    <path d="M167 183H273" marker-start="url(#dimension)" marker-end="url(#dimension)"/>
+  </g>
+  <g font-family="system-ui, sans-serif" font-style="italic" font-size="21">
+    <text x="370" y="40" fill="#a93420">σ</text>
+    <text x="370" y="271" fill="#a93420">σ</text>
+    <text x="220" y="210" text-anchor="middle" fill="#2e2a74">2a</text>
+  </g>
+</svg>

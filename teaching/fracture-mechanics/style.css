@@ -49,8 +49,7 @@
 }
 
 .two-up,
-.figure-pair,
-.specimen-example {
+.figure-pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
@@ -124,8 +123,7 @@
 .photo-card img,
 .technical-figure img,
 .technical-figure svg,
-.case-figure img,
-.specimen-example img {
+.case-figure img {
   display: block;
   width: 100%;
   height: auto;
@@ -140,8 +138,7 @@
 .photo-card figcaption a,
 .technical-figure figcaption,
 .case-figure figcaption,
-.source-line,
-.specimen-example figcaption > a {
+.source-line {
   color: var(--muted);
   font-size: .88rem;
 }
@@ -164,13 +161,6 @@
   padding: .65rem .85rem;
   border-left: 3px solid var(--coral);
   background: #f4effa;
-}
-
-.specimen-example {
-  grid-template-columns: minmax(0, 15rem) 1fr;
-  gap: clamp(1rem, 3vw, 2rem);
-  align-items: center;
-  margin: 1rem 0;
 }
 
 .formula-row {
@@ -470,14 +460,8 @@
   width: 17%;
 }
 
-.test-selection,
-.supporting-figure {
+.test-selection {
   margin-top: 1rem;
-}
-
-.supporting-figure summary {
-  cursor: pointer;
-  font-weight: 800;
 }
 
 .comet-roof-panel {
@@ -501,6 +485,33 @@
   margin-top: 1.5rem;
 }
 
+.geometry-grid {
+  align-items: start;
+}
+
+#stress-intensity-geometries,
+.geometry-card {
+  scroll-margin-top: 1rem;
+}
+
+.geometry-card h4 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.geometry-sketch {
+  margin: .75rem 0;
+}
+
+.geometry-sketch img {
+  max-height: 17rem;
+  object-fit: contain;
+}
+
+.geometry-card .formula {
+  padding-inline: .65rem;
+}
+
 .plastic-zone-comparison {
   margin-top: 1.5rem;
   scroll-margin-top: 1rem;
@@ -509,6 +520,24 @@
 .plastic-zone-comparison h4 {
   margin: 0;
   font-size: 1.05rem;
+}
+
+.plastic-zone-control {
+  max-width: 32rem;
+  margin-bottom: 1.2rem;
+}
+
+.plastic-zone-control input {
+  display: block;
+  margin: 0;
+}
+
+.plastic-zone-range {
+  display: flex;
+  justify-content: space-between;
+  margin-top: .15rem;
+  color: var(--muted);
+  font-size: .8rem;
 }
 
 .plastic-zone-grid {
@@ -521,8 +550,39 @@
   padding: .7rem .7rem .9rem;
 }
 
-.plastic-zone-grid a {
+.plastic-zone-original:not([hidden]) {
   display: block;
+}
+
+.plastic-zone-chart h5 {
+  margin: .2rem 0 .2rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.plastic-zone-chart canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+}
+
+.plastic-zone-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .25rem .65rem;
+  margin-bottom: .65rem;
+  color: var(--ink-soft);
+  font-size: .8rem;
+}
+
+.plastic-zone-legend .plot-key::before {
+  border-color: #544183;
+}
+
+.plastic-zone-legend .plastic-zone-strain-key::before {
+  border-top: 2px dashed #086e6c;
 }
 
 .plastic-zone-grid figcaption {
@@ -554,15 +614,6 @@
   .two-up,
   .figure-pair {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .specimen-example {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .specimen-example img {
-    max-width: 15rem;
-    margin-inline: auto;
   }
 
   .fracture-data,

@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
-  <script src="app.js?v=3" defer></script>
+  <script src="app.js?v=4" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the fracture lesson</a>
@@ -30,14 +30,14 @@
     <header class="teaching-intro">
       <div><p class="eyebrow">Teaching page 11</p><h1>Fracture Mechanics</h1></div>
       <div class="teaching-intro-copy">
-        <p>Read fracture surfaces and examine historical failures. Then use crack-tip stresses and fracture toughness to predict when a loaded crack can extend.</p>
+        <p>Examine historical failures and read fracture surfaces. Then use crack-tip stresses and fracture toughness to predict when a loaded crack can extend.</p>
         <p class="teaching-intro-note"><a href="../../simulations/fracture-toughness/index.html">Open the fracture toughness lab &rarr;</a></p>
       </div>
     </header>
     <nav class="fracture-route" aria-label="Lesson sections">
+      <a href="#cases">History</a>
       <a href="#fracture-modes">Ductile and brittle fracture</a>
       <a href="#fractography">Fractography</a>
-      <a href="#cases">History</a>
       <a href="#transition">Ductile-to-brittle transition</a>
       <a href="#impact">Impact tests</a>
       <a href="#comet">Comet failures</a>
@@ -49,6 +49,32 @@
       <a href="#toughness">Fracture toughness</a>
       <a href="#testing">Fracture toughness testing</a>
     </nav>
+
+    <section id="cases" class="fracture-section" aria-labelledby="cases-title">
+      <h2 id="cases-title">Historical accidents that gave birth to Fracture Mechanics</h2>
+      <p class="section-lead">Steel structures that fractured in cold service prompted investigations into the combined effects of material toughness, flaws, and structural details.</p>
+      <div class="two-up">
+        <article class="fracture-card">
+          <h3>Wartime welded ships</h3>
+          <figure class="case-figure">
+            <img src="schenectady-1943.jpg" width="886" height="694" alt="The SS Schenectady tanker after its hull fractured at the outfitting dock" loading="lazy">
+            <figcaption>The <i>SS Schenectady</i>, a welded T2 tanker. <a href="https://commons.wikimedia.org/wiki/File:TankerSchenectady.jpg">U.S. Government Printing Office, 1947, via Wikimedia Commons</a></figcaption>
+          </figure>
+          <p>In 1943 the tanker fractured while moored in Portland, Oregon. Wartime investigations examined cold-temperature notch toughness alongside crack initiation at structural details, welding, and residual stresses. Welded hulls could let a crack travel a long distance once it started.</p>
+          <a href="https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca3300/ca3398/data/ca3398data.pdf">Library of Congress engineering history</a>
+        </article>
+        <article class="fracture-card">
+          <h3>RMS Titanic</h3>
+          <figure class="case-figure">
+            <img src="titanic-belfast.jpg" width="1280" height="937" alt="Archival photograph of the Titanic hull afloat in Belfast before its funnels were fitted" loading="lazy">
+            <figcaption><i>RMS Titanic</i> at its launch in Belfast, 1911. <a href="https://www.loc.gov/item/2001704335/">Bain News Service, Library of Congress</a></figcaption>
+          </figure>
+          <p>Using a 27 J Charpy criterion, NIST reported transition temperatures of about 40 &deg;C longitudinally and 70 &deg;C transversely for recovered hull plate. The estimated seawater temperature was &minus;2 &deg;C. The investigators also examined the wrought-iron rivets and their slag inclusions. The iceberg strike initiated the damage, and the response of plates and joints influenced the subsequent flooding.</p>
+          <p class="section-note">The recovered samples tell us how those materials could respond in the cold. The test result alone cannot reconstruct how every plate and joint failed during the collision.</p>
+          <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir6118.pdf#page=6">NIST metallurgical investigation, Figure 2</a>
+        </article>
+      </div>
+    </section>
 
     <section id="fracture-modes" class="fracture-section" aria-labelledby="modes-title">
       <h2 id="modes-title">Ductile and brittle fracture</h2>
@@ -92,7 +118,7 @@
         </div>
       </section>
       <p class="section-note">Ductile tearing and brittle fracture can occur in different regions of one surface. Temperature, loading rate, and constraint around the crack tip influence which mechanism dominates.</p>
-      <p>A <strong>Charpy impact test</strong> strikes a notched bar with a pendulum and measures the absorbed energy. Repeating the test at different temperatures helps characterize how the fracture response changes. This is the test used in the historical investigations below.</p>
+      <p>A <strong>Charpy impact test</strong> strikes a notched bar with a pendulum and measures the absorbed energy. Repeating the test at different temperatures helps characterize how the fracture response changes. The <a href="#cases">historical investigations</a> use this test to compare toughness at different temperatures.</p>
     </section>
 
     <section id="fractography" class="fracture-section" aria-labelledby="fractography-title">
@@ -141,32 +167,6 @@
         <h3>Interpret a mixed fracture surface</h3>
         <p>A notched steel specimen shows fine dimples close to the notch and cleavage facets farther across the ligament. If low-magnification evidence places the origin at the notch, the sequence is consistent with initial ductile tearing followed by cleavage. The dimples show where voids joined. The facets show where the crack crossed grains by cleavage.</p>
       </article>
-    </section>
-
-    <section id="cases" class="fracture-section" aria-labelledby="cases-title">
-      <h2 id="cases-title">History</h2>
-      <p class="section-lead">Steel structures that fractured in cold service prompted investigations into the combined effects of material toughness, flaws, and structural details.</p>
-      <div class="two-up">
-        <article class="fracture-card">
-          <h3>Wartime welded ships</h3>
-          <figure class="case-figure">
-            <img src="schenectady-1943.jpg" width="886" height="694" alt="The SS Schenectady tanker after its hull fractured at the outfitting dock" loading="lazy">
-            <figcaption>The <i>SS Schenectady</i>, a welded T2 tanker. <a href="https://commons.wikimedia.org/wiki/File:TankerSchenectady.jpg">U.S. Government Printing Office, 1947, via Wikimedia Commons</a></figcaption>
-          </figure>
-          <p>In 1943 the tanker fractured while moored in Portland, Oregon. Wartime investigations examined cold-temperature notch toughness alongside crack initiation at structural details, welding, and residual stresses. Welded hulls could let a crack travel a long distance once it started.</p>
-          <a href="https://tile.loc.gov/storage-services/master/pnp/habshaer/ca/ca3300/ca3398/data/ca3398data.pdf">Library of Congress engineering history</a>
-        </article>
-        <article class="fracture-card">
-          <h3>RMS Titanic</h3>
-          <figure class="case-figure">
-            <img src="titanic-belfast.jpg" width="1280" height="937" alt="Archival photograph of the Titanic hull afloat in Belfast before its funnels were fitted" loading="lazy">
-            <figcaption><i>RMS Titanic</i> at its launch in Belfast, 1911. <a href="https://www.loc.gov/item/2001704335/">Bain News Service, Library of Congress</a></figcaption>
-          </figure>
-          <p>Using a 27 J Charpy criterion, NIST reported transition temperatures of about 40 &deg;C longitudinally and 70 &deg;C transversely for recovered hull plate. The estimated seawater temperature was &minus;2 &deg;C. The investigators also examined the wrought-iron rivets and their slag inclusions. The iceberg strike initiated the damage, and the response of plates and joints influenced the subsequent flooding.</p>
-          <p class="section-note">The recovered samples tell us how those materials could respond in the cold. The test result alone cannot reconstruct how every plate and joint failed during the collision.</p>
-          <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir6118.pdf#page=6">NIST metallurgical investigation, Figure 2</a>
-        </article>
-      </div>
     </section>
 
     <section id="transition" class="fracture-section" aria-labelledby="transition-title">
@@ -346,6 +346,49 @@
         <p>The dimensionless factor <i>Y</i> accounts for geometry and loading. Use <i>Y</i> = 1 for a central through crack in an effectively infinite plate under uniform tension. Here <i>a</i> is half the total crack length. For an edge crack, <i>a</i> is its depth and a different <i>Y</i> applies. Use metres for <i>a</i> with &sigma; in MPa to obtain MPa&radic;m.</p>
         <p>The second equation relates the Mode I elastic field to <a href="#griffith">Griffith&rsquo;s energy release rate</a>. In plane stress, <i>E</i>&prime; = <i>E</i>. In plane strain, <i>E</i>&prime; = <i>E</i>/(1 &minus; &nu;<sup>2</sup>).</p>
       </div>
+      <section id="stress-intensity-geometries" aria-labelledby="stress-intensity-geometries-title">
+        <h3 class="subsection-heading" id="stress-intensity-geometries-title">Mode I stress intensity by geometry</h3>
+        <p>For the three test specimens, <i>F</i> is the applied force, <i>B</i> is the thickness, and &alpha; = <i>a</i>/<i>W</i> is the ratio of crack length to specimen width as measured in each sketch. Use newtons and metres to obtain <i>K</i><sub>I</sub> in Pa&radic;m.</p>
+        <div class="two-up geometry-grid">
+          <article class="fracture-card geometry-card">
+            <h4>Griffith&rsquo;s center crack</h4>
+            <figure class="technical-figure geometry-sketch">
+              <img src="griffith-center-crack.svg" width="440" height="300" alt="A central through crack of total length 2a in a wide plate. Uniform tensile stress acts perpendicular to the crack.">
+              <figcaption>The plate is effectively infinite. The remote tensile stress is &sigma;, and <i>a</i> is the half-length of the through crack.</figcaption>
+            </figure>
+            <p class="formula" data-tex="K_{\mathrm{I}} = \sigma\sqrt{\pi a}"><i>K</i><sub>I</sub> = &sigma;&radic;(&pi;<i>a</i>)</p>
+          </article>
+          <article class="fracture-card geometry-card" id="geometry-ct">
+            <h4>Compact tension, C(T)</h4>
+            <figure class="technical-figure geometry-sketch">
+              <img src="compact-tension.svg" width="440" height="338" alt="Compact tension specimen with pin forces F, load line, total crack length a, width W, thickness B, starter notch and fatigue precrack" loading="lazy">
+              <figcaption>Two pins pull through the holes and open the crack. Measure <i>a</i> and <i>W</i> from the pin load line. The total crack length includes the starter notch and fatigue precrack.</figcaption>
+            </figure>
+            <p class="formula" data-tex="K_{\mathrm{I}} = \frac{F}{B\sqrt{W}}\,f(\alpha)"><i>K</i><sub>I</sub> = [<i>F</i>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(&alpha;)</p>
+            <p class="formula" data-tex="\begin{aligned} f(\alpha) &= \frac{2+\alpha}{(1-\alpha)^{3/2}} \\ &\times\bigl[0.886+4.64\alpha \\ &\enspace -13.32\alpha^2+14.72\alpha^3 \\ &\enspace -5.60\alpha^4\bigr] \end{aligned}"><i>f</i>(&alpha;) = [(2 + &alpha;)/(1 &minus; &alpha;)<sup>3/2</sup>] [0.886 + 4.64&alpha; &minus; 13.32&alpha;<sup>2</sup> + 14.72&alpha;<sup>3</sup> &minus; 5.60&alpha;<sup>4</sup>]</p>
+          </article>
+          <article class="fracture-card geometry-card" id="geometry-seb">
+            <h4>Single-edge bend, SE(B)</h4>
+            <figure class="technical-figure geometry-sketch">
+              <img src="bend-specimen.svg" width="440" height="300" alt="Single-edge bend specimen with central force F, two supports separated by S, crack length a, width W, thickness B, starter notch and fatigue precrack" loading="lazy">
+              <figcaption>The center roller loads the bar over two supports with span <i>S</i> = 4<i>W</i>. Measure <i>a</i> from the tensile surface to the fatigue crack tip. Here <i>W</i> is the beam depth.</figcaption>
+            </figure>
+            <p class="formula" data-tex="K_{\mathrm{I}} = \frac{FS}{BW^{3/2}}\,f(\alpha)"><i>K</i><sub>I</sub> = [<i>FS</i>/(<i>BW</i><sup>3/2</sup>)] <i>f</i>(&alpha;)</p>
+            <p class="formula" data-tex="\begin{aligned} f(\alpha) &= \frac{3\sqrt{\alpha}}{2(1+2\alpha)(1-\alpha)^{3/2}} \\ &\times \bigl[1.99-\alpha(1-\alpha) \\ &\enspace (2.15-3.93\alpha+2.70\alpha^2)\bigr] \end{aligned}"><i>f</i>(&alpha;) = [3&radic;&alpha;/(2(1 + 2&alpha;)(1 &minus; &alpha;)<sup>3/2</sup>)] [1.99 &minus; &alpha;(1 &minus; &alpha;)(2.15 &minus; 3.93&alpha; + 2.70&alpha;<sup>2</sup>)]</p>
+          </article>
+          <article class="fracture-card geometry-card" id="geometry-dct">
+            <h4>Disk-shaped compact tension, DC(T)</h4>
+            <figure class="technical-figure geometry-sketch">
+              <a href="disk-compact-specimen.jpg"><img src="disk-compact-specimen.jpg" width="664" height="794" alt="Disk-shaped compact tension specimen with two pin holes, initial crack length a₀, remaining ligament b₀, width W and thickness B" loading="lazy"></a>
+              <figcaption>The pins open the crack. Measure <i>a</i> and <i>W</i> from the pin load line. The sketch labels the initial crack length <i>a</i><sub>0</sub> and the remaining ligament <i>b</i><sub>0</sub>. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6981386/#materials-13-00244-f002">Kong et al., Figure 2</a> &middot; <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></figcaption>
+            </figure>
+            <p class="formula" data-tex="K_{\mathrm{I}} = \frac{F}{B\sqrt{W}}\,f(\alpha)"><i>K</i><sub>I</sub> = [<i>F</i>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(&alpha;)</p>
+            <p class="formula" data-tex="\begin{aligned} f(\alpha) &= \frac{2+\alpha}{(1-\alpha)^{3/2}} \\ &\times\bigl[0.76+4.80\alpha \\ &\enspace -11.58\alpha^2+11.43\alpha^3 \\ &\enspace -4.08\alpha^4\bigr] \end{aligned}"><i>f</i>(&alpha;) = [(2 + &alpha;)/(1 &minus; &alpha;)<sup>3/2</sup>] [0.76 + 4.80&alpha; &minus; 11.58&alpha;<sup>2</sup> + 11.43&alpha;<sup>3</sup> &minus; 4.08&alpha;<sup>4</sup>]</p>
+          </article>
+        </div>
+        <p>Use each calibration with the geometry and loading shown. For a toughness test, check the specimen proportions, crack-length range, and precrack requirements in the applicable standard.</p>
+        <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19920021173">NASA primer, center crack</a> &middot; <a href="https://ntrs.nasa.gov/citations/19760012381">Srawley, C(T) and SE(B)</a> &middot; <a href="https://ntrs.nasa.gov/citations/19800007170">Newman, DC(T)</a> &middot; <a href="https://store.astm.org/e0399-24.html">ASTM E399, Annexes A3&ndash;A5</a></p>
+      </section>
       <article class="fracture-card worked-example">
         <h3>Calculate stress intensity for a central crack</h3>
         <p>A central through crack is 4.0 mm long in a wide plate under 150 MPa tension. With <i>a</i> = 0.0020 m and <i>Y</i> &asymp; 1, the stress intensity is 150&radic;(&pi; &times; 0.0020) = <strong>11.9 MPa&radic;m</strong>. If the total length increases to 16.0 mm under the same stress and <i>Y</i> is still approximately 1, <i>K</i><sub>I</sub> doubles to <strong>23.8 MPa&radic;m</strong>.</p>
@@ -401,22 +444,43 @@
         <p class="source-line"><a href="https://ntrs.nasa.gov/citations/19740027167">NASA fracture mechanics assessment, equations 30&ndash;34</a></p>
         <div class="plastic-zone-comparison" id="plastic-zone-shapes">
           <h4>Crack-tip plastic zones in Modes I, II, and III</h4>
-          <p>The plots use the same millimetre scale for all three pure modes, with a stress intensity magnitude of 30 MPa&radic;m and a yield strength of 450 MPa. Each contour marks where the von Mises equivalent stress from the leading elastic field reaches the yield strength. The black line ends at the crack tip at (0, 0).</p>
+          <p id="plastic-zone-settings">All three pure modes use the same stress intensity magnitude, fixed millimetre axes, and a yield strength of <strong>450 MPa</strong>. Each contour marks where the von Mises equivalent stress from the leading elastic field reaches the yield strength. The dark line ends at the crack tip at (0, 0).</p>
+          <div class="fracture-controls plastic-zone-control" id="plastic-zone-control" hidden>
+            <label for="plastic-zone-k"><span>Stress intensity magnitude |<i>K</i>|</span> <output id="plastic-zone-k-value" for="plastic-zone-k">30 MPa&radic;m</output></label>
+            <input id="plastic-zone-k" type="range" min="0" max="30" step="1" value="30" aria-describedby="plastic-zone-settings">
+            <div class="plastic-zone-range" aria-hidden="true"><span>0</span><span>30 MPa&radic;m</span></div>
+          </div>
           <div class="plastic-zone-grid">
-            <figure class="fracture-card technical-figure">
-              <a href="plastic-zone-mode-i.png"><img src="plastic-zone-mode-i.png" width="1280" height="1148" loading="lazy" alt="Mode I opening. The compact shaded zone extends mainly ahead of the tip, with a smaller, two-lobed plane-strain contour."></a>
-              <figcaption>Directly ahead of the tip, first yield occurs at <strong>0.71 mm</strong> in plane stress and <strong>0.11 mm</strong> in plane strain.</figcaption>
+            <figure class="fracture-card technical-figure" data-plastic-zone-mode="i">
+              <a class="plastic-zone-original" href="plastic-zone-mode-i.png"><img src="plastic-zone-mode-i.png" width="1280" height="1148" loading="lazy" alt="Mode I opening. The compact shaded zone extends mainly ahead of the tip, with a smaller, two-lobed plane-strain contour."></a>
+              <div class="plastic-zone-chart" hidden>
+                <h5>Mode I &middot; Opening</h5>
+                <canvas width="640" height="480" role="img" aria-label="Mode I first-yield contours for plane stress and plane strain" aria-describedby="plastic-zone-caption-i"></canvas>
+                <div class="plastic-zone-legend"><span class="plot-key">Plane stress</span><span class="plot-key plastic-zone-strain-key">Plane strain</span></div>
+              </div>
+              <figcaption id="plastic-zone-caption-i">Radius directly ahead of the tip is <strong data-zone-ahead>0.71 mm</strong> in plane stress and <strong data-zone-strain>0.11 mm</strong> in plane strain.</figcaption>
             </figure>
-            <figure class="fracture-card technical-figure">
-              <a href="plastic-zone-mode-ii.png"><img src="plastic-zone-mode-ii.png" width="1280" height="1148" loading="lazy" alt="Mode II sliding. The plane-stress zone extends farther behind the tip. Both contours meet on the axis ahead of the tip."></a>
-              <figcaption>Both contours reach <strong>2.12 mm</strong> directly ahead of the tip. The larger plane-stress lobe extends behind the tip.</figcaption>
+            <figure class="fracture-card technical-figure" data-plastic-zone-mode="ii">
+              <a class="plastic-zone-original" href="plastic-zone-mode-ii.png"><img src="plastic-zone-mode-ii.png" width="1280" height="1148" loading="lazy" alt="Mode II sliding. The plane-stress zone extends farther behind the tip. Both contours meet on the axis ahead of the tip."></a>
+              <div class="plastic-zone-chart" hidden>
+                <h5>Mode II &middot; Sliding</h5>
+                <canvas width="640" height="480" role="img" aria-label="Mode II first-yield contours for plane stress and plane strain" aria-describedby="plastic-zone-caption-ii"></canvas>
+                <div class="plastic-zone-legend"><span class="plot-key">Plane stress</span><span class="plot-key plastic-zone-strain-key">Plane strain</span></div>
+              </div>
+              <figcaption id="plastic-zone-caption-ii">Radius directly ahead of the tip is <strong data-zone-ahead>2.12 mm</strong> in both plane stress and plane strain.</figcaption>
             </figure>
-            <figure class="fracture-card technical-figure">
-              <a href="plastic-zone-mode-iii.png"><img src="plastic-zone-mode-iii.png" width="1280" height="1148" loading="lazy" alt="Mode III tearing. The first-yield contour for antiplane shear is a circle centered on the crack tip."></a>
-              <figcaption>The antiplane shear field gives a circular first-yield contour with a radius of <strong>2.12 mm</strong>.</figcaption>
+            <figure class="fracture-card technical-figure" data-plastic-zone-mode="iii">
+              <a class="plastic-zone-original" href="plastic-zone-mode-iii.png"><img src="plastic-zone-mode-iii.png" width="1280" height="1148" loading="lazy" alt="Mode III tearing. The first-yield contour for antiplane shear is a circle centered on the crack tip."></a>
+              <div class="plastic-zone-chart" hidden>
+                <h5>Mode III &middot; Tearing</h5>
+                <canvas width="640" height="480" role="img" aria-label="Circular Mode III first-yield contour for antiplane shear" aria-describedby="plastic-zone-caption-iii"></canvas>
+                <div class="plastic-zone-legend"><span class="plot-key">Antiplane shear</span></div>
+              </div>
+              <figcaption id="plastic-zone-caption-iii">The circular first-yield contour has a radius of <strong data-zone-ahead>2.12 mm</strong>.</figcaption>
             </figure>
           </div>
-          <p>The plane-strain contours use the angular elastic field with &nu; = 0.30. The earlier 0.24 mm value for Mode I comes from the characteristic engineering estimate.</p>
+          <p>At fixed yield strength, doubling <i>K</i> quadruples the distance from the crack tip to the contour. The plane-strain contours use the angular elastic field with &nu; = 0.30. The earlier 0.24 mm value for Mode I comes from the characteristic engineering estimate at 30 MPa&radic;m.</p>
+          <p class="source-line" id="plastic-zone-original-links" hidden>Full-size figures at 30 MPa&radic;m &middot; <a href="plastic-zone-mode-i.png">Mode I</a> &middot; <a href="plastic-zone-mode-ii.png">Mode II</a> &middot; <a href="plastic-zone-mode-iii.png">Mode III</a></p>
           <p class="source-line"><a href="https://www.techno-press.com/papers/14599">Ayatollahi and Sedighiani, Modes I and II</a> &middot; <a href="https://msp.org/jomms/2010/5-6/jomms-v5-n6-p10-s.pdf#page=9">Yi, Mode III elastic field, equation 33</a></p>
         </div>
       </section>
@@ -521,19 +585,7 @@
     <section id="testing" class="fracture-section" aria-labelledby="testing-title">
       <h2 id="testing-title">Fracture toughness testing</h2>
       <p class="section-lead">Grow a sharp fatigue precrack from a machined starter notch. Load the specimen so the crack opens in Mode I, and record force and displacement. Use the measured crack length and specimen geometry to determine resistance to crack extension.</p>
-      <div class="two-up">
-        <figure class="fracture-card technical-figure">
-          <h3>Compact tension, C(T)</h3>
-          <img src="compact-tension.svg" width="440" height="338" alt="Compact tension specimen with pin forces F, load line, total crack length a, width W, thickness B, starter notch and fatigue precrack" loading="lazy">
-          <figcaption>Two pins pull through the holes and open the crack. Measure both <i>a</i> and <i>W</i> from the pin load line. The total crack length includes the starter notch and fatigue precrack.</figcaption>
-        </figure>
-        <figure class="fracture-card technical-figure">
-          <h3>Single-edge bend, SE(B)</h3>
-          <img src="bend-specimen.svg" width="440" height="300" alt="Single-edge bend specimen with central force F, two supports separated by S, crack length a, width W, thickness B, starter notch and fatigue precrack" loading="lazy">
-          <figcaption>The center roller bends the bar over two supports. The crack is on the tensile side. Measure <i>a</i> from the notched surface to the fatigue crack tip. This example uses span <i>S</i> = 4<i>W</i>.</figcaption>
-        </figure>
-      </div>
-      <p class="section-note">These schematics show the dimensional conventions. The selected standard supplies the permitted proportions, tolerances, notch preparation, and precrack requirements.</p>
+      <p><a href="#stress-intensity-geometries">See the C(T), SE(B), and DC(T) sketches and stress-intensity formulas.</a></p>
       <div class="fracture-card test-selection">
         <h3>Choose the test from the material response</h3>
         <table class="fracture-data">
@@ -588,13 +640,6 @@
         <h3>Interpret a failed force check</h3>
         <p>A second record gives <i>F</i><sub>Q</sub> = 10.0 kN and <i>F</i><sub>max</sub> = 11.8 kN. The ratio is 1.18, above 1.10. The result remains conditional <i>K</i><sub>Q</sub>. Meeting a size requirement cannot compensate for this failed force-record check.</p>
       </article>
-      <details class="fracture-card supporting-figure">
-        <summary>A published disk compact specimen</summary>
-        <figure class="specimen-example">
-          <img src="disk-compact-specimen.jpg" width="664" height="794" alt="Published disk compact tension specimen sketch with loading holes, starter notch, remaining ligament, width and thickness" loading="lazy">
-          <figcaption><p>The disk compact DC(T) specimen provides another standardized geometry. Its calibration follows its own dimensions and loading arrangement.</p><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6981386/#materials-13-00244-f002">Kong et al., <i>Materials</i> (2020), Figure 2</a> &middot; <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></figcaption>
-        </figure>
-      </details>
       <p><a class="button secondary" href="../../simulations/fracture-toughness/index.html">Run the fracture toughness lab and see specimen sketches</a></p>
     </section>
   </main>
