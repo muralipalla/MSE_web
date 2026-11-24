@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=12">
+  <link rel="stylesheet" href="style.css?v=13">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
@@ -40,7 +40,6 @@
       <a href="#fractography">Fractography</a>
       <a href="#transition">Ductile-to-brittle transition</a>
       <a href="#impact">Impact tests</a>
-      <a href="#comet">Comet failures</a>
       <a href="#concentration">Stress concentration</a>
       <a href="#griffith">Griffith&rsquo;s energy balance</a>
       <a href="#loading-modes">Modes of fracture</a>
@@ -52,7 +51,7 @@
 
     <section id="cases" class="fracture-section" aria-labelledby="cases-title">
       <h2 id="cases-title">Historical accidents that gave birth to Fracture Mechanics</h2>
-      <p class="section-lead">Steel structures that fractured in cold service prompted investigations into the combined effects of material toughness, flaws, and structural details.</p>
+      <p class="section-lead">Investigations of ship and aircraft failures show how material toughness, structural details, and repeated loading influence crack initiation and growth.</p>
       <div class="two-up">
         <article class="fracture-card">
           <h3>Wartime welded ships</h3>
@@ -74,6 +73,32 @@
           <a href="https://nvlpubs.nist.gov/nistpubs/Legacy/IR/nistir6118.pdf#page=6">NIST metallurgical investigation, Figure 2</a>
         </article>
       </div>
+
+      <section id="comet" class="historical-case" aria-labelledby="comet-title">
+        <h3 id="comet-title">The Comet failures</h3>
+        <div class="figure-pair">
+          <div>
+            <p>The Comet investigation showed how <strong>small-radius corners in nearly rectangular cabin windows and other openings concentrate tensile stress</strong>. The local stresses were higher than designers had anticipated. Countersunk fastener holes near a corner could raise the stress further. These details made the pressure cabin vulnerable to fatigue under repeated pressurization.</p>
+            <p>In 1954, the de Havilland Comet G-ALYP broke up near Elba. Investigators found fatigue cracking near the rear roof opening for a direction-finding antenna. They identified the edge of a nearby countersunk bolt hole as the probable crack origin. A second breakup near Naples that year was consistent with a similar failure, although too little wreckage was recovered to establish the cause.</p>
+            <p>In a separate full-scale test, investigators repeatedly pressurized Comet G-ALYU in a water tank. The cabin ruptured at a corner of the forward escape-hatch window. As an aircraft climbs and descends, the changing cabin pressure differential cycles the stress in the skin. Repeated cycles can initiate and grow a fatigue crack at a highly stressed detail. As the crack grows, the cabin can fracture at a pressure differential it had previously carried.</p>
+            <p>This case connects <strong>fatigue crack growth under repeated loading</strong> with <strong>final fracture at a critical flaw size</strong>. Opening shape and corner radius affect <a href="#concentration">stress concentration</a>. The <a href="#stress-intensity">stress intensity factor</a> and <a href="#toughness">fracture toughness</a> relate the applied load to the critical crack size.</p>
+            <p class="source-line"><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/G-ALYV">FAA, stress concentrations at window corners</a> &middot; <a href="https://www.faa.gov/sites/faa.gov/files/2022-10/G-ALYP_Report_0.pdf">1955 Court of Inquiry, paragraphs 75&ndash;79 and Appendix VI</a> &middot; <a href="https://collection.sciencemuseumgroup.org.uk/objects/co202453/section-of-upper-fuselage-of-comet-g-alyp-showing-fatigue-cracks">Science Museum fuselage record</a></p>
+          </div>
+          <div class="comet-evidence">
+            <figure class="fracture-card technical-figure">
+              <img src="comet-hatch-failure.png" width="615" height="505" alt="Photograph taken inside Comet G-ALYU after the pressure test, showing the forward port-side escape-hatch window and torn fuselage skin extending from its lower corners" loading="lazy">
+              <figcaption><h4>Window-corner failure in the pressure test</h4><p>The cabin skin tore at the forward port-side escape hatch of G-ALYU. This view from inside the airframe shows the window opening and the ruptured skin below it.</p><a href="https://www.faa.gov/sites/faa.gov/files/2022-10/G-ALYP_Report_0.pdf">1955 Court of Inquiry, Figure 7, HM Stationery Office</a> &middot; <a href="https://commons.wikimedia.org/wiki/File:Comet_G-ALYU_escape_hatch_failure.png">Completeaerogeek digitization, Wikimedia Commons</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></figcaption>
+            </figure>
+            <details class="fracture-card comet-roof-panel">
+              <summary>View the recovered G-ALYP roof panel</summary>
+              <figure class="technical-figure">
+                <img src="comet-g-alyp-fuselage.jpg" width="1280" height="568" alt="Recovered upper fuselage panel from Comet G-ALYP with two antenna openings on display at the Science Museum" loading="lazy">
+                <figcaption>Recovered upper fuselage from G-ALYP, with openings for the automatic direction-finding antennas. <a href="https://commons.wikimedia.org/wiki/File:Fuselage_of_de_Havilland_Comet_Airliner_G-ALYP.JPG">Krelnik, Wikimedia Commons, resized</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></figcaption>
+              </figure>
+            </details>
+          </div>
+        </div>
+      </section>
     </section>
 
     <section id="fracture-modes" class="fracture-section" aria-labelledby="modes-title">
@@ -118,7 +143,7 @@
         </div>
       </section>
       <p class="section-note">Ductile tearing and brittle fracture can occur in different regions of one surface. Temperature, loading rate, and constraint around the crack tip influence which mechanism dominates.</p>
-      <p>A <strong>Charpy impact test</strong> strikes a notched bar with a pendulum and measures the absorbed energy. Repeating the test at different temperatures helps characterize how the fracture response changes. The <a href="#cases">historical investigations</a> use this test to compare toughness at different temperatures.</p>
+      <p>A <strong>Charpy impact test</strong> strikes a notched bar with a pendulum and measures the absorbed energy. Repeating the test at different temperatures helps characterize how the fracture response changes. The <a href="#cases">ship cases</a> show how impact tests help assess fracture in cold service.</p>
     </section>
 
     <section id="fractography" class="fracture-section" aria-labelledby="fractography-title">
@@ -209,32 +234,6 @@
         <p>The pendulum loses 110 J between release and the peak after fracture. The correction for machine losses over this swing is 2 J. The specimen&rsquo;s reported absorbed energy is 110 &minus; 2 = <strong>108 J</strong>.</p>
       </article>
       <p><a class="button secondary" href="../../simulations/impact-test/index.html">Run the Charpy &amp; Izod lab</a></p>
-    </section>
-
-    <section id="comet" class="fracture-section" aria-labelledby="comet-title">
-      <h2 id="comet-title">The Comet failures</h2>
-      <div class="figure-pair">
-        <div>
-          <p>The Comet investigation showed how <strong>small-radius corners in nearly rectangular cabin windows and other openings concentrate tensile stress</strong>. The local stresses were higher than designers had anticipated. Countersunk fastener holes near a corner could raise the stress further. These details made the pressure cabin vulnerable to fatigue under repeated pressurization.</p>
-          <p>In 1954, the de Havilland Comet G-ALYP broke up near Elba. Investigators found fatigue cracking near the rear roof opening for a direction-finding antenna. They identified the edge of a nearby countersunk bolt hole as the probable crack origin. A second breakup near Naples that year was consistent with a similar failure, although too little wreckage was recovered to establish the cause.</p>
-          <p>In a separate full-scale test, investigators repeatedly pressurized Comet G-ALYU in a water tank. The cabin ruptured at a corner of the forward escape-hatch window. As an aircraft climbs and descends, the changing cabin pressure differential cycles the stress in the skin. Repeated cycles can initiate and grow a fatigue crack at a highly stressed detail. As the crack grows, the cabin can fracture at a pressure differential it had previously carried.</p>
-          <p>This case connects <strong>fatigue crack growth under repeated loading</strong> with <strong>final fracture at a critical flaw size</strong>. The next section examines how opening shape and corner radius affect stress concentration. Crack-tip stresses and fracture toughness then connect the applied stress with the critical crack size.</p>
-          <p class="source-line"><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/G-ALYV">FAA, stress concentrations at window corners</a> &middot; <a href="https://www.faa.gov/sites/faa.gov/files/2022-10/G-ALYP_Report_0.pdf">1955 Court of Inquiry, paragraphs 75&ndash;79 and Appendix VI</a> &middot; <a href="https://collection.sciencemuseumgroup.org.uk/objects/co202453/section-of-upper-fuselage-of-comet-g-alyp-showing-fatigue-cracks">Science Museum fuselage record</a></p>
-        </div>
-        <div class="comet-evidence">
-          <figure class="fracture-card technical-figure">
-            <img src="comet-hatch-failure.png" width="615" height="505" alt="Photograph taken inside Comet G-ALYU after the pressure test, showing the forward port-side escape-hatch window and torn fuselage skin extending from its lower corners" loading="lazy">
-            <figcaption><h3>Window-corner failure in the pressure test</h3><p>The cabin skin tore at the forward port-side escape hatch of G-ALYU. This view from inside the airframe shows the window opening and the ruptured skin below it.</p><a href="https://www.faa.gov/sites/faa.gov/files/2022-10/G-ALYP_Report_0.pdf">1955 Court of Inquiry, Figure 7, HM Stationery Office</a> &middot; <a href="https://commons.wikimedia.org/wiki/File:Comet_G-ALYU_escape_hatch_failure.png">Completeaerogeek digitization, Wikimedia Commons</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></figcaption>
-          </figure>
-          <details class="fracture-card comet-roof-panel">
-            <summary>View the recovered G-ALYP roof panel</summary>
-            <figure class="technical-figure">
-              <img src="comet-g-alyp-fuselage.jpg" width="1280" height="568" alt="Recovered upper fuselage panel from Comet G-ALYP with two antenna openings on display at the Science Museum" loading="lazy">
-              <figcaption>Recovered upper fuselage from G-ALYP, with openings for the automatic direction-finding antennas. <a href="https://commons.wikimedia.org/wiki/File:Fuselage_of_de_Havilland_Comet_Airliner_G-ALYP.JPG">Krelnik, Wikimedia Commons, resized</a> &middot; <a href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a></figcaption>
-            </figure>
-          </details>
-        </div>
-      </div>
     </section>
 
     <section id="concentration" class="fracture-section" aria-labelledby="concentration-title">
