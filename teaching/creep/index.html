@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fdf6ec">
+  <meta name="description" content="Predict creep deformation and rupture from material tests and a hot-service duty history.">
+  <title>Creep | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/teaching-intro.css">
+  <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
+  <link rel="stylesheet" href="../../css/service-life.css?v=2">
+  <link rel="stylesheet" href="furnace.css?v=2">
+  <link rel="stylesheet" href="mechanism-map.css?v=3">
+  <link rel="stylesheet" href="cavitation.css?v=1">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
+  <script src="../../js/math-render.js?v=1" defer></script>
+  <script src="../../js/service-life-ui.js?v=2" defer></script>
+  <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
+  <script src="furnace-view.js?v=2" defer></script>
+  <script src="app.js?v=4" defer></script>
+  <script src="lmp.js?v=2" defer></script>
+  <script src="mechanism-grains.js?v=1" defer></script>
+  <script src="mechanism-map.js?v=3" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the creep lesson</a>
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#topics">&larr; Back to modules</a>
+    </nav>
+  </header>
+
+  <main class="teaching-shell" id="lesson">
+    <header class="teaching-intro">
+      <div><p class="eyebrow">Teaching page 13</p><h1>Creep</h1></div>
+      <div class="teaching-intro-copy">
+        <p>At high temperature, a loaded part can keep changing shape long after the load stops changing. Watch it happen in a furnace, then use the measured quantities to estimate remaining hot hours.</p>
+        <p class="teaching-intro-note"><a href="#creep-test">Start the furnace experiment &rarr;</a> &middot; <a href="#formula-summary">Formula summary</a></p>
+      </div>
+    </header>
+
+    <nav class="life-route creep-lesson-route" aria-label="Lesson sections">
+      <a href="#service-case">Why creep matters</a>
+      <a href="#creep-test">Run the experiment</a>
+      <a href="#models">Predict life</a>
+      <a href="#mechanism-map">Mechanism map</a>
+      <a href="#lab">Replay a service log</a>
+    </nav>
+
+    <section class="life-section life-story-lead" id="service-case" aria-labelledby="service-title">
+      <div>
+        <h2 id="service-title">How does a hot turbine blade keep its shape?</h2>
+        <p>A jet engine&rsquo;s gas can be hotter than the melting point of its turbine blade alloy. Cooling air and a ceramic thermal barrier keep the blade metal cooler. Even below melting, a spinning blade experiences sustained tensile stress. Over many hot hours it can slowly lengthen and close the small gap to the surrounding casing. This time-dependent deformation is <strong>creep</strong>.</p>
+        <p>Some high-pressure turbine blades are cast as single crystals of a nickel-based superalloy. Removing grain boundaries removes pathways for boundary diffusion and sliding. The material and the cooling system work together to keep creep slow enough for the blade to retain its shape in service.</p>
+        <p>In the video, a heated steel specimen keeps deforming under a constant load. Watch for that same gradual stretch in the simulated furnace test. <a href="https://www.youtube.com/watch?v=QtxVdC7pBQM&amp;t=585s">Heated-steel demonstration at 9:45</a></p>
+        <p class="life-source"><a href="https://www.youtube.com/watch?v=QtxVdC7pBQM">The Ridiculous Engineering Of Jet Engines &mdash; Veritasium (YouTube)</a> &middot; <a href="https://www.rolls-royce.com/media/our-stories/discover/2021/our-sustainability-journey.aspx">Rolls-Royce on turbine blade design</a></p>
+        <p>The same time-at-temperature question applies to the disk that holds the blades. Follow an Alloy 718 disk-rim example through the lesson. The operating log tells us how long the rim was hot, and the furnace test shows how much a metal specimen can stretch in that time. <a href="https://ntrs.nasa.gov/citations/19780025535">NASA tests of turbine disk alloys</a></p>
+      </div>
+      <aside class="life-story-question">If the part has already logged 1,000 hot hours, how much time is left before it stretches too far or ruptures?</aside>
+    </section>
+
+    <section class="life-section" id="creep-test" aria-labelledby="test-title">
+      <h2 id="test-title">Heat a specimen, apply a load, and watch it stretch</h2>
+      <p class="life-lead">Set the specimen&rsquo;s metal temperature and apply a fixed tensile force. The gauge records extension after loading. Step through the test and watch the point move along the strain curve.</p>
+      <div class="life-card life-experiment" id="furnace">
+        <div class="life-experiment-grid">
+          <div>
+            <figure class="life-instrument">
+              <figcaption>Constant-load creep test</figcaption>
+              <canvas data-creep-3d hidden tabindex="0" role="img" aria-label="3D cutaway of the creep furnace, with a specimen held by its upper grip and pulled by a hanging weight." aria-describedby="furnace-orbit">Watch the gauge marks move apart as the specimen stretches.</canvas>
+              <canvas data-creep-rig role="img" aria-label="A specimen is suspended in a furnace, with a fixed load at its lower end and a highlighted interval showing gauge length.">As the test progresses, the load hangs lower and the gauge length increases.</canvas>
+              <span class="life-caption"><span id="furnace-orbit" hidden>Drag or use the left and right arrow keys to rotate. </span>The yellow marks show the gauge length. Stretching is exaggerated.</span>
+            </figure>
+            <div class="life-machine-actions">
+              <button class="life-play" type="button" data-creep-play>Start test</button>
+              <button type="button" data-creep-step>Step through test</button>
+              <button type="button" data-creep-reset>Reset time</button>
+              <button type="button" data-creep-view hidden>Show schematic</button>
+              <label class="creep-playback" for="furnace-speed">Animation speed
+                <select id="furnace-speed">
+                  <option value="1" selected>1× Normal</option>
+                  <option value="0.5">½× Slow</option>
+                  <option value="0.25">¼× Very slow</option>
+                </select>
+              </label>
+            </div>
+            <div class="life-live-state"><span data-result="time">0 h</span><strong data-result="strain">0.273%</strong><span data-result="phase" data-sign="hot">Elastic extension</span></div>
+          </div>
+          <div>
+            <figure class="life-plot life-plot-focus">
+              <figcaption>Read the test from the elastic jump to rupture</figcaption>
+              <canvas id="creep-stages" data-creep-curve role="img" aria-label="Total strain over the creep test. The strain jumps when load is applied, then rises through primary, minimum-rate, and tertiary intervals until rupture.">Follow the point as the specimen stretches under load.</canvas>
+              <span class="life-caption">The amber marker tracks the specimen in the furnace. The curve shape illustrates the stages. Minimum creep rate and rupture time come from published Alloy 718 specimen fits.</span>
+            </figure>
+            <fieldset class="life-experiment-inputs">
+              <legend>Change the test conditions</legend>
+              <div class="life-control"><label for="furnace-temperature">Metal temperature <span data-value="testTemperature" aria-hidden="true">650 °C</span></label><input id="furnace-temperature" name="testTemperature" type="range" min="625" max="660" step="1" value="650" data-unit=" °C"></div>
+              <div class="life-control"><label for="furnace-stress">Initial stress <span data-value="testStress" aria-hidden="true">450 MPa</span></label><input id="furnace-stress" name="testStress" type="range" min="400" max="500" step="5" value="450" data-unit=" MPa"></div>
+            </fieldset>
+            <label class="life-check-control"><input type="checkbox" data-hotter> Compare a specimen 15 °C hotter at the same stress</label>
+          </div>
+        </div>
+        <dl class="life-results life-cycle-values">
+          <div><dt>Immediate elastic strain</dt><dd data-result="elastic">0.273%</dd></div>
+          <div><dt>Minimum creep rate</dt><dd data-result="rate">2.51e−4 %/h</dd></div>
+          <div><dt>Time to rupture</dt><dd data-result="rupture">2,839.6 h</dd></div>
+        </dl>
+        <details class="life-details">
+          <summary>What the demonstration assumes</summary>
+          <p>Zero the extension measurement at the test temperature before loading. The immediate jump uses a representative hot elastic modulus of 165 GPa. The three stage shapes are illustrative and are scaled using the fitted minimum rate and rupture time of NCF718-B. The live test runs on a compressed time scale. True stress can rise during a constant-force test as the area shrinks.</p>
+          <p class="life-source"><a href="https://doi.org/10.1080/27660400.2024.2425179">Alloy 718 creep regressions, tables 6 and 8</a> &middot; <a href="https://www.tms.org/superalloys/10.7449/1992/Superalloys_1992_589_598.pdf">Measured single-crystal creep curves</a></p>
+        </details>
+        <noscript><p class="life-note">Enable JavaScript to run the test or change the furnace settings.</p></noscript>
+      </div>
+      <div class="life-story-transition"><p>The slope tells us how fast strain builds. The endpoint tells us when the specimen fails. We can turn both into service limits.</p><a href="#models">Use the curve to predict life &darr;</a></div>
+    </section>
+
+    <section class="life-section" id="models" aria-labelledby="models-title">
+      <h2 id="models-title">Two ways to run out of life</h2>
+      <p class="life-lead">In primary creep the strain rate often falls. The shallowest part gives the minimum rate, even when there is little steady plateau. In tertiary creep the rate rises as the section thins or damage builds. Use the slope for a deformation estimate and the failure time for rupture.</p>
+      <div class="life-grid">
+        <article class="life-card" id="deformation-life">
+          <h3>Time to a strain limit</h3>
+          <p>The furnace&rsquo;s dashed guide sits 0.5% strain above the elastic jump. Clearance or dimensional tolerance may set a limit like this. For nearly steady creep, divide the remaining strain allowance by the estimated rate. At 0.002%/h, a 0.30% allowance lasts about <strong>150 h</strong>.</p>
+          <p class="formula" data-tex="\dot{\varepsilon}_{\min}=A\sigma^n\exp\!\left(-\frac{Q}{R_gT}\right)">ε̇<sub>min</sub> = Aσ<sup>n</sup> exp[−Q/(R<sub>g</sub>T)]</p>
+          <p>The Norton–Arrhenius fit gives the stress exponent <i>n</i> from the slope against log stress and the activation energy <i>Q</i> from the slope against inverse temperature in kelvin. Use the full creep curve when primary or tertiary strain matters.</p>
+        </article>
+        <article class="life-card" id="rupture-life">
+          <h3>Time to rupture</h3>
+          <p>The red dot on the reference curve marks rupture. Test several stresses and temperatures to estimate its location under other conditions. One approach fits stress against the Larson–Miller parameter, using an absolute temperature and a constant fitted to the material.</p>
+          <p class="formula" data-tex="P_{\mathrm{LM}}=T\!\left[C_{\mathrm{LM}}+\log_{10}(t_r/1\,\mathrm{h})\right]">P<sub>LM</sub> = T[C<sub>LM</sub> + log<sub>10</sub>(t<sub>r</sub>/1 h)]</p>
+          <p>Use kelvin for <i>T</i> and hours for the rupture time <i>t</i><sub>r</sub>. Once you have a fit, find the parameter at the service stress and use the service temperature to recover the rupture time.</p>
+          <p class="life-source"><a href="#lmp-extrapolation">Read the stress–LMP graph &darr;</a> &middot; <a href="https://doi.org/10.1115/1.4015909">Larson and Miller</a></p>
+        </article>
+      </div>
+
+      <section class="life-topic" id="lmp-extrapolation" aria-labelledby="lmp-title">
+        <h3 id="lmp-title">Read a rupture life from the stress–LMP graph</h3>
+        <p class="life-lead">Convert each rupture test to a Larson–Miller parameter, then plot it against its test stress. This example uses measured Alloy 718 rupture times from one NIMS heat and assumes <i>C</i><sub>LM</sub> = 20.</p>
+        <div class="life-card" data-lmp-demo>
+          <div class="life-grid life-split">
+            <figure class="life-plot life-plot-focus">
+              <figcaption>Rupture stress vs. Larson–Miller parameter</figcaption>
+              <canvas data-lmp-plot role="img" aria-label="Logarithmic stress versus Larson–Miller parameter. Measured rupture points, a fitted line, a dashed extrapolation, and a held-out test are shown.">The worked example and test table below give the values used in the graph.</canvas>
+              <span class="life-caption">The dashed segment extends the fit below 300 MPa. At fixed stress, changing temperature changes the predicted hours while the point on the graph stays put.</span>
+            </figure>
+            <div class="life-stack">
+              <fieldset class="life-controls">
+                <legend>Choose service conditions</legend>
+                <div class="life-control"><label for="lmp-stress">Tensile stress <span data-value="lmpStress" aria-hidden="true">250 MPa</span></label><input id="lmp-stress" name="lmpStress" type="range" min="100" max="700" step="5" value="250" data-unit=" MPa"></div>
+                <div class="life-control"><label for="lmp-temperature">Metal temperature <span data-value="lmpTemperature" aria-hidden="true">650 °C</span></label><input id="lmp-temperature" name="lmpTemperature" type="range" min="550" max="750" step="5" value="650" data-unit=" °C"></div>
+                <div class="life-machine-actions">
+                  <button type="button" data-lmp-stress="250" data-lmp-temperature="650">Worked example</button>
+                  <button type="button" data-lmp-stress="100" data-lmp-temperature="750">Held-out test</button>
+                </div>
+              </fieldset>
+              <dl class="life-results">
+                <div><dt>Predicted rupture life</dt><dd data-result="lmpLife">39,200 h</dd></div>
+                <div><dt>LMP (10³ K)</dt><dd data-result="lmpValue">22.704</dd></div>
+              </dl>
+              <p class="life-caption" data-result="lmpRange">Stress extrapolation below 300 MPa.</p>
+            </div>
+          </div>
+          <details class="life-details">
+            <summary>Measured tests and fitted equation</summary>
+            <div class="life-table-wrap" tabindex="0" role="region" aria-label="Alloy 718 rupture test data">
+              <table class="life-table">
+                <caption>NCF718-B, heat iGB</caption>
+                <thead><tr><th scope="col">Temperature (°C)</th><th scope="col">Stress (MPa)</th><th scope="col">Rupture time (h)</th><th scope="col">LMP (10³ K)</th><th scope="col">Use</th></tr></thead>
+                <tbody data-lmp-tests></tbody>
+              </table>
+            </div>
+            <p>Least squares fits <i>P</i><sub>LM</sub>/1,000 against log<sub>10</sub>(σ/1 MPa) for the three fit points. The resulting line is <i>P</i><sub>LM</sub>/1,000 ≈ 33.38283 &minus; 4.45354 log<sub>10</sub>(σ/1 MPa) with the parameter expressed in 10³ K.</p>
+            <p class="life-source">The measurements are from figure 10 of the <a href="https://mdr.nims.go.jp/datasets/a4d0f348-f1dc-44b4-94ee-4b018f9dafb0?locale=en">open NIMS paper by Sawada et al.</a> The authors used a larger dataset and selected an Orr–Sherby–Dorn regression for their material assessment.</p>
+          </details>
+        </div>
+        <article class="life-card life-worked life-details" aria-labelledby="lmp-example-title">
+          <h4 id="lmp-example-title">Worked example at 250 MPa and 650 °C</h4>
+          <ol>
+            <li><strong>Read the parameter.</strong> Start at 250 MPa on the stress axis, move across to the dashed fit, and read <i>P</i><sub>LM</sub>/1,000 ≈ 22.7035 on the horizontal axis. The fitting tests span 300 to 700 MPa, so this step extrapolates in stress.</li>
+            <li><strong>Convert back to time.</strong> At 650 °C, <i>T</i> = 923.15 K. Substitute <i>P</i><sub>LM</sub> ≈ 22,703.5 K into the rearranged equation.</li>
+          </ol>
+          <p class="formula" data-tex="t_r=1\,\mathrm{h}\times10^{P_{\mathrm{LM}}/T-C_{\mathrm{LM}}}=1\,\mathrm{h}\times10^{22{,}703.5/923.15-20}\approx39{,}200\,\mathrm{h}">t<sub>r</sub> = 1 h × 10<sup>22,703.5/923.15 − 20</sup> ≈ 39,200 h</p>
+          <p>Compare with the held-out test at <strong>100 MPa and 750 °C</strong>. Farther along the dashed line the fit predicts about <strong>8,360 h</strong>, while the specimen ruptured after <strong>1,595.2 h</strong>. This is why checking extrapolations against tests near the intended service conditions matters.</p>
+        </article>
+      </section>
+
+      <section class="life-topic" id="service-history" aria-labelledby="history-title">
+        <h3 id="history-title">A turbine run contains more than one test condition</h3>
+        <p class="life-lead">Return to the rotor-rim log. During each start the peak thermal stress adds to the centrifugal load. The longer rated dwell runs cooler. Split the log into periods with similar metal temperature and stress, then read a rate and rupture time for each.</p>
+        <div class="life-grid">
+          <article class="life-card">
+            <h4>Add the strain increments</h4>
+            <p class="formula" data-tex="\Delta\varepsilon_c\approx\sum_i\dot{\varepsilon}_i\Delta t_i">Δε<sub>c</sub> ≈ Σ ε̇<sub>i</sub> Δt<sub>i</sub></p>
+            <p>Multiply each creep rate by the hours at that condition. If inspection gives permanent elongation, use it to update the strain budget. If the section thins, recalculate stress for the remaining material.</p>
+          </article>
+          <article class="life-card">
+            <h4>Add the fractions of rupture life</h4>
+            <p class="formula" data-tex="D_c=\sum_i\frac{\Delta t_i}{t_{r,i}}">D<sub>c</sub> = Σ Δt<sub>i</sub>/t<sub>r,i</sub></p>
+            <p>Robinson&rsquo;s rule compares the exposure in each period with its constant-condition rupture life. The model reaches rupture at a total of one. The linear sum assumes the order of the periods leaves the rates and rupture properties unchanged.</p>
+          </article>
+        </div>
+        <div class="life-story-transition"><p>We can now compare the two limits for the 1,000-hour log. Both use the same duty cycle and material data.</p><a href="#worked-example">Calculate remaining hours &darr;</a></div>
+      </section>
+    </section>
+
+    <section class="life-section" id="worked-example" aria-labelledby="worked-title">
+      <h2 id="worked-title">Worked example · Remaining hot operating hours</h2>
+      <article class="life-card life-worked">
+        <p>An Alloy 718 turbine disk rim has logged <strong>1,000 hot hours</strong> in 100 identical 10 h runs. Approximate the hot transition under combined thermal and centrifugal stress as 15 minutes at 670 °C and 500 MPa. The remaining 9.75 h per run are at 650 °C and 450 MPa. Find the remaining time to a <strong>0.50% creep-strain limit</strong> and compare it with the time-fraction rupture estimate.</p>
+        <div class="life-table-wrap" tabindex="0" role="region" aria-label="Worked example conditions and material estimates">
+          <table class="life-table">
+            <caption>One run with rates and rupture times from the NCF718-B regressions</caption>
+            <thead><tr><th scope="col">Segment</th><th scope="col">Exposure (h)</th><th scope="col">Metal temp. (°C)</th><th scope="col">Stress (MPa)</th><th scope="col">Min. rate (%/h)</th><th scope="col">Rupture life (h)</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">Hot transition</th><td>0.25</td><td>670</td><td>500</td><td>1.751 × 10<sup>&minus;3</sup></td><td>484.4</td></tr>
+              <tr><th scope="row">Rated dwell</th><td>9.75</td><td>650</td><td>450</td><td>2.515 × 10<sup>&minus;4</sup></td><td>2,839.6</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ol>
+          <li><strong>Add strain in one run.</strong><p>(0.25 h)(0.001751%/h) + (9.75 h)(0.0002515%/h) &asymp; <strong>0.002890%</strong>. After 100 runs the estimate is 0.289% creep strain.</p></li>
+          <li><strong>Add rupture fractions in one run.</strong><p>0.25/484.4 + 9.75/2839.6 &asymp; <strong>0.003950</strong>. After 100 runs the consumed rupture fraction is about 0.395.</p></li>
+          <li><strong>Project the repeated duty.</strong><p>Divide each target, 0.50% strain or a rupture fraction of one, by the increment per run to locate the final run. Resolve the last partial run using its individual segments. The strain limit is reached at about <strong>1,730 hot hours</strong> and modelled rupture at about <strong>2,531 hot hours</strong> from new.</p></li>
+        </ol>
+        <p class="life-answer"><strong>About 730 hot hours remain</strong> after the logged 1,000 h. The strain allowance is used up before the rupture estimate under the same future duty.</p>
+        <p class="life-source"><a href="https://doi.org/10.1080/27660400.2024.2425179">Sawada et al., NCF718-B creep tests and Orr–Sherby–Dorn regressions, tables 6 and 8</a></p>
+        <a class="button primary" href="#lab">Change the duty in the service lab</a>
+      </article>
+    </section>
+
+    <section class="life-section" id="lab" aria-labelledby="creep-lab-title">
+      <h2 id="creep-lab-title">Will a different duty reach the same limit first?</h2>
+      <p class="life-lead">Keep the log at 1,000 h and compare short and long runs. Then add a hotter dwell. Both curves use percentages of their own limit, so the first crossing of 100% identifies what governs.</p>
+      <noscript><p class="life-note">Enable JavaScript to change the lab inputs. The worked example above gives the full calculation.</p></noscript>
+      <form class="life-card life-lab" id="creep-lab">
+        <div class="life-stage">
+          <h3>Alloy 718 disk rim · Repeated hot runs</h3>
+          <p>Each run begins with a 15-minute hot transition at 20 °C and 50 MPa above rated conditions. An optional excursion at 35 °C above rated replaces an equal amount of rated dwell. The laboratory material fit supplies rates and rupture times.</p>
+          <div class="life-workspace">
+            <fieldset class="life-controls">
+              <legend class="visually-hidden">Turbine duty inputs</legend>
+              <div class="life-control">
+                <label for="creep-temperature">Rated metal temperature <span data-value="temperature" aria-hidden="true">650 °C</span></label>
+                <input id="creep-temperature" name="temperature" type="range" min="625" max="660" step="1" value="650" data-unit=" °C">
+              </div>
+              <div class="life-control">
+                <label for="creep-stress">Rated stress <span data-value="stress" aria-hidden="true">450 MPa</span></label>
+                <input id="creep-stress" name="stress" type="range" min="400" max="500" step="5" value="450" data-unit=" MPa">
+              </div>
+              <div class="life-control">
+                <label for="creep-run-time">Hot time per run <span data-value="runHours" aria-hidden="true">10 h</span></label>
+                <input id="creep-run-time" name="runHours" type="range" min="2" max="20" step="1" value="10" data-unit=" h">
+                <small>More starts occur in the same hot hours when runs are shorter.</small>
+              </div>
+              <div class="life-control">
+                <label for="creep-log">Logged hot hours <span data-value="loggedHours" aria-hidden="true">1,000 h</span></label>
+                <input id="creep-log" name="loggedHours" type="range" min="50" max="3000" step="50" value="1000" data-unit=" h">
+              </div>
+              <div class="life-control">
+                <label for="creep-excursion">Excursion per run</label>
+                <select id="creep-excursion" name="excursionMinutes" data-unit="">
+                  <option value="0" selected>No added excursion</option>
+                  <option value="5">5 min at +35 °C</option>
+                  <option value="15">15 min at +35 °C</option>
+                  <option value="30">30 min at +35 °C</option>
+                </select>
+              </div>
+              <div class="life-control">
+                <label for="creep-limit">Allowable creep strain <span data-value="limit" aria-hidden="true">0.5%</span></label>
+                <input id="creep-limit" name="limit" type="range" min="0.2" max="1.2" step="0.05" value="0.50" data-digits="2" data-unit="%">
+              </div>
+              <div class="life-actions" role="group" aria-label="Compare run schedules">
+                <button type="button" data-run-hours="4" aria-pressed="false">Short runs · 4 h</button>
+                <button type="button" data-run-hours="20" aria-pressed="false">Long runs · 20 h</button>
+                <button type="reset">Load worked example values</button>
+              </div>
+            </fieldset>
+            <div class="life-stack">
+              <div>
+                <dl class="life-results" aria-live="polite">
+                  <div><dt>Time remaining to first limit</dt><dd data-result="remaining">&ndash;</dd></div>
+                  <div><dt>Governing limit</dt><dd data-result="activeLimit">&ndash;</dd></div>
+                  <div><dt>Time to strain limit from new</dt><dd data-result="strainLife">&ndash;</dd></div>
+                  <div><dt>Time to modelled rupture from new</dt><dd data-result="ruptureLife">&ndash;</dd></div>
+                  <div><dt>Creep strain in displayed history</dt><dd data-result="strain">&ndash;</dd></div>
+                  <div><dt>Consumed rupture fraction</dt><dd data-result="fraction">&ndash;</dd></div>
+                </dl>
+                <p class="life-status" role="status"></p>
+              </div>
+              <figure class="life-plot life-plot-focus"><figcaption>Which curve reaches its limit first?</figcaption>
+                <canvas data-creep-forecast role="img" aria-label="Creep strain and rupture fraction as percentages of their own service limits."></canvas>
+                <span class="life-caption">Solid lines show the estimates through the logged hours. Dashed extensions project the same duty into the future.</span>
+              </figure>
+              <figure class="life-plot life-plot-support"><figcaption>Metal temperature during one run</figcaption>
+                <canvas data-duty role="img" aria-label="Hot transition, rated dwell and optional overtemperature through one run."></canvas>
+                <span class="life-caption" data-result="schedule"></span>
+              </figure>
+            </div>
+          </div>
+          <div class="life-table-wrap life-details" tabindex="0" role="region" aria-label="Creep exposure and damage per duty segment">
+            <table class="life-table">
+              <caption>Contribution of each segment per run</caption>
+              <thead><tr><th scope="col">Segment</th><th scope="col">Hours</th><th scope="col">Metal temp. (°C)</th><th scope="col">Stress (MPa)</th><th scope="col">Min. rate (%/h)</th><th scope="col">Rupture life (h)</th><th scope="col">Strain added (%)</th><th scope="col">Rupture fraction added</th></tr></thead>
+              <tbody>
+                <tr data-phase><th scope="row">Hot transition</th><td data-result="time"></td><td data-result="temperature"></td><td data-result="stress"></td><td data-result="rate"></td><td data-result="rupture"></td><td data-result="strain"></td><td data-result="fraction"></td></tr>
+                <tr data-phase><th scope="row">Rated dwell</th><td data-result="time"></td><td data-result="temperature"></td><td data-result="stress"></td><td data-result="rate"></td><td data-result="rupture"></td><td data-result="strain"></td><td data-result="fraction"></td></tr>
+                <tr data-phase hidden><th scope="row">Overtemperature</th><td data-result="time"></td><td data-result="temperature"></td><td data-result="stress"></td><td data-result="rate"></td><td data-result="rupture"></td><td data-result="strain"></td><td data-result="fraction"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <details class="life-details">
+            <summary>Material calibration and model scope</summary>
+            <p>The example duty history is representative. The material rates and rupture lives come from published Orr–Sherby–Dorn regressions for four heats of NCF718-B bar, a nickel-base Alloy 718 grade. The correlation for the minimum rate is distinct from the rupture correlation. The calculation follows the phases in order and includes the last partial run.</p>
+            <p>The model uses a uniaxial stress for each phase, minimum-rate strain accumulation and linear time-fraction damage. It screens creep under the hot portions of the duty. Creep–fatigue interaction, primary and tertiary strain, changing cross-section and stress redistribution require additional treatment. <a href="https://mdr.nims.go.jp/datasets/a4d0f348-f1dc-44b4-94ee-4b018f9dafb0?locale=en">NIMS creep data and material fits</a></p>
+          </details>
+        </div>
+      </form>
+    </section>
+    <section class="life-section" id="mechanisms" aria-labelledby="mechanisms-title">
+      <h2 id="mechanisms-title">Why would a different microstructure shift the curves?</h2>
+      <p class="life-lead">Homologous temperature <i>T</i>/<i>T</i><sub>m</sub> compares the operating and melting temperatures in kelvin. Temperature promotes atomic transport. Stress, grain size and microstructure help determine how that transport produces deformation.</p>
+      <section class="life-card creep-mechanism-map" id="mechanism-map" aria-labelledby="mechanism-map-title">
+        <h3 id="mechanism-map-title">Explore the creep mechanism map</h3>
+        <p class="life-lead">Set temperature and stress with the sliders or select a point on the map. Then vary grain size to see the boundaries move around that point. The microstructure view follows the mechanism with the highest modeled creep rate.</p>
+        <div class="creep-mechanism-grid">
+          <div>
+            <figure class="creep-map-figure">
+              <canvas data-mechanism-map role="img" aria-label="Illustrative creep mechanism map. Homologous temperature increases to the right and normalized tensile stress increases upward on a logarithmic scale.">Use the controls below to explore the four mechanism fields.</canvas>
+              <figcaption class="life-caption">Solid boundaries mark equal modeled rates. <span class="creep-map-reference">5 µm reference when grain size changes</span></figcaption>
+            </figure>
+            <div class="creep-map-controls">
+              <div class="life-control">
+                <label for="mechanism-temperature"><span>Temperature, <i>T</i>/<i>T</i><sub>m</sub></span> <output for="mechanism-temperature" aria-hidden="true">0.56</output></label>
+                <input type="range" id="mechanism-temperature" min="0.45" max="0.90" step="0.01" value="0.56">
+              </div>
+              <div class="life-control">
+                <label for="mechanism-stress"><span>Tensile stress, σ/<i>G</i></span> <output for="mechanism-stress" aria-hidden="true">1.0 × 10<sup>−5</sup></output></label>
+                <input type="range" id="mechanism-stress" min="-6" max="-2.4" step="0.01" value="-5">
+              </div>
+              <div class="life-control">
+                <label for="mechanism-grain-size"><span>Grain size, <i>d</i></span> <output for="mechanism-grain-size" aria-hidden="true">5 µm</output></label>
+                <input type="range" id="mechanism-grain-size" min="-0.7" max="1.3" step="0.01" value="0" aria-describedby="mechanism-grain-range">
+                <div class="creep-grain-range" id="mechanism-grain-range"><span>1 µm</span><span>Log scale</span><span>100 µm</span></div>
+              </div>
+            </div>
+            <div class="creep-map-presets" role="group" aria-label="Example operating points">
+              <button type="button" data-mechanism-example="coble">Coble</button>
+              <button type="button" data-mechanism-example="nabarro">Nabarro–Herring</button>
+              <button type="button" data-mechanism-example="sliding">Grain-boundary sliding</button>
+              <button type="button" data-mechanism-example="dislocation">Dislocation creep</button>
+            </div>
+            <p class="life-caption creep-map-availability" data-map-availability hidden>Dimmed mechanisms have no selectable example in the plotted range at this grain size.</p>
+          </div>
+          <div class="creep-grains">
+            <figure class="life-instrument">
+              <figcaption>Microstructure under tension</figcaption>
+              <canvas data-mechanism-grains role="img" aria-label="Grain-scale view of Coble creep.">The description below explains how the selected mechanism deforms the material.</canvas>
+              <span class="life-caption">Schematic motion with exaggerated deformation.</span>
+            </figure>
+            <div class="creep-mechanism-reading">
+              <h4 data-mechanism-name aria-live="polite" aria-atomic="true">Coble creep</h4>
+              <button type="button" data-mechanism-motion>Pause motion</button>
+              <p data-mechanism-description>Atoms diffuse along grain boundaries toward the faces pulled apart by tension. The grains elongate along the tensile axis.</p>
+              <p class="life-caption" data-mechanism-crossover hidden></p>
+            </div>
+          </div>
+        </div>
+        <details class="life-details">
+          <summary>Model and interpretation</summary>
+          <p>Each field shows the highest of four relative creep rates. The model uses a fixed shear modulus <i>G</i>, a reference grain size <i>d</i><sub>0</sub> of 5 µm, and illustrative coefficients. The Alloy 718 furnace uses a separate material fit.</p>
+          <p class="formula" data-tex="\log_{10}r_i=a_i+n_i\log_{10}(\sigma/G)-q_i\left(T_m/T-1/0.68\right)-p_i\log_{10}(d/d_0)">log₁₀ rᵢ = aᵢ + nᵢ log₁₀(σ/G) − qᵢ(Tₘ/T − 1/0.68) − pᵢ log₁₀(d/d₀)</p>
+          <p>Doubling grain size at fixed temperature and stress reduces the modeled Coble rate by a factor of eight and the Nabarro–Herring and fine-grained sliding rates by a factor of four. The dislocation-creep law has no grain-size term in this model, so its field grows as these competing rates fall. The map extends the fine-grained sliding law over the whole slider range for comparison. Sliding can also accommodate deformation in other fields.</p>
+          <p class="life-source"><a href="https://defmech.engineering.dartmouth.edu/chapter_2.htm">Frost and Ashby on creep rate laws</a> &middot; <a href="https://doi.org/10.1016/0956-7151(94)90322-0">Langdon on grain-boundary sliding</a></p>
+        </details>
+      </section>
+      <div class="life-methods">
+        <article class="life-card"><h3>Diffusional creep</h3><p>Stress drives atomic transport between grain faces. Lattice diffusion controls Nabarro–Herring creep, and grain-boundary diffusion controls Coble creep. Smaller grains shorten diffusion distances and can raise the rate in these regimes.</p><a href="../diffusion/index.html">Review diffusion &rarr;</a></article>
+        <article class="life-card"><h3>Dislocation creep</h3><p>Diffusion of vacancies enables edge dislocations to climb out of their slip planes and bypass obstacles. Climb and subsequent glide can control creep under higher stress. Precipitates and their stability matter.</p><a href="../dislocations/index.html">Review dislocation motion &rarr;</a></article>
+        <article class="life-card"><h3>Boundary damage</h3><p>Grains can slide relative to each other while diffusion or dislocations accommodate the shape changes. Cavities can develop at boundaries under tensile stress and join to form a crack. The rupture life also depends on the strain the material can sustain.</p><a href="#grain-boundary-cavitation">See cavities grow along grain boundaries &rarr;</a></article>
+      </div>
+      <div class="life-note">
+        <h3>Lower creep rate can accompany shorter rupture life</h3>
+        <p>At 980 °C and 110 MPa, tests of a directionally solidified nickel superalloy gave a minimum rate of 0.0061%/h and a mean rupture time of 794 h for transverse specimens. Longitudinal specimens gave 0.0086%/h and 1,456 h. The transverse specimens had lower elongation to fracture.</p>
+        <p class="life-source"><a href="https://www.mdpi.com/1996-1944/18/9/1998">Directional-solidification creep test results, table 1</a></p>
+      </div>
+      <p>Equiaxed cast blades have grain boundaries in many orientations. Directional solidification reduces boundaries transverse to the main stress. Single-crystal castings remove those boundaries, while orientation and γ′ precipitates still govern the response. <a href="../introduction.html#intro-processing-case-title">Compare the three casting routes</a> &middot; <a href="https://ntrs.nasa.gov/citations/20130013683">NASA single-crystal creep tests</a></p>
+    </section>
+
+    <section class="life-section" id="grain-boundary-cavitation" aria-labelledby="cavitation-title">
+      <h2 id="cavitation-title">How grain-boundary cavities become cracks</h2>
+      <p class="life-lead">During prolonged tensile creep, tiny voids can nucleate at grain boundaries, often near particles or junctions where local stresses concentrate. Cavities grow by diffusion and deformation of the surrounding metal. Neighboring cavities can join into a crack that follows the grain boundary.</p>
+      <p>These scanning electron micrographs show Super304H oxide-dispersion-strengthened steel tested at <strong>650 °C and 100 MPa</strong>. Compare specimens at three exposure times. The original arrows mark cavities in yellow and a crack in red.</p>
+      <div class="life-methods">
+        <figure class="life-card creep-micrograph">
+          <a href="images/cavitation-2032h.jpg"><img src="images/cavitation-2032h.jpg" width="780" height="588" loading="lazy" decoding="async" alt="SEM image after 2,032 hours, with yellow arrows pointing to small dark cavities along grain boundaries and near particles."></a>
+          <figcaption><strong>2,032 h · Isolated cavities</strong><p>Small cavities are visible along grain boundaries near bright particles.</p></figcaption>
+        </figure>
+        <figure class="life-card creep-micrograph">
+          <a href="images/cavitation-3360h.jpg"><img src="images/cavitation-3360h.jpg" width="780" height="588" loading="lazy" decoding="async" alt="SEM image after 3,360 hours, with three yellow arrows pointing to a group of nearby cavities along grain boundaries."></a>
+          <figcaption><strong>3,360 h · Cavities grow and cluster</strong><p>Larger, more closely spaced cavities leave less intact material between them.</p></figcaption>
+        </figure>
+        <figure class="life-card creep-micrograph">
+          <a href="images/cavitation-4572h.jpg"><img src="images/cavitation-4572h.jpg" width="780" height="588" loading="lazy" decoding="async" alt="SEM image after 4,572 hours, with a red arrow marking an elongated crack and yellow arrows marking nearby cavities."></a>
+          <figcaption><strong>4,572 h · Cavities link into a crack</strong><p>An elongated crack follows the boundary, with cavities still visible nearby.</p></figcaption>
+        </figure>
+      </div>
+      <p class="life-source">Micrographs by Wan Zhu, Zeyue Zhang, Dijun Long, Huijun Li and Liming Yu, <a href="https://doi.org/10.3390/met13061106"><i>Metals</i> (2023), Figure 13b–d</a>. Panels cropped and resized under <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. Scale bars and annotations are from the source.</p>
+      <p>Compare with nickel superalloys. The two panels in <a href="https://www.researchgate.net/figure/Micrograph-of-creep-cavities-at-grain-boundaries-a-steady-state-growth-of-cavities-in_fig1_301755238">Wen et al., Figure 2</a> show cavity growth in Inconel 718 at 650 °C and linked cavities in Waspaloy at 700 °C.</p>
+    </section>
+
+    <section class="life-section" id="improve-creep-life" aria-labelledby="improve-creep-title">
+      <h2 id="improve-creep-title">Methods to improve creep life</h2>
+      <div class="life-grid">
+        <article class="life-card">
+          <h3>Lower the metal temperature</h3>
+          <p>Use cooling, insulation or thermal barrier coatings as the application allows. On turbine blades, internal cooling passages and thermal barrier coatings lower the metal temperature. The exponential temperature term in the <a href="#deformation-life">creep-rate law</a> explains why even a modest reduction can matter.</p>
+          <p class="life-source"><a href="https://www.rolls-royce.com/media/our-stories/discover/2021/our-sustainability-journey.aspx">Rolls-Royce on how turbine blades stay cool</a></p>
+        </article>
+        <article class="life-card">
+          <h3>Reduce sustained tensile stress</h3>
+          <p>Increase the load-bearing section where practical, share the load across more of the part, and use smooth transitions at attachments. Lower local stress reduces the creep rate and helps delay strain accumulation and rupture.</p>
+        </article>
+        <article class="life-card">
+          <h3>Choose a microstructure that stays stable</h3>
+          <p>Use an alloy and heat treatment that retain strengthening precipitates or dispersoids over the service exposure. Larger grains can help where diffusional creep dominates. Directional solidification aligns elongated grains with the main tensile load, reducing the number of boundaries across it. Single-crystal blades eliminate grain boundaries.</p>
+          <p class="life-source"><a href="https://defmech.engineering.dartmouth.edu/chapter_2.htm">Frost and Ashby on creep mechanisms</a> &middot; <a href="https://ntrs.nasa.gov/citations/20130013683">NASA single-crystal creep tests</a></p>
+        </article>
+        <article class="life-card">
+          <h3>Limit the hottest operating periods</h3>
+          <p>Shorten peak-temperature holds where the process permits, and track how long the part spends at each hot condition. Use the <a href="#lab">service-history lab</a> to see how a hotter dwell changes accumulated strain and consumed rupture life.</p>
+        </article>
+      </div>
+      <div class="life-note"><p><strong>Try a 10 °C reduction in the furnace.</strong> At an initial stress of 450 MPa, lowering the metal temperature from 650 to 640 °C cuts the fitted minimum creep rate from about 2.51 × 10<sup>−4</sup> to 1.29 × 10<sup>−4</sup> %/h. The fitted rupture life rises from about 2,840 to 5,090 h for the Alloy 718 example. <a href="#creep-test">Compare the two temperature settings &rarr;</a></p></div>
+    </section>
+
+    <section class="life-section" id="creep-fatigue" aria-labelledby="interaction-title">
+      <h2 id="interaction-title">A hot dwell changes a fatigue cycle</h2>
+      <div class="life-grid">
+        <article class="life-card">
+          <h3>Load hold and fixed-strain hold</h3>
+          <p>Under sustained load, creep strain accumulates. Under a fixed total strain at constant temperature, creep strain grows by taking up part of the elastic strain, so the stress relaxes. In a simple uniaxial model the relaxation rate is approximately &minus;<i>E</i> times the creep strain rate.</p>
+          <p>Use the changing stress during a constrained hold when estimating the creep fraction. Using the starting peak for the entire hold can misrepresent the exposure.</p>
+        </article>
+        <article class="life-card">
+          <h3>Compare cycles with and without a dwell</h3>
+          <p>A startup and shutdown can impose a thermal strain cycle. Vibration can add many smaller cycles during running, and the hot dwell adds creep exposure. Compare strain-controlled test loops at the same strain range with and without a tensile hold. Relaxation during the hold and the changed lifetime reveal creep–fatigue interaction.</p>
+          <p>Use dwell-fatigue data to assess this interaction where it matters. Compare life in starts and in hot hours, with the startup rate and dwell duration stated.</p>
+          <p class="life-source"><a href="../fatigue/index.html#strain-life">Review fatigue hysteresis</a> &middot; <a href="https://info.ornl.gov/sites/publications/Files/Pub223853.pdf">Oak Ridge creep–fatigue tests</a></p>
+        </article>
+      </div>
+      <figure class="life-plot life-plot-support life-details">
+        <figcaption>Same strain range with and without a tensile hold</figcaption>
+        <canvas id="dwell-loops" role="img" aria-label="Two schematic strain-controlled cycles. With a hold at peak tensile strain, the stress drops vertically while strain is fixed.">At fixed peak strain, the held cycle shows a drop in stress.</canvas>
+        <span class="life-caption">The solid coral curve drops vertically at peak strain during the hold. The dashed navy cycle reverses immediately. Both are illustrative.</span>
+      </figure>
+    </section>
+
+    <section class="life-section" id="formula-summary" aria-labelledby="formula-summary-title">
+      <h2 id="formula-summary-title">Summary and formulas</h2>
+      <p class="life-lead">Read a creep test for its strain rate and time to rupture. For a changing service history, estimate both the time to the strain limit and the time to rupture. The earlier limit governs.</p>
+      <div class="life-grid">
+        <article class="life-card">
+          <h3>Read a constant-load test</h3>
+          <p class="formula" data-tex="\sigma_0=\frac{F}{A_0},\qquad \varepsilon(t)=\frac{L(t)-L_0}{L_0}">σ<sub>0</sub> = F/A<sub>0</sub>, ε(t) = [L(t) − L<sub>0</sub>]/L<sub>0</sub></p>
+          <p class="formula" data-tex="\varepsilon_e\approx\frac{\sigma_0}{E(T)},\qquad \varepsilon_c(t)=\varepsilon(t)-\varepsilon_e">ε<sub>e</sub> ≈ σ<sub>0</sub>/E(T), ε<sub>c</sub>(t) = ε(t) − ε<sub>e</sub></p>
+          <p>In the <a href="#creep-test">furnace test</a>, measure the initial cross-section <i>A</i><sub>0</sub> and gauge length <i>L</i><sub>0</sub> at test temperature before loading. Subtract the elastic jump to read creep strain. The slope falls in primary creep, reaches a minimum, then rises in tertiary creep toward rupture. True stress <i>F</i>/<i>A</i>(<i>t</i>) can rise as the section thins under the fixed force <i>F</i>.</p>
+        </article>
+        <article class="life-card">
+          <h3>Estimate the time to a strain limit</h3>
+          <p class="formula" data-tex="\dot{\varepsilon}_{\min}=A\sigma^n\exp\!\left(-\frac{Q}{R_gT}\right)">ε̇<sub>min</sub> = Aσ<sup>n</sup> exp[−Q/(R<sub>g</sub>T)]</p>
+          <p class="formula" data-tex="t_{\mathrm{rem},\varepsilon}\approx\frac{\varepsilon_{c,\mathrm{lim}}-\varepsilon_{c,\mathrm{now}}}{\dot{\varepsilon}_{\min}}">t<sub>rem,ε</sub> ≈ (ε<sub>c,lim</sub> − ε<sub>c,now</sub>)/ε̇<sub>min</sub></p>
+          <p>The <a href="#deformation-life">Norton–Arrhenius law</a> uses material parameters <i>A</i> and <i>n</i>, activation energy <i>Q</i>, and the gas constant <i>R</i><sub>g</sub>. Use kelvin for <i>T</i>. The time estimate assumes a nearly steady rate at fixed conditions. Use consistent strain units for the allowance and rate.</p>
+        </article>
+        <article class="life-card">
+          <h3>Recover rupture life from an LMP fit</h3>
+          <p class="formula" data-tex="P_{\mathrm{LM}}=T\!\left[C_{\mathrm{LM}}+\log_{10}(t_r/1\,\mathrm{h})\right]">P<sub>LM</sub> = T[C<sub>LM</sub> + log<sub>10</sub>(t<sub>r</sub>/1 h)]</p>
+          <p class="formula" data-tex="t_r=(1\,\mathrm{h})\,10^{P_{\mathrm{LM}}/T-C_{\mathrm{LM}}}">t<sub>r</sub> = (1 h) × 10<sup>P<sub>LM</sub>/T − C<sub>LM</sub></sup></p>
+          <p>Read <i>P</i><sub>LM</sub> at the service stress from the <a href="#lmp-extrapolation">stress–LMP graph</a>. Convert the plotted value from thousands of kelvin before substituting. Use the same material constant <i>C</i><sub>LM</sub> as the fit, and check extrapolations against independent rupture tests.</p>
+        </article>
+        <article class="life-card">
+          <h3>Add creep strain and consumed rupture life</h3>
+          <p class="formula" data-tex="\Delta\varepsilon_c\approx\sum_i\dot{\varepsilon}_i\Delta t_i">Δε<sub>c</sub> ≈ Σ ε̇<sub>i</sub> Δt<sub>i</sub></p>
+          <p class="formula" data-tex="D_c=\sum_i\frac{\Delta t_i}{t_{r,i}},\qquad D_c=1\;\text{at modeled rupture}">D<sub>c</sub> = Σ Δt<sub>i</sub>/t<sub>r,i</sub>, D<sub>c</sub> = 1 at modeled rupture</p>
+          <p>Split the <a href="#lab">service log</a> into periods with similar metal temperature and stress. For each period, use its own creep rate and constant-condition rupture time <i>t</i><sub>r,i</sub>. Robinson&rsquo;s rule adds the life fractions and assumes that their order leaves the rupture properties unchanged.</p>
+        </article>
+        <article class="life-card">
+          <h3>Compare mechanisms on the map</h3>
+          <p class="formula" data-tex="\theta=\frac{T}{T_m},\qquad s=\frac{\sigma}{G}">θ = T/T<sub>m</sub>, s = σ/G</p>
+          <p class="formula" data-tex="\dot{\varepsilon}_i\propto d^{-p_i}\quad\text{at fixed }T\text{ and }\sigma">ε̇<sub>i</sub> ∝ d<sup>−p<sub>i</sub></sup> at fixed T and σ</p>
+          <p>Use absolute melting temperature <i>T</i><sub>m</sub>, shear modulus <i>G</i>, and grain size <i>d</i>. On the <a href="#mechanism-map">illustrative map</a>, equal modeled rates define field boundaries. The grain-size exponents are 3 for Coble creep, 2 for Nabarro–Herring creep and fine-grained boundary sliding, and 0 for the dislocation-creep law.</p>
+        </article>
+        <article class="life-card">
+          <h3>Read stress relaxation during a dwell</h3>
+          <p class="formula" data-tex="\dot{\varepsilon}_{\mathrm{tot}}=0\quad\Longrightarrow\quad\dot{\sigma}\approx-E\dot{\varepsilon}_c">ε̇<sub>tot</sub> = 0 ⇒ σ̇ ≈ −Eε̇<sub>c</sub></p>
+          <p>During a <a href="#creep-fatigue">fixed-strain hold</a> at constant temperature, increasing creep strain reduces elastic strain and relaxes the tensile stress. This relation uses uniaxial loading and a constant elastic modulus <i>E</i>. Use the evolving stress when estimating creep during the hold.</p>
+        </article>
+      </div>
+    </section>
+
+    <p class="life-actions"><a class="button secondary" href="../fatigue/index.html">&larr; Previous module · Fatigue</a></p>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Creep &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>

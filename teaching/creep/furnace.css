@@ -1,0 +1,45 @@
+#furnace .life-instrument canvas {
+  height: clamp(19rem, 31vw, 23rem);
+}
+
+#furnace .life-instrument canvas[hidden] {
+  display: none;
+}
+
+[data-creep-3d] {
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+[data-creep-3d]:active {
+  cursor: grabbing;
+}
+
+[data-creep-3d]:focus-visible {
+  outline: 2px solid #ffe196;
+  outline-offset: -3px;
+}
+
+.creep-playback {
+  display: inline-flex;
+  align-items: center;
+  gap: .48rem;
+  color: var(--ink);
+  font-size: .85rem;
+  font-weight: 750;
+}
+
+.creep-playback select {
+  min-height: 2.5rem;
+  padding: .4rem .48rem;
+  border: 1px solid #c9bfdc;
+  border-radius: .45rem;
+  background-color: #fff;
+  color: inherit;
+  font: inherit;
+}
+
+.creep-playback select:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}

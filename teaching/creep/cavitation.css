@@ -1,0 +1,23 @@
+.creep-micrograph {
+  padding: .8rem;
+}
+
+.creep-micrograph a {
+  display: block;
+  border-radius: .45rem;
+}
+
+.creep-micrograph a:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+}
+
+.creep-micrograph img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
+
+.creep-micrograph figcaption { margin-top: .6rem; }
+.creep-micrograph figcaption p { margin: .25rem 0 0; font-size: .9rem; }

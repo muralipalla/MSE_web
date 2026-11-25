@@ -1,0 +1,88 @@
+.life-route.creep-lesson-route { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+.creep-mechanism-map {
+  margin-bottom: 1rem;
+  border-top: 4px solid var(--lavender);
+}
+
+.creep-mechanism-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+.creep-map-figure { margin: 0; }
+.creep-map-figure canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 15.5rem;
+  aspect-ratio: 4 / 3;
+  cursor: crosshair;
+}
+.creep-map-figure figcaption { margin: .2rem 0 0; }
+.creep-map-reference { display: block; margin-top: .15rem; }
+.creep-map-reference::before {
+  display: inline-block;
+  width: 1.1rem;
+  margin-right: .3rem;
+  border-top: 2px dashed #4a436e;
+  vertical-align: middle;
+  content: "";
+}
+.creep-map-controls { display: grid; gap: .6rem; margin-top: .9rem; }
+.creep-map-controls output { color: var(--navy); font-variant-numeric: tabular-nums; }
+.creep-grain-range { display: flex; justify-content: space-between; color: var(--muted); font-size: .75rem; }
+.creep-map-availability { margin: .45rem 0 0; }
+
+.creep-map-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .38rem;
+  margin-top: .65rem;
+}
+
+.creep-map-presets button, .creep-mechanism-reading button {
+  min-height: 2.15rem;
+  padding: .24rem .6rem;
+  border: 1px solid var(--line);
+  border-radius: .42rem;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: .81rem;
+  font-weight: 730;
+  cursor: pointer;
+}
+.creep-map-presets button:hover, .creep-mechanism-reading button:hover { border-color: var(--navy); }
+.creep-mechanism-map :is(button, input):focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+
+.creep-map-presets button::before {
+  display: inline-block;
+  width: .65rem;
+  height: .65rem;
+  margin-right: .35rem;
+  border: 1px solid var(--field-ink);
+  border-radius: .2rem;
+  background: var(--field-fill);
+  content: "";
+}
+.creep-map-presets button[data-dominant] { border-color: var(--field-ink); background: var(--field-fill); }
+.creep-map-presets button:disabled { opacity: .58; cursor: default; border-color: var(--line); }
+
+.creep-grains .life-instrument canvas { height: auto; aspect-ratio: 400 / 252; }
+.creep-mechanism-reading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: .55rem .6rem;
+  margin-top: .8rem;
+}
+.creep-mechanism-reading h4 { align-self: center; }
+.creep-mechanism-reading p { grid-column: 1 / -1; margin: 0; }
+
+@media (max-width: 760px) {
+  .life-route.creep-lesson-route { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .creep-lesson-route a:last-child { grid-column: span 2; }
+  .creep-mechanism-grid { grid-template-columns: minmax(0, 1fr); }
+}
