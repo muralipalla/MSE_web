@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fdf6ec">
+  <meta name="description" content="Predict fatigue life from service loads using stress–life, strain–life, and Paris-law crack growth.">
+  <title>Fatigue | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/teaching-intro.css">
+  <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
+  <link rel="stylesheet" href="../../css/service-life.css?v=5">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
+  <script src="../../js/math-render.js?v=1" defer></script>
+  <script src="../../js/service-life-ui.js?v=3" defer></script>
+  <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
+  <script src="beam-view.js" defer></script>
+  <script src="beam.js?v=3" defer></script>
+  <script src="sn-tests.js?v=3" defer></script>
+  <script src="app.js?v=3" defer></script>
+  <script src="hysteresis.js?v=5" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to the fatigue lesson</a>
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Lesson navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#topics">&larr; Back to modules</a>
+    </nav>
+  </header>
+
+  <main class="teaching-shell" id="lesson">
+    <header class="teaching-intro">
+      <div><p class="eyebrow">Teaching page 12</p><h1>Fatigue</h1></div>
+      <div class="teaching-intro-copy">
+        <p>A shaft can carry a load on every turn for months and still crack. Follow one point on a rotating specimen, measure its stress cycle, and use that measurement to predict life in service.</p>
+        <p class="teaching-intro-note"><a href="#rotating-beam">Start the rotating-beam experiment &rarr;</a> &middot; <a href="#formula-summary">Formula summary</a></p>
+      </div>
+    </header>
+
+    <nav class="life-route" aria-label="Lesson sections">
+      <a href="#service-case">Why fatigue matters</a>
+      <a href="#rotating-beam">Run the experiment</a>
+      <a href="#methods">Predict life</a>
+      <a href="#lab">Try a service case</a>
+    </nav>
+
+    <section class="life-section life-story-lead" id="service-case" aria-labelledby="service-title">
+      <div>
+        <h2 id="service-title">Why study a load the part has already carried?</h2>
+        <p>A rotating axle bends under the weight it supports. A surface point passes from compression to tension and back on each turn. Repeated local slip can initiate a crack near a notch, scratch or inclusion, even when the overall load is below the part&rsquo;s static capacity.</p>
+        <p>Once a crack starts, further cycles can grow it until the remaining section fractures. Knowing the stress history and the current crack size helps determine when to inspect or replace the part. <a href="../fracture-mechanics/index.html#fractography">Find the fatigue origins on a fractured propeller &rarr;</a></p>
+      </div>
+      <aside class="life-story-question">The external bending force stays fixed. What does a point on the rotating surface feel?</aside>
+    </section>
+
+    <section class="life-section" id="rotating-beam" aria-labelledby="beam-title">
+      <h2 id="beam-title">One revolution makes one stress cycle</h2>
+      <p class="life-lead">The motor turns the specimen while a hanging load applies a steady bending moment to the gauge section. Follow the yellow surface point from maximum compression at the top to maximum tension at the bottom. Each turn gives a fully reversed stress cycle with zero mean.</p>
+      <div id="cycles" class="life-card life-experiment">
+        <div class="life-experiment-grid">
+          <div>
+            <figure class="life-instrument life-beam-instrument">
+              <figcaption>Rotating-beam fatigue test</figcaption>
+              <canvas data-beam-3d hidden tabindex="0" role="img" aria-label="3D rotating-beam fatigue rig with a suspended load, motor, and revolution counter. The yellow surface marker rotates with the specimen." aria-description="Drag or use the left and right arrow keys to orbit the rig.">The schematic shows the rig if the 3D view is unavailable.</canvas>
+              <canvas data-beam-machine role="img" aria-label="A rotating-beam rig with two bearing housings, a suspended load yoke, a flexible coupling, a motor and a revolution counter. The yellow point on the gauge cross-section rotates between compression at the top and tension at the bottom.">The load yoke divides the hanging force equally between the two collars. The motor turns the specimen and the counter records its revolutions.</canvas>
+              <span class="life-caption" data-beam-guide>The lower detail shows the gauge diameter and the point tracked on the graph.</span>
+            </figure>
+            <div class="life-machine-actions">
+              <button class="life-play" type="button" data-beam-play>Play slow motion</button>
+              <button type="button" data-beam-step>Step 90°</button>
+              <button type="button" data-beam-reset>Reset rotation</button>
+              <button type="button" data-beam-view hidden>Show schematic</button>
+            </div>
+            <div class="life-live-state"><span data-result="angle">0°</span><strong data-result="stress">−179 MPa</strong><span data-result="sign">Compression</span><span data-result="turns">0 revolutions</span></div>
+          </div>
+          <div>
+            <figure class="life-plot life-plot-focus">
+              <figcaption>Stress at the marked point during one turn</figcaption>
+              <canvas data-beam-waveform role="img" aria-label="Stress waveform, from compression at zero degrees to tension at 180 degrees and then back to compression.">The stress starts at maximum compression, peaks at maximum tension, and returns to maximum compression.</canvas>
+              <span class="life-caption">Coral shading is tension. Blue shading is compression. The dot follows the yellow material point in the experiment.</span>
+            </figure>
+            <fieldset class="life-experiment-inputs">
+              <legend>Set the hanging load and gauge size</legend>
+              <div class="life-control"><label for="beam-force">Force F <span data-value="force" aria-hidden="true">450 N</span></label><input id="beam-force" name="force" type="range" min="100" max="800" step="5" value="450" data-unit=" N"></div>
+              <div class="life-control"><label for="beam-diameter">Diameter d <span data-value="diameter" aria-hidden="true">8 mm</span></label><input id="beam-diameter" name="diameter" type="range" min="8" max="12" step="0.1" value="8" data-unit=" mm" data-digits="1"></div>
+            </fieldset>
+            <p class="life-control-note">Increase the force or decrease the diameter to increase the stress amplitude. The tensile and compressive peaks always have equal magnitude.</p>
+          </div>
+        </div>
+        <dl class="life-results life-cycle-values">
+          <div><dt>Stress amplitude σ<sub>a</sub></dt><dd data-result="amplitude">179 MPa</dd></div>
+          <div><dt>Mean stress σ<sub>m</sub></dt><dd>0 MPa</dd></div>
+          <div><dt>Stress ratio R</dt><dd>−1</dd></div>
+        </dl>
+        <details class="life-details">
+          <summary>Connect the instrument and graph to the equations</summary>
+          <p class="formula" data-tex="M=\frac{F\ell}{2},\qquad \sigma_a=\frac{32M}{\pi d^3}=\frac{16F\ell}{\pi d^3}">M = Fℓ/2, σ<sub>a</sub> = 32M/(πd³) = 16Fℓ/(πd³)</p>
+          <p>In this four-point layout each collar carries <i>F</i>/2. The distance ℓ from each outer support to its collar is 40 mm. Bending moment is constant between the collars. The equation gives nominal elastic stress at the surface of the round gauge.</p>
+          <p class="life-source"><a href="https://www.iso.org/standard/79575.html">ISO 1143 rotating-bar bending fatigue testing</a></p>
+        </details>
+        <noscript><p class="life-note">Enable JavaScript to rotate the specimen and edit the stress cycle.</p></noscript>
+      </div>
+      <div class="life-story-transition"><p>Real service loads can have a tensile mean or a different frequency.</p><a href="#stress-cycle">Explore a service stress cycle &darr;</a></div>
+    </section>
+
+    <section class="life-section" id="stress-cycle" aria-labelledby="cycle-title">
+      <h2 id="cycle-title">Explore a general stress cycle</h2>
+      <p class="life-lead">Compare fully reversed, pulsating, and tension–tension loading. This graph uses a positive maximum stress. Frequency changes how many cycles fit into two seconds.</p>
+      <div class="life-card life-experiment">
+        <div class="life-grid life-split">
+          <figure class="life-plot life-plot-focus">
+            <figcaption>Stress over time</figcaption>
+            <canvas data-cycle-waveform role="img" aria-label="Stress versus time for a sinusoidal cycle.">The graph shows how stress varies in a two-second interval.</canvas>
+          </figure>
+          <fieldset class="life-experiment-inputs life-cycle-inputs">
+            <legend>Set the cycle</legend>
+            <div class="life-control"><label for="cycle-maximum">Maximum stress <span data-value="maximum" aria-hidden="true">180 MPa</span></label><input id="cycle-maximum" name="maximum" type="range" min="40" max="400" step="any" value="180" data-unit=" MPa" data-digits="1"></div>
+            <div class="life-control"><label for="cycle-minimum">Minimum stress <span data-value="minimum" aria-hidden="true">−180 MPa</span></label><input id="cycle-minimum" name="minimum" type="range" min="-400" max="180" step="any" value="-180" data-unit=" MPa" data-digits="1"></div>
+            <div class="life-control"><label for="cycle-amplitude">Amplitude <span data-value="amplitude" aria-hidden="true">180 MPa</span></label><input id="cycle-amplitude" name="amplitude" type="range" min="0" max="400" step="any" value="180" data-unit=" MPa" data-digits="1"></div>
+            <div class="life-control"><label for="cycle-ratio">Stress ratio R <span data-value="ratio" aria-hidden="true">−1</span></label><input id="cycle-ratio" name="ratio" type="range" min="-3" max="1" step="any" value="-1" data-unit="" data-digits="3"></div>
+            <div class="life-control"><label for="cycle-frequency">Frequency <span data-value="frequency" aria-hidden="true">1 Hz</span></label><input id="cycle-frequency" name="frequency" type="range" min="0.5" max="4" step="0.1" value="1" data-unit=" Hz" data-digits="1"></div>
+          </fieldset>
+        </div>
+        <dl class="life-results life-cycle-values">
+          <div><dt>Mean stress σ<sub>m</sub></dt><dd data-result="mean">0 MPa</dd></div>
+          <div><dt>Stress range Δσ</dt><dd data-result="range">360 MPa</dd></div>
+          <div><dt>Period <i>T</i></dt><dd data-result="period">1 s</dd></div>
+        </dl>
+        <details class="life-details">
+          <summary>How the settings are linked</summary>
+          <p>Changing the maximum holds the minimum fixed, and vice versa. Changing amplitude holds <i>R</i> fixed. Changing <i>R</i> holds amplitude fixed. Each slider stops at the limits for that combination. If maximum and minimum coincide, change either peak to restore cycling.</p>
+          <p class="formula" data-tex="\sigma_a=\frac{\sigma_{\max}-\sigma_{\min}}{2},\quad \sigma_m=\frac{\sigma_{\max}+\sigma_{\min}}{2}">σ<sub>a</sub> = (σ<sub>max</sub> − σ<sub>min</sub>)/2, σ<sub>m</sub> = (σ<sub>max</sub> + σ<sub>min</sub>)/2</p>
+          <p class="formula" data-tex="R=\frac{\sigma_{\min}}{\sigma_{\max}},\qquad T=\frac{1}{f}">R = σ<sub>min</sub>/σ<sub>max</sub>, T = 1/f</p>
+        </details>
+      </div>
+      <div class="life-story-transition"><p>Run fully reversed tests at several amplitudes to see how stress changes fatigue life.</p><a href="#stress-life">Build an S–N curve &darr;</a></div>
+    </section>
+
+    <section class="life-section" id="methods" aria-labelledby="methods-title">
+      <h2 id="methods-title">From a single cycle to a life prediction</h2>
+      <p class="life-lead">Start with the rotating-beam test. Each time the service question changes, choose a model that uses the information you have.</p>
+      <div class="life-methods">
+        <a class="life-card life-method" href="#stress-life"><strong>Stress–life</strong><span>Use stress amplitude when cycles are predominantly elastic.</span></a>
+        <a class="life-card life-method" href="#strain-life"><strong>Strain–life</strong><span>Use local strain when the material yields each cycle.</span></a>
+        <a class="life-card life-method" href="#crack-growth"><strong>Crack growth</strong><span>Use the measured flaw to estimate remaining life.</span></a>
+      </div>
+
+      <section id="stress-life" class="life-topic" aria-labelledby="stress-title">
+        <h3 id="stress-title">How many cycles does the specimen survive?</h3>
+        <div id="fatigue-coupons" class="life-grid life-split life-test-builder">
+          <figure class="life-plot">
+            <figcaption>Build the S–N curve one specimen at a time</figcaption>
+            <canvas role="img" aria-label="Stress amplitude versus cycles, with illustrative test records added one by one.">Use the test button to add each specimen’s result.</canvas>
+            <span class="life-caption">Smooth, normalized SAE 1045 steel · Simulated rotating bending at <i>R</i> = −1</span>
+          </figure>
+          <article class="life-card">
+            <h4>Test specimens at several amplitudes</h4>
+            <p>Repeat a test at the same amplitude to see how life varies. Run a series to compare four specimens at each of six amplitudes.</p>
+            <div class="life-control"><label for="coupon-amplitude">Stress amplitude <span data-value="amplitude" aria-hidden="true">300 MPa</span></label><input id="coupon-amplitude" name="amplitude" type="range" min="170" max="340" step="5" value="300" data-unit=" MPa"></div>
+            <div class="life-machine-actions">
+              <button class="life-play" type="button" data-coupon-run>Test one specimen</button>
+              <button type="button" data-coupon-series>Run test series</button>
+              <button type="button" data-coupon-fit aria-describedby="coupon-fit-note" disabled>Fit regression line</button>
+              <button type="button" data-coupon-reset>Clear results</button>
+            </div>
+            <p class="life-status" role="status">Select an amplitude or run a full series.</p>
+            <p class="life-control-note" id="coupon-fit-note">Fit a log–log line using fractures at two or more distinct amplitudes. Refit after adding specimens.</p>
+            <p>A plus sign and right-pointing arrow mark a <strong>runout</strong>. That specimen survived the 5 million-cycle stop. Its fracture life remains unknown.</p>
+            <details class="life-details">
+              <summary>Simulation model</summary>
+              <p>Each simulated specimen adds independent normal scatter with standard deviation 0.08 to log<sub>10</sub> life around an illustrative Basquin median. The parameters are chosen for teaching. Use measured curves for engineering estimates.</p>
+              <p class="formula" data-tex="\sigma_a=280\,\mathrm{MPa}\left(\frac{N_{50}}{10^5}\right)^{-0.105}">σ<sub>a</sub> = 280 MPa (N<sub>50</sub>/10⁵)<sup>−0.105</sup></p>
+              <p class="life-source"><a href="https://arxiv.org/abs/2212.04550">Statistical treatment of fatigue life and runouts</a></p>
+            </details>
+            <details class="life-details" data-coupon-results hidden>
+              <summary>Specimen results</summary>
+              <div class="life-table-wrap life-coupon-table" tabindex="0" role="region" aria-label="Scrollable specimen results">
+                <table class="life-table">
+                  <thead><tr><th scope="col">Test</th><th scope="col">MPa</th><th scope="col">Cycles</th><th scope="col">Result</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </details>
+          </article>
+        </div>
+        <div id="mean-stress" class="life-grid life-details">
+          <article class="life-card">
+            <h4>The same amplitude can act around a different mean</h4>
+            <p>In the <a href="#stress-cycle">general stress-cycle graph</a>, compare −80 to 80 MPa with −60 to 100 MPa. Both cycles have an amplitude of 80 MPa. The second has a 20 MPa tensile mean, which can reduce life. The Goodman correction estimates an equivalent fully reversed amplitude using the ultimate tensile strength <i>S</i><sub>u</sub>.</p>
+            <p class="formula" data-tex="\sigma_{a,\mathrm{eq}}=\frac{\sigma_a}{1-\sigma_m/S_u}">σ<sub>a,eq</sub> = σ<sub>a</sub> / (1 − σ<sub>m</sub>/S<sub>u</sub>)</p>
+            <p>80 MPa amplitude, 20 MPa tensile mean and <i>S</i><sub>u</sub> = 490 MPa give <strong>83.4 MPa</strong> on an <i>R</i> = −1 curve. Surface residual stress also shifts the local mean and can relax in service.</p>
+          </article>
+          <article class="life-card" id="service-life">
+            <h4>A service shift contains many amplitudes</h4>
+            <p>Rainflow counting groups cycles in an irregular record by range and mean. A repeating record of 0 → 140 → 60 → 100 → 0 MPa contains an inner 60–100 MPa cycle and an outer 0–140 MPa cycle. Each is read against its own fatigue life.</p>
+            <p class="formula" data-tex="D=\sum_i\frac{n_i}{N_i},\qquad \text{repeated blocks to }D=1=\frac{1}{D}">D = Σ n<sub>i</sub>/N<sub>i</sub>; repeated blocks to D = 1 are 1/D.</p>
+            <p>Miner&rsquo;s rule divides each bin&rsquo;s count <i>n</i><sub>i</sub> by its constant-amplitude life <i>N</i><sub>i</sub>. Identify the bin that consumes the most life. Investigate sequence effects when overloads change the local response.</p>
+            <p class="life-source"><a href="https://store.astm.org/standards/e1049">Rainflow counting methods</a> &middot; <a href="https://ntrs.nasa.gov/citations/19930084379">Measured open-hole S–N data</a></p>
+          </article>
+        </div>
+        <div class="life-story-transition"><p>Stress–life works for predominantly elastic cycling. A constrained region can yield during each start and stop, so now measure strain.</p><a href="#strain-life">Follow the hysteresis loop &darr;</a></div>
+        <p><a href="#lab" data-fatigue-mode="stress">Use measured S–N data to predict bracket life in the lab &rarr;</a></p>
+      </section>
+
+      <section id="strain-life" class="life-topic" aria-labelledby="strain-title">
+        <h3 id="strain-title">What changes when the material yields every cycle?</h3>
+        <p class="life-lead">A vibration can produce many mostly elastic cycles, characteristic of <strong>high-cycle fatigue</strong>. A constrained detail may experience fewer cycles with appreciable plastic strain, characteristic of <strong>low-cycle fatigue</strong>. The local response determines the transition.</p>
+        <div class="life-grid life-split" id="hysteresis-demo">
+          <figure class="life-plot">
+            <figcaption>Loading, unloading, and reverse yielding</figcaption>
+            <label class="life-check-control">
+              <input type="checkbox" data-hysteresis-compare aria-controls="cyclic-response">
+              Compare isotropic and kinematic hardening
+            </label>
+            <canvas id="cyclic-response" role="img" aria-label="Stress versus total strain during strain-controlled loading and unloading.">Play or step through the test to trace the stress–strain path.</canvas>
+            <div class="life-machine-actions">
+              <button class="life-play" type="button" data-hysteresis-play>Play cycles</button>
+              <button type="button" data-hysteresis-step>Step to reversal</button>
+              <button type="button" data-hysteresis-reset>Reset cycles</button>
+            </div>
+            <div class="life-live-state">
+              <span data-result="phase">Ready to load</span>
+              <span data-result="strain">0%</span>
+              <strong data-result="stress">0 MPa</strong>
+              <span data-result="cycleCount" role="status">Cycles 0 / 3</span>
+            </div>
+            <div data-hysteresis-single>
+              <dl class="life-results life-yield-values" aria-label="Yield limits at the first reversal after tensile loading">
+                <div><dt>First reverse compression yield</dt><dd data-result="compressionLimit">−250 MPa</dd></div>
+                <div><dt>Tensile yield limit at that state</dt><dd data-result="tensionLimit">+250 MPa</dd></div>
+              </dl>
+            </div>
+            <div data-hysteresis-comparison hidden>
+              <dl class="life-results life-yield-values" aria-label="First compressive yield after tensile prestrain">
+                <div><dt>Kinematic reverse yield</dt><dd data-result="kinematicLimit">—</dd></div>
+                <div><dt>Isotropic reverse yield</dt><dd data-result="isotropicLimit">—</dd></div>
+              </dl>
+            </div>
+            <p class="life-caption" data-result="reverse">The virgin yield limits are −250 and +250 MPa.</p>
+          </figure>
+          <article class="life-card">
+            <h4>Compare hardening under strain control</h4>
+            <fieldset class="life-experiment-inputs life-hysteresis-inputs">
+              <legend>Test settings</legend>
+              <div class="life-control">
+                <label for="hysteresis-model">Material response</label>
+                <select id="hysteresis-model">
+                  <option value="perfect">No hardening</option>
+                  <option value="isotropic">Isotropic hardening</option>
+                  <option value="kinematic" selected>Kinematic hardening</option>
+                  <option value="combined">Combined hardening</option>
+                </select>
+              </div>
+              <div class="life-control">
+                <label for="hysteresis-amplitude">Strain amplitude <span data-value="amplitude" aria-hidden="true">0.8%</span></label>
+                <input id="hysteresis-amplitude" name="amplitude" type="range" min="0.05" max="1" step="0.05" value="0.8" data-unit="%" data-digits="2">
+              </div>
+              <div class="life-control">
+                <label for="hysteresis-cycles">Cycles <span data-value="cycles" aria-hidden="true">3</span></label>
+                <input id="hysteresis-cycles" name="cycles" type="range" min="1" max="20" step="1" value="3" data-unit="">
+              </div>
+            </fieldset>
+            <div data-hysteresis-single>
+              <dl class="life-results life-yield-values">
+                <div><dt>Current backstress</dt><dd data-result="centre">0 MPa</dd></div>
+                <div><dt>Current yield half-width</dt><dd data-result="radius">250 MPa</dd></div>
+              </dl>
+            </div>
+            <p class="life-control-note" data-result="modelNote">After plastic tension, the yield interval shifts toward tension. Compressive yielding begins closer to zero. This is the Bauschinger effect.</p>
+          </article>
+        </div>
+        <details class="life-details">
+          <summary>How to read the cycles</summary>
+          <p>The initial load takes the specimen from zero to the tensile strain peak. Each counted cycle then goes to the compressive strain peak and back. The first reversal shows the asymmetry most clearly. With kinematic hardening, the backstress reverses as the loading reverses, and a later loop under symmetric strain can be nearly symmetric.</p>
+          <p>This illustrative model uses <i>E</i> = 200 GPa and virgin yield limits of ±250 MPa. Isotropic hardening expands the interval with accumulated plastic strain. Kinematic hardening shifts its centre with signed plastic strain. Both use the same shifted power law <i>g</i>(<i>x</i>) = (1 + <i>x</i>/0.002)<sup>0.4</sup> − 1. At the prescribed strain rate, a cubic overstress law brings plastic flow in gradually.</p>
+          <p>The area enclosed by a closed loop is the mechanical work dissipated per unit volume in that cycle. The elastic strain amplitude is <i>σ</i><sub>a</sub>/<i>E</i>. The plastic strain amplitude is the total strain amplitude minus the elastic part.</p>
+          <p class="life-source"><a href="../uniaxial-tension/index.html#strain-parts">Elastic and plastic strain from the tensile test</a> &middot; <a href="https://docs.software.vt.edu/abaqusv2026/English/SIMACAEMATRefMap/simamat-c-hardening.htm">Cyclic metal plasticity models</a> &middot; <a href="https://neml.readthedocs.io/en/stable/vp_flow/perzyna.html">Power-law overstress flow</a></p>
+        </details>
+        <article class="life-card life-details">
+          <h4>Use both strain components to predict life</h4>
+          <p class="formula" data-tex="\frac{\Delta\varepsilon}{2}=\underbrace{\frac{\sigma_f'}{E}(2N_f)^b}_{\text{elastic}}+\underbrace{\varepsilon_f'(2N_f)^c}_{\text{plastic}}">Δε/2 = (σ′<sub>f</sub>/E)(2N<sub>f</sub>)<sup>b</sup> + ε′<sub>f</sub>(2N<sub>f</sub>)<sup>c</sup></p>
+          <p>Coffin–Manson–Basquin fits the elastic and plastic amplitudes separately. Solve for cycles <i>N</i><sub>f</sub> from the local total mechanical strain amplitude. The fit uses two reversals per full cycle. With tensile mean stress, one option is a calibrated Smith–Watson–Topper model based on the product of peak tensile stress and strain amplitude.</p>
+          <p class="life-source"><a href="https://ntrs.nasa.gov/api/citations/20140000732/downloads/20140000732.pdf?attachment=true">NASA tests using Smith–Watson–Topper</a></p>
+        </article>
+        <div class="life-story-transition"><p>The first two approaches predict life to a test endpoint. Once inspection gives you a crack size, the question becomes how fast that crack will grow.</p><a href="#crack-growth">Start from an inspected flaw &darr;</a></div>
+        <p><a href="#lab" data-fatigue-mode="strain">Predict life for a start–stop shaft in the lab &rarr;</a></p>
+      </section>
+
+      <section id="crack-growth" class="life-topic" aria-labelledby="crack-title">
+        <h3 id="crack-title">How much life is left once a crack exists?</h3>
+        <p class="life-lead">A pressurised aircraft experiences one large cabin load cycle per flight. Investigators reproduced repeated pressurisation after the Comet failures at a working differential near 57 kPa. Openings and fastener holes concentrated the local stress. <a href="../fracture-mechanics/index.html#comet">See what the full-scale Comet investigation found &rarr;</a></p>
+        <div class="life-grid life-split">
+          <figure class="life-plot">
+            <figcaption>How the growth rate changes as the crack driving force rises</figcaption>
+            <canvas id="growth-regimes" role="img" aria-label="Log–log plot showing the near-threshold, Paris and near-instability regimes.">The Paris fit occupies the nearly straight middle region.</canvas>
+            <span class="life-caption">The solid line is the Paris fit over the lesson’s 5–18 MPa√m window. The dashed ends are schematic. Markers are digitized from <a href="https://ntrs.nasa.gov/api/citations/19690025326/downloads/19690025326.pdf#page=33">Hudson’s Figure 9(b)</a> for 2024-T3 aluminium at <i>R</i> = 0 and converted to the lesson’s Δ<i>K</i> convention.</span>
+          </figure>
+          <article class="life-card">
+            <h4>Translate the stress cycle into ΔK</h4>
+            <p class="formula" data-tex="\Delta K=Y(a)\Delta\sigma\sqrt{\pi a}">ΔK = Y(a) Δσ √(πa)</p>
+            <p>For a wide plate with a central through-crack, <i>a</i> is half the crack length and <i>Y</i> is about one. A growing crack raises Δ<i>K</i> even if the applied stress cycle stays the same.</p>
+            <p>Growth is slow near the long-crack threshold. Short cracks can grow at lower applied ranges. Fit Paris&rsquo;s law, <i>da/dN</i> = <i>C</i>(Δ<i>K</i>)<sup>m</sup>, over the intermediate region at the appropriate stress ratio. Near fracture, growth accelerates as peak intensity approaches the applicable toughness.</p>
+            <p class="life-source"><a href="../fracture-mechanics/index.html#stress-intensity">Mode I stress intensity</a> &middot; <a href="https://doi.org/10.1115/1.3656900">Paris and Erdogan</a></p>
+          </article>
+        </div>
+        <article class="life-card life-details">
+          <h4>Count the cycles from one crack size to the next</h4>
+          <p class="formula" data-tex="N_{\mathrm{grow}}=\int_{a_0}^{a_{\mathrm{lim}}}\frac{da}{C[\Delta K(a)]^m}">N<sub>grow</sub> = ∫<sub>a₀</sub><sup>aₗᵢₘ</sup> da / (C[ΔK(a)]<sup>m</sup>)</p>
+          <p>Integrate over the crack-size interval covered by the fit. Specify the starting flaw and the assessment or fracture limit. A stress–life or strain–life estimate inherits its test endpoint. Add a separate initiation life to a crack-growth life only when their handoff uses the same crack size.</p>
+        </article>
+      </section>
+    </section>
+
+    <section class="life-section" id="worked-example" aria-labelledby="worked-title">
+      <h2 id="worked-title">Worked prediction · Flights after inspection</h2>
+      <article class="life-card life-worked">
+        <p>A representative 2024-T3 aluminium skin panel in a cylindrical pressure shell has a radius of 1.8 m and a thickness of 1.2 mm. Its pressure differential cycles from 0 to 57 kPa. Inspection finds a central through-crack whose <strong>half-length is 3.0 ± 0.5 mm</strong>. Estimate the flights to a half-length of <strong>6.0 mm</strong>.</p>
+        <ol>
+          <li><strong>Use the pressure range to find the stress range.</strong><p>For a thin shell, Δ<i>σ</i> = Δ<i>p r</i>/<i>t</i> = (0.057 MPa)(1.8 m)/(0.0012 m) = <strong>85.5 MPa</strong>. The cycle returns to zero, so <i>R</i> = 0.</p></li>
+          <li><strong>Check the Paris fit.</strong><p>With <i>Y</i> = 1 and <i>a</i> in metres, Δ<i>K</i> rises from <strong>8.30 to 11.74 MPa√m</strong>. Both values fall inside the lab&rsquo;s 5–18 MPa√m fit window.</p></li>
+          <li><strong>Integrate crack growth.</strong><p>Hudson&rsquo;s fit for 2024-T3 at <i>R</i> = 0 gives <i>m</i> = 4 and <i>C</i> &asymp; 3.78 × 10<sup>−12</sup> with growth in metres per cycle and Δ<i>K</i> in MPa√m.</p>
+          <p class="formula" data-tex="N_{\mathrm{grow}}=\frac{1/a_0-1/a_{\mathrm{lim}}}{C\pi^2(\Delta\sigma)^4}\approx8.37\times10^4\ \text{cycles}">N<sub>grow</sub> = (1/a₀ − 1/aₗᵢₘ) / [Cπ²(Δσ)⁴] ≈ 83,700 cycles.</p></li>
+        </ol>
+        <p class="life-answer"><strong>About 83,700 flights</strong> to the assessment size at one cycle per flight. The smaller and larger flaw bounds give about 117,100 and 59,800 flights. The shell and flaw geometry here defines a separate teaching case at the pressure scale of the Comet tests.</p>
+        <p class="life-source"><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/G-ALYV">FAA Comet case</a> &middot; <a href="https://ntrs.nasa.gov/citations/19690025326">Hudson, NASA TN D-5390, equations 3–5 and 9</a></p>
+        <a class="button primary" href="#lab" data-fatigue-mode="crack">Change the flaw size in the service lab</a>
+      </article>
+    </section>
+
+    <section class="life-section" id="lab" aria-labelledby="fatigue-lab-title">
+      <h2 id="fatigue-lab-title">Try the prediction under service loads</h2>
+      <p class="life-lead">Start with the aircraft example. Then compare how the model and the meaning of life change for a perforated bracket and a start–stop shaft.</p>
+      <noscript><p class="life-note">Enable JavaScript to change the lab inputs. The worked example above gives the full calculation.</p></noscript>
+      <form class="life-card life-lab" id="fatigue-lab">
+        <fieldset class="life-choice">
+          <legend class="visually-hidden">Fatigue prediction case</legend>
+          <label><input class="visually-hidden" type="radio" name="mode" value="stress"><span>Stress–life</span></label>
+          <label><input class="visually-hidden" type="radio" name="mode" value="strain"><span>Strain–life</span></label>
+          <label><input class="visually-hidden" type="radio" name="mode" value="crack" checked><span>Crack growth</span></label>
+        </fieldset>
+
+        <div class="life-stage" data-stage="stress" hidden>
+          <h3>Perforated machine bracket · Repeated axial loading</h3>
+          <p>An eight-hour shift contains 10,000 cycles. A portion runs at 1.2 times the routine stress amplitude. The preset geometry is a 101.6 mm-wide aluminium strip with a 12.7 mm hole, as in the coupon data.</p>
+          <div class="life-workspace">
+            <fieldset class="life-controls">
+              <legend class="visually-hidden">Bracket service inputs</legend>
+              <div class="life-control">
+                <label for="stress-amplitude">Routine amplitude <span data-value="amplitude" aria-hidden="true">85 MPa</span></label>
+                <input id="stress-amplitude" name="amplitude" type="range" min="70" max="90" step="1" value="85" data-unit=" MPa">
+                <small>MPa on the net section.</small>
+              </div>
+              <div class="life-control">
+                <label for="stress-mean">Tensile mean <span data-value="mean" aria-hidden="true">15 MPa</span></label>
+                <input id="stress-mean" name="mean" type="range" min="0" max="22" step="1" value="15" data-unit=" MPa">
+              </div>
+              <div class="life-control">
+                <label for="stress-heavy">Heavy cycles per shift <span data-value="heavyCycles" aria-hidden="true">1,000</span></label>
+                <input id="stress-heavy" name="heavyCycles" type="range" min="0" max="2000" step="100" value="1000" data-unit="">
+                <small>Heavy cycles replace routine cycles in the shift.</small>
+              </div>
+            </fieldset>
+            <div class="life-stack">
+              <dl class="life-results" aria-live="polite">
+                <div><dt>Predicted life</dt><dd data-result="life">&ndash;</dd></div>
+                <div><dt>Damage per shift</dt><dd data-result="damage">&ndash;</dd></div>
+                <div><dt>Life at zero mean</dt><dd data-result="reference">&ndash;</dd></div>
+                <div><dt>Peak net-section stress</dt><dd data-result="peak">&ndash;</dd></div>
+              </dl>
+              <figure class="life-plot life-plot-focus"><figcaption>Where the service loads sit on the measured S–N curve</figcaption>
+                <canvas role="img" aria-label="Stress–life curve for laboratory specimens and selected service stress bins."></canvas>
+                <span class="life-caption">Each service point uses a Goodman-corrected amplitude. The table shows how the two loads contribute to damage in one shift.</span>
+              </figure>
+            </div>
+          </div>
+          <div class="life-table-wrap life-details" tabindex="0" role="region" aria-label="Fatigue damage by load bin">
+            <table class="life-table">
+              <caption>Damage per shift by load bin</caption>
+              <thead><tr><th scope="col">Bin</th><th scope="col">Cycles</th><th scope="col">Amplitude (MPa)</th><th scope="col">Equivalent (MPa)</th><th scope="col">Test life (cycles)</th><th scope="col">Damage</th></tr></thead>
+              <tbody>
+                <tr data-bin><th scope="row">Routine</th><td data-result="count"></td><td data-result="amplitude"></td><td data-result="equivalent"></td><td data-result="life"></td><td data-result="damage"></td></tr>
+                <tr data-bin><th scope="row">Heavy</th><td data-result="count"></td><td data-result="amplitude"></td><td data-result="equivalent"></td><td data-result="life"></td><td data-result="damage"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <details class="life-details">
+            <summary>Model and specimen data</summary>
+            <p>Basquin fit to 12 measured failure points in NACA TN 3631, table II, printed page 9. With stress in MPa and life in cycles, <i>N</i><sub>f</sub> = 171,607(<i>σ</i><sub>a,eq</sub>/100)<sup>&minus;6.72524</sup>. The lab uses a representative 490 MPa tensile strength for the Goodman correction and sums the two counted load bins with Miner&rsquo;s rule. <a href="https://ntrs.nasa.gov/citations/19930084379">NACA specimen data</a></p>
+          </details>
+        </div>
+
+        <div class="life-stage" data-stage="strain" hidden>
+          <h3>Constrained shaft detail · One cycle per start and stop</h3>
+          <p>Each start and stop imposes a local, fully reversed strain cycle in a constrained steel detail. The prescribed strain is the mechanical component at the hotspot. The example uses normalised SAE 1045 shaft-steel specimens.</p>
+          <div class="life-workspace">
+            <fieldset class="life-controls">
+              <legend class="visually-hidden">Shaft service inputs</legend>
+              <div class="life-control">
+                <label for="strain-amplitude">Local strain amplitude <span data-value="strainPercent" aria-hidden="true">0.6%</span></label>
+                <input id="strain-amplitude" name="strainPercent" type="range" min="0.25" max="1.2" step="0.01" value="0.60" data-digits="2" data-unit="%">
+                <small>Enter the amplitude. A 0.6% amplitude gives a 1.2% range.</small>
+              </div>
+              <div class="life-control">
+                <label for="strain-starts">Starts per week <span data-value="starts" aria-hidden="true">25</span></label>
+                <input id="strain-starts" name="starts" type="range" min="5" max="100" step="5" value="25" data-unit="">
+                <small>One complete strain cycle per start and stop.</small>
+              </div>
+            </fieldset>
+            <div class="life-stack">
+              <dl class="life-results" aria-live="polite">
+                <div><dt>Life to test endpoint</dt><dd data-result="life">&ndash;</dd></div>
+                <div><dt>Equivalent service time</dt><dd data-result="weeks">&ndash;</dd></div>
+                <div><dt>Elastic strain amplitude</dt><dd data-result="elastic">&ndash;</dd></div>
+                <div><dt>Plastic strain amplitude</dt><dd data-result="plastic">&ndash;</dd></div>
+                <div><dt>Stress amplitude</dt><dd data-result="stress">&ndash;</dd></div>
+                <div><dt>Plastic share of total amplitude</dt><dd data-result="share">&ndash;</dd></div>
+              </dl>
+              <div class="life-stack">
+                <figure class="life-plot"><figcaption>First read the stabilised hysteresis loop</figcaption>
+                  <canvas data-loop role="img" aria-label="Stabilised stress–strain loop."></canvas>
+                  <span class="life-caption">The horizontal and vertical extremes give the total strain and stress amplitudes.</span>
+                </figure>
+                <figure class="life-plot life-plot-focus"><figcaption>Then read the predicted life at that strain</figcaption>
+                  <canvas data-strain-life role="img" aria-label="Strain–life curve with the elastic, plastic, and total fits."></canvas>
+                  <span class="life-caption">The elastic and plastic curves sum to the total strain amplitude.</span>
+                </figure>
+              </div>
+            </div>
+          </div>
+          <details class="life-details">
+            <summary>Model and specimen data</summary>
+            <p>The lab fits the two Coffin–Manson–Basquin terms to selected measured failures from the SAE Fatigue Design &amp; Evaluation shaft-steel tests (1045, 203 HB). It uses <i>E</i> = 203.4 GPa, <i>σ</i><sub>f</sub>′ = 1231 MPa, <i>b</i> = &minus;0.113, <i>ε</i><sub>f</sub>′ = 0.423 and <i>c</i> = &minus;0.503. The illustrated loop uses Masing branches based on the implied cyclic stress–strain curve. <a href="https://fde.uwaterloo.ca/Fde/Materials/Steel/Sae1045/sae1045_203BHN_CA_Bonnen-Chern.html">SAE FD&amp;E specimen data</a></p>
+          </details>
+        </div>
+
+        <div class="life-stage" data-stage="crack">
+          <h3>Pressurised aluminium skin · One pressure cycle per flight</h3>
+          <p>Start at the inspected flaw. Predict the flights to the selected assessment size and compare both ends of the inspection sizing range. Enter crack half-lengths throughout.</p>
+          <div class="life-workspace">
+            <fieldset class="life-controls">
+              <legend class="visually-hidden">Pressure and crack inputs</legend>
+              <div class="life-control">
+                <label for="crack-pressure">Cruise pressure differential <span data-value="pressure" aria-hidden="true">57 kPa</span></label>
+                <input id="crack-pressure" name="pressure" type="range" min="40" max="65" step="1" value="57" data-unit=" kPa">
+                <small>Reference geometry uses radius 1.8 m and skin thickness 1.2 mm.</small>
+              </div>
+              <div class="life-control">
+                <label for="crack-initial">Measured half-length <span data-value="initial" aria-hidden="true">3 mm</span></label>
+                <input id="crack-initial" name="initial" type="range" min="1.5" max="8" step="0.1" value="3" data-digits="1" data-unit=" mm">
+              </div>
+              <div class="life-control">
+                <label for="crack-uncertainty">Sizing uncertainty <span data-value="uncertainty" aria-hidden="true">0.5 mm</span></label>
+                <input id="crack-uncertainty" name="uncertainty" type="range" min="0" max="1" step="0.1" value="0.5" data-digits="1" data-unit=" mm">
+                <small>Compare the measured half-length ± this amount.</small>
+              </div>
+              <div class="life-control">
+                <label for="crack-target">Assessment half-length <span data-value="target" aria-hidden="true">6 mm</span></label>
+                <input id="crack-target" name="target" type="range" min="4" max="12" step="0.5" value="6" data-digits="1" data-unit=" mm">
+              </div>
+              <div class="life-actions"><button type="button" data-reset-crack>Load worked example values</button></div>
+            </fieldset>
+            <div class="life-stack">
+              <div>
+                <dl class="life-results" aria-live="polite">
+                  <div><dt>Nominal remaining life</dt><dd data-result="life">&ndash;</dd></div>
+                  <div><dt>Hoop stress range</dt><dd data-result="stress">&ndash;</dd></div>
+                  <div><dt>Starting ΔK</dt><dd data-result="startK">&ndash;</dd></div>
+                  <div><dt>ΔK at assessment size</dt><dd data-result="endK">&ndash;</dd></div>
+                </dl>
+                <p class="life-status" role="status"></p>
+              </div>
+              <figure class="life-plot life-plot-focus"><figcaption>When does the crack reach the assessment size?</figcaption>
+                <canvas data-crack-growth role="img" aria-label="Change in crack size after successive flights."></canvas>
+                <span class="life-caption">The shaded region shows the effect of inspection sizing uncertainty while both bounds are in the prediction interval.</span>
+              </figure>
+            </div>
+          </div>
+          <div class="life-table-wrap life-details" tabindex="0" role="region" aria-label="Effect of inspection sizing uncertainty">
+            <table class="life-table">
+              <caption>Effect of inspection sizing uncertainty</caption>
+              <thead><tr><th scope="col">Case</th><th scope="col">Starting half-length</th><th scope="col">Prediction</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Smaller bound</th><td data-result="smallSize"></td><td data-result="smallLife"></td></tr>
+                <tr><th scope="row">Measured</th><td data-result="nominalSize"></td><td data-result="nominalLife"></td></tr>
+                <tr><th scope="row">Larger bound</th><td data-result="largeSize"></td><td data-result="largeLife"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <details class="life-details">
+            <summary>View one flight’s pressure record</summary>
+            <figure class="life-plot life-plot-support life-details"><figcaption>Cabin pressure during one flight</figcaption>
+              <canvas data-flight role="img" aria-label="Cabin pressure differential through a representative flight."></canvas>
+              <span class="life-caption">Climb, cruise and descent make one pressure cycle.</span>
+            </figure>
+          </details>
+          <details class="life-details">
+            <summary>Model and fit limits</summary>
+            <p>The shell supplies the hoop stress. Crack growth uses the flat, wide-plate approximation with <i>Y</i> = 1. The lab uses Hudson&rsquo;s constant-amplitude fit for 2024-T3 at <i>R</i> = 0, evaluated over an instructional window of 5–18 MPa√m. This excludes the near-threshold region and the acceleration toward fracture. The result is tied to the chosen assessment size and the teaching geometry. <a href="https://ntrs.nasa.gov/citations/19690025326">NASA crack-growth data and fit</a></p>
+          </details>
+        </div>
+      </form>
+    </section>
+    <section class="life-section" id="formula-summary" aria-labelledby="formula-summary-title">
+      <h2 id="formula-summary-title">Summary and formulas</h2>
+      <p class="life-lead">Use stress–life for predominantly elastic cycles, strain–life when local plastic strain matters, and crack-growth analysis when you know the starting flaw size.</p>
+      <div class="life-grid">
+        <article class="life-card">
+          <h3>Describe the stress cycle</h3>
+          <p class="formula" data-tex="\Delta\sigma=\sigma_{\max}-\sigma_{\min},\quad \sigma_a=\frac{\Delta\sigma}{2}">Δσ = σ<sub>max</sub> − σ<sub>min</sub>, σ<sub>a</sub> = Δσ/2</p>
+          <p class="formula" data-tex="\sigma_m=\frac{\sigma_{\max}+\sigma_{\min}}{2},\quad R=\frac{\sigma_{\min}}{\sigma_{\max}},\quad T=\frac{1}{f}">σ<sub>m</sub> = (σ<sub>max</sub> + σ<sub>min</sub>)/2, R = σ<sub>min</sub>/σ<sub>max</sub>, T = 1/f</p>
+          <p class="formula" data-tex="M=\frac{F\ell}{2},\qquad \sigma_a=\frac{32M}{\pi d^3}">M = Fℓ/2, σ<sub>a</sub> = 32M/(πd³)</p>
+          <p>In the <a href="#rotating-beam">rotating-beam test</a>, the total hanging force <i>F</i> is shared by the two collars, ℓ is the lever arm, and <i>d</i> is the round gauge diameter. One revolution gives one cycle at zero mean stress and <i>R</i> = −1.</p>
+        </article>
+        <article class="life-card">
+          <h3>Estimate stress–life and cumulative damage</h3>
+          <p class="formula" data-tex="\sigma_a=A N_f^{\,b}">σ<sub>a</sub> = A N<sub>f</sub><sup>b</sup></p>
+          <p>Fit Basquin’s relation over the finite-life part of the <a href="#fatigue-coupons">S–N curve</a>. A runout establishes a lower bound on life.</p>
+          <p class="formula" data-tex="\sigma_{a,\mathrm{eq}}=\frac{\sigma_a}{1-\sigma_m/S_u},\qquad D=\sum_i\frac{n_i}{N_i}">σ<sub>a,eq</sub> = σ<sub>a</sub>/(1 − σ<sub>m</sub>/S<sub>u</sub>), D = Σ n<sub>i</sub>/N<sub>i</sub></p>
+          <p>The Goodman correction uses ultimate tensile strength <i>S</i><sub>u</sub> to estimate a fully reversed equivalent amplitude for a tensile mean. Miner’s rule adds the damage from <i>n</i><sub>i</sub> cycles in each bin with test life <i>N</i><sub>i</sub>. A repeated block with damage <i>D</i> reaches the model’s failure criterion after about 1/<i>D</i> blocks.</p>
+        </article>
+        <article class="life-card">
+          <h3>Use the local strain amplitude</h3>
+          <p class="formula" data-tex="\frac{\Delta\varepsilon}{2}=\frac{\sigma_f'}{E}(2N_f)^b+\varepsilon_f'(2N_f)^c">Δε/2 = (σ′<sub>f</sub>/E)(2N<sub>f</sub>)<sup>b</sup> + ε′<sub>f</sub>(2N<sub>f</sub>)<sup>c</sup></p>
+          <p>In Coffin–Manson–Basquin, the first term is elastic and the second is plastic. Each cycle contains two reversals. Choose coefficients for the material and use the local mechanical strain range.</p>
+          <p class="formula" data-tex="\varepsilon_{a,e}=\frac{\sigma_a}{E},\qquad \varepsilon_{a,p}=\frac{\Delta\varepsilon}{2}-\varepsilon_{a,e}">ε<sub>a,e</sub> = σ<sub>a</sub>/E, ε<sub>a,p</sub> = Δε/2 − ε<sub>a,e</sub></p>
+          <p>Use the <a href="#hysteresis-demo">hysteresis loop</a> to read the stress amplitude and separate the strain components.</p>
+        </article>
+        <article class="life-card">
+          <h3>Integrate growth from the measured crack</h3>
+          <p class="formula" data-tex="\Delta K=Y(a)\,\Delta\sigma\sqrt{\pi a},\qquad \frac{da}{dN}=C(\Delta K)^m">ΔK = Y(a) Δσ √(πa), da/dN = C(ΔK)<sup>m</sup></p>
+          <p class="formula" data-tex="N_{\rm grow}=\int_{a_0}^{a_{\rm lim}}\frac{da}{C[\Delta K(a)]^m}">N<sub>grow</sub> = ∫<sub>a₀</sub><sup>aₗᵢₘ</sup> da / {C[ΔK(a)]<sup>m</sup>}</p>
+          <p>Choose a Paris fit for the material and stress ratio. Integrate only over the fit range, from the measured size to the assessment limit. In the <a href="#worked-example">central through-crack example</a>, <i>a</i> is half the crack length and <i>Y</i> is about one.</p>
+        </article>
+      </div>
+    </section>
+    <p class="life-actions"><a class="button secondary" href="../../index.html#topics">&larr; Back to teaching modules</a></p>
+  </main>
+  <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Fatigue &middot; <span data-year>2026</span></p></footer>
+</body>
+</html>
