@@ -31,7 +31,7 @@
       <div><p class="eyebrow">Teaching page 11</p><h1>Fracture Mechanics</h1></div>
       <div class="teaching-intro-copy">
         <p>Examine historical failures and read fracture surfaces. Then use crack-tip stresses and fracture toughness to predict when a loaded crack can extend.</p>
-        <p class="teaching-intro-note"><a href="../../simulations/fracture-toughness/index.html">Open the fracture toughness lab &rarr;</a></p>
+        <p class="teaching-intro-note"><a href="../../simulations/fracture-toughness/index.html">Open the fracture toughness lab &rarr;</a> &middot; <a href="#formula-summary">Formula summary</a></p>
       </div>
     </header>
     <nav class="fracture-route" aria-label="Lesson sections">
@@ -640,6 +640,42 @@
         <p>A second record gives <i>F</i><sub>Q</sub> = 10.0 kN and <i>F</i><sub>max</sub> = 11.8 kN. The ratio is 1.18, above 1.10. The result remains conditional <i>K</i><sub>Q</sub>. Meeting a size requirement cannot compensate for this failed force-record check.</p>
       </article>
       <p><a class="button secondary" href="../../simulations/fracture-toughness/index.html">Run the fracture toughness lab and see specimen sketches</a></p>
+    </section>
+    <section id="formula-summary" class="fracture-section" aria-labelledby="formula-summary-title">
+      <h2 id="formula-summary-title">Summary and formulas</h2>
+      <p class="section-lead">Identify the flaw and loading mode, calculate how strongly the load drives the crack, and compare that result with toughness measured under suitable conditions.</p>
+      <div class="figure-pair">
+        <article class="fracture-card">
+          <h3>Measure impact energy and estimate notch stress</h3>
+          <p class="formula" data-tex="E_{\rm abs}=mg(h_{\rm release}-h_{\rm rise})-E_{\rm loss}"><i>E</i><sub>abs</sub> = <i>mg</i>(<i>h</i><sub>release</sub> − <i>h</i><sub>rise</sub>) − <i>E</i><sub>loss</sub></p>
+          <p><a href="#impact">Charpy and Izod</a> use the pendulum energy drop corrected for machine losses. Compare absorbed energies at matched test conditions.</p>
+          <p class="formula" data-tex="K_t=1+2\sqrt{\frac{a}{\rho}},\qquad \sigma_{\max}=K_t\sigma"><i>K</i><sub>t</sub> = 1 + 2√(<i>a</i>/ρ), σ<sub>max</sub> = <i>K</i><sub>t</sub>σ</p>
+          <p>This <a href="#concentration">elastic stress concentration</a> applies to an elliptical hole with half-length <i>a</i>, tip radius ρ, and remote tension perpendicular to its long axis.</p>
+        </article>
+        <article class="fracture-card">
+          <h3>Compare crack driving force with resistance</h3>
+          <p class="formula" data-tex="K_{\rm I}=Y\sigma\sqrt{\pi a},\qquad G=\frac{K_{\rm I}^2}{E'}"><i>K</i><sub>I</sub> = <i>Y</i>σ√(π<i>a</i>), <i>G</i> = <i>K</i><sub>I</sub>²/<i>E</i>′</p>
+          <p>Use the <a href="#stress-intensity-geometries">shape factor</a> for the flaw geometry. In Mode I linear elasticity, <i>E</i>′ = <i>E</i> in plane stress and <i>E</i>′ = <i>E</i>/(1 − ν²) in plane strain. Crack extension becomes possible when <i>G</i> reaches resistance <i>G</i><sub>c</sub>, or when <i>K</i><sub>I</sub> reaches the applicable toughness.</p>
+          <p class="formula" data-tex="\sigma_c=\sqrt{\frac{E'G_c}{\pi a}},\qquad G_c=2\gamma_s\;\text{(ideal brittle case)}">σ<sub>c</sub> = √(<i>E</i>′<i>G</i><sub>c</sub>/(π<i>a</i>)), <i>G</i><sub>c</sub> = 2γ<sub>s</sub> for ideal brittle growth</p>
+          <p>The <a href="#griffith">Griffith stress</a> above assumes an effectively infinite plate with a central through crack of total length 2<i>a</i>.</p>
+        </article>
+      </div>
+      <div class="figure-pair">
+        <article class="fracture-card">
+          <h3>Check the size of the crack-tip plastic zone</h3>
+          <p class="formula" data-tex="\sigma_{yy}(r,0)=\frac{K_{\rm I}}{\sqrt{2\pi r}}">σ<sub>yy</sub>(<i>r</i>, 0) = <i>K</i><sub>I</sub>/√(2π<i>r</i>)</p>
+          <p class="formula" data-tex="r_{p,\,\text{plane stress}}\approx\frac{1}{2\pi}\left(\frac{K_{\rm I}}{\sigma_{\rm ys}}\right)^2">Plane stress <i>r</i><sub>p</sub> ≈ [1/(2π)](<i>K</i><sub>I</sub>/σ<sub>ys</sub>)²</p>
+          <p class="formula" data-tex="r_{p,\,\text{plane strain}}\approx\frac{1}{6\pi}\left(\frac{K_{\rm I}}{\sigma_{\rm ys}}\right)^2">Plane strain <i>r</i><sub>p</sub> ≈ [1/(6π)](<i>K</i><sub>I</sub>/σ<sub>ys</sub>)²</p>
+          <p>The elastic opening stress grows as 1/√<i>r</i> ahead of the tip. For <a href="#small-scale-yielding">small-scale yielding</a>, the estimated plastic zone should be small compared with the crack, ligament, and relevant specimen dimensions.</p>
+        </article>
+        <article class="fracture-card">
+          <h3>Qualify the measured toughness</h3>
+          <p class="formula" data-tex="K_{\rm Q}=\frac{F_{\rm Q}}{B\sqrt{W}}f(a/W)"><i>K</i><sub>Q</sub> = [<i>F</i><sub>Q</sub>/(<i>B</i>√<i>W</i>)]<i>f</i>(<i>a</i>/<i>W</i>)</p>
+          <p>This formula uses the C(T) shape factor and the conditional force <i>F</i><sub>Q</sub>. For an <a href="#testing">ASTM E399 test</a>, check the force record and remaining ligament.</p>
+          <p class="formula" data-tex="\frac{F_{\max}}{F_{\rm Q}}\leq1.10,\qquad W-a\geq2.5\left(\frac{K_{\rm Q}}{\sigma_{\rm ys}}\right)^2"><i>F</i><sub>max</sub>/<i>F</i><sub>Q</sub> ≤ 1.10, <i>W</i> − <i>a</i> ≥ 2.5(<i>K</i><sub>Q</sub>/σ<sub>ys</sub>)²</p>
+          <p>Report <i>K</i><sub>Ic</sub> after all qualification requirements have been met. When elastic-plastic deformation or stable tearing governs, choose a test that reports <i>J</i> or CTOD toughness.</p>
+        </article>
+      </div>
     </section>
   </main>
   <footer class="site-footer"><p><a href="../../index.html">MSE Learning Lab home</a></p><p>Fracture Mechanics &middot; <span data-year>2026</span></p></footer>

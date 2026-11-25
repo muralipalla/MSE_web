@@ -38,7 +38,7 @@
       <div><p class="eyebrow">Teaching page 12</p><h1>Fatigue</h1></div>
       <div class="teaching-intro-copy">
         <p>A shaft can carry a load on every turn for months and still crack. Follow one point on a rotating specimen, measure its stress cycle, and use that measurement to predict life in service.</p>
-        <p class="teaching-intro-note"><a href="#rotating-beam">Start the rotating-beam experiment &rarr;</a> &middot; <a href="#formula-summary">Formula summary</a></p>
+        <p class="teaching-intro-note"><a href="#rotating-beam">Start the rotating-beam experiment &rarr;</a> &middot; <a href="#improve-fatigue-life">Improve fatigue life</a> &middot; <a href="#formula-summary">Formula summary</a></p>
       </div>
     </header>
 
@@ -504,6 +504,31 @@
           </details>
         </div>
       </form>
+    </section>
+    <section class="life-section" id="improve-fatigue-life" aria-labelledby="improve-fatigue-title">
+      <h2 id="improve-fatigue-title">Methods to improve fatigue life</h2>
+      <p class="life-lead">Lower the stress or strain at the critical location, make it harder for a crack to start, and account for cracks that can still grow in service.</p>
+      <div class="life-grid">
+        <article class="life-card">
+          <h3>Reduce the cyclic load at the hot spot</h3>
+          <p>Reduce vibration or resonance, stiffen the part where appropriate, and improve the load path to lower the local stress amplitude. Reducing a tensile mean stress can also reduce the severity of the cycle. Use local <a href="#strain-life">strain–life data</a> when starts, stops or overloads cause plastic strain.</p>
+        </article>
+        <article class="life-card">
+          <h3>Round notches and protect the surface</h3>
+          <p>Use smooth fillets and gradual section changes, deburr holes, and remove machining scratches where fatigue cracks are likely to start. Reduce pitting and fretting by protecting exposed surfaces and controlling relative motion at joints.</p>
+          <p class="life-source"><a href="https://ntrs.nasa.gov/citations/19890024777">NASA analysis of flaws at fillets</a> &middot; <a href="https://ntrs.nasa.gov/citations/19830019076">NASA case of a corrosion pit at a fillet</a></p>
+        </article>
+        <article class="life-card">
+          <h3>Introduce compressive residual stress</h3>
+          <p>Shot peening, laser peening, or cold expansion of a hole can leave the treated region in compression. This reduces the local tensile stress that opens small surface cracks. Check how much compression remains after the expected temperature and load history.</p>
+          <p class="life-source"><a href="https://ntrs.nasa.gov/citations/20020010582">NASA tests of shot and laser peening</a></p>
+        </article>
+        <article class="life-card">
+          <h3>Control defects and plan inspections</h3>
+          <p>Choose a material, heat treatment, and manufacturing route with fatigue data for the expected loading and environment. Control pores, inclusions, and weld defects at critical locations. Use the <a href="#crack-growth">crack-growth model</a> to estimate the cycles from a detectable flaw to the assessment size and set inspection intervals.</p>
+        </article>
+      </div>
+      <div class="life-note"><p><strong>What does a 20% reduction in cyclic stress range do?</strong> In the Paris regime, at the same crack size and geometry, it reduces Δ<i>K</i> by 20%. For an illustrative Paris exponent of 3, the growth rate falls to 0.8³ ≈ 0.51 of its original value at that crack size.</p></div>
     </section>
     <section class="life-section" id="formula-summary" aria-labelledby="formula-summary-title">
       <h2 id="formula-summary-title">Summary and formulas</h2>
