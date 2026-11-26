@@ -8,6 +8,7 @@
   const status = builder.querySelector(".life-status");
   const results = builder.querySelector("[data-coupon-results]");
   const table = results.querySelector("tbody");
+  const headings = Array.from(results.querySelectorAll("thead th"), heading => heading.textContent);
   const fit = builder.querySelector("[data-coupon-fit]");
   const reset = builder.querySelector("[data-coupon-reset]");
   const levels = [340, 300, 260, 220, 190, 170];
@@ -52,8 +53,11 @@
     const outcome = runout ? "Runout" : "Fracture";
     records.push({ amplitude, cycles, runout });
     const row = table.insertRow();
-    for (const value of [records.length, amplitude, cycles, outcome]) {
-      row.insertCell().textContent = typeof value === "number" ? format(value) : value;
+    const values = [records.length, amplitude, cycles, outcome];
+    for (const [index, value] of values.entries()) {
+      const cell = row.insertCell();
+      cell.textContent = typeof value === "number" ? format(value) : value;
+      cell.dataset.label = headings[index];
     }
     return outcome + " at " + format(cycles) + " cycles and " + format(amplitude) + " MPa.";
   }
@@ -106,7 +110,7 @@
   reset.addEventListener("click", () => {
     records.length = 0;
     table.replaceChildren();
-    results.open = false;
+    results.removeAttribute("open");
     status.textContent = "Results cleared. Select an amplitude or run a full series.";
     update();
   });

@@ -188,8 +188,10 @@
     });
   }
 
+  const dwellPlot = document.querySelector("#dwell-loops");
+
   function renderDwellLoops() {
-    plot(document.querySelector("#dwell-loops"), {
+    plot(dwellPlot, {
       x: { label: "Mechanical strain (%)", range: [-0.25, 0.25] },
       y: { label: "Stress (MPa)", range: [-550, 450] },
       series: [
@@ -343,12 +345,17 @@
     c.restore();
   }
 
-  function renderTestMotion() {
+  function readTest() {
     const hour = progress * specimen.rupture;
     const strain = specimen.strainAt(hour);
     const ruptured = progress >= 1;
     const phase = ruptured ? "Rupture" : progress >= specimen.tertiaryStart ? "Tertiary creep"
       : progress >= specimen.primaryEnd ? "Minimum-rate interval" : progress > 0 ? "Primary creep" : "Elastic extension";
+    return { hour, strain, phase, ruptured };
+  }
+
+  function renderTestMotion() {
+    const { hour, strain, phase, ruptured } = readTest();
     showResults(test.querySelector(".life-live-state"), {
       time: format(hour) + " h",
       strain: format(strain, 3) + "%",
@@ -455,21 +462,50 @@
     renderTest();
   });
 
-  for (const button of lab.querySelectorAll("[data-run-hours]")) {
-    button.addEventListener("click", () => {
-      lab.elements.runHours.value = button.dataset.runHours;
-      renderLab();
+  const log = test.querySelector("[data-creep-records]");
+  if (log) {
+    const clear = log.querySelector("[data-creep-clear]");
+    const table = log.querySelector("tbody");
+    const headings = Array.from(log.querySelectorAll("thead th"), heading => heading.textContent);
+    const status = test.querySelector("[data-creep-record-status]");
+    const empty = status.textContent;
+    test.querySelector("[data-creep-record]").addEventListener("click", () => {
+      const { hour, strain, phase } = readTest();
+      const row = table.insertRow();
+      const values = [format(specimen.temperature), format(specimen.stress), format(hour, 1),
+        format(strain, 3), format(strain - specimen.elastic, 3), phase];
+      for (const [index, value] of values.entries()) {
+        const cell = row.insertCell();
+        cell.textContent = value;
+        cell.dataset.label = headings[index];
+      }
+      clear.disabled = false;
+      status.textContent = "Recorded " + format(hour, 1) + " h at " + specimen.temperature + " °C and " + specimen.stress + " MPa.";
+    });
+    clear.addEventListener("click", () => {
+      table.replaceChildren();
+      clear.disabled = true;
+      status.textContent = empty;
     });
   }
-  lab.addEventListener("submit", event => event.preventDefault());
-  lab.addEventListener("input", renderLab);
-  lab.addEventListener("reset", () => window.requestAnimationFrame(renderLab));
-  refreshOnResize(document.querySelectorAll("canvas"), () => {
-    renderDwellLoops();
+
+  if (lab) {
+    for (const button of lab.querySelectorAll("[data-run-hours]")) {
+      button.addEventListener("click", () => {
+        lab.elements.runHours.value = button.dataset.runHours;
+        renderLab();
+      });
+    }
+    lab.addEventListener("submit", event => event.preventDefault());
+    lab.addEventListener("input", renderLab);
+    lab.addEventListener("reset", () => window.requestAnimationFrame(renderLab));
+  }
+
+  function redraw() {
+    if (dwellPlot) renderDwellLoops();
     renderTest();
-    renderLab();
-  });
-  renderDwellLoops();
-  renderTest();
-  renderLab();
+    if (lab) renderLab();
+  }
+  refreshOnResize(document.querySelectorAll("canvas"), redraw);
+  redraw();
 }());

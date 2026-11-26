@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fdf6ec">
+  <meta name="description" content="Operate a rotating-beam fatigue rig and build an S–N curve from simulated specimen tests.">
+  <title>Fatigue Test | MSE Learning Lab</title>
+  <link rel="stylesheet" href="../../css/style.css?v=20261126">
+  <link rel="stylesheet" href="../../css/teaching-intro.css?v=20261126">
+  <link rel="stylesheet" href="../../css/service-life.css?v=20261126">
+  <link rel="stylesheet" href="../experiment.css?v=20261126">
+  <script src="../../js/main.js?v=2" defer></script>
+  <script src="../../js/service-life-ui.js?v=20261126" defer></script>
+  <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
+  <script src="../../teaching/fatigue/beam-view.js" defer></script>
+  <script src="../../teaching/fatigue/beam.js?v=20261126-experiment" defer></script>
+  <script src="../../teaching/fatigue/sn-tests.js?v=20261126-experiment" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#fatigue-test">Skip to the fatigue test</a>
+  <header class="article-header">
+    <nav class="article-nav" aria-label="Experiment navigation">
+      <a class="brand" href="../../index.html">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>MSE</strong><small>Learning Lab</small></span>
+      </a>
+      <a class="back-link" href="../../index.html#lab">&larr; Back to experiments</a>
+    </nav>
+  </header>
+
+  <main class="teaching-shell virtual-experiment" id="fatigue-test">
+    <header class="teaching-intro">
+      <div>
+        <p class="eyebrow">Virtual experiment</p>
+        <h1>Fatigue Test</h1>
+      </div>
+      <div class="teaching-intro-copy">
+        <p>Apply a bending load to a rotating specimen. Follow one surface point through a stress cycle, then test specimens at several amplitudes to build a stress–life curve.</p>
+      </div>
+    </header>
+    <nav class="life-route experiment-nav" aria-label="Fatigue test sections">
+      <a href="#rotating-beam">Rotating-beam rig</a>
+      <a href="#fatigue-coupons">Specimen series</a>
+    </nav>
+    <noscript><p class="life-note">Enable JavaScript to operate the rig and run specimen tests.</p></noscript>
+
+    <section class="life-section" id="rotating-beam" aria-labelledby="beam-title">
+      <h2 id="beam-title">Set the bending load</h2>
+      <div class="life-card life-experiment experiment-setup">
+        <fieldset class="life-experiment-inputs">
+          <legend class="visually-hidden">Rotating-beam settings</legend>
+          <div class="life-control">
+            <label for="beam-force">Hanging force <span data-value="force" aria-hidden="true">450 N</span></label>
+            <input id="beam-force" name="force" type="range" min="100" max="800" step="5" value="450" data-unit=" N">
+          </div>
+          <div class="life-control">
+            <label for="beam-diameter">Gauge diameter <span data-value="diameter" aria-hidden="true">8 mm</span></label>
+            <input id="beam-diameter" name="diameter" type="range" min="8" max="12" step="0.1" value="8" data-unit=" mm" data-digits="1">
+          </div>
+        </fieldset>
+        <dl class="life-results life-cycle-values">
+          <div><dt>Stress amplitude σ<sub>a</sub></dt><dd data-result="amplitude">179 MPa</dd></div>
+          <div><dt>Mean stress</dt><dd>0 MPa</dd></div>
+          <div><dt>Stress ratio <i>R</i></dt><dd>−1</dd></div>
+        </dl>
+      </div>
+
+      <div class="life-experiment-grid experiment-workbench">
+        <div class="life-card">
+          <figure class="life-instrument life-beam-instrument">
+            <figcaption>Rotating-beam rig</figcaption>
+            <canvas data-beam-3d hidden tabindex="0" role="img" aria-label="Three-dimensional rotating-beam rig with hanging load, motor and revolution counter." aria-description="Drag or use the arrow keys to orbit the rig.">The yellow marker rotates with the specimen.</canvas>
+            <canvas data-beam-machine role="img" aria-label="Schematic of the rotating-beam rig with bearings, hanging load, motor and revolution counter.">The yellow marker tracks a point on the specimen surface.</canvas>
+            <span class="life-caption" data-beam-guide>The lower detail shows the gauge diameter and the point tracked on the graph.</span>
+          </figure>
+          <div class="life-machine-actions">
+            <button class="life-play" type="button" data-beam-play>Play slow motion</button>
+            <button type="button" data-beam-step>Step 90°</button>
+            <button type="button" data-beam-reset>Reset rotation</button>
+            <button type="button" data-beam-view hidden>Show schematic</button>
+          </div>
+          <div class="life-live-state" aria-label="Current rotation readings">
+            <span data-result="angle">0°</span>
+            <strong data-result="stress">−179 MPa</strong>
+            <span data-result="sign" data-sign="compression">Compression</span>
+            <span data-result="turns">0 revolutions</span>
+          </div>
+        </div>
+        <figure class="life-plot life-plot-focus">
+          <figcaption>Surface stress over one revolution</figcaption>
+          <canvas data-beam-waveform role="img" aria-label="Stress varies from compression at zero degrees to tension at 180 degrees, then returns to compression.">One revolution makes one fully reversed stress cycle.</canvas>
+          <span class="life-caption">The dot tracks the yellow point on the specimen. Coral shading marks tension and blue shading marks compression.</span>
+        </figure>
+      </div>
+
+      <div class="experiment-transfer">
+        <p>The specimen series uses amplitudes from 170 to 340 MPa in 5 MPa steps. Transfer the nearest setting from the rig.</p>
+        <div class="life-machine-actions">
+          <button type="button" data-beam-transfer disabled>Use rig stress in the series</button>
+        </div>
+      </div>
+      <details class="life-card life-details">
+        <summary>How the rig sets the stress</summary>
+        <p>The yoke divides the hanging force <i>F</i> equally between two collars. Each force acts over 40 mm to produce a bending moment of <i>M</i> = <i>F</i>ℓ/2 in the gauge section. For gauge diameter <i>d</i>, the surface stress amplitude is σ<sub>a</sub> = 32<i>M</i>/(π<i>d</i><sup>3</sup>).</p>
+      </details>
+    </section>
+
+    <section class="life-section experiment-series" id="fatigue-coupons" aria-labelledby="series-title">
+      <h2 id="series-title">Measure fatigue life</h2>
+      <p class="life-lead">Test smooth, normalized SAE 1045 steel specimens at <i>R</i> = −1. Repeat an amplitude to see how life varies, or run a series of four specimens at each of six amplitudes.</p>
+      <div class="life-experiment-grid experiment-workbench">
+        <div class="life-card life-experiment">
+          <div class="life-control">
+            <label for="coupon-amplitude">Stress amplitude <span data-value="amplitude" aria-hidden="true">300 MPa</span></label>
+            <input id="coupon-amplitude" name="amplitude" type="range" min="170" max="340" step="5" value="300" data-unit=" MPa">
+          </div>
+          <div class="life-machine-actions">
+            <button class="life-play" type="button" data-coupon-run>Test one specimen</button>
+            <button type="button" data-coupon-series>Run test series</button>
+            <button type="button" data-coupon-fit aria-describedby="coupon-fit-note" disabled>Fit regression line</button>
+            <button type="button" data-coupon-reset disabled>Clear results</button>
+          </div>
+          <p class="life-status" role="status">Select an amplitude and test a specimen.</p>
+          <p class="life-control-note" id="coupon-fit-note">Use fractures at two or more distinct amplitudes to fit the line. Refit after adding specimens.</p>
+          <details class="life-details">
+            <summary>Simulation model</summary>
+            <p>Each specimen has simulated scatter around a Basquin stress–life curve. The standard deviation of log<sub>10</sub> life is 0.08. Fitting only fractures can underestimate life near the stop because some longer-lived specimens are runouts.</p>
+          </details>
+        </div>
+        <figure class="life-plot life-plot-focus">
+          <figcaption>Stress amplitude versus cycles</figcaption>
+          <canvas role="img" aria-label="Stress–life plot of simulated specimens.">Test specimens to plot each fracture or runout.</canvas>
+          <span class="life-caption">A runout survived the 5 million-cycle stop. The right-pointing arrow indicates that its fracture life exceeds the stop count.</span>
+        </figure>
+      </div>
+      <section class="life-card experiment-results" data-coupon-results hidden aria-labelledby="fatigue-results-title">
+        <h3 id="fatigue-results-title">Specimen results</h3>
+        <div class="life-table-wrap experiment-table" tabindex="0" role="region" aria-label="Scrollable fatigue specimen results">
+          <table class="life-table" role="table">
+            <thead><tr><th scope="col">Test</th><th scope="col">Stress amplitude (MPa)</th><th scope="col">Cycles</th><th scope="col">Result</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+    <nav class="experiment-links" aria-label="Related fatigue lesson">
+      <a href="../../teaching/fatigue/index.html">Read the Fatigue lesson &rarr;</a>
+      <a href="../../teaching/fatigue/index.html#lab">Try a fatigue service-life calculation &rarr;</a>
+    </nav>
+  </main>
+  <footer class="site-footer">
+    <p><a href="../../index.html#lab">MSE Learning Lab experiments</a></p>
+    <p>Fatigue Test &middot; <span data-year>2026</span></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,130 @@
+.virtual-experiment {
+  width: min(calc(100% - 2rem), 78rem);
+}
+
+.experiment-nav {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.virtual-experiment .life-section:first-of-type {
+  margin-top: 1.8rem;
+}
+
+.virtual-experiment .experiment-setup {
+  margin-bottom: 1rem;
+}
+
+.experiment-setup .life-experiment-inputs {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.virtual-experiment .life-control label {
+  font-size: 1rem;
+}
+
+.virtual-experiment .life-machine-actions button {
+  min-height: 2.75rem;
+  font-size: 1rem;
+}
+
+.experiment-workbench > * {
+  min-width: 0;
+}
+
+.virtual-experiment .life-plot figcaption,
+.virtual-experiment .life-instrument figcaption {
+  font-size: 1.125rem;
+}
+
+.experiment-results {
+  margin-top: 1rem;
+}
+
+.experiment-table {
+  max-height: 18rem;
+}
+
+.experiment-table .life-table {
+  min-width: 32rem;
+}
+
+.experiment-series .life-table {
+  min-width: 22rem;
+}
+
+.experiment-transfer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem 1rem;
+  margin-top: .9rem;
+  padding: .5rem .85rem;
+  border: 1px solid var(--line);
+  border-radius: .65rem;
+  background: #f8f5fc;
+}
+
+.experiment-transfer p {
+  flex: 1 1 16rem;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.experiment-transfer .life-machine-actions {
+  margin: .25rem 0;
+}
+
+.experiment-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem 1.25rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 540px) {
+  .virtual-experiment .life-experiment-inputs,
+  .virtual-experiment .life-cycle-values {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .experiment-table .life-table,
+  .experiment-table .life-table tbody {
+    display: block;
+    min-width: 0;
+  }
+
+  .experiment-table .life-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .experiment-table .life-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .55rem .85rem;
+    padding: .7rem .75rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .experiment-table .life-table td {
+    padding: 0;
+    border: 0;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .experiment-table .life-table td::before {
+    display: block;
+    color: var(--ink-soft);
+    font-size: .875rem;
+    font-weight: 700;
+    content: attr(data-label);
+  }
+}

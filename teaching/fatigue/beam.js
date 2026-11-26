@@ -200,6 +200,8 @@
   const waveform = experiment.querySelector("[data-beam-waveform]");
   const play = experiment.querySelector("[data-beam-play]");
   const live = experiment.querySelector(".life-live-state");
+  const transfer = experiment.querySelector("[data-beam-transfer]");
+  const seriesInput = transfer ? document.querySelector("#coupon-amplitude") : null;
   const leverArm = 40;
   let beam;
   let rotation = 0;
@@ -233,6 +235,13 @@
     const amplitude = 16 * force * leverArm / (Math.PI * diameter ** 3);
     beam = { force, diameter, amplitude };
     showResults(experiment, { amplitude: format(amplitude, 1) + " MPa" });
+    if (seriesInput) {
+      const step = Number(seriesInput.step);
+      const rounded = step * Math.round(amplitude / step);
+      transfer.disabled = rounded < Number(seriesInput.min) || rounded > Number(seriesInput.max);
+      transfer.textContent = transfer.disabled ? "Use rig stress in the series" : "Use " + format(rounded) + " MPa in the series";
+      transfer.dataset.amplitude = rounded;
+    }
     plotWaveform(waveform, {
       x: { label: "Beam angle (°)", range: [0, 360], ticks: [0, 90, 180, 270, 360] },
       y: { range: [-350, 350], ticks: [-300, -200, -100, 0, 100, 200, 300] }
@@ -292,11 +301,20 @@
     rotation = 0;
     renderMotion();
   });
+  if (seriesInput) {
+    transfer.addEventListener("click", () => {
+      setPlaying(false);
+      seriesInput.value = transfer.dataset.amplitude;
+      seriesInput.dispatchEvent(new Event("input", { bubbles: true }));
+      seriesInput.focus();
+    });
+  }
   experiment.querySelector(".life-experiment-inputs").addEventListener("input", renderBeam);
   refreshOnResize([machine, model, waveform], renderBeam);
   renderBeam();
 
   const cycle = document.querySelector("#stress-cycle");
+  if (!cycle) return;
   const cycleWaveform = cycle.querySelector("[data-cycle-waveform]");
   const cycleInputs = cycle.querySelector(".life-cycle-inputs");
   const controls = Object.fromEntries([...cycleInputs.querySelectorAll("input")].map(input => [input.name, input]));
