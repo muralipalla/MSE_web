@@ -47,7 +47,9 @@
     return { context, width, height };
   }
 
-  function drawPlot(canvas, { xTicks, yTicks, xLabel, yLabel, curve, reference, point, thresholdX }) {
+  function drawPlot(canvas, {
+    xTicks, yTicks, xLabel, yLabel, curve, reference, point, thresholdX, pointLabel, sampleExponent = 1,
+  }) {
     const plot = preparePlot(canvas);
     if (!plot) return;
     const { context, width, height } = plot;
@@ -117,7 +119,7 @@
       context.beginPath();
       context.moveTo(x(from), y(curve(from)));
       for (let step = 1; step <= 100; step += 1) {
-        const value = from + (to - from) * step / 100;
+        const value = from + (to - from) * (step / 100) ** sampleExponent;
         context.lineTo(x(value), y(curve(value)));
       }
       context.stroke();
@@ -137,6 +139,13 @@
     context.lineWidth = 2;
     context.stroke();
 
+    if (pointLabel) {
+      context.font = plotLabelFont;
+      context.textAlign = "left";
+      context.textBaseline = "bottom";
+      context.fillText(pointLabel, x(point[0]) + 10, y(point[1]) - 4);
+    }
+
     if (thresholdX !== undefined) {
       const markerX = x(thresholdX);
       const markerY = y(reference);
@@ -150,6 +159,234 @@
       context.fillStyle = ink;
       context.fillText(thresholdX.toFixed(2) + " mm", markerX - 9, markerY - 12);
     }
+  }
+
+  function makeInglisStress(a, b) {
+    const scale = (a + b) / 2;
+    const shape = (a - b) / (a + b);
+    const shapePlusOne = 1 + shape;
+    const shapeComplement = 1 - shape * shape;
+
+    // Invert the ellipse mapping z/scale = w + shape/w in the first quadrant.
+    // The outer root represents material outside the traction-free hole.
+    return function normalizedStress(x, y) {
+      const scaledX = Math.abs(x) / scale;
+      const scaledY = Math.abs(y) / scale;
+      const discriminantReal = scaledX * scaledX - scaledY * scaledY - 4 * shape;
+      const discriminantImag = 2 * scaledX * scaledY;
+      const magnitude = Math.hypot(discriminantReal, discriminantImag);
+      const wReal = (scaledX + Math.sqrt((magnitude + discriminantReal) / 2)) / 2;
+      const wImag = (scaledY + Math.sqrt((magnitude - discriminantReal) / 2)) / 2;
+      const wNormSquared = wReal * wReal + wImag * wImag;
+
+      // q = 1/(w² - shape) expresses the two elastic stress potentials.
+      const denominatorReal = wReal * wReal - wImag * wImag - shape;
+      const denominatorImag = 2 * wReal * wImag;
+      const denominatorSquared = denominatorReal * denominatorReal + denominatorImag * denominatorImag;
+      const qReal = denominatorReal / denominatorSquared;
+      const qImag = -denominatorImag / denominatorSquared;
+      const sumHalf = 0.5 + shapePlusOne * qReal;
+      const differenceHalf = (1 + shapeComplement * (qReal + shapePlusOne * (qReal * qReal - qImag * qImag))) / 2;
+
+      const productReal = wReal * qReal - wImag * qImag;
+      const productImag = wReal * qImag + wImag * qReal;
+      const cubeReal = productReal * (productReal * productReal - 3 * productImag * productImag);
+      const cubeImag = productImag * (3 * productReal * productReal - productImag * productImag);
+      const boundaryCorrection = shapePlusOne * (1 - 1 / wNormSquared) * (
+        (1 - shape) * wReal * cubeReal + shapePlusOne * wImag * cubeImag
+      );
+      return sumHalf + differenceHalf - boundaryCorrection;
+    };
+  }
+
+  const stressColors = [
+    [52, 107, 153],
+    [238, 232, 246],
+    [241, 161, 67],
+    [163, 43, 40],
+  ];
+  const stressPalette = Array.from({ length: 256 }, (_, index) => {
+    const position = 3 * index / 255;
+    const segment = Math.min(2, Math.floor(position));
+    const color = stressColors[segment].map((channel, index) =>
+      Math.round(channel + (stressColors[segment + 1][index] - channel) * (position - segment))
+    );
+    return [...color, 255];
+  });
+
+  function drawInglisMap(canvas, raster, stress, a, b, concentration) {
+    const plot = preparePlot(canvas);
+    if (!plot) return;
+    const { context, width, height } = plot;
+    const halfWidth = 12;
+    const halfHeight = 9;
+    const scale = Math.min((width - 20) / (2 * halfWidth), (height - 56) / (2 * halfHeight));
+    const fieldWidth = 2 * halfWidth * scale;
+    const fieldHeight = 2 * halfHeight * scale;
+    const cx = width / 2;
+    const cy = height / 2;
+    const left = cx - fieldWidth / 2;
+    const top = cy - fieldHeight / 2;
+    const radiusX = a * scale;
+    const radiusY = b * scale;
+
+    const pixels = raster.createImageData(raster.canvas.width, raster.canvas.height);
+    // The stress component is symmetric across both axes of the hole.
+    for (let row = 0; row < pixels.height / 2; row += 1) {
+      const y = halfHeight * (1 - (2 * row + 1) / pixels.height);
+      const upper = 4 * row * pixels.width;
+      const lower = 4 * (pixels.height - 1 - row) * pixels.width;
+      for (let column = 0; column < pixels.width / 2; column += 1) {
+        const x = halfWidth * (1 - (2 * column + 1) / pixels.width);
+        if ((x / a) ** 2 + (y / b) ** 2 <= 1) continue;
+        const value = stress(x, y);
+        const colorPosition = value <= 1
+          ? Math.max(0, value) / 3
+          : (1 + 2 * Math.sqrt(Math.min(1, (value - 1) / (concentration - 1)))) / 3;
+        const color = stressPalette[Math.round(255 * colorPosition)];
+        const near = 4 * column;
+        const far = 4 * (pixels.width - 1 - column);
+        pixels.data.set(color, upper + near);
+        pixels.data.set(color, upper + far);
+        pixels.data.set(color, lower + near);
+        pixels.data.set(color, lower + far);
+      }
+    }
+    raster.putImageData(pixels, 0, 0);
+    context.drawImage(raster.canvas, left, top, fieldWidth, fieldHeight);
+    context.lineWidth = 1;
+    context.strokeStyle = muted;
+    context.strokeRect(left, top, fieldWidth, fieldHeight);
+
+    context.strokeStyle = referenceColour;
+    context.lineWidth = 2;
+    context.beginPath();
+    for (const offset of [-1 / 3, 0, 1 / 3]) {
+      const x = cx + fieldWidth * offset;
+      for (const direction of [-1, 1]) {
+        const edge = cy + direction * fieldHeight / 2;
+        const arrow = edge + direction * 19;
+        context.moveTo(x, edge + direction * 3);
+        context.lineTo(x, arrow);
+        context.moveTo(x - 4.5, arrow - direction * 5);
+        context.lineTo(x, arrow);
+        context.lineTo(x + 4.5, arrow - direction * 5);
+      }
+    }
+    context.stroke();
+
+    context.beginPath();
+    context.ellipse(cx, cy, radiusX, radiusY, 0, 0, Math.PI * 2);
+    context.fillStyle = "#ffffff";
+    context.fill();
+    context.strokeStyle = ink;
+    context.lineWidth = 1.5;
+    context.stroke();
+
+    context.setLineDash([4, 4]);
+    context.beginPath();
+    context.moveTo(cx, cy - radiusY);
+    context.lineTo(cx, cy);
+    context.lineTo(left + fieldWidth, cy);
+    context.stroke();
+    context.setLineDash([]);
+
+    for (const x of [cx - radiusX, cx + radiusX]) {
+      context.beginPath();
+      context.arc(x, cy, 4, 0, 2 * Math.PI);
+      context.fillStyle = referenceColour;
+      context.fill();
+      context.strokeStyle = "#ffffff";
+      context.stroke();
+    }
+
+    context.font = "italic 700 14px system-ui, sans-serif";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.lineWidth = 3;
+    context.fillStyle = ink;
+    for (const [label, x, y] of [["a", cx + radiusX / 2, cy + 12], ["b", cx - 10, cy - radiusY / 2]]) {
+      context.strokeText(label, x, y);
+      context.fillText(label, x, y);
+    }
+  }
+
+  function setupInglisDemo() {
+    const demo = document.getElementById("inglis-demo");
+    if (!demo) return;
+
+    const aInput = document.getElementById("inglis-a");
+    const bInput = document.getElementById("inglis-b");
+    const aReadout = document.getElementById("inglis-a-value");
+    const bReadout = document.getElementById("inglis-b-value");
+    const radiusReadout = document.getElementById("inglis-radius");
+    const factorReadout = document.getElementById("inglis-factor");
+    const peakReadout = document.getElementById("inglis-peak");
+    const scalePeak = document.getElementById("inglis-scale-peak");
+    const map = document.getElementById("inglis-map");
+    const profile = document.getElementById("inglis-profile");
+    const raster = document.createElement("canvas").getContext("2d");
+    if (!raster || !map.getContext("2d") || !profile.getContext("2d")) return;
+
+    raster.canvas.width = 480;
+    raster.canvas.height = 360;
+    const gradient = stressColors.map(color => "rgb(" + color.join(", ") + ")");
+    demo.querySelector(".inglis-scale-bar").style.backgroundImage = "linear-gradient(to right, " + gradient.join(", ") + ")";
+    const formatNumber = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+    const formatRadius = new Intl.NumberFormat("en-US", { maximumFractionDigits: 3 });
+    const remoteStress = 50;
+    let frame;
+
+    function redraw() {
+      frame = undefined;
+      const a = aInput.valueAsNumber;
+      const b = bInput.valueAsNumber;
+      const radius = b * b / a;
+      const concentration = 1 + 2 * a / b;
+      const peak = remoteStress * concentration;
+      const peakText = formatNumber.format(peak);
+      aReadout.textContent = formatNumber.format(a) + " mm";
+      bReadout.textContent = formatNumber.format(b) + " mm";
+      radiusReadout.textContent = formatRadius.format(radius) + " mm";
+      factorReadout.textContent = formatNumber.format(concentration);
+      peakReadout.textContent = peakText + " MPa";
+      scalePeak.textContent = peakText + " peak";
+      aInput.setAttribute("aria-valuetext", a + " millimetres");
+      bInput.setAttribute("aria-valuetext", b + " millimetres");
+
+      const stress = makeInglisStress(a, b);
+      drawInglisMap(map, raster, stress, a, b, concentration);
+      const distance = Math.min(2 * a, Math.max(a / 4, 8 * radius));
+      const distanceStep = Math.ceil(distance) / 4;
+      const tickStep = 25 * Math.ceil(peak / (3.4 * 25));
+      drawPlot(profile, {
+        xTicks: [0, distanceStep, 2 * distanceStep, 3 * distanceStep, 4 * distanceStep],
+        yTicks: [0, tickStep, 2 * tickStep, 3 * tickStep, 4 * tickStep],
+        xLabel: "Distance from tip (mm)",
+        yLabel: "Vertical stress σyy (MPa)",
+        curve: distance => remoteStress * stress(a + distance, 0),
+        reference: remoteStress,
+        point: [0, peak],
+        pointLabel: "σmax = " + peakText + " MPa",
+        sampleExponent: 2,
+      });
+    }
+
+    function scheduleRedraw() {
+      if (frame === undefined) frame = window.requestAnimationFrame(redraw);
+    }
+
+    function updateAxisLimit() {
+      bInput.max = aInput.value;
+      if (bInput.valueAsNumber > aInput.valueAsNumber) bInput.value = aInput.value;
+      scheduleRedraw();
+    }
+
+    aInput.addEventListener("input", updateAxisLimit);
+    bInput.addEventListener("input", scheduleRedraw);
+    demo.hidden = false;
+    updateAxisLimit();
+    return { canvases: [map, profile], redraw: scheduleRedraw };
   }
 
   function crackIntensity(millimetres) {
@@ -354,18 +591,21 @@
   }
 
   const plasticZones = setupPlasticZones();
+  const inglisDemo = setupInglisDemo();
 
   function redraw() {
     describeCrack();
     if (rate) describeTransition();
     plasticZones?.redraw();
+    inglisDemo?.redraw();
   }
 
   size.addEventListener("input", describeCrack);
   rate?.addEventListener("input", describeTransition);
   if ("ResizeObserver" in window) {
     const observer = new ResizeObserver(redraw);
-    for (const plot of [crackPlot, transitionPlot, ...(plasticZones?.canvases ?? [])].filter(Boolean)) observer.observe(plot);
+    const plots = [crackPlot, transitionPlot, ...(plasticZones?.canvases ?? []), ...(inglisDemo?.canvases ?? [])];
+    for (const plot of plots.filter(Boolean)) observer.observe(plot);
   } else {
     window.addEventListener("resize", redraw);
   }

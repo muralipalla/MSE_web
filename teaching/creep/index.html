@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
   <link rel="stylesheet" href="../../css/service-life.css?v=20261126">
   <link rel="stylesheet" href="furnace.css?v=20261126">
-  <link rel="stylesheet" href="mechanism-map.css?v=20261126">
+  <link rel="stylesheet" href="mechanism-map.css?v=20261126-2">
   <link rel="stylesheet" href="cavitation.css?v=20261126">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
@@ -50,6 +50,7 @@
       <a href="#creep-test">Run the experiment</a>
       <a href="#models">Predict life</a>
       <a href="#mechanism-map">Mechanism map</a>
+      <a href="#improve-creep-life">Improve creep life</a>
       <a href="#lab">Replay a service log</a>
     </nav>
 
@@ -57,7 +58,7 @@
       <div>
         <h2 id="service-title">How does a hot turbine blade keep its shape?</h2>
         <p>A jet engine&rsquo;s gas can be hotter than the melting point of its turbine blade alloy. Cooling air and a ceramic thermal barrier keep the blade metal cooler. Even below melting, a spinning blade experiences sustained tensile stress. Over many hot hours it can slowly lengthen and close the small gap to the surrounding casing. This time-dependent deformation is <strong>creep</strong>.</p>
-        <p>Some high-pressure turbine blades are cast as single crystals of a nickel-based superalloy. Removing grain boundaries removes pathways for boundary diffusion and sliding. The material and the cooling system work together to keep creep slow enough for the blade to retain its shape in service.</p>
+        <p>Some high-pressure turbine blades are cast as single crystals of a nickel-based superalloy. Removing grain boundaries removes pathways for boundary diffusion and sliding. The material and the cooling system work together to keep creep slow enough for the blade to retain its shape in service. <a href="#blade-microstructure">See how alloy design and casting improve creep life &rarr;</a></p>
         <p>In the video, a heated steel specimen keeps deforming under a constant load. Watch for that same gradual stretch in the simulated furnace test. <a href="https://www.youtube.com/watch?v=QtxVdC7pBQM&amp;t=585s">Heated-steel demonstration at 9:45</a></p>
         <p class="life-source"><a href="https://www.youtube.com/watch?v=QtxVdC7pBQM">The Ridiculous Engineering Of Jet Engines &mdash; Veritasium (YouTube)</a> &middot; <a href="https://www.rolls-royce.com/media/our-stories/discover/2021/our-sustainability-journey.aspx">Rolls-Royce on turbine blade design</a></p>
         <p>The same time-at-temperature question applies to the disk that holds the blades. Follow an Alloy 718 disk-rim example through the lesson. The operating log tells us how long the rim was hot, and the furnace test shows how much a metal specimen can stretch in that time. <a href="https://ntrs.nasa.gov/citations/19780025535">NASA tests of turbine disk alloys</a></p>
@@ -388,12 +389,7 @@
         <article class="life-card"><h3>Dislocation creep</h3><p>Diffusion of vacancies enables edge dislocations to climb out of their slip planes and bypass obstacles. Climb and subsequent glide can control creep under higher stress. Precipitates and their stability matter.</p><a href="../dislocations/index.html">Review dislocation motion &rarr;</a></article>
         <article class="life-card"><h3>Boundary damage</h3><p>Grains can slide relative to each other while diffusion or dislocations accommodate the shape changes. Cavities can develop at boundaries under tensile stress and join to form a crack. The rupture life also depends on the strain the material can sustain.</p><a href="#grain-boundary-cavitation">See cavities grow along grain boundaries &rarr;</a></article>
       </div>
-      <div class="life-note">
-        <h3>Lower creep rate can accompany shorter rupture life</h3>
-        <p>At 980 °C and 110 MPa, tests of a directionally solidified nickel superalloy gave a minimum rate of 0.0061%/h and a mean rupture time of 794 h for transverse specimens. Longitudinal specimens gave 0.0086%/h and 1,456 h. The transverse specimens had lower elongation to fracture.</p>
-        <p class="life-source"><a href="https://www.mdpi.com/1996-1944/18/9/1998">Directional-solidification creep test results, table 1</a></p>
-      </div>
-      <p>Equiaxed cast blades have grain boundaries in many orientations. Directional solidification reduces boundaries transverse to the main stress. Single-crystal castings remove those boundaries, while orientation and γ′ precipitates still govern the response. <a href="../introduction.html#intro-processing-case-title">Compare the three casting routes</a> &middot; <a href="https://ntrs.nasa.gov/citations/20130013683">NASA single-crystal creep tests</a></p>
+      <p>Blade casting changes which grain boundaries can open under load. The <a href="#columnar-creep-example">measured comparison of columnar grain orientations</a> shows why creep rate and time to rupture both matter.</p>
     </section>
 
     <section class="life-section" id="grain-boundary-cavitation" aria-labelledby="cavitation-title">
@@ -432,8 +428,8 @@
         </article>
         <article class="life-card">
           <h3>Choose a microstructure that stays stable</h3>
-          <p>Use an alloy and heat treatment that retain strengthening precipitates or dispersoids over the service exposure. Larger grains can help where diffusional creep dominates. Directional solidification aligns elongated grains with the main tensile load, reducing the number of boundaries across it. Single-crystal blades eliminate grain boundaries.</p>
-          <p class="life-source"><a href="https://defmech.engineering.dartmouth.edu/chapter_2.htm">Frost and Ashby on creep mechanisms</a> &middot; <a href="https://ntrs.nasa.gov/citations/20130013683">NASA single-crystal creep tests</a></p>
+          <p>Use an alloy and heat treatment that retain strengthening precipitates or dispersoids over the service exposure. Larger grains can help where diffusional creep dominates. In turbine blades, alloy chemistry and casting also control dislocation motion and grain-boundary damage.</p>
+          <p><a href="#blade-microstructure">Explore superalloy microstructure and casting &rarr;</a></p>
         </article>
         <article class="life-card">
           <h3>Limit the hottest operating periods</h3>
@@ -441,6 +437,39 @@
         </article>
       </div>
       <div class="life-note"><p><strong>Try a 10 °C reduction in the furnace.</strong> At an initial stress of 450 MPa, lowering the metal temperature from 650 to 640 °C cuts the fitted minimum creep rate from about 2.51 × 10<sup>−4</sup> to 1.29 × 10<sup>−4</sup> %/h. The fitted rupture life rises from about 2,840 to 5,090 h for the Alloy 718 example. <a href="#creep-test">Compare the two temperature settings &rarr;</a></p></div>
+
+      <section class="life-topic" id="blade-microstructure" aria-labelledby="blade-microstructure-title">
+        <h3 id="blade-microstructure-title">Superalloy microstructure and turbine blade casting</h3>
+        <p class="life-lead">Alloy chemistry and heat treatment strengthen the metal inside each grain. Casting controls how many grain boundaries the blade has and how they line up with the tensile load.</p>
+        <div class="life-methods">
+          <article class="life-card">
+            <h4>Nickel-based superalloy microstructure</h4>
+            <p>Many turbine blade alloys contain a face-centered cubic nickel-rich matrix (γ) and small, often cuboidal precipitates of ordered gamma prime (γ′), typically Ni<sub>3</sub>(Al, Ti, Ta). The phases are coherent, meaning their lattice planes match across the interface.</p>
+            <p><strong>γ′ precipitates impede dislocation motion.</strong> Dislocations can move through the narrow γ channels and can cut through or bypass γ′ depending on stress and temperature. Heat treatment sets the initial precipitate size and spacing. Long exposure can coarsen the precipitates and change creep resistance.</p>
+            <p class="life-source"><a href="https://www.mdpi.com/2073-4352/12/2/299">Blade micrographs and phase composition</a> &middot; <a href="https://ntrs.nasa.gov/citations/20130013683">NASA single-crystal creep tests</a></p>
+          </article>
+          <article class="life-card">
+            <h4>Columnar grains by directional solidification</h4>
+            <p>Extracting heat through a chilled base makes several elongated grains grow along the blade span. The grains follow the direction of the main centrifugal tensile load.</p>
+            <p><strong>Fewer boundaries lie across the tensile axis</strong> than in a conventional equiaxed casting. This reduces the number of boundaries that can be pulled open and develop into creep cracks. The remaining boundaries can still develop cavities under transverse loading.</p>
+            <p class="life-source"><a href="https://www.tms.org/Superalloys/10.7449/1980/Superalloys_1980_205_214.pdf">Columnar and single-crystal casting diagrams, figure 8</a></p>
+          </article>
+          <article class="life-card">
+            <h4>Single-crystal casting technology</h4>
+            <p>In Bridgman casting, the ceramic mold is withdrawn from a hot zone into a cooler one. A spiral grain selector lets one grain grow into the blade cavity. A pre-oriented seed can also set the crystal orientation. The [001] direction is typically aligned near the blade span because stiffness and creep depend on orientation.</p>
+            <p><strong>A single-crystal blade removes grain-boundary paths for sliding and cavitation.</strong> The γ and γ′ phases still share one crystal orientation, and dislocation creep can still occur.</p>
+            <p class="life-source"><a href="https://www.mdpi.com/1996-1944/10/11/1236">Spiral grain selector experiments</a> &middot; <a href="https://www.sciencedirect.com/science/article/pii/S0264127517304665">Bridgman casting with oriented seeds</a></p>
+          </article>
+        </div>
+        <p>The Alloy 718 in the disk-rim example is strengthened mainly by gamma double prime (γ″, Ni<sub>3</sub>Nb), with some strengthening from γ′. <a href="https://www.mdpi.com/2075-4701/9/10/1130">Precipitation in Alloy 718</a></p>
+        <div class="life-note" id="columnar-creep-example">
+          <h4>Columnar grain orientation and measured rupture life</h4>
+          <p>At 980 °C and 110 MPa, specimens of a directionally solidified nickel superalloy loaded along the columnar grains lasted <strong>1,456 h</strong> on average. Specimens loaded across the grains lasted <strong>794 h</strong>. Loading along the columns gave about <strong>1.8 times the rupture life</strong> in this test.</p>
+          <p>The across-grain specimens had a lower minimum creep rate (0.0061%/h versus 0.0086%/h) and a lower elongation at fracture. Rupture life depends on how much strain the material can sustain and on how fast it accumulates strain.</p>
+          <p class="life-source"><a href="https://www.mdpi.com/1996-1944/18/9/1998">Directional-solidification creep test results, table 1</a></p>
+        </div>
+        <p><a href="../introduction.html#intro-processing-case-title">Compare equiaxed, columnar and single-crystal castings &rarr;</a></p>
+      </section>
     </section>
 
     <section class="life-section" id="creep-fatigue" aria-labelledby="interaction-title">

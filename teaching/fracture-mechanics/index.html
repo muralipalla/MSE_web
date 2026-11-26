@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="../../css/style.css?v=20261126">
   <link rel="stylesheet" href="../../css/teaching-intro.css?v=20261126">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=20261126">
+  <link rel="stylesheet" href="style.css?v=20261126-inglis">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
-  <script src="app.js?v=6" defer></script>
+  <script src="app.js?v=20261126-inglis" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the fracture lesson</a>
@@ -238,38 +238,56 @@
 
     <section id="concentration" class="fracture-section" aria-labelledby="concentration-title">
       <h2 id="concentration-title">Stress concentration</h2>
-      <div class="figure-pair">
-        <div>
-          <p>A hole or rounded notch raises the local elastic stress above the nominal stress. The elastic stress concentration factor is <i>K</i><sub>t</sub> = &sigma;<sub>max</sub>/&sigma;<sub>nom</sub>. It is dimensionless.</p>
-          <p>The Inglis solution applies to an effectively infinite elastic plate under remote tension perpendicular to the long axis of an elliptical hole. The semi-axes are <i>a</i> and <i>b</i>, with tip radius &rho; = <i>b</i><sup>2</sup>/<i>a</i>.</p>
-          <p class="formula" data-tex="K_t = 1 + \frac{2a}{b} = 1 + 2\sqrt{\frac{a}{\rho}}"><i>K</i><sub>t</sub> = 1 + 2<i>a</i>/<i>b</i> = 1 + 2&radic;(<i>a</i>/&rho;)</p>
-          <p>A circular hole gives <i>K</i><sub>t</sub> = 3. As the ellipse sharpens toward a crack, the elastic peak stress grows without bound. A sharp crack is described by the stress intensity factor <i>K</i><sub>I</sub>, which sets the magnitude of the near-tip stress field.</p>
+      <p class="section-lead">An elliptical hole in a plate under tension raises the local stress at its tips. The dimensionless stress concentration factor <i>K</i><sub>t</sub> compares the peak stress with the remote stress. The Inglis solution assumes an effectively infinite, linearly elastic plate under tension perpendicular to the long axis.</p>
+      <div class="formula-row">
+        <p class="formula" data-tex="K_t = \frac{\sigma_{\max}}{\sigma_{\mathrm{nom}}} = 1 + \frac{2a}{b} = 1 + 2\sqrt{\frac{a}{\rho}}"><i>K</i><sub>t</sub> = &sigma;<sub>max</sub>/&sigma;<sub>nom</sub> = 1 + 2<i>a</i>/<i>b</i> = 1 + 2&radic;(<i>a</i>/&rho;)</p>
+        <p class="formula" data-tex="\rho = \frac{b^2}{a}">&rho; = <i>b</i><sup>2</sup>/<i>a</i></p>
+      </div>
+      <p class="section-lead">A circular hole gives <i>K</i><sub>t</sub> = 3. As the ellipse sharpens toward a crack, the elastic peak stress grows without bound. For a sharp crack, the stress intensity factor <i>K</i><sub>I</sub> sets the magnitude of the near-tip field.</p>
+
+      <div class="fracture-card inglis-demo" id="inglis-demo" aria-labelledby="inglis-title" hidden>
+        <h3 id="inglis-title">Stress around an elliptical hole</h3>
+        <p class="inglis-instructions">Change the semi-axes to see how the shape affects the stress. The remote tension stays at <strong>50 MPa</strong>.</p>
+        <div class="fracture-controls two-up inglis-controls">
+          <div>
+            <label for="inglis-a"><span>Across the load, <i>a</i></span><span id="inglis-a-value">4 mm</span></label>
+            <input id="inglis-a" type="range" min="1" max="8" step="0.25" value="4">
+          </div>
+          <div>
+            <label for="inglis-b"><span>Along the load, <i>b</i></span><span id="inglis-b-value">2 mm</span></label>
+            <input id="inglis-b" type="range" min="0.5" max="4" step="0.25" value="2" aria-describedby="inglis-axis-limit">
+            <small id="inglis-axis-limit"><i>b</i> &le; <i>a</i></small>
+          </div>
         </div>
-        <figure class="fracture-card technical-figure">
-          <svg viewBox="0 0 440 270" role="img" aria-labelledby="hole-title hole-desc">
-            <title id="hole-title">Elliptical hole in a plate under tension</title>
-            <desc id="hole-desc">Vertical tension acts across a horizontal elliptical hole. The semi-major axis a points to the right tip, where stress is concentrated. The semi-minor axis b points upward.</desc>
-            <rect x="36" y="51" width="368" height="165" rx="8" fill="#e9e6f5" stroke="#5d5686" stroke-width="2"/>
-            <g fill="none" stroke="#c93b1f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M110 50V18m-6 7 6-7 6 7M220 50V18m-6 7 6-7 6 7M330 50V18m-6 7 6-7 6 7"/>
-              <path d="M110 216v32m-6-7 6 7 6-7M220 216v32m-6-7 6 7 6-7M330 216v32m-6-7 6 7 6-7"/>
-            </g>
-            <ellipse cx="220" cy="135" rx="88" ry="30" fill="#fff" stroke="#2e2a74" stroke-width="2"/>
-            <path d="M220 135h88M220 135v-30" fill="none" stroke="#6757a8" stroke-dasharray="4 4" stroke-width="1.6"/>
-            <circle cx="308" cy="135" r="5" fill="#c93b1f"/>
-            <path d="M313 139l28 29h20" fill="none" stroke="#6757a8" stroke-width="1.7"/>
-            <g fill="#2e2a74" font-family="system-ui,sans-serif" font-size="17">
-              <text x="257" y="128">a</text><text x="203" y="119">b</text><text x="319" y="190">Tip radius ρ</text>
-              <text x="351" y="32">σ<tspan dy="5" font-size="11">nom</tspan></text>
-            </g>
-          </svg>
-          <figcaption>Original schematic of the Inglis geometry. The peak tensile stress occurs at the ends of the major axis.</figcaption>
-        </figure>
+        <dl class="inglis-results fracture-readout" aria-live="polite">
+          <div><dt>Tip radius &rho;</dt><dd id="inglis-radius">1 mm</dd></div>
+          <div><dt>Concentration factor <i>K</i><sub>t</sub></dt><dd id="inglis-factor">5</dd></div>
+          <div><dt>Peak stress &sigma;<sub>max</sub></dt><dd id="inglis-peak">250 MPa</dd></div>
+        </dl>
+        <div class="two-up inglis-figures">
+          <figure class="fracture-plot">
+            <h4>Stress heat map</h4>
+            <canvas id="inglis-map" role="img" aria-label="Approximate map of vertical stress around the hole in a plate under vertical tension. Both tips carry peak stress.">The horizontal tips of the hole carry the peak stress shown above.</canvas>
+            <div class="inglis-scale">
+              <span>Vertical stress &sigma;<sub>yy</sub> (MPa)</span>
+              <div class="inglis-scale-bar" aria-hidden="true"></div>
+              <div class="inglis-scale-values"><span>&le;0</span><span>50 nominal</span><span id="inglis-scale-peak">250 peak</span></div>
+            </div>
+            <figcaption>Dots mark the stress peaks at both tips. The dashed line shows the path of the stress profile.</figcaption>
+          </figure>
+          <figure class="fracture-plot">
+            <h4>Stress ahead of the right tip</h4>
+            <canvas id="inglis-profile" role="img" aria-label="Vertical stress versus distance from the right tip. Stress peaks at the tip, then approaches the 50 MPa remote tension.">The stress is highest at the tip and decreases toward the remote tension.</canvas>
+            <figcaption><span class="plot-key">Stress along the major axis</span><span class="plot-key plot-key-reference">Remote stress (50 MPa)</span></figcaption>
+          </figure>
+        </div>
+        <p class="source-line">The heat map samples the Inglis elastic field. Its color range follows the current peak, and the profile zooms in as the tip sharpens. <a href="https://doi.org/10.1177/10812865241249751">Elastic stress along the major axis</a> &middot; <a href="https://www.sciencedirect.com/science/article/pii/0308016194001731">Elastic field around an elliptical hole</a></p>
       </div>
       <article class="fracture-card worked-example">
         <h3>Find the stress at a hole</h3>
         <p>An elliptical hole has <i>a</i> = 4 mm and <i>b</i> = 2 mm. The remote tensile stress is 50 MPa, perpendicular to the long axis.</p>
         <p><i>K</i><sub>t</sub> = 1 + 2(4/2) = 5. The peak elastic stress is 5 &times; 50 = <strong>250 MPa</strong>.</p>
+        <p>Try reducing <i>b</i> to 1 mm at the same <i>a</i>. The tip radius falls from 1 to 0.25 mm and the peak stress rises to <strong>450 MPa</strong>.</p>
       </article>
     </section>
 

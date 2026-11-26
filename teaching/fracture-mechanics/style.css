@@ -266,6 +266,123 @@
   font-variant-numeric: tabular-nums;
 }
 
+.inglis-demo {
+  margin-top: 1rem;
+}
+
+.inglis-instructions {
+  margin: .5rem 0 .85rem;
+}
+
+.inglis-controls {
+  gap: .45rem 1.25rem;
+}
+
+.inglis-controls label {
+  margin-top: 0;
+}
+
+.inglis-controls input {
+  display: block;
+  margin: 0;
+}
+
+.inglis-controls small {
+  color: var(--muted);
+  font-size: .9375rem;
+}
+
+.inglis-results {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 1rem 0 0;
+  border: 1px solid var(--line);
+  border-radius: .65rem;
+  background: var(--lavender-light);
+}
+
+.inglis-results > div {
+  padding: .6rem clamp(.4rem, 2vw, 1rem);
+}
+
+.inglis-results > div + div {
+  border-left: 1px solid var(--line);
+}
+
+.inglis-results dt {
+  color: var(--ink-soft);
+  font-size: .9375rem;
+  font-weight: 650;
+}
+
+.inglis-results dd {
+  margin: .15rem 0 0;
+  font-size: clamp(1rem, 1.75vw, 1.25rem);
+  font-weight: 800;
+}
+
+.inglis-figures {
+  gap: .5rem 1rem;
+}
+
+.inglis-figures h4 {
+  margin: .25rem 0 .5rem;
+  font-size: 1.0625rem;
+}
+
+.inglis-figures canvas {
+  height: auto;
+  min-height: 14.5rem;
+  aspect-ratio: 3 / 2;
+}
+
+.inglis-scale {
+  margin-top: .5rem;
+  color: var(--ink-soft);
+  font-size: .9375rem;
+}
+
+.inglis-scale-bar {
+  height: .6rem;
+  margin: .25rem 0 .2rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.inglis-scale-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  font-variant-numeric: tabular-nums;
+}
+
+.inglis-scale-values > :last-child {
+  text-align: right;
+}
+
+@media (max-width: 420px) {
+  .inglis-results {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .inglis-results > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding-inline: .65rem;
+  }
+
+  .inglis-results > div + div {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .inglis-results dd {
+    margin: 0;
+    white-space: nowrap;
+  }
+}
+
 .transition-demo {
   margin: 1rem 0;
 }
