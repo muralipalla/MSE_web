@@ -1,3 +1,29 @@
+:root {
+  --ink: #231c36;
+  --ink-soft: #342b44;
+  --muted: #473d58;
+  --lavender: #4c3c77;
+  --coral: #a33621;
+}
+
+body {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+.article-nav .brand small,
+.fracture-lesson .eyebrow {
+  font-size: .875rem;
+}
+
+.article-nav .back-link {
+  font-size: 1rem;
+}
+
+.teaching-intro-copy p {
+  font-size: inherit;
+}
+
 .fracture-route {
   display: flex;
   flex-wrap: wrap;
@@ -12,7 +38,7 @@
   padding: .35rem .65rem;
   border-radius: .45rem;
   background: var(--lavender-light);
-  font-size: .82rem;
+  font-size: .9375rem;
   font-weight: 750;
   text-decoration: none;
 }
@@ -35,7 +61,7 @@
 
 .fracture-section h3 {
   margin: 0;
-  font-size: 1.17rem;
+  font-size: 1.25rem;
   line-height: 1.25;
 }
 
@@ -96,8 +122,6 @@
 
 .fracture-overview-figure figcaption {
   margin-top: .7rem;
-  color: var(--ink-soft);
-  font-size: .95rem;
 }
 
 .fracture-overview-figure figcaption p {
@@ -135,12 +159,14 @@
   margin-top: .8rem;
 }
 
-.photo-card figcaption a,
-.technical-figure figcaption,
-.case-figure figcaption,
-.source-line {
+.fracture-lesson figcaption {
   color: var(--muted);
-  font-size: .88rem;
+  font-size: 1rem;
+}
+
+.fracture-section .source-line {
+  color: var(--muted);
+  font-size: .9375rem;
 }
 
 .photo-card figcaption p,
@@ -180,7 +206,7 @@
   color: var(--ink);
   background: var(--lavender-light);
   border-radius: .5rem;
-  font: 400 clamp(1.05rem, 1.8vw, 1.25rem)/1.5 "KaTeX_Main", "Cambria Math", serif;
+  font: 400 clamp(1.125rem, 1.8vw, 1.25rem)/1.5 "KaTeX_Main", "Cambria Math", serif;
 }
 
 .fracture-section .formula .katex {
@@ -239,7 +265,6 @@
   gap: .25rem .85rem;
   margin-top: .45rem;
   color: var(--ink-soft);
-  font-size: .875rem;
 }
 
 .plot-key {
@@ -315,7 +340,7 @@
   }
 
   .fracture-section .stress-equations .formula {
-    font-size: .9rem;
+    font-size: 1rem;
   }
 }
 
@@ -412,7 +437,7 @@
   margin: 1.2rem 0;
   table-layout: fixed;
   border-collapse: collapse;
-  font-size: .95rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 
@@ -479,7 +504,7 @@
 
 .comet-evidence h4 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.0625rem;
 }
 
 .comet-roof-panel {
@@ -514,7 +539,7 @@
 
 .geometry-card h4 {
   margin: 0;
-  font-size: 1.08rem;
+  font-size: 1.125rem;
 }
 
 .geometry-sketch {
@@ -537,7 +562,7 @@
 
 .plastic-zone-comparison h4 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 1.125rem;
 }
 
 .plastic-zone-control {
@@ -555,7 +580,7 @@
   justify-content: space-between;
   margin-top: .15rem;
   color: var(--muted);
-  font-size: .8rem;
+  font-size: .9375rem;
 }
 
 .plastic-zone-grid {
@@ -592,7 +617,7 @@
   gap: .25rem .65rem;
   margin-bottom: .65rem;
   color: var(--ink-soft);
-  font-size: .8rem;
+  font-size: .9375rem;
 }
 
 .plastic-zone-legend .plot-key::before {
@@ -685,7 +710,7 @@
     margin-bottom: .2rem;
     color: var(--muted);
     content: attr(data-label);
-    font-size: .8rem;
+    font-size: .875rem;
     font-weight: 750;
   }
 

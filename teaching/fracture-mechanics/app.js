@@ -25,6 +25,8 @@
   const muted = theme.getPropertyValue("--ink-soft").trim();
   const referenceColour = theme.getPropertyValue("--coral").trim();
   const grid = theme.getPropertyValue("--line").trim();
+  const plotTickFont = "600 13px system-ui, sans-serif";
+  const plotLabelFont = "700 14px system-ui, sans-serif";
 
   function preparePlot(canvas) {
     if (!canvas) return;
@@ -49,7 +51,7 @@
     const plot = preparePlot(canvas);
     if (!plot) return;
     const { context, width, height } = plot;
-    const left = 42;
+    const left = 46;
     const right = width - 16;
     const top = 32;
     const bottom = height - 45;
@@ -65,7 +67,7 @@
     context.strokeStyle = grid;
     context.lineWidth = 1;
     context.fillStyle = muted;
-    context.font = "12px system-ui, sans-serif";
+    context.font = plotTickFont;
 
     context.beginPath();
     context.textAlign = "center";
@@ -84,7 +86,8 @@
     }
     context.stroke();
 
-    context.font = "650 13px system-ui, sans-serif";
+    context.font = plotLabelFont;
+    context.fillStyle = ink;
     context.textAlign = "left";
     context.textBaseline = "top";
     context.fillText(yLabel, left, 9);
@@ -141,7 +144,7 @@
       context.beginPath();
       context.arc(markerX, markerY, 7, 0, 2 * Math.PI);
       context.stroke();
-      context.font = "650 12px system-ui, sans-serif";
+      context.font = plotLabelFont;
       context.textAlign = "right";
       context.textBaseline = "bottom";
       context.fillStyle = ink;
@@ -223,7 +226,7 @@
     context.strokeStyle = grid;
     context.lineWidth = 1;
     context.fillStyle = muted;
-    context.font = "12px system-ui, sans-serif";
+    context.font = plotTickFont;
     context.textAlign = "center";
     context.textBaseline = "top";
     context.beginPath();
@@ -249,10 +252,12 @@
     context.lineTo(x(0), bottom);
     context.stroke();
 
+    context.font = plotLabelFont;
+    context.fillStyle = ink;
     context.textAlign = "center";
     context.fillText("x (mm)", x(0), bottom + 28);
     context.save();
-    context.translate(8, y(0));
+    context.translate(9, y(0));
     context.rotate(-Math.PI / 2);
     context.fillText("y (mm)", 0, 0);
     context.restore();
