@@ -96,27 +96,33 @@
     return { sample, centre, radius, point: [100 * strain, centre - radius] };
   }
 
-  function asStress(value, explicitSign = false) {
+  function signedStress(value, explicitSign = false) {
     const rounded = Math.abs(value) < .05 ? 0 : value;
-    return (explicitSign && rounded > 0 ? "+" : "") + format(rounded, 1).replace("-", "−") + " MPa";
+    return (explicitSign && rounded > 0 ? "+" : "") + format(rounded, 1).replace("-", "−");
   }
 
-  function summarizeYieldLimits({ branches, firstReverse }) {
-    const state = firstReverse || branches[1].states.at(-1);
-    const compressionLimit = state.centre - state.radius;
-    const tensionLimit = state.centre + state.radius;
-    const difference = initialYield - Math.abs(compressionLimit);
-    let note = "The first reversal has the same yield limits as the virgin material (±250 MPa).";
+  function asStress(value) {
+    return signedStress(value) + " MPa";
+  }
+
+  function summarizeReverseYield({ firstReverse }) {
     if (!firstReverse) {
-      note = "The first reversal stays inside the compression yield limit at this strain amplitude.";
-    } else if (difference > .05) {
-      note = "After tensile prestrain, compression starts to yield " + asStress(difference)
+      return {
+        reverseYield: "Not reached",
+        reverse: "The selected strain path stays within its compressive yield limit on the first reversal."
+      };
+    }
+    const stress = firstReverse.point[1];
+    const difference = initialYield - Math.abs(stress);
+    let note = "The model predicts reverse yielding at the virgin compressive yield limit of −250 MPa.";
+    if (difference > .05) {
+      note = "After tensile prestrain, the model predicts compressive yield " + asStress(difference)
         + " closer to zero than the virgin limit of −250 MPa.";
     } else if (difference < -.05) {
-      note = "After tensile prestrain, compression requires " + asStress(-difference)
-        + " more stress magnitude than the virgin limit of −250 MPa.";
+      note = "After tensile prestrain, the model predicts a " + asStress(-difference)
+        + " increase in the compressive stress magnitude needed to yield.";
     }
-    return { compressionLimit: asStress(compressionLimit), tensionLimit: asStress(tensionLimit, true), reverse: note };
+    return { reverseYield: asStress(stress), reverse: note };
   }
 
   function summarizeComparison([kinematic, isotropic]) {
@@ -126,7 +132,7 @@
       kinematicLimit: kinematicYield ? asStress(kinematicYield.point[1]) : "Not reached",
       isotropicLimit: isotropicYield ? asStress(isotropicYield.point[1]) : "Not reached",
       reverse: kinematicYield || isotropicYield
-        ? "The circles mark the first compressive yield for each model after the same tensile prestrain. Virgin compression yields at −250 MPa."
+        ? "A circle appears when a simulated path reaches reverse compression yield. The virgin compressive yield limit is −250 MPa."
         : "Both runs stay inside their compressive yield limits on the first reversal."
     };
   }
@@ -167,6 +173,8 @@
       phase: index === 0 || comparing ? phase : phase + (Math.abs(current.flow) > 1e-8 ? " · Plastic flow" : " · Elastic"),
       strain: format(100 * current.strain, 3).replace("-", "−") + "%",
       stress: asStress(current.stress), centre: asStress(current.centre), radius: asStress(current.radius),
+      yieldLimits: signedStress(current.centre - current.radius, true) + " to "
+        + signedStress(current.centre + current.radius, true) + " MPa",
       cycleCount: "Cycles " + completedCycles + " / " + requestedCycles,
       modelNote: comparing
         ? "Both models use the same strain history. Isotropic hardening widens the yield interval. Kinematic hardening shifts it."
@@ -238,7 +246,7 @@
       const branches = buildBranches(models[style.model], amplitude / 100, cycles);
       return { ...style, branches, firstReverse: findReverseYield(branches[1].states) };
     });
-    yieldReadout = comparing ? summarizeComparison(runs) : summarizeYieldLimits(runs[0]);
+    yieldReadout = comparing ? summarizeComparison(runs) : summarizeReverseYield(runs[0]);
     compareResults.hidden = !comparing;
     for (const readout of singleReadouts) readout.hidden = comparing;
     modelSelect.disabled = comparing;

@@ -20,7 +20,7 @@
   <script src="../../visualizations/crystal-voids/three.min.js" defer></script>
   <script src="furnace-view.js?v=2" defer></script>
   <script src="app.js?v=4" defer></script>
-  <script src="lmp.js?v=2" defer></script>
+  <script src="lmp.js?v=3" defer></script>
   <script src="mechanism-grains.js?v=1" defer></script>
   <script src="mechanism-map.js?v=3" defer></script>
 </head>
@@ -148,7 +148,7 @@
             <figure class="life-plot life-plot-focus">
               <figcaption>Rupture stress vs. Larson–Miller parameter</figcaption>
               <canvas data-lmp-plot role="img" aria-label="Logarithmic stress versus Larson–Miller parameter. Measured rupture points, a fitted line, a dashed extrapolation, and a held-out test are shown.">The worked example and test table below give the values used in the graph.</canvas>
-              <span class="life-caption">The dashed segment extends the fit below 300 MPa. At fixed stress, changing temperature changes the predicted hours while the point on the graph stays put.</span>
+              <span class="life-caption">The dashed segment extends the fit below 300 MPa. At fixed stress, changing temperature changes the predicted hours while the point on the graph stays put. Check the test conditions beside the life estimate.</span>
             </figure>
             <div class="life-stack">
               <fieldset class="life-controls">
@@ -164,7 +164,10 @@
                 <div><dt>Predicted rupture life</dt><dd data-result="lmpLife">39,200 h</dd></div>
                 <div><dt>LMP (10³ K)</dt><dd data-result="lmpValue">22.704</dd></div>
               </dl>
-              <p class="life-caption" data-result="lmpRange">Stress extrapolation below 300 MPa.</p>
+              <div role="status">
+                <p class="life-caption" data-result="lmpRange">Stress extrapolation below 300 MPa. The three calibration tests used other stress–temperature pairs.</p>
+                <p class="life-caption" data-result="lmpTest">Closest calibration test by stress · 300 MPa at 650 °C · measured rupture at 14,610.2 h.</p>
+              </div>
             </div>
           </div>
           <details class="life-details">

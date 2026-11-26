@@ -19,7 +19,7 @@
   <script src="beam.js?v=3" defer></script>
   <script src="sn-tests.js?v=3" defer></script>
   <script src="app.js?v=3" defer></script>
-  <script src="hysteresis.js?v=5" defer></script>
+  <script src="hysteresis.js?v=6" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the fatigue lesson</a>
@@ -230,15 +230,15 @@
               <span data-result="cycleCount" role="status">Cycles 0 / 3</span>
             </div>
             <div data-hysteresis-single>
-              <dl class="life-results life-yield-values" aria-label="Yield limits at the first reversal after tensile loading">
-                <div><dt>First reverse compression yield</dt><dd data-result="compressionLimit">−250 MPa</dd></div>
-                <div><dt>Tensile yield limit at that state</dt><dd data-result="tensionLimit">+250 MPa</dd></div>
+              <dl class="life-results life-yield-values">
+                <div><dt>Predicted first reverse yield</dt><dd data-result="reverseYield">—</dd></div>
+                <div><dt>Current yield limits</dt><dd data-result="yieldLimits">−250 to +250 MPa</dd></div>
               </dl>
             </div>
             <div data-hysteresis-comparison hidden>
-              <dl class="life-results life-yield-values" aria-label="First compressive yield after tensile prestrain">
-                <div><dt>Kinematic reverse yield</dt><dd data-result="kinematicLimit">—</dd></div>
-                <div><dt>Isotropic reverse yield</dt><dd data-result="isotropicLimit">—</dd></div>
+              <dl class="life-results life-yield-values" aria-label="Predicted first compressive yield after tensile prestrain">
+                <div><dt>Predicted kinematic reverse yield</dt><dd data-result="kinematicLimit">—</dd></div>
+                <div><dt>Predicted isotropic reverse yield</dt><dd data-result="isotropicLimit">—</dd></div>
               </dl>
             </div>
             <p class="life-caption" data-result="reverse">The virgin yield limits are −250 and +250 MPa.</p>
@@ -319,15 +319,32 @@
     <section class="life-section" id="worked-example" aria-labelledby="worked-title">
       <h2 id="worked-title">Worked prediction · Flights after inspection</h2>
       <article class="life-card life-worked">
-        <p>A representative 2024-T3 aluminium skin panel in a cylindrical pressure shell has a radius of 1.8 m and a thickness of 1.2 mm. Its pressure differential cycles from 0 to 57 kPa. Inspection finds a central through-crack whose <strong>half-length is 3.0 ± 0.5 mm</strong>. Estimate the flights to a half-length of <strong>6.0 mm</strong>.</p>
+        <p>A thin, closed-end cylindrical pressure shell made of 2024-T3 aluminium has a radius of 1.8 m and a wall thickness of 1.2 mm. Its pressure differential cycles from 0 to 57 kPa. Inspection finds a <strong>longitudinal through-crack</strong> of total length 2<i>a</i>, parallel to the cylinder axis. Its measured half-length is <strong>3.0 ± 0.5 mm</strong>. Estimate the flights to a half-length of <strong>6.0 mm</strong>.</p>
+        <figure class="life-plot" style="max-width: 25rem">
+          <figcaption>Hoop stress opens the longitudinal crack</figcaption>
+          <svg viewBox="0 0 330 141" width="100%" role="img" aria-labelledby="shell-crack-title shell-crack-description" style="display: block">
+            <title id="shell-crack-title">Longitudinal crack in a cylindrical shell</title>
+            <desc id="shell-crack-description">In a locally flattened view of the shell wall, a horizontal crack runs parallel to the cylinder axis. Hoop stress arrows point up and down, away from its faces.</desc>
+            <rect x="3" y="3" width="324" height="108" rx="7" fill="#f5f1fa" stroke="#a79cbb"/>
+            <path d="M51 57h102" stroke="#b93620" stroke-width="5" stroke-linecap="round"/>
+            <path d="M102 46V16m-5 6 5-6 5 6M102 68v30m-5-6 5 6 5-6" fill="none" stroke="#18375f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M158 57h18m-142 69h100m-6-5 6 5-6 5" fill="none" stroke="#554f68" stroke-width="1.5"/>
+            <g fill="#292340" font-family="system-ui, sans-serif" font-size="15">
+              <text x="115" y="25">Hoop tension</text>
+              <text x="183" y="61">Through-crack (2a)</text>
+              <text x="143" y="131">Cylinder axis</text>
+            </g>
+          </svg>
+        </figure>
         <ol>
-          <li><strong>Use the pressure range to find the stress range.</strong><p>For a thin shell, Δ<i>σ</i> = Δ<i>p r</i>/<i>t</i> = (0.057 MPa)(1.8 m)/(0.0012 m) = <strong>85.5 MPa</strong>. The cycle returns to zero, so <i>R</i> = 0.</p></li>
+          <li><strong>Find the opening stress range.</strong><p>Hoop stress acts perpendicular to the longitudinal crack. Its range is Δ<i>σ</i><sub>θ</sub> = Δ<i>p r</i>/<i>t</i> = (0.057 MPa)(1.8 m)/(0.0012 m) = <strong>85.5 MPa</strong>. The cycle returns to zero, so <i>R</i> = 0.</p></li>
           <li><strong>Check the Paris fit.</strong><p>With <i>Y</i> = 1 and <i>a</i> in metres, Δ<i>K</i> rises from <strong>8.30 to 11.74 MPa√m</strong>. Both values fall inside the lab&rsquo;s 5–18 MPa√m fit window.</p></li>
-          <li><strong>Integrate crack growth.</strong><p>Hudson&rsquo;s fit for 2024-T3 at <i>R</i> = 0 gives <i>m</i> = 4 and <i>C</i> &asymp; 3.78 × 10<sup>−12</sup> with growth in metres per cycle and Δ<i>K</i> in MPa√m.</p>
-          <p class="formula" data-tex="N_{\mathrm{grow}}=\frac{1/a_0-1/a_{\mathrm{lim}}}{C\pi^2(\Delta\sigma)^4}\approx8.37\times10^4\ \text{cycles}">N<sub>grow</sub> = (1/a₀ − 1/aₗᵢₘ) / [Cπ²(Δσ)⁴] ≈ 83,700 cycles.</p></li>
+          <li><strong>Integrate crack growth.</strong><p>Hudson&rsquo;s fit for 2024-T3 at <i>R</i> = 0 gives <i>m</i> = 4 and <i>C</i> &asymp; 3.7775 × 10<sup>−12</sup> with growth in metres per cycle and Δ<i>K</i> in MPa√m.</p>
+          <p class="formula" data-tex="N_{\mathrm{grow}}=\frac{1/a_0-1/a_{\mathrm{lim}}}{C\pi^2(\Delta\sigma_\theta)^4}\approx83{,}653\ \text{cycles}">N<sub>grow</sub> = (1/a₀ − 1/aₗᵢₘ) / [Cπ²(Δσ<sub>θ</sub>)⁴] ≈ 83,653 cycles.</p></li>
         </ol>
-        <p class="life-answer"><strong>About 83,700 flights</strong> to the assessment size at one cycle per flight. The smaller and larger flaw bounds give about 117,100 and 59,800 flights. The shell and flaw geometry here defines a separate teaching case at the pressure scale of the Comet tests.</p>
-        <p class="life-source"><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/G-ALYV">FAA Comet case</a> &middot; <a href="https://ntrs.nasa.gov/citations/19690025326">Hudson, NASA TN D-5390, equations 3–5 and 9</a></p>
+        <p class="life-answer">The model gives <strong>83,653 flights</strong> to the assessment size at one cycle per flight. The smaller and larger flaw bounds give about 117,100 and 59,800 flights. The shell and flaw geometry here defines a separate teaching case at the pressure scale of the Comet tests.</p>
+        <p><strong>What if the crack ran around the circumference?</strong> Axial tension would open it. The stress range would be Δ<i>p r</i>/(2<i>t</i>) = <strong>42.75 MPa</strong>. With the same flat-plate approximation and 3.0 mm starting half-length, Δ<i>K</i> would start at <strong>4.15 MPa√m</strong>, below the 5 MPa√m limit of this fit.</p>
+        <p class="life-source"><a href="https://www.faa.gov/lessons_learned/transport_airplane/accidents/G-ALYV">FAA Comet case</a> &middot; <a href="https://ntrs.nasa.gov/citations/19690025326">Hudson, NASA TN D-5390, equations 3–5 and 9</a> &middot; <a href="https://standards.nasa.gov/sites/default/files/standards/NASA/REVISION/0/2023-12-14-NASA-HDBK-5010-Vol-2-Rev-Final.pdf#page=98">NASA pressure-shell crack orientations</a></p>
         <a class="button primary" href="#lab" data-fatigue-mode="crack">Change the flaw size in the service lab</a>
       </article>
     </section>
@@ -440,7 +457,7 @@
 
         <div class="life-stage" data-stage="crack">
           <h3>Pressurised aluminium skin · One pressure cycle per flight</h3>
-          <p>Start at the inspected flaw. Predict the flights to the selected assessment size and compare both ends of the inspection sizing range. Enter crack half-lengths throughout.</p>
+          <p>Start at the inspected longitudinal flaw, which opens under hoop stress. Predict the flights to the selected assessment size and compare both ends of the inspection sizing range. Enter crack half-lengths throughout.</p>
           <div class="life-workspace">
             <fieldset class="life-controls">
               <legend class="visually-hidden">Pressure and crack inputs</legend>
@@ -500,7 +517,7 @@
           </details>
           <details class="life-details">
             <summary>Model and fit limits</summary>
-            <p>The shell supplies the hoop stress. Crack growth uses the flat, wide-plate approximation with <i>Y</i> = 1. The lab uses Hudson&rsquo;s constant-amplitude fit for 2024-T3 at <i>R</i> = 0, evaluated over an instructional window of 5–18 MPa√m. This excludes the near-threshold region and the acceleration toward fracture. The result is tied to the chosen assessment size and the teaching geometry. <a href="https://ntrs.nasa.gov/citations/19690025326">NASA crack-growth data and fit</a></p>
+            <p>The shell supplies the hoop stress that opens the longitudinal through-crack. Crack growth uses the flat, wide-plate approximation with <i>Y</i> = 1. The lab uses Hudson&rsquo;s constant-amplitude fit for 2024-T3 at <i>R</i> = 0, evaluated over an instructional window of 5–18 MPa√m. This excludes the near-threshold region and the acceleration toward fracture. The result is tied to the chosen assessment size and the teaching geometry. <a href="https://ntrs.nasa.gov/citations/19690025326">NASA crack-growth data and fit</a></p>
           </details>
         </div>
       </form>
