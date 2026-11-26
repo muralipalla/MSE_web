@@ -6,6 +6,7 @@
   const intensityValue = document.getElementById("intensity-value");
   const status = document.getElementById("crack-status");
   const crackPlot = document.getElementById("crack-plot");
+  const charpyPlot = document.getElementById("charpy-transition-plot");
   const rate = document.getElementById("transition-rate");
   const transitionPlot = document.getElementById("transition-plot");
   const rateMantissa = document.getElementById("transition-rate-mantissa");
@@ -22,11 +23,31 @@
   const fractureStress = Math.sqrt(2 * youngsModulus * surfaceEnergy / (Math.PI * flawHalfLength)) / 1e6;
   const theme = getComputedStyle(document.documentElement);
   const ink = theme.getPropertyValue("--ink").trim();
+  const navy = theme.getPropertyValue("--navy").trim();
   const muted = theme.getPropertyValue("--ink-soft").trim();
   const referenceColour = theme.getPropertyValue("--coral").trim();
   const grid = theme.getPropertyValue("--line").trim();
   const plotTickFont = "600 13px system-ui, sans-serif";
   const plotLabelFont = "700 14px system-ui, sans-serif";
+  const dbtPlotStyle = {
+    tickFont: "650 15px system-ui, sans-serif",
+    labelFont: "750 17px system-ui, sans-serif",
+    left: 56,
+    rightInset: 23,
+    top: 37,
+    bottomInset: 55,
+    xLabelInset: 25,
+    curveWidth: 3.6,
+    referenceWidth: 3,
+    guideWidth: 2,
+    markerRadius: 8,
+  };
+
+  // X52 steel energy measurements from NIST TN 2158, Figure 19.
+  const charpyMeasurements = [
+    [-80, 2.40], [-50, 4.13], [-35, 4.13], [-15, 10.21], [0, 27.99], [10, 34.25],
+    [21, 48.86], [40, 61.88], [76, 74.29], [100, 75.22], [148, 71.50], [198, 69.40],
+  ];
 
   function preparePlot(canvas) {
     if (!canvas) return;
@@ -49,14 +70,18 @@
 
   function drawPlot(canvas, {
     xTicks, yTicks, xLabel, yLabel, curve, reference, point, thresholdX, pointLabel, sampleExponent = 1,
+    measurements = [], style = {},
   }) {
     const plot = preparePlot(canvas);
     if (!plot) return;
     const { context, width, height } = plot;
-    const left = 46;
-    const right = width - 16;
-    const top = 32;
-    const bottom = height - 45;
+    const {
+      tickFont = plotTickFont, labelFont = plotLabelFont, left = 46, rightInset = 16,
+      top = 32, bottomInset = 45, xLabelInset = 21, curveWidth = 2.5, referenceWidth = 2,
+      guideWidth = 1, markerRadius = 5.5,
+    } = style;
+    const right = width - rightInset;
+    const bottom = height - bottomInset;
     const xMin = xTicks[0];
     const xMax = xTicks.at(-1);
     const yMin = yTicks[0];
@@ -69,7 +94,7 @@
     context.strokeStyle = grid;
     context.lineWidth = 1;
     context.fillStyle = muted;
-    context.font = plotTickFont;
+    context.font = tickFont;
 
     context.beginPath();
     context.textAlign = "center";
@@ -77,7 +102,7 @@
     for (const tick of xTicks) {
       context.moveTo(x(tick), top);
       context.lineTo(x(tick), bottom);
-      context.fillText(String(tick), x(tick), bottom + 7);
+      context.fillText(String(tick).replace("-", "−"), x(tick), bottom + 7);
     }
     context.textAlign = "right";
     context.textBaseline = "middle";
@@ -88,24 +113,26 @@
     }
     context.stroke();
 
-    context.font = plotLabelFont;
+    context.font = labelFont;
     context.fillStyle = ink;
     context.textAlign = "left";
     context.textBaseline = "top";
     context.fillText(yLabel, left, 9);
     context.textAlign = "center";
-    context.fillText(xLabel, (left + right) / 2, height - 21);
+    context.fillText(xLabel, (left + right) / 2, height - xLabelInset);
 
-    context.strokeStyle = referenceColour;
-    context.lineWidth = 2;
-    context.setLineDash([6, 4]);
-    context.beginPath();
-    context.moveTo(left, y(reference));
-    context.lineTo(right, y(reference));
-    context.stroke();
+    if (reference !== undefined) {
+      context.strokeStyle = referenceColour;
+      context.lineWidth = referenceWidth;
+      context.setLineDash([6, 4]);
+      context.beginPath();
+      context.moveTo(left, y(reference));
+      context.lineTo(right, y(reference));
+      context.stroke();
+    }
 
     context.strokeStyle = muted;
-    context.lineWidth = 1;
+    context.lineWidth = guideWidth;
     context.setLineDash([3, 4]);
     context.beginPath();
     context.moveTo(x(point[0]), y(point[1]));
@@ -114,7 +141,7 @@
 
     context.setLineDash([]);
     context.strokeStyle = ink;
-    context.lineWidth = 2.5;
+    context.lineWidth = curveWidth;
     function drawCurve(from, to) {
       context.beginPath();
       context.moveTo(x(from), y(curve(from)));
@@ -131,16 +158,21 @@
       context.setLineDash([]);
     }
 
-    context.beginPath();
-    context.arc(x(point[0]), y(point[1]), 5.5, 0, 2 * Math.PI);
-    context.fillStyle = ink;
-    context.fill();
-    context.strokeStyle = "#ffffff";
-    context.lineWidth = 2;
-    context.stroke();
+    function drawMarker([horizontal, vertical], radius, color) {
+      context.beginPath();
+      context.arc(x(horizontal), y(vertical), radius, 0, 2 * Math.PI);
+      context.fillStyle = color;
+      context.fill();
+      context.strokeStyle = "#ffffff";
+      context.lineWidth = 2;
+      context.stroke();
+    }
+    for (const measurement of measurements) drawMarker(measurement, 6.5, navy);
+    if (markerRadius > 0) drawMarker(point, markerRadius, ink);
 
     if (pointLabel) {
-      context.font = plotLabelFont;
+      context.fillStyle = ink;
+      context.font = labelFont;
       context.textAlign = "left";
       context.textBaseline = "bottom";
       context.fillText(pointLabel, x(point[0]) + 10, y(point[1]) - 4);
@@ -153,7 +185,7 @@
       context.beginPath();
       context.arc(markerX, markerY, 7, 0, 2 * Math.PI);
       context.stroke();
-      context.font = plotLabelFont;
+      context.font = labelFont;
       context.textAlign = "right";
       context.textBaseline = "bottom";
       context.fillStyle = ink;
@@ -417,6 +449,25 @@
     });
   }
 
+  function drawCharpyTransition() {
+    if (!charpyPlot) return;
+    // NIST TN 2158, Table 2. Hyperbolic tangent fit with variable shelves.
+    const lowerShelf = 1.8561;
+    const upperShelf = 72.6228;
+    const midpoint = (lowerShelf + upperShelf) / 2;
+    const dbtt = 11.2039;
+    drawPlot(charpyPlot, {
+      xTicks: charpyPlot.clientWidth < 380 ? [-100, 0, 100, 200] : [-100, -50, 0, 50, 100, 150, 200],
+      yTicks: [0, 20, 40, 60, 80],
+      xLabel: "Test temperature (°C)",
+      yLabel: "Absorbed energy (J)",
+      curve: temperature => midpoint + (upperShelf - lowerShelf) / 2 * Math.tanh((temperature - dbtt) / 30.2865),
+      point: [dbtt, midpoint],
+      measurements: charpyMeasurements,
+      style: { ...dbtPlotStyle, markerRadius: 0 },
+    });
+  }
+
   function describeTransition() {
     const logRate = Number(rate.value);
     const [mantissa, exponent] = (10 ** logRate).toExponential(1).split("e");
@@ -430,13 +481,14 @@
     celsiusValue.textContent = `${(temperature - 273.15).toFixed(1).replace("-", "−")}\u00a0°C`;
 
     drawPlot(transitionPlot, {
-      xTicks: [150, 200, 250, 300, 350, 400],
+      xTicks: transitionPlot?.clientWidth < 380 ? [150, 250, 350, 400] : [150, 200, 250, 300, 350, 400],
       yTicks: [0, 300, 600, 900, 1200],
       xLabel: "Temperature (K)",
       yLabel: "Stress (MPa)",
       curve: kelvin => rateTerm + 173600 / kelvin,
       reference: fractureStress,
       point: [temperature, fractureStress],
+      style: dbtPlotStyle,
     });
   }
 
@@ -592,9 +644,11 @@
 
   const plasticZones = setupPlasticZones();
   const inglisDemo = setupInglisDemo();
+  if (charpyPlot?.getContext("2d")) charpyPlot.parentElement.hidden = false;
 
   function redraw() {
     describeCrack();
+    drawCharpyTransition();
     if (rate) describeTransition();
     plasticZones?.redraw();
     inglisDemo?.redraw();
@@ -604,7 +658,7 @@
   rate?.addEventListener("input", describeTransition);
   if ("ResizeObserver" in window) {
     const observer = new ResizeObserver(redraw);
-    const plots = [crackPlot, transitionPlot, ...(plasticZones?.canvases ?? []), ...(inglisDemo?.canvases ?? [])];
+    const plots = [crackPlot, charpyPlot, transitionPlot, ...(plasticZones?.canvases ?? []), ...(inglisDemo?.canvases ?? [])];
     for (const plot of plots.filter(Boolean)) observer.observe(plot);
   } else {
     window.addEventListener("resize", redraw);

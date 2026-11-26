@@ -387,6 +387,43 @@
   margin: 1rem 0;
 }
 
+.dbt-plot {
+  margin-top: 0;
+}
+
+.dbt-plot canvas {
+  height: clamp(16rem, 31vw, 21rem);
+}
+
+.fracture-lesson .dbt-plot figcaption,
+.dbt-legend {
+  font-size: 1.0625rem;
+}
+
+.dbt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem 1rem;
+  margin-top: .6rem;
+  color: var(--ink-soft);
+}
+
+.dbt-plot .plot-key::before {
+  border-top-width: 3px;
+}
+
+.dbt-plot .dbt-measurement-key::before {
+  width: .75rem;
+  height: .75rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--navy);
+}
+
+.dbt-plot .dbt-midpoint-key::before {
+  border-top: 2px dashed var(--ink-soft);
+}
+
 .worked-example {
   margin-top: 1rem;
   border-top: 3px solid var(--lavender);

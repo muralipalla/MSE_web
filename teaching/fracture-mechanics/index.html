@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="../../css/style.css?v=20261126">
   <link rel="stylesheet" href="../../css/teaching-intro.css?v=20261126">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=20261126-inglis">
+  <link rel="stylesheet" href="style.css?v=20261126-dbt">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
-  <script src="app.js?v=20261126-inglis" defer></script>
+  <script src="app.js?v=20261126-dbt" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the fracture lesson</a>
@@ -203,8 +203,16 @@
           <p>The <strong>ductile-to-brittle transition temperature</strong> (DBTT) depends on the criterion. A temperature at 27 J, the midpoint between the energy shelves, and the temperature at 50% shear fracture appearance may differ. Use multiple specimens and temperatures to fit a transition curve, particularly where results scatter widely. Report the criterion, specimen, test conditions, and uncertainty with the result.</p>
         </div>
         <figure id="transition-figure" class="fracture-card technical-figure">
-          <img src="nist-charpy-transition.png" width="1757" height="1069" alt="Charpy absorbed energy rises from a low-energy shelf to a high-energy shelf as temperature rises, with a transition temperature marked between them" loading="lazy">
-          <figcaption>Charpy absorbed energy versus test temperature for a low-strength ferritic steel. <a href="https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2158.pdf#page=8">NIST Technical Note 2158, Figures 1&ndash;2 and transition-curve fitting</a></figcaption>
+          <div class="fracture-plot dbt-plot" hidden>
+            <canvas id="charpy-transition-plot" width="640" height="336" role="img" aria-label="Charpy V-notch measurements and fitted absorbed energy versus temperature. A dashed line marks the fitted midpoint at about 11 degrees Celsius."></canvas>
+            <div class="dbt-legend">
+              <span class="plot-key dbt-measurement-key">Measured energy</span>
+              <span class="plot-key">Fitted curve</span>
+              <span class="plot-key dbt-midpoint-key">DBTT &asymp; 11&nbsp;&deg;C</span>
+            </div>
+          </div>
+          <noscript><img src="nist-charpy-transition.png" width="1757" height="1069" alt="Charpy absorbed energy rises from a low-energy shelf to a high-energy shelf as temperature rises, with a transition temperature marked between them" loading="lazy"></noscript>
+          <figcaption>Charpy V-notch tests on X52 ferritic steel. The fit rises from about 2 J on the lower shelf to 73 J on the upper shelf. <a href="https://nvlpubs.nist.gov/nistpubs/TechnicalNotes/NIST.TN.2158.pdf#page=29">NIST Technical Note 2158, Figure 19 and Table 2</a></figcaption>
         </figure>
       </div>
       <article class="fracture-card worked-example">
@@ -576,7 +584,7 @@
             <p id="transition-rate-scale" class="source-line">Logarithmic scale from 10<sup>&minus;5</sup> to 10<sup>&minus;2</sup> s<sup>&minus;1</sup>.</p>
             <p class="fracture-readout" role="status">Predicted crossover <strong id="transition-kelvin">229.0 K</strong> (<span id="transition-celsius">&minus;44.1&nbsp;&deg;C</span>).</p>
           </div>
-          <figure class="fracture-plot">
+          <figure class="fracture-plot dbt-plot">
             <canvas id="transition-plot" width="520" height="270" role="img" aria-label="Yield strength against temperature. The point marks its crossover with the fixed brittle fracture stress."></canvas>
             <figcaption><span class="plot-key"><span>Yield strength &sigma;<sub>y</sub></span></span><span class="plot-key plot-key-reference"><span>Fracture stress &sigma;<sub>c</sub></span></span></figcaption>
           </figure>
