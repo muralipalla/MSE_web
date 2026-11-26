@@ -32,7 +32,7 @@
 }
 .creep-map-controls { display: grid; gap: .6rem; margin-top: .9rem; }
 .creep-map-controls output { color: var(--navy); font-variant-numeric: tabular-nums; }
-.creep-grain-range { display: flex; justify-content: space-between; color: var(--muted); font-size: .75rem; }
+.creep-grain-range { display: flex; justify-content: space-between; color: var(--muted); font-size: .875rem; }
 .creep-map-availability { margin: .45rem 0 0; }
 
 .creep-map-presets {
@@ -50,7 +50,7 @@
   background: var(--paper);
   color: var(--ink);
   font: inherit;
-  font-size: .81rem;
+  font-size: .9375rem;
   font-weight: 730;
   cursor: pointer;
 }

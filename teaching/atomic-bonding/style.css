@@ -195,7 +195,6 @@ button:focus-visible {
 .atomic-figure figcaption {
   margin: 0.55rem 0 0;
   color: var(--muted);
-  font-size: 0.82rem;
 }
 
 .atom-stage-backdrop {

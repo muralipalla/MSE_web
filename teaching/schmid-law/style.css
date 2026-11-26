@@ -45,7 +45,7 @@ input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 .traction-grid .formula { margin: .7rem 0; padding: .65rem .85rem; border-radius: .6rem; background: var(--lavender-light); font-size: 1.15rem; }
 .traction-figure { margin: 0; padding: 1rem; background: white; border: 1px solid var(--line); border-radius: 1rem; }
 .traction-figure svg { display: block; width: 100%; height: auto; }
-.traction-figure figcaption { margin-top: .7rem; color: var(--muted); font-size: .88rem; }
+.traction-figure figcaption { margin-top: .7rem; color: var(--muted); }
 .traction-note { padding: .8rem 1rem; border-left: 3px solid var(--coral); background: #f3eff9; font-size: .93rem; }
 @media (max-width: 800px) { .traction-grid { grid-template-columns: 1fr; } .traction-figure { max-width: 34rem; } }
 .concepts { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding: 4rem 0 1rem; }
@@ -332,7 +332,6 @@ input:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
 .crystal-figure figcaption {
   margin: .65rem .2rem .1rem;
   color: var(--muted);
-  font-size: .8rem;
 }
 
 .crystal-controls {

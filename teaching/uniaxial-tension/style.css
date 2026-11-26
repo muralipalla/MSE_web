@@ -9,7 +9,7 @@
 .measurement-intro .section-head { margin-bottom: 0; }
 .specimen-figure { width: 100%; max-width: 18rem; margin: 0; justify-self: center; text-align: center; }
 .specimen-figure svg { display: block; width: 100%; }
-.specimen-figure figcaption { color: var(--muted); font-size: .8rem; margin-top: .3rem; }
+.specimen-figure figcaption { color: var(--muted); margin-top: .3rem; }
 .text-card, .interactive-card, .feature-card, .strain-panel, .graph-panel { background: #fff; border: 1px solid var(--line); border-radius: 1.2rem; box-shadow: var(--shadow); }
 .text-card { padding: 1.4rem; }
 h3 { line-height: 1.2; margin: .65rem 0; }

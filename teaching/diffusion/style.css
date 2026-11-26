@@ -365,7 +365,6 @@
   padding: 0.78rem 1rem 0.9rem;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.78rem;
   line-height: 1.45;
 }
 
@@ -1025,8 +1024,8 @@
 
 .solution-label {
   margin: 0;
-  color: var(--diffusion-orange);
-  font-size: 0.68rem;
+  color: var(--coral);
+  font-size: .875rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -1057,14 +1056,14 @@
 .panel-kicker {
   margin: 0;
   color: var(--diffusion-blue);
-  font-size: 0.72rem;
+  font-size: .875rem;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.09em;
 }
 
 .second-law .panel-kicker {
-  color: var(--diffusion-orange);
+  color: var(--coral);
 }
 
 .stability-challenge {
@@ -1496,7 +1495,7 @@
   .kmc-grid,
   .continuum-grid,
   .takeaway-card {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .quiz-cta {

@@ -477,7 +477,6 @@
   padding: 0.7rem 1rem 0.9rem;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.78rem;
   line-height: 1.5;
 }
 
@@ -730,7 +729,6 @@ input[type="range"] {
 
 .lever-force-diagram figcaption {
   color: var(--muted);
-  font-size: 0.72rem;
   line-height: 1.45;
   text-align: center;
 }
@@ -1020,7 +1018,6 @@ input[type="range"] {
   border-top: 1px solid var(--line);
   background: white;
   color: var(--ink-soft);
-  font-size: 0.76rem;
   line-height: 1.45;
 }
 
@@ -1317,7 +1314,6 @@ input[type="range"] {
   margin: 0;
   padding: 0;
   color: var(--ink-soft);
-  font-size: 0.82rem;
   line-height: 1.55;
 }
 

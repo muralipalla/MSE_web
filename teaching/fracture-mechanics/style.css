@@ -1,29 +1,3 @@
-:root {
-  --ink: #231c36;
-  --ink-soft: #342b44;
-  --muted: #473d58;
-  --lavender: #4c3c77;
-  --coral: #a33621;
-}
-
-body {
-  font-size: 1.125rem;
-  font-weight: 500;
-}
-
-.article-nav .brand small,
-.fracture-lesson .eyebrow {
-  font-size: .875rem;
-}
-
-.article-nav .back-link {
-  font-size: 1rem;
-}
-
-.teaching-intro-copy p {
-  font-size: inherit;
-}
-
 .fracture-route {
   display: flex;
   flex-wrap: wrap;

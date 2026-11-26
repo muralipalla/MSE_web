@@ -1,9 +1,13 @@
 (function () {
   "use strict";
 
+  const theme = getComputedStyle(document.documentElement);
   const colours = {
-    ink: "#2e2a74", muted: "#554f68", grid: "#e9e5ef",
-    navy: "#18375f", coral: "#b93620", lavender: "#6c56a4", blue: "#386694"
+    ink: theme.getPropertyValue("--ink").trim(),
+    muted: theme.getPropertyValue("--ink-soft").trim(),
+    navy: theme.getPropertyValue("--navy").trim(),
+    coral: theme.getPropertyValue("--coral").trim(),
+    grid: "#e9e5ef", lavender: "#6c56a4", blue: "#386694"
   };
   const charts = new WeakMap();
   const superscripts = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" };
@@ -117,8 +121,8 @@
       context.setLineDash([]);
 
       if (!label) continue;
-      context.font = "650 11px system-ui, sans-serif";
-      const width = context.measureText(label).width + 12;
+      context.font = "650 12px system-ui, sans-serif";
+      const width = Math.min(context.measureText(label).width + 12, box.right - box.left - 6);
       const left = xGuide ? Math.min(box.right - width - 3, Math.max(box.left + 3, pixel - width / 2))
         : side === "left" ? box.left + 3 : box.right - width - 3;
       const top = xGuide ? box.top + 7 : Math.max(box.top + 7, pixel - 22);
@@ -128,8 +132,8 @@
       context.fillRect(left, top, width, 19);
       context.textAlign = "center";
       context.textBaseline = "middle";
-      context.fillStyle = colour;
-      context.fillText(label, left + width / 2, top + 9);
+      context.fillStyle = colours.ink;
+      context.fillText(label, left + width / 2, top + 9, width - 12);
     }
   }
 
@@ -145,8 +149,8 @@
       context.fillRect(xScale.at(band.from), box.top, xScale.at(band.to) - xScale.at(band.from), box.bottom - box.top);
     }
 
-    const axisFont = width < 360 ? "11px system-ui, sans-serif" : "12px system-ui, sans-serif";
-    context.font = axisFont;
+    const compact = width < 360;
+    context.font = compact ? "600 12px system-ui, sans-serif" : "600 13px system-ui, sans-serif";
     context.lineWidth = 1;
     context.strokeStyle = colours.grid;
     context.fillStyle = colours.muted;
@@ -168,13 +172,14 @@
     line(context, box.left, box.top, box.left, box.bottom);
     line(context, box.left, box.bottom, box.right, box.bottom);
     context.fillStyle = colours.ink;
-    context.font = "650 " + axisFont;
+    context.font = compact ? "700 13px system-ui, sans-serif" : "700 14px system-ui, sans-serif";
     context.textAlign = "center";
-    context.fillText(x.label + (x.log ? " · log scale" : ""), (box.left + box.right) / 2, height - 13);
+    context.fillText(x.label + (x.log ? " · log scale" : ""),
+      (box.left + box.right) / 2, height - 13, box.right - box.left);
     context.save();
     context.translate(11, (box.top + box.bottom) / 2);
     context.rotate(-Math.PI / 2);
-    context.fillText(y.label + (y.log ? " · log scale" : ""), 0, 0);
+    context.fillText(y.label + (y.log ? " · log scale" : ""), 0, 0, box.bottom - box.top);
     context.restore();
 
     context.save();
@@ -216,7 +221,7 @@
     for (const { from, to, label, short } of bands) {
       if (!label) continue;
       const available = xScale.at(to) - xScale.at(from) - 8;
-      context.font = "650 11px system-ui, sans-serif";
+      context.font = "650 12px system-ui, sans-serif";
       const text = context.measureText(label).width <= available ? label : short;
       if (!text || context.measureText(text).width > available) continue;
       context.fillStyle = colours.muted;
