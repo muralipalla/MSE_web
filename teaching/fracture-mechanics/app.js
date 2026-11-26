@@ -15,6 +15,7 @@
 
   const appliedStress = 180;
   const toughness = 24;
+  const criticalHalfLength = 1000 * (toughness / appliedStress) ** 2 / Math.PI;
   const youngsModulus = 350e9;
   const surfaceEnergy = 2;
   const flawHalfLength = 2e-6;
@@ -44,7 +45,7 @@
     return { context, width, height };
   }
 
-  function drawPlot(canvas, { xTicks, yTicks, xLabel, yLabel, curve, reference, point }) {
+  function drawPlot(canvas, { xTicks, yTicks, xLabel, yLabel, curve, reference, point, thresholdX }) {
     const plot = preparePlot(canvas);
     if (!plot) return;
     const { context, width, height } = plot;
@@ -109,13 +110,21 @@
     context.setLineDash([]);
     context.strokeStyle = ink;
     context.lineWidth = 2.5;
-    context.beginPath();
-    context.moveTo(left, y(curve(xMin)));
-    for (let step = 1; step <= 100; step += 1) {
-      const value = xMin + (xMax - xMin) * step / 100;
-      context.lineTo(x(value), y(curve(value)));
+    function drawCurve(from, to) {
+      context.beginPath();
+      context.moveTo(x(from), y(curve(from)));
+      for (let step = 1; step <= 100; step += 1) {
+        const value = from + (to - from) * step / 100;
+        context.lineTo(x(value), y(curve(value)));
+      }
+      context.stroke();
     }
-    context.stroke();
+    drawCurve(xMin, thresholdX ?? xMax);
+    if (thresholdX !== undefined) {
+      context.setLineDash([6, 4]);
+      drawCurve(thresholdX, xMax);
+      context.setLineDash([]);
+    }
 
     context.beginPath();
     context.arc(x(point[0]), y(point[1]), 5.5, 0, 2 * Math.PI);
@@ -124,6 +133,20 @@
     context.strokeStyle = "#ffffff";
     context.lineWidth = 2;
     context.stroke();
+
+    if (thresholdX !== undefined) {
+      const markerX = x(thresholdX);
+      const markerY = y(reference);
+      context.strokeStyle = referenceColour;
+      context.beginPath();
+      context.arc(markerX, markerY, 7, 0, 2 * Math.PI);
+      context.stroke();
+      context.font = "650 12px system-ui, sans-serif";
+      context.textAlign = "right";
+      context.textBaseline = "bottom";
+      context.fillStyle = ink;
+      context.fillText(thresholdX.toFixed(2) + " mm", markerX - 9, markerY - 12);
+    }
   }
 
   function crackIntensity(millimetres) {
@@ -137,7 +160,9 @@
 
     sizeValue.textContent = `${millimetres.toFixed(1)} mm`;
     intensityValue.textContent = intensity.toFixed(1);
-    status.textContent = critical ? "Mode I fracture criterion reached." : "Below the Mode I fracture threshold.";
+    status.textContent = critical
+      ? "This assumed flaw meets the criterion for unstable extension."
+      : "Below the Mode I fracture threshold.";
     size.setAttribute("aria-valuetext", `${millimetres.toFixed(1)} millimetres`);
 
     drawPlot(crackPlot, {
@@ -148,6 +173,7 @@
       curve: crackIntensity,
       reference: toughness,
       point: [millimetres, intensity],
+      thresholdX: criticalHalfLength,
     });
   }
 

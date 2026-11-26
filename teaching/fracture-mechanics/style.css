@@ -259,6 +259,10 @@
   border-top: 2px dashed var(--coral);
 }
 
+.plot-key-hypothetical::before {
+  border-top-style: dashed;
+}
+
 .fracture-readout {
   font-variant-numeric: tabular-nums;
 }

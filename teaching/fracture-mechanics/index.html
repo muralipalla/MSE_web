@@ -9,11 +9,11 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/teaching-intro.css">
   <link rel="stylesheet" href="../../assets/vendor/katex-0.19.1/katex.min.css">
-  <link rel="stylesheet" href="style.css?v=13">
+  <link rel="stylesheet" href="style.css?v=14">
   <script src="../../js/main.js?v=2" defer></script>
   <script src="../../assets/vendor/katex-0.19.1/katex.min.js" defer></script>
   <script src="../../js/math-render.js?v=1" defer></script>
-  <script src="app.js?v=4" defer></script>
+  <script src="app.js?v=5" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">Skip to the fracture lesson</a>
@@ -518,10 +518,15 @@
           <label for="crack-size"><span>Crack half-length <i>a</i></span> <output id="crack-size-value" for="crack-size">2.0 mm</output></label>
           <input id="crack-size" type="range" min="0.5" max="12" step="0.1" value="2">
           <figure class="fracture-plot">
-            <canvas id="crack-plot" width="520" height="270" role="img" aria-label="Mode I stress intensity against crack half-length. The dashed line is the fracture toughness."></canvas>
-            <figcaption><span class="plot-key"><span>Applied <i>K</i><sub>I</sub></span></span><span class="plot-key plot-key-reference"><span>Toughness <i>K</i><sub>Ic</sub></span></span></figcaption>
+            <canvas id="crack-plot" width="520" height="270" role="img" aria-label="Mode I stress intensity against crack half-length" aria-describedby="crack-threshold"></canvas>
+            <figcaption>
+              <span class="plot-key"><span>Applied <i>K</i><sub>I</sub> up to the threshold</span></span>
+              <span class="plot-key plot-key-hypothetical">Calculated for hypothetical larger flaws</span>
+              <span class="plot-key plot-key-reference"><span>Toughness <i>K</i><sub>Ic</sub></span></span>
+            </figcaption>
           </figure>
           <p class="fracture-readout" role="status"><i>K</i><sub>I</sub> = <strong id="intensity-value">14.3</strong> MPa&radic;m. <span id="crack-status">Below the Mode I fracture threshold.</span></p>
+          <p id="crack-threshold">Setting <i>K</i><sub>I</sub> = <i>K</i><sub>Ic</sub> gives a critical half-length of <strong>5.66 mm</strong>. At this fixed remote stress, the driving force rises with crack length, so extension becomes unstable at the threshold. The dashed curve calculates <i>K</i><sub>I</sub> for hypothetical larger flaws.</p>
         </article>
       </div>
       <p class="section-note">The toughness comparison addresses fracture under the stated load. Under cyclic loading, fatigue can extend a crack at peak stress intensities below <i>K</i><sub>Ic</sub>, as the <a href="#comet">Comet investigation</a> illustrates.</p>
@@ -609,11 +614,15 @@
       <p>The 95% secant has 95% of the initial elastic slope. It is a prescribed evaluation construction. Microscopic damage or crack extension can begin before its intersection with the record. Records containing earlier peaks require the full selection rules for <i>F</i><sub>Q</sub>.</p>
       <section id="specimen-size-check" aria-labelledby="specimen-size-check-title">
         <h3 class="subsection-heading" id="specimen-size-check-title">Specimen size check</h3>
-        <p>In a conservative check for a plane-strain toughness specimen, each of the three dimensions must meet the same minimum. Compare the thickness <i>B</i>, measured total crack length <i>a</i>, and uncracked ligament <i>W</i> &minus; <i>a</i> with the length calculated from the conditional toughness <i>K</i><sub>Q</sub> and yield strength &sigma;<sub>ys</sub>.</p>
-        <p class="formula" data-tex="B,\ a,\ (W-a)\ \geq\ 2.5\left(\frac{K_{\mathrm{Q}}}{\sigma_{\mathrm{ys}}}\right)^2"><i>B</i>, <i>a</i>, (<i>W</i> &minus; <i>a</i>) &ge; 2.5(<i>K</i><sub>Q</sub>/&sigma;<sub>ys</sub>)<sup>2</sup></p>
-        <p>Here <i>W</i> is the specimen width for the selected geometry. Use the 0.2% offset yield strength at the test conditions. With <i>K</i><sub>Q</sub> in MPa&radic;m and &sigma;<sub>ys</sub> in MPa, the result is in metres.</p>
-        <p>For ASTM E399-24 qualification, apply the calculated minimum to the remaining ligament. Confirm the permitted specimen proportions, force-record limit, precrack, and other requirements before reporting <i>K</i><sub>Ic</sub>.</p>
-        <p class="source-line"><a href="https://store.astm.org/e0399-24.html">ASTM E399-24, &sect;&sect;7.1 and 9.1.4</a></p>
+        <p>For <strong>ASTM E399-24 qualification</strong>, compare the remaining ligament <i>W</i> &minus; <i>a</i> with the minimum calculated from the conditional toughness <i>K</i><sub>Q</sub> and yield strength &sigma;<sub>ys</sub>.</p>
+        <p class="formula" data-tex="W-a\ \geq\ 2.5\left(\frac{K_{\mathrm{Q}}}{\sigma_{\mathrm{ys}}}\right)^2"><i>W</i> &minus; <i>a</i> &ge; 2.5(<i>K</i><sub>Q</sub>/&sigma;<sub>ys</sub>)<sup>2</sup></p>
+        <p>Here <i>W</i> is specimen width and <i>a</i> is the measured crack length, including the fatigue precrack. Use the 0.2% offset yield strength at the test conditions. With <i>K</i><sub>Q</sub> in MPa&radic;m and &sigma;<sub>ys</sub> in MPa, the minimum is in metres.</p>
+        <p>Check that <i>a</i>/<i>W</i> is between 0.45 and 0.55, that <i>W</i>/<i>B</i> is permitted for the specimen geometry, and that <i>F</i><sub>max</sub>/<i>F</i><sub>Q</sub> &le; 1.10. Verify the fatigue-precrack and other test requirements before reporting <i>K</i><sub>Ic</sub>.</p>
+        <p class="source-line"><a href="https://store.astm.org/e0399-24.html">ASTM E399-24, &sect;&sect;7.1, 9.1, and 9.3</a></p>
+        <aside class="fracture-card" aria-labelledby="conservative-size-title">
+          <h4 id="conservative-size-title">Conservative specimen-sizing screen</h4>
+          <p>When planning a test, use an estimated toughness to calculate a minimum length and compare it with the thickness <i>B</i>, crack length <i>a</i>, and remaining ligament <i>W</i> &minus; <i>a</i>. Apply the qualification checks above to the measured specimen and force record.</p>
+        </aside>
       </section>
       <article class="fracture-card worked-example">
         <h3>Evaluate a compact tension test</h3>
@@ -624,7 +633,7 @@
               <li><strong>Read the conditional force.</strong> The smoothly rising record intersects the 95% secant at <i>F</i><sub>Q</sub> = 15.00 kN. Its maximum is <i>F</i><sub>max</sub> = 16.05 kN.</li>
               <li><strong>Calculate toughness.</strong> With force in N and lengths in m, <i>K</i><sub>Q</sub> = [<i>F</i><sub>Q</sub>/(<i>B</i>&radic;<i>W</i>)] <i>f</i>(<i>a</i>/<i>W</i>). Substitution gives [15,000/(0.020&radic;0.040)] &times; 9.659 = 36.22 &times; 10<sup>6</sup> Pa&radic;m = <strong>36.2 MPa&radic;m</strong>.</li>
               <li><strong>Check the force ratio.</strong> <i>F</i><sub>max</sub>/<i>F</i><sub>Q</sub> = 16.05/15.00 = <strong>1.07 &le; 1.10</strong>.</li>
-              <li><strong>Check specimen size.</strong> The minimum is 2.5(36.22/450)<sup>2</sup> m = <strong>16.2 mm</strong>. Here <i>B</i> = <i>a</i> = <i>W</i> &minus; <i>a</i> = 20 mm, so all three dimensions pass the conservative check. The 20 mm ligament satisfies the E399 size limit.</li>
+              <li><strong>Check the remaining ligament.</strong> The minimum is 2.5(36.22/450)<sup>2</sup> m = <strong>16.2 mm</strong>. The 20 mm ligament satisfies the E399-24 size requirement.</li>
             </ol>
           </div>
           <figure class="technical-figure worked-record">
