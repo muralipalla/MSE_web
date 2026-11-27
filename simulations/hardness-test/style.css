@@ -427,9 +427,33 @@ select:disabled {
   font-size: 15px;
 }
 
+.brinell-drawing-note,
+.brinell-preview-label {
+  display: none;
+  font: 700 15px system-ui, sans-serif;
+}
+
+#tester-svg[data-method="brinell"] .brinell-drawing-note {
+  display: inline;
+  fill: var(--ink-soft);
+}
+
+#microscope-svg.is-contact-preview .brinell-preview-label {
+  display: inline;
+  fill: #fff;
+}
+
+#microscope-svg.is-contact-preview .measure-handle {
+  display: none;
+}
+
 .dwell-counter {
   fill: var(--coral);
   font-size: 20px;
+}
+
+#tester-svg[data-method="brinell"] .dwell-counter {
+  transform: translateX(120px);
 }
 
 .indenter-shaft {
@@ -456,10 +480,19 @@ select:disabled {
   stroke-width: 2;
 }
 
+#tester-svg[data-method="brinell"] .sample-surface,
+.brinell-impression {
+  filter: url(#brinell-metal-finish);
+}
+
 .plastic-zone {
   fill: url(#plastic-gradient);
   opacity: 0;
   pointer-events: none;
+}
+
+#tester-svg[data-method="brinell"] .plastic-zone {
+  display: none;
 }
 
 .residual-indent {
@@ -498,6 +531,17 @@ select:disabled {
   fill: #d5dadd;
 }
 
+#microscope-svg[data-method="brinell"] .lens-surface {
+  filter: url(#brinell-metal-finish) url(#focus-blur);
+  clip-path: url(#microscope-clip);
+}
+
+#microscope-svg[data-method="brinell"] .surface-texture,
+#microscope-svg[data-method="brinell"] .scale-band,
+#microscope-svg[data-method="brinell"] .scale-rail {
+  display: none;
+}
+
 .surface-texture {
   fill: none;
   stroke: rgba(53, 70, 80, 0.2);
@@ -511,8 +555,8 @@ select:disabled {
 
 .brinell-impression {
   fill: url(#brinell-indent-gradient);
-  stroke: #2b3b47;
-  stroke-width: 4;
+  stroke: #293740;
+  stroke-width: 3;
 }
 
 .vickers-impression {
@@ -525,6 +569,11 @@ select:disabled {
   fill: none;
   stroke: rgba(245, 250, 251, 0.72);
   stroke-width: 7;
+}
+
+#microscope-svg[data-method="brinell"] .pileup-ring {
+  stroke-opacity: .32;
+  stroke-width: 4;
 }
 
 .measurement-overlay {
@@ -556,6 +605,27 @@ select:disabled {
 .vertical-scale .scale-rail,
 .vertical-scale .scale-gradation {
   stroke: #111;
+}
+
+#microscope-svg[data-method="brinell"] .scale-gradation {
+  stroke: #090909;
+  stroke-width: 1;
+}
+
+#microscope-svg[data-method="brinell"] .scale-gradation.is-half {
+  stroke-width: 1.45;
+}
+
+#microscope-svg[data-method="brinell"] .scale-gradation.is-major {
+  stroke-width: 2;
+}
+
+.reticle-value {
+  paint-order: stroke;
+  fill: #090909;
+  stroke: rgba(250, 251, 252, .9);
+  stroke-width: 2.5;
+  font: 700 18px system-ui, sans-serif;
 }
 
 .measure-handle {

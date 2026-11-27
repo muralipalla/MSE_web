@@ -106,11 +106,19 @@
   display: block;
   width: 100%;
   height: auto;
+  margin-top: .65rem;
+}
+
+.rw-machine .rw-outline {
+  stroke-width: 2.3;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .rw-machine svg text {
   font-family: inherit;
-  font-size: 19px;
+  font-size: 22px;
+  font-weight: 700;
 }
 
 .rw-machine figcaption,
@@ -128,6 +136,7 @@
 }
 
 .rw-stage {
+  margin-top: .75rem;
   padding: .75rem .9rem;
   border-left: 3px solid var(--hardness-teal);
   border-radius: .5rem;
@@ -226,7 +235,7 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .rw-machine svg text {
-    font-size: 21px;
+  .rw-machine .rw-depth-guide {
+    stroke-width: 1.75;
   }
 }

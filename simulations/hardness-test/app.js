@@ -3,6 +3,11 @@
 
   const KG_FORCE_TO_NEWTONS = 9.80665;
   const BALL_DIAMETER_MM = 10;
+  const BRINELL_DIVISION_MM = 0.1;
+  const BRINELL_RESIDUAL_DEPTH_FRACTION = 0.72;
+  const BRINELL_DRAWING_DEPTH_SCALE = 24;
+  const SPECIMEN_TOP_Y = 318;
+  const FLAT_SPECIMEN = `M105 ${SPECIMEN_TOP_Y}H495V430H105Z`;
   const ANIMATION_SPEED = 0.2;
   const T_CRITICAL_95 = {
     2: 12.706,
@@ -343,6 +348,8 @@
   }
 
   const motionPreference = globalObject.matchMedia("(prefers-reduced-motion: reduce)");
+  const drawnBallRadius = elements.ballIndenter.r.baseVal.value;
+  const drawnContactTravel = SPECIMEN_TOP_Y - elements.ballIndenter.cy.baseVal.value - drawnBallRadius;
   const LOCATION_NAMES = elements.locationPoints.map((button) => button.dataset.location);
   const state = {
     method: elements.methodSelect.value,
@@ -455,6 +462,10 @@
 
   function updateSetupSummary() {
     const material = currentMaterial();
+    elements.testerSvg.dataset.method = state.method;
+    elements.microscopeSvg.dataset.method = state.method;
+    elements.sampleStopLight.setAttribute("stop-color", material.colors[0]);
+    elements.sampleStopDark.setAttribute("stop-color", material.colors[1]);
     elements.indenterSummary.textContent = state.method === "brinell"
       ? `${BALL_DIAMETER_MM} mm tungsten-carbide ball`
       : "136° square-based diamond pyramid";
@@ -509,6 +520,7 @@
   }
 
   function resetMicroscopeView() {
+    elements.microscopeSvg.classList.remove("is-contact-preview");
     elements.brinellImpression.hidden = true;
     elements.brinellImpression.style.display = "none";
     elements.vickersImpression.hidden = true;
@@ -536,17 +548,54 @@
     elements.microscopeDescription.textContent = "Make an indentation to activate the microscope.";
   }
 
+  function circleContactRadius(radius, depth) {
+    return Math.sqrt(Math.max(0, depth * (2 * radius - depth)));
+  }
+
+  function brinellMotion(phase, trial, animating) {
+    const residualDepth = trial.depthMm;
+    const peakDepth = residualDepth / BRINELL_RESIDUAL_DEPTH_FRACTION;
+    const liftedTravel = 58;
+    if (!animating) return { depth: residualDepth, translation: liftedTravel, loadFraction: 0 };
+    if (phase.phase === "Approach") {
+      return { depth: 0, translation: drawnContactTravel * smoothStep(phase.fraction), loadFraction: 0 };
+    }
+    if (phase.phase === "Unloading and elastic recovery") {
+      const recoveryEnd = 0.62;
+      const recovery = smoothStep(phase.fraction / recoveryEnd);
+      const lift = smoothStep((phase.fraction - recoveryEnd) / (1 - recoveryEnd));
+      const depth = peakDepth + (residualDepth - peakDepth) * recovery;
+      const atContact = drawnContactTravel + depth * BRINELL_DRAWING_DEPTH_SCALE;
+      return { depth, translation: atContact + (liftedTravel - atContact) * lift, loadFraction: 1 - recovery };
+    }
+    const depth = peakDepth * phase.depthFraction;
+    return { depth, translation: drawnContactTravel + depth * BRINELL_DRAWING_DEPTH_SCALE, loadFraction: phase.loadFraction };
+  }
+
+  function drawBrinellSpecimen(depth) {
+    const cutDepth = depth * BRINELL_DRAWING_DEPTH_SCALE;
+    const halfWidth = circleContactRadius(drawnBallRadius, cutDepth);
+    const left = (300 - halfWidth).toFixed(3);
+    const right = (300 + halfWidth).toFixed(3);
+    const arc = `A${drawnBallRadius} ${drawnBallRadius} 0 0 0 ${right} ${SPECIMEN_TOP_Y}`;
+    const hasImpression = cutDepth > 0.005;
+    elements.sampleSurface.setAttribute("d", hasImpression ? `M105 ${SPECIMEN_TOP_Y}H${left}${arc}H495V430H105Z` : FLAT_SPECIMEN);
+    elements.residualIndent.setAttribute("d", `M${left} ${SPECIMEN_TOP_Y}${arc}`);
+    elements.residualIndent.hidden = !hasImpression;
+  }
+
   function renderTester() {
     const mounted = state.status !== "setup";
     const material = currentMaterial();
     const progress = state.animationProgress;
     const phaseData = animationPhase(progress);
-    elements.ballIndenter.hidden = state.method !== "brinell";
-    elements.ballIndenter.style.display = state.method === "brinell" ? "" : "none";
-    elements.vickersIndenter.hidden = state.method !== "vickers";
-    elements.vickersIndenter.style.display = state.method === "vickers" ? "" : "none";
-    elements.sampleStopLight.setAttribute("stop-color", material.colors[0]);
-    elements.sampleStopDark.setAttribute("stop-color", material.colors[1]);
+    const brinell = state.method === "brinell";
+    const animating = state.status === "animating";
+    const trial = state.currentTrial;
+    elements.ballIndenter.hidden = !brinell;
+    elements.ballIndenter.style.display = brinell ? "" : "none";
+    elements.vickersIndenter.hidden = brinell;
+    elements.vickersIndenter.style.display = brinell ? "none" : "";
     elements.sampleSurface.style.opacity = mounted ? "1" : "0.28";
     elements.testerMethodLabel.textContent = mounted
       ? `${material.shortName} · ${loadNotation()} · location ${state.selectedLocation}`
@@ -555,7 +604,7 @@
     let translation = 0;
     let loadFraction = 0;
     let depthFraction = 0;
-    if (state.status === "animating") {
+    if (animating) {
       translation = phaseData.translation;
       loadFraction = phaseData.loadFraction;
       depthFraction = phaseData.depthFraction;
@@ -563,19 +612,29 @@
       translation = 58;
       depthFraction = 0.72;
     }
+    let depth = trial ? trial.depthMm * depthFraction : 0;
+    if (brinell) {
+      if (trial) {
+        ({ depth, translation, loadFraction } = brinellMotion(phaseData, trial, animating));
+        depthFraction = depth * BRINELL_RESIDUAL_DEPTH_FRACTION / trial.depthMm;
+        if (animating) {
+          const diameter = 2 * circleContactRadius(BALL_DIAMETER_MM / 2, depth);
+          drawBrinellImpression(trial, diameter / trial.meanDimension);
+        }
+      }
+      drawBrinellSpecimen(depth);
+    } else {
+      elements.sampleSurface.setAttribute("d", FLAT_SPECIMEN);
+      elements.residualIndent.setAttribute("d", "M270 318 L300 338 L330 318");
+      elements.residualIndent.hidden = !trial || progress < 0.42 && animating;
+    }
     elements.movingHeadGroup.setAttribute("transform", `translate(0 ${translation})`);
     elements.forceFill.setAttribute("y", String(274 - 140 * loadFraction));
     elements.forceFill.setAttribute("height", String(140 * loadFraction));
     elements.plasticZone.style.opacity = String(state.currentTrial ? Math.max(0, Math.min(0.82, depthFraction * 0.82)) : 0);
     elements.plasticZone.setAttribute("rx", String(45 + depthFraction * 42));
     elements.plasticZone.setAttribute("ry", String(18 + depthFraction * 26));
-    elements.residualIndent.hidden = !state.currentTrial || progress < 0.42 && state.status === "animating";
     elements.residualIndent.style.display = !elements.residualIndent.hidden ? "" : "none";
-    if (state.method === "brinell") {
-      elements.residualIndent.setAttribute("d", "M265 318 Q300 344 335 318");
-    } else {
-      elements.residualIndent.setAttribute("d", "M270 318 L300 338 L330 318");
-    }
     elements.dwellCounter.textContent = state.status === "animating" && phaseData.phase === "Dwell"
       ? `${Math.max(0, Math.ceil(state.dwellSeconds * phaseData.dwellRemaining))} s`
       : "";
@@ -583,8 +642,7 @@
     elements.liveForceValue.textContent = liveForce >= 1000
       ? `${formatNumber(liveForce / 1000, 3)} kN`
       : `${formatNumber(liveForce, liveForce < 10 ? 3 : 1)} N`;
-    const depth = state.currentTrial ? state.currentTrial.depthMm * depthFraction : 0;
-    elements.depthValue.textContent = `${formatNumber(depth, state.method === "brinell" ? 3 : 4)} mm`;
+    elements.depthValue.textContent = `${formatNumber(depth, brinell ? 3 : 4)} mm`;
     elements.phaseValue.textContent = state.phase;
     elements.testerDescription.textContent = mounted
       ? `${loadNotation()} test on ${material.shortName}. Current phase: ${state.phase}.`
@@ -597,6 +655,7 @@
       const fraction = bounded / 0.22;
       return {
         phase: "Approach",
+        fraction,
         translation: 67 * smoothStep(fraction),
         loadFraction: 0,
         depthFraction: 0,
@@ -626,6 +685,7 @@
     const fraction = (bounded - 0.78) / 0.22;
     return {
       phase: "Unloading and elastic recovery",
+      fraction,
       translation: 84 - 26 * smoothStep(fraction),
       loadFraction: 1 - smoothStep(fraction),
       depthFraction: 1 - 0.28 * smoothStep(fraction),
@@ -687,6 +747,7 @@
       state.animationFrame = 0;
     }
     state.status = "microscope";
+    elements.microscopeSvg.classList.remove("is-contact-preview");
     state.phase = "Microscope measurement";
     state.animationPaused = false;
     state.animationProgress = 1;
@@ -770,6 +831,46 @@
     group.replaceChildren(fragment);
   }
 
+  function renderBrinellReticle(group, axis, pixelsPerMm) {
+    const horizontal = axis === "horizontal";
+    const center = horizontal ? 300 : 206;
+    const midline = horizontal ? 206 : 300;
+    const halfSpan = 152;
+    const spacing = BRINELL_DIVISION_MM * pixelsPerMm;
+    const count = Math.floor(2 * halfSpan / spacing);
+    const fragment = document.createDocumentFragment();
+    for (let index = 0; index <= count; index += 1) {
+      const coordinate = center - halfSpan + index * spacing;
+      const fullMark = index % 10 === 0;
+      const halfMark = index % 10 === 5;
+      const reach = fullMark ? 28 : halfMark ? 17 : 8;
+      const attributes = horizontal
+        ? { x1: coordinate, y1: midline - reach, x2: coordinate, y2: midline + reach }
+        : { x1: midline - reach, y1: coordinate, x2: midline + reach, y2: coordinate };
+      attributes.class = `scale-gradation${fullMark ? " is-major" : halfMark ? " is-half" : ""}`;
+      fragment.append(svgElement("line", attributes));
+      if (fullMark) {
+        const label = svgElement("text", horizontal
+          ? { x: coordinate, y: midline - reach - 8, "text-anchor": "middle", class: "reticle-value" }
+          : { x: midline - reach - 8, y: coordinate, "text-anchor": "end", "dominant-baseline": "central", class: "reticle-value" });
+        label.textContent = String(index / 10);
+        fragment.append(label);
+      }
+    }
+    group.replaceChildren(fragment);
+  }
+
+  function drawBrinellImpression(trial, size = 1) {
+    elements.brinellImpression.setAttribute("rx", String(trial.trueDiameterOne * trial.pixelsPerMm * size / 2));
+    elements.brinellImpression.setAttribute("ry", String(trial.trueDiameterTwo * trial.pixelsPerMm * size / 2));
+  }
+
+  function labelGradations(divisionMm) {
+    const divisionText = graduationLabel(divisionMm);
+    elements.horizontalToolLabel.textContent = `d1 · ${divisionText}`;
+    elements.verticalToolLabel.textContent = `d2 · ${divisionText}`;
+  }
+
   function renderMicroscope() {
     const trial = state.currentTrial;
     const active = trial && ["microscope", "pending-calculation", "ready-next", "analysis"].includes(state.status);
@@ -791,8 +892,7 @@
     const trueWidth = trial.trueDiameterOne * ppm;
     const trueHeight = trial.trueDiameterTwo * ppm;
     if (state.method === "brinell") {
-      elements.brinellImpression.setAttribute("rx", String(trueWidth / 2));
-      elements.brinellImpression.setAttribute("ry", String(trueHeight / 2));
+      drawBrinellImpression(trial);
       elements.pileupRing.setAttribute("rx", String(trueWidth / 2 + 8));
       elements.pileupRing.setAttribute("ry", String(trueHeight / 2 + 8));
     } else {
@@ -825,12 +925,13 @@
     elements.handleTop.setAttribute("transform", `translate(300 ${206 - halfHeight}) rotate(90)`);
     elements.handleBottom.setAttribute("transform", `translate(300 ${206 + halfHeight}) rotate(90)`);
 
-    const graduation = niceGraduationLength(trial.meanDimension);
-    renderGradations(elements.horizontalGradations, "horizontal", halfWidth, ppm, graduation);
-    renderGradations(elements.verticalGradations, "vertical", halfHeight, ppm, graduation);
-    const divisionText = graduationLabel(graduation);
-    elements.horizontalToolLabel.textContent = `d1 · ${divisionText}`;
-    elements.verticalToolLabel.textContent = `d2 · ${divisionText}`;
+    const brinell = state.method === "brinell";
+    const graduation = brinell ? BRINELL_DIVISION_MM : niceGraduationLength(trial.meanDimension);
+    if (!brinell) {
+      renderGradations(elements.horizontalGradations, "horizontal", halfWidth, ppm, graduation);
+      renderGradations(elements.verticalGradations, "vertical", halfHeight, ppm, graduation);
+    }
+    labelGradations(graduation);
 
     const digits = dimensionDigits();
     const suffix = " mm";
@@ -957,6 +1058,22 @@
     state.lastAnnouncedPhase = "";
     resetMicroscopeView();
     renderControlStates();
+    if (state.method === "brinell") {
+      const trial = state.currentTrial;
+      renderBrinellReticle(elements.horizontalGradations, "horizontal", trial.pixelsPerMm);
+      renderBrinellReticle(elements.verticalGradations, "vertical", trial.pixelsPerMm);
+      labelGradations(BRINELL_DIVISION_MM);
+      if (!motionPreference.matches) {
+        drawBrinellImpression(trial, 0);
+        elements.microscopeSvg.classList.add("is-contact-preview");
+        elements.microscopeDescription.textContent = "Projected Brinell contact area during loading, with the calibrated microscope reticle.";
+        elements.microscopePlaceholder.style.display = "none";
+        elements.measurementOverlay.hidden = false;
+        elements.measurementOverlay.style.display = "";
+        elements.brinellImpression.hidden = false;
+        elements.brinellImpression.style.display = "";
+      }
+    }
     if (motionPreference.matches) {
       state.animationProgress = 1;
       announceAnimationPhase("Unloading and elastic recovery");
