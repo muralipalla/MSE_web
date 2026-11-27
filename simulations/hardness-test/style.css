@@ -427,15 +427,17 @@ select:disabled {
   font-size: 15px;
 }
 
-.brinell-drawing-note,
+.tester-drawing-note,
 .brinell-preview-label {
-  display: none;
   font: 700 15px system-ui, sans-serif;
 }
 
-#tester-svg[data-method="brinell"] .brinell-drawing-note {
-  display: inline;
+.tester-drawing-note {
   fill: var(--ink-soft);
+}
+
+.brinell-preview-label {
+  display: none;
 }
 
 #microscope-svg.is-contact-preview .brinell-preview-label {
@@ -452,8 +454,8 @@ select:disabled {
   font-size: 20px;
 }
 
-#tester-svg[data-method="brinell"] .dwell-counter {
-  transform: translateX(120px);
+#tester-svg[data-method="vickers"] .brinell-shaft {
+  display: none;
 }
 
 .indenter-shaft {
@@ -468,10 +470,32 @@ select:disabled {
   stroke-width: 2;
 }
 
-.vickers-indenter {
-  fill: #b7e2ec;
-  stroke: #264c5e;
-  stroke-width: 3;
+.vickers-holder {
+  fill: url(#tester-metal-gradient);
+  stroke: #354653;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.vickers-tip {
+  fill: #d4e8ee;
+}
+
+.vickers-facet {
+  fill: #86aab9;
+}
+
+.vickers-tip-outline,
+.vickers-tip-leader {
+  fill: none;
+  stroke: #264353;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.vickers-tip-label {
+  fill: #243848;
+  font: 800 15px system-ui, sans-serif;
 }
 
 .sample-surface {
@@ -485,14 +509,9 @@ select:disabled {
   filter: url(#brinell-metal-finish);
 }
 
-.plastic-zone {
-  fill: url(#plastic-gradient);
-  opacity: 0;
-  pointer-events: none;
-}
-
-#tester-svg[data-method="brinell"] .plastic-zone {
-  display: none;
+#tester-svg[data-method="vickers"] .sample-surface,
+.vickers-facets {
+  filter: url(#vickers-polished-finish);
 }
 
 .residual-indent {
@@ -529,28 +548,16 @@ select:disabled {
 
 .lens-surface {
   fill: #d5dadd;
+  clip-path: url(#microscope-clip);
 }
 
 #microscope-svg[data-method="brinell"] .lens-surface {
   filter: url(#brinell-metal-finish) url(#focus-blur);
-  clip-path: url(#microscope-clip);
 }
 
-#microscope-svg[data-method="brinell"] .surface-texture,
-#microscope-svg[data-method="brinell"] .scale-band,
-#microscope-svg[data-method="brinell"] .scale-rail {
-  display: none;
-}
-
-.surface-texture {
-  fill: none;
-  stroke: rgba(53, 70, 80, 0.2);
-  stroke-width: 2;
-}
-
-.surface-texture circle {
-  fill: rgba(53, 70, 80, 0.24);
-  stroke: none;
+#microscope-svg[data-method="vickers"] .lens-surface {
+  fill: color-mix(in srgb, var(--vickers-surface-color, #dce4e7) 52%, #f2f3f2);
+  filter: url(#vickers-polished-finish) url(#focus-blur);
 }
 
 .brinell-impression {
@@ -560,9 +567,31 @@ select:disabled {
 }
 
 .vickers-impression {
-  fill: url(#vickers-indent-gradient);
-  stroke: #253946;
-  stroke-width: 4;
+  fill: none;
+  stroke: #2a3b45;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.vickers-facets path {
+  fill: var(--facet-tone);
+  fill: color-mix(in srgb, var(--facet-tone) 76%, var(--vickers-surface-color, #dce4e7));
+}
+
+.vickers-facet-north-east {
+  --facet-tone: #92a0a7;
+}
+
+.vickers-facet-south-east {
+  --facet-tone: #5f707a;
+}
+
+.vickers-facet-south-west {
+  --facet-tone: #aab8bd;
+}
+
+.vickers-facet-north-west {
+  --facet-tone: #c2cdd0;
 }
 
 .pileup-ring {
@@ -580,43 +609,19 @@ select:disabled {
   pointer-events: none;
 }
 
-.scale-band {
-  fill: transparent;
-  stroke: #111;
-  stroke-width: 2;
-  vector-effect: non-scaling-stroke;
-  pointer-events: none;
-}
-
-.scale-rail,
 .scale-gradation {
   fill: none;
-  stroke-width: 1.5;
+  stroke: #090909;
+  stroke-width: 1;
   vector-effect: non-scaling-stroke;
   pointer-events: none;
 }
 
-.scale-gradation.is-major {
-  stroke-width: 2.8;
-}
-
-.horizontal-scale .scale-rail,
-.horizontal-scale .scale-gradation,
-.vertical-scale .scale-rail,
-.vertical-scale .scale-gradation {
-  stroke: #111;
-}
-
-#microscope-svg[data-method="brinell"] .scale-gradation {
-  stroke: #090909;
-  stroke-width: 1;
-}
-
-#microscope-svg[data-method="brinell"] .scale-gradation.is-half {
+.scale-gradation.is-half {
   stroke-width: 1.45;
 }
 
-#microscope-svg[data-method="brinell"] .scale-gradation.is-major {
+.scale-gradation.is-major {
   stroke-width: 2;
 }
 

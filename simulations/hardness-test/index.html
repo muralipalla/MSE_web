@@ -16,10 +16,10 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Brinell, Vickers and Rockwell Hardness Tests | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css?v=20261126">
-  <link rel="stylesheet" href="style.css?v=20261127-motion">
+  <link rel="stylesheet" href="style.css?v=20261127-vickers-specimen">
   <link rel="stylesheet" href="rockwell.css?v=20261127-schematic">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="app.js?v=20261127-motion" defer></script>
+  <script src="app.js?v=20261127-vickers-specimen" defer></script>
   <script src="rockwell.js?v=20261127-motion" defer></script>
 </head>
 <body>
@@ -194,10 +194,16 @@
                 <feBlend in="mottling" in2="SourceGraphic" mode="normal"></feBlend>
                 <feComposite in2="SourceAlpha" operator="in"></feComposite>
               </filter>
-              <radialGradient id="plastic-gradient">
-                <stop offset="0" stop-color="#f8a27e" stop-opacity="0.72"></stop>
-                <stop offset="1" stop-color="#f05030" stop-opacity="0"></stop>
-              </radialGradient>
+              <filter id="vickers-polished-finish" x="-3%" y="-4%" width="106%" height="108%" color-interpolation-filters="sRGB">
+                <feTurbulence type="fractalNoise" baseFrequency="0.11 0.44" numOctaves="2" seed="47" result="polish"></feTurbulence>
+                <feColorMatrix in="polish" type="matrix" values="2.2 0 0 0 -0.6
+                                                              2.2 0 0 0 -0.6
+                                                              2.2 0 0 0 -0.6
+                                                              0   0 0 0  0.26"></feColorMatrix>
+                <feGaussianBlur stdDeviation="0.22" result="finish"></feGaussianBlur>
+                <feBlend in="finish" in2="SourceGraphic" mode="normal"></feBlend>
+                <feComposite in2="SourceAlpha" operator="in"></feComposite>
+              </filter>
             </defs>
 
             <rect class="tester-backdrop" x="20" y="18" width="560" height="456" rx="24"></rect>
@@ -210,13 +216,21 @@
               <text class="tester-label" x="300" y="135" text-anchor="middle">LOAD CELL</text>
 
               <g id="indenter-group">
-                <rect class="indenter-shaft" x="278" y="146" width="44" height="64" rx="8"></rect>
+                <rect class="indenter-shaft brinell-shaft" x="278" y="146" width="44" height="64" rx="8"></rect>
                 <circle id="ball-indenter" class="ball-indenter" cx="300" cy="226" r="22"></circle>
-                <path id="vickers-indenter" class="vickers-indenter" d="M266 204 H334 L300 246 Z" hidden></path>
+                <g id="vickers-indenter" hidden>
+                  <path class="vickers-holder" d="M277 177V153L284 146H316L323 153V177Z"></path>
+                  <path class="vickers-holder" d="M249 186H351V209L340.84 229.5H259.16L249 209Z"></path>
+                  <rect class="vickers-holder" x="240" y="172" width="120" height="17" rx="5"></rect>
+                  <path class="vickers-tip" d="M259.16 229.5H340.84L300 246Z"></path>
+                  <path class="vickers-facet" d="M300 229.5H340.84L300 246Z"></path>
+                  <path class="vickers-tip-outline" d="M259.16 229.5H340.84L300 246Z"></path>
+                  <path class="vickers-tip-leader" d="M342 229.5H347L357 214H363"></path>
+                  <text class="vickers-tip-label" x="369" y="219">Diamond tip</text>
+                </g>
               </g>
             </g>
 
-            <ellipse id="plastic-zone" class="plastic-zone" cx="300" cy="331" rx="75" ry="38"></ellipse>
             <path id="sample-surface" class="sample-surface" d="M105 318 H495 V430 H105 Z"></path>
             <path id="residual-indent" class="residual-indent" d="M270 318 Q300 338 330 318" hidden></path>
             <rect class="anvil" x="82" y="429" width="436" height="30" rx="10"></rect>
@@ -228,8 +242,8 @@
             </g>
 
             <text id="tester-method-label" class="method-label" x="300" y="458" text-anchor="middle">No specimen mounted</text>
-            <text class="brinell-drawing-note" x="300" y="492" text-anchor="middle">Penetration exaggerated in this view</text>
-            <text id="dwell-counter" class="dwell-counter" x="300" y="285" text-anchor="middle"></text>
+            <text class="tester-drawing-note" x="300" y="492" text-anchor="middle">Penetration exaggerated in this view</text>
+            <text id="dwell-counter" class="dwell-counter" x="420" y="285" text-anchor="middle"></text>
           </svg>
         </div>
         <p class="stage-explanation" id="stage-explanation">
@@ -259,12 +273,6 @@
                 <stop offset="0.70" stop-color="#949fa6"></stop>
                 <stop offset="1" stop-color="#788791"></stop>
               </radialGradient>
-              <linearGradient id="vickers-indent-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="#1f3040"></stop>
-                <stop offset="0.48" stop-color="#81909a"></stop>
-                <stop offset="0.52" stop-color="#dbe0e3"></stop>
-                <stop offset="1" stop-color="#304251"></stop>
-              </linearGradient>
               <clipPath id="microscope-clip">
                 <circle cx="300" cy="206" r="188"></circle>
               </clipPath>
@@ -272,27 +280,21 @@
 
             <circle class="lens-rim" cx="300" cy="206" r="202"></circle>
             <circle id="lens-surface" class="lens-surface" cx="300" cy="206" r="188"></circle>
-            <g class="surface-texture" clip-path="url(#microscope-clip)" aria-hidden="true">
-              <path d="M110 145 Q190 108 263 144 T490 137"></path>
-              <path d="M118 238 Q202 194 290 232 T486 224"></path>
-              <path d="M142 320 Q229 280 312 322 T467 307"></path>
-              <path d="M175 44 Q212 130 166 214 T191 371"></path>
-              <path d="M400 35 Q356 123 410 205 T394 378"></path>
-              <circle cx="206" cy="105" r="5"></circle>
-              <circle cx="433" cy="281" r="4"></circle>
-              <circle cx="155" cy="285" r="3"></circle>
-            </g>
 
             <g id="micrograph-group" filter="url(#focus-blur)">
               <ellipse id="brinell-impression" class="brinell-impression" cx="300" cy="206" rx="0" ry="0" hidden></ellipse>
+              <g id="vickers-facets" class="vickers-facets" aria-hidden="true" hidden>
+                <path class="vickers-facet-north-east" d=""></path>
+                <path class="vickers-facet-south-east" d=""></path>
+                <path class="vickers-facet-south-west" d=""></path>
+                <path class="vickers-facet-north-west" d=""></path>
+              </g>
               <path id="vickers-impression" class="vickers-impression" d="" hidden></path>
               <ellipse id="pileup-ring" class="pileup-ring" cx="300" cy="206" rx="0" ry="0" hidden></ellipse>
             </g>
 
             <g id="measurement-overlay" class="measurement-overlay" hidden>
               <g class="graduated-scale horizontal-scale">
-                <rect id="horizontal-scale-band" class="scale-band" x="220" y="198" width="160" height="16" rx="4"></rect>
-                <line id="measure-horizontal" class="scale-rail" x1="220" y1="206" x2="380" y2="206"></line>
                 <g id="horizontal-gradations" class="scale-gradations" aria-hidden="true"></g>
                 <g id="handle-left" class="measure-handle horizontal-handle" data-handle="left" transform="translate(220 206)">
                   <rect class="pin-hit-area" x="-22" y="-28" width="44" height="44"></rect>
@@ -306,8 +308,6 @@
               </g>
 
               <g class="graduated-scale vertical-scale">
-                <rect id="vertical-scale-band" class="scale-band" x="292" y="126" width="16" height="160" rx="4"></rect>
-                <line id="measure-vertical" class="scale-rail" x1="300" y1="126" x2="300" y2="286"></line>
                 <g id="vertical-gradations" class="scale-gradations" aria-hidden="true"></g>
                 <g id="handle-top" class="measure-handle vertical-handle" data-handle="top" transform="translate(300 126) rotate(90)">
                   <rect class="pin-hit-area" x="-22" y="-28" width="44" height="44"></rect>

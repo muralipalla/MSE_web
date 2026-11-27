@@ -16,9 +16,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Uniaxial Tension Test | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css?v=20261126">
-  <link rel="stylesheet" href="style.css?v=20261127-instruments">
+  <link rel="stylesheet" href="style.css?v=20261127-measurements">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="app.js?v=20261127-instruments" defer></script>
+  <script src="app.js?v=20261127-measurements" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#tension-lab">Skip to tension test</a>
@@ -163,7 +163,7 @@
           <select id="strain-instrument" aria-describedby="strain-instrument-detail">
             <option value="clip-on">Clip-on extensometer</option>
             <option value="foil">Bonded foil strain gauge</option>
-            <option value="video">Video extensometer</option>
+            <option value="video">Optical extensometer</option>
           </select>
         </label>
 
@@ -189,11 +189,18 @@
             <rect class="machine-column" x="400" y="-17" width="34" height="465" rx="10"></rect>
             <rect class="machine-base" x="28" y="438" width="424" height="34" rx="12"></rect>
             <rect class="machine-top" x="28" y="-33" width="424" height="28" rx="12"></rect>
+            <path class="telescope-field" d="M241 154L313 253V275L241 317Z" aria-hidden="true"></path>
+            <g class="clip-on-dock" aria-hidden="true">
+              <path d="M369 281H411V292H369Z"></path>
+              <circle cx="410" cy="286.5" r="3"></circle>
+            </g>
 
             <g id="crosshead-group">
               <rect class="crosshead" x="76" y="91" width="328" height="42" rx="9"></rect>
               <rect class="load-cell" x="216" y="129" width="48" height="34" rx="8"></rect>
               <text class="machine-label" x="240" y="116" text-anchor="middle">MOVING CROSSHEAD</text>
+              <path class="load-cell-leader" d="M263 146H281"></path>
+              <text class="load-cell-label" x="287" y="151">Load cell</text>
             </g>
 
             <g id="upper-grip-group">
@@ -222,7 +229,7 @@
               <text class="dial-caption dial-number" id="force-dial-value" x="0" y="42" text-anchor="middle">0.000 kN</text>
             </g>
 
-            <g class="strain-tool" id="clip-on-tool" aria-hidden="true" hidden>
+            <g class="strain-tool is-retracted" id="clip-on-tool" aria-hidden="true">
               <path class="tool-arm" id="clip-on-arms"></path>
               <rect class="tool-body" id="clip-on-body" x="318" width="20" rx="4"></rect>
               <text class="tool-caption" id="clip-on-caption" x="328" text-anchor="middle">Clip-on</text>
@@ -234,24 +241,25 @@
               <text class="tool-caption" x="83" y="-16">Foil gauge</text>
             </g>
             <g class="strain-tool" id="video-tool" aria-hidden="true" hidden>
-              <path class="camera-sightline" id="video-sightlines"></path>
               <circle class="camera-target" id="video-target-top" cx="240" r="3.5"></circle>
               <circle class="camera-target" id="video-target-bottom" cx="240" r="3.5"></circle>
-              <g id="video-camera">
-                <path class="tool-body" d="M331 -8 H321 L316 -12 V12 L321 8 H331 Z"></path>
-                <rect class="tool-body" x="329" y="-15" width="43" height="30" rx="5"></rect>
-                <circle class="camera-lamp" cx="359" cy="-6" r="3"></circle>
-                <text class="tool-caption" x="346" y="32" text-anchor="middle">Video</text>
+              <g id="video-telescope" transform="translate(0 264)">
+                <path class="telescope-mount" d="M349 10V39H410V51H342L335 40V11Z"></path>
+                <rect class="telescope-tube" x="319" y="-11" width="51" height="22" rx="5"></rect>
+                <rect class="telescope-collar" x="312" y="-15" width="11" height="30" rx="3"></rect>
+                <rect class="telescope-collar" x="368" y="-8" width="11" height="16" rx="3"></rect>
+                <ellipse class="telescope-lens" cx="313" cy="0" rx="3.5" ry="11"></ellipse>
+                <text class="tool-caption" x="349" y="-25" text-anchor="middle">Fixed telescope</text>
               </g>
             </g>
             <text class="material-label" id="utm-material-label" x="240" y="486" text-anchor="middle">No specimen loaded</text>
           </svg>
         </div>
 
-        <div class="strain-instrument-reading">
-          <p class="instrument-detail" id="strain-instrument-detail">Measures extension between two points on the specimen.</p>
-          <p class="instrument-value"><span class="instrument-reading-label" id="instrument-reading-label">Strain reading</span><output id="instrument-strain" for="strain-instrument" aria-labelledby="instrument-reading-label" aria-live="off">&mdash;</output></p>
-          <p class="instrument-status" id="instrument-status">Load a specimen to attach the extensometer.</p>
+        <div class="force-explanation">
+          <h3>From force to stress</h3>
+          <p>The load cell measures force. The dial displays it in kN. Divide the force in newtons by the original cross-sectional area to get engineering stress in MPa.</p>
+          <p class="measurement-equation" id="force-equation" aria-live="off">&sigma; = F/A<sub>0</sub> = 0.0 N / 18.000 mm<sup>2</sup> = 0.0 MPa</p>
         </div>
 
         <p class="stage-explanation" id="stage-explanation">
@@ -260,6 +268,72 @@
       </article>
 
       <article class="lab-panel graph-panel" aria-labelledby="graph-title">
+        <section class="strain-instrument-reading" aria-labelledby="strain-view-title">
+          <div class="instrument-heading">
+            <h3 id="strain-view-title">Clip-on extensometer</h3>
+            <span class="instrument-state" id="instrument-state" data-state="ready">Ready</span>
+          </div>
+          <p class="instrument-detail" id="strain-instrument-detail">Measures extension between two points on the specimen.</p>
+
+          <figure class="instrument-figure" id="optical-view" hidden>
+            <svg id="optical-field" viewBox="0 0 360 194" role="img" aria-labelledby="optical-title optical-desc">
+              <title id="optical-title">View through the fixed telescope</title>
+              <desc id="optical-desc">The upper specimen mark rises past a stationary ruler that reads extension in millimetres. Zero is the initial upper mark position.</desc>
+              <rect class="optical-bezel" x="7" y="3" width="346" height="188" rx="16"></rect>
+              <rect class="optical-screen" x="19" y="15" width="322" height="164" rx="9"></rect>
+              <path class="optical-specimen" d="M79 18H135V176H79Z"></path>
+              <line class="optical-zero" x1="58" y1="154" x2="239" y2="154"></line>
+              <path class="optical-ruler" d="M238 31V159"></path>
+              <g id="optical-ticks"></g>
+              <text class="optical-units" x="316" y="33" text-anchor="end">&Delta;L (mm)</text>
+              <g class="optical-mark" id="optical-mark" transform="translate(0 154)" hidden>
+                <path class="optical-gauge-mark" d="M79 0H135"></path>
+                <path class="optical-pointer" d="M139 0H228 M228 0L219 -4V4Z"></path>
+              </g>
+              <text class="optical-label" x="106" y="172" text-anchor="middle">Gauge mark</text>
+            </svg>
+            <figcaption>During loading, the lower mark is fixed. The ruler starts at zero at the upper mark, so its movement gives &Delta;L.</figcaption>
+          </figure>
+
+          <figure class="instrument-figure" id="bridge-view" hidden>
+            <svg id="strain-bridge" viewBox="0 0 380 160" role="img" aria-labelledby="bridge-title bridge-desc">
+              <title id="bridge-title">Quarter-bridge strain gauge circuit and meter</title>
+              <desc id="bridge-desc">A 5 volt supply excites two resistor dividers. The active foil is the lower divider's right resistor. The amplifier measures the active midpoint minus the reference midpoint and sends the result to a strain meter.</desc>
+              <path class="bridge-wire" d="M26 51V127 M26 51H65 M109 51H167 M211 51H238V58 M26 127H65 M109 127H167 M211 127H238V134 M138 51V77H166 M138 127V101H166"></path>
+              <path class="bridge-wire" d="M231 58H245 M234 62H242 M237 66H239 M231 134H245 M234 138H242 M237 142H239"></path>
+              <circle class="bridge-node" cx="138" cy="51" r="3.4"></circle>
+              <circle class="bridge-node" cx="138" cy="127" r="3.4"></circle>
+              <text class="bridge-text" x="26" y="32" text-anchor="middle">5 V</text>
+              <rect class="bridge-resistor" x="65" y="45" width="44" height="12" rx="2"></rect>
+              <rect class="bridge-resistor" x="167" y="45" width="44" height="12" rx="2"></rect>
+              <rect class="bridge-resistor" x="65" y="121" width="44" height="12" rx="2"></rect>
+              <rect class="bridge-resistor bridge-active" x="167" y="121" width="44" height="12" rx="2"></rect>
+              <text class="bridge-text" x="87" y="39" text-anchor="middle">R₁</text>
+              <text class="bridge-text" x="189" y="39" text-anchor="middle">R₂</text>
+              <text class="bridge-text" x="87" y="150" text-anchor="middle">R₃</text>
+              <text class="bridge-text bridge-active-text" x="189" y="150" text-anchor="middle">R<tspan baseline-shift="sub">g</tspan> · foil</text>
+              <path class="bridge-amp" d="M166 65V113L219 89Z"></path>
+              <text class="bridge-polarity" x="172" y="82">&minus;</text>
+              <text class="bridge-polarity" x="172" y="106">+</text>
+              <text class="bridge-text bridge-gain" x="194" y="94" text-anchor="middle">&times;100</text>
+              <path class="bridge-signal" d="M219 89H260"></path>
+              <rect class="bridge-meter" x="260" y="64" width="113" height="50" rx="7"></rect>
+              <text class="bridge-meter-label" x="316.5" y="82" text-anchor="middle">Strain meter</text>
+              <text class="bridge-meter-value" id="bridge-meter-value" x="316.5" y="103" text-anchor="middle">&mdash;</text>
+            </svg>
+            <dl class="bridge-values">
+              <div><dt>Foil resistance</dt><dd id="bridge-resistance">&mdash;</dd></div>
+              <div><dt>Bridge output</dt><dd id="bridge-voltage">&mdash;</dd></div>
+              <div><dt>Amplifier</dt><dd id="bridge-amplified">&mdash;</dd></div>
+            </dl>
+            <figcaption>The ideal bridge starts balanced at 120 &Omega; per arm. Tension raises the foil resistance. The meter uses the amplified voltage and a gauge factor of 2 to recover the local strain.</figcaption>
+          </figure>
+
+          <p class="instrument-value"><span class="instrument-reading-label" id="instrument-reading-label">Strain reading</span><output id="instrument-strain" for="strain-instrument" aria-labelledby="instrument-reading-label" aria-live="off">&mdash;</output></p>
+          <p class="measurement-equation" id="strain-equation" aria-live="off"></p>
+          <p class="instrument-status" id="instrument-status" role="status">Load a specimen to attach the extensometer.</p>
+        </section>
+
         <div class="panel-heading compact-heading">
           <div class="step-number" aria-hidden="true">3</div>
           <div>
@@ -278,8 +352,7 @@
           </canvas>
         </div>
         <p class="graph-caption">
-          Engineering stress uses the original area A<sub>0</sub>; engineering
-          strain uses the original gauge length L<sub>0</sub> for every instrument selection.
+          The curve uses engineering stress F/A<sub>0</sub> and gauge-length strain &Delta;L/L<sub>0</sub> through the last instant before separation.
         </p>
       </article>
     </section>
