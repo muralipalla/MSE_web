@@ -366,6 +366,47 @@ button.button.secondary {
   height: auto;
 }
 
+#utm-svg [hidden] {
+  display: none;
+}
+
+.strain-selector {
+  max-width: 26rem;
+  margin-bottom: 0.75rem;
+}
+
+.strain-instrument-reading {
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: #f5f2fa;
+  color: var(--ink-soft);
+}
+
+.strain-instrument-reading p {
+  margin: 0;
+}
+
+.instrument-detail,
+.instrument-status {
+  font-size: 0.9rem;
+}
+
+.strain-instrument-reading .instrument-value {
+  margin: 0.3rem 0;
+  color: var(--ink);
+  font-size: 1.18rem;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.instrument-reading-label {
+  display: block;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+
 .machine-backdrop {
   fill: #f3f0f8;
   stroke: rgba(46, 42, 116, 0.12);
@@ -401,7 +442,9 @@ button.button.secondary {
 
 .machine-label,
 .material-label,
-.force-label {
+.dial-caption,
+.dial-tick-label,
+.tool-caption {
   fill: var(--ink);
   font-family: system-ui, sans-serif;
   font-weight: 900;
@@ -416,10 +459,6 @@ button.button.secondary {
   font-size: 13px;
 }
 
-.force-label {
-  font-size: 18px;
-}
-
 .specimen {
   fill: url(#specimen-gradient);
   stroke: #792314;
@@ -428,35 +467,109 @@ button.button.secondary {
 }
 
 .gauge-mark {
-  stroke: #fce5d9;
-  stroke-width: 2;
-  stroke-dasharray: 4 3;
+  stroke: #fff3e9;
+  stroke-width: 1.8;
 }
 
-.force-arrow {
+.dial-casing {
+  fill: url(#steel-gradient);
+  stroke: #435463;
+  stroke-width: 2;
+}
+
+.dial-face {
+  fill: #fcfbff;
+  stroke: #a2aab9;
+  stroke-width: 1.5;
+}
+
+.dial-tick {
+  stroke: #505e6d;
+  stroke-width: 1.45;
+}
+
+.dial-tick.is-major {
+  stroke: #202d42;
+  stroke-width: 2.2;
+}
+
+.dial-tick-label {
+  font-size: 13px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.dial-caption {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.dial-number {
+  font-size: 13px;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.dial-needle {
+  fill: #a93324;
+}
+
+.dial-hub {
+  fill: #26354c;
+}
+
+.tool-body {
+  fill: #d5e5ec;
+  stroke: #31596d;
+  stroke-width: 2;
+}
+
+.tool-arm,
+.tool-wire,
+.foil-grid,
+.camera-sightline {
   fill: none;
-  stroke: var(--coral);
+}
+
+.tool-arm {
+  stroke: #264351;
   stroke-width: 3;
   stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
-#fracture-mark path {
-  fill: none;
-  stroke: var(--tension-gold);
-  stroke-width: 4;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.tool-wire {
+  stroke: #314b64;
+  stroke-width: 1.4;
 }
 
-#fracture-mark circle {
-  fill: var(--tension-gold);
+.tool-caption {
+  font-size: 12px;
 }
 
-#utm-svg.is-empty .force-arrow,
-#utm-svg.is-empty .force-label,
-#utm-svg.is-empty .gauge-mark {
-  opacity: 0.16;
+.foil-patch {
+  fill: #edf3ff;
+  stroke: #354e7b;
+}
+
+.foil-grid {
+  stroke: #28406b;
+  stroke-width: 0.8;
+}
+
+.camera-sightline {
+  stroke: #396c7c;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+}
+
+.camera-target {
+  fill: #151d2b;
+  stroke: #fff;
+  stroke-width: 1.3;
+}
+
+.camera-lamp {
+  fill: #216d5e;
 }
 
 .stage-explanation,

@@ -546,7 +546,24 @@
     specimenFull: document.getElementById("specimen-full"),
     specimenTop: document.getElementById("specimen-top"),
     specimenBottom: document.getElementById("specimen-bottom"),
-    fractureMark: document.getElementById("fracture-mark"),
+    forceDial: document.getElementById("force-dial"),
+    dialTicks: document.getElementById("force-dial-ticks"),
+    dialNeedle: document.getElementById("force-dial-needle"),
+    dialValue: document.getElementById("force-dial-value"),
+    strainInstrument: document.getElementById("strain-instrument"),
+    instrumentDetail: document.getElementById("strain-instrument-detail"),
+    instrumentStrain: document.getElementById("instrument-strain"),
+    instrumentStatus: document.getElementById("instrument-status"),
+    clipOnTool: document.getElementById("clip-on-tool"),
+    clipOnArms: document.getElementById("clip-on-arms"),
+    clipOnBody: document.getElementById("clip-on-body"),
+    clipOnCaption: document.getElementById("clip-on-caption"),
+    foilTool: document.getElementById("foil-tool"),
+    videoTool: document.getElementById("video-tool"),
+    videoSightlines: document.getElementById("video-sightlines"),
+    videoCamera: document.getElementById("video-camera"),
+    videoTargetTop: document.getElementById("video-target-top"),
+    videoTargetBottom: document.getElementById("video-target-bottom"),
     gaugeMarkTop: document.getElementById("gauge-mark-top"),
     gaugeMarkBottom: document.getElementById("gauge-mark-bottom"),
     utmMaterialLabel: document.getElementById("utm-material-label"),
@@ -609,6 +626,14 @@
     "Cold drawing": "The narrowed, molecularly oriented region is propagating along the polymer gauge section.",
     "Orientation hardening": "Alignment of polymer chains raises the engineering stress again before fracture.",
     Fractured: "The specimen has separated and the current load has fallen to zero. The final pre-separation curve point is recorded automatically, and the interpretation questions are unlocked."
+  };
+
+  const clipOnTravel = 2.5;
+  const foilStrainLimit = 0.01;
+  const instrumentDetails = {
+    "clip-on": `Contact arms measure extension between the gauge marks. This clip-on has ${clipOnTravel} mm of travel.`,
+    foil: "A bonded resistance grid measures local surface strain in microstrain. This model reads up to 10,000 µε during uniform deformation.",
+    video: "A camera tracks the two gauge marks without touching the specimen. Their changing separation gives gauge-length strain through necking."
   };
 
   function currentMaterial() {
@@ -909,6 +934,7 @@
 
     elements.materialSelect.disabled = !unloaded;
     elements.rateInput.disabled = !unloaded;
+    elements.strainInstrument.disabled = !(unloaded || loaded);
     elements.loadSpecimen.disabled = !unloaded;
     elements.startTest.disabled = !loaded;
     elements.pauseTest.disabled = !(running || paused);
@@ -961,12 +987,14 @@
 
   function renderDynamic() {
     const reading = currentReading();
-    renderLiveValues(reading);
+    const force = state.status === "fractured" || state.status === "unloaded" ? 0 : reading.loadKilonewtons;
+    renderLiveValues(reading, force);
+    renderForceDial(currentMaterial(), force);
     renderMachine(reading);
     drawGraph(reading);
   }
 
-  function renderLiveValues(reading) {
+  function renderLiveValues(reading, force) {
     if (state.status === "unloaded") {
       elements.timeValue.textContent = "0.00 s";
       elements.extensionValue.textContent = "0.000 mm";
@@ -980,7 +1008,7 @@
     elements.extensionValue.textContent = `${formatNumber(reading.extension, reading.extension < 0.1 ? 4 : 3)} mm`;
     elements.loadValue.textContent = state.status === "fractured"
       ? "0.000 kN (released)"
-      : `${formatNumber(reading.loadKilonewtons, 3)} kN`;
+      : `${formatNumber(force, 3)} kN`;
     const strainPercent = reading.strain * 100;
     const strainDigits = strainPercent < 0.1 ? 4 : strainPercent < 10 ? 3 : 1;
     elements.strainValue.textContent = `${formatNumber(strainPercent, strainDigits)}%`;
@@ -988,6 +1016,109 @@
       ? `${formatNumber(reading.stress, 1)} MPa at fracture`
       : `${formatNumber(reading.stress, 1)} MPa`;
     elements.stageValue.textContent = reading.stage;
+  }
+
+  function renderForceDial(material, force) {
+    const peak = material.properties.ultimateStress * areaFor(material) / 1000;
+    const majorStep = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20].find(step => step * 5 >= peak) || Math.ceil(peak / 5);
+    const fullScale = majorStep * 5;
+    if (Number(elements.forceDial.dataset.range) !== fullScale) {
+      elements.forceDial.dataset.range = String(fullScale);
+      const marks = document.createDocumentFragment();
+      const namespace = elements.utmSvg.namespaceURI;
+      for (let index = 0; index <= 20; index += 1) {
+        const angle = (-135 + 270 * index / 20) * Math.PI / 180;
+        const x = Math.sin(angle);
+        const y = -Math.cos(angle);
+        const major = index % 4 === 0;
+        const inside = major ? 41 : 45;
+        const mark = document.createElementNS(namespace, "line");
+        mark.setAttribute("x1", (inside * x).toFixed(2));
+        mark.setAttribute("y1", (inside * y).toFixed(2));
+        mark.setAttribute("x2", (49 * x).toFixed(2));
+        mark.setAttribute("y2", (49 * y).toFixed(2));
+        mark.setAttribute("class", major ? "dial-tick is-major" : "dial-tick");
+        marks.append(mark);
+        if (major) {
+          const number = document.createElementNS(namespace, "text");
+          number.setAttribute("x", (33 * x).toFixed(2));
+          number.setAttribute("y", (33 * y).toFixed(2));
+          number.setAttribute("class", "dial-tick-label");
+          number.textContent = String(Number((index / 4 * majorStep).toFixed(1)));
+          marks.append(number);
+        }
+      }
+      elements.dialTicks.replaceChildren(marks);
+    }
+    const angle = 270 * clamp(force / fullScale, 0, 1) - 135;
+    elements.dialNeedle.setAttribute("transform", `rotate(${angle.toFixed(2)})`);
+    elements.dialValue.textContent = `${formatNumber(force, 3)} kN`;
+  }
+
+  function renderStrainReading(material, reading) {
+    const instrument = elements.strainInstrument.value;
+    if (elements.instrumentDetail.textContent !== instrumentDetails[instrument]) {
+      elements.instrumentDetail.textContent = instrumentDetails[instrument];
+    }
+    if (state.status === "unloaded") {
+      elements.instrumentStrain.textContent = "—";
+      elements.instrumentStatus.textContent = "Load a specimen to get a strain reading.";
+      return null;
+    }
+
+    const gaugeLength = material.geometry.gaugeLength;
+    const uniformLimit = material.family === "polymer" ? material.properties.yieldStrain : material.properties.uniformStrain;
+    const limit = instrument === "clip-on"
+      ? clipOnTravel / gaugeLength
+      : instrument === "foil" ? Math.min(foilStrainLimit, uniformLimit) : Infinity;
+    const measuredStrain = Math.min(reading.strain, limit);
+    const percent = measuredStrain * 100;
+    elements.instrumentStrain.textContent = instrument === "foil"
+      ? `${formatNumber(measuredStrain * 1e6, 0)} µε`
+      : `${formatNumber(percent, percent < 0.1 ? 4 : 3)}% · ${formatNumber(measuredStrain * gaugeLength, 3)} mm`;
+
+    if (reading.strain > limit) {
+      const messages = {
+        "clip-on": "Travel limit reached. The clip-on is removed and its last reading is held.",
+        foil: uniformLimit < foilStrainLimit
+          ? "Deformation has localized. The last uniform surface strain reading is held."
+          : "Foil gauge range reached. Its last reading is held."
+      };
+      elements.instrumentStatus.textContent = messages[instrument];
+      return null;
+    }
+    if (state.status === "fractured") {
+      elements.instrumentStatus.textContent = "Last reading before separation.";
+      return null;
+    }
+    elements.instrumentStatus.textContent = instrument === "foil"
+      ? "Local axial surface strain"
+      : "Engineering strain and extension across the gauge length";
+    return instrument;
+  }
+
+  function drawStrainTool(instrument, top, bottom) {
+    elements.clipOnTool.toggleAttribute("hidden", instrument !== "clip-on");
+    elements.foilTool.toggleAttribute("hidden", instrument !== "foil");
+    elements.videoTool.toggleAttribute("hidden", instrument !== "video");
+    if (!instrument) return;
+
+    const middleY = ((top.y + bottom.y) / 2).toFixed(2);
+    const topY = top.y.toFixed(2);
+    const bottomY = bottom.y.toFixed(2);
+    if (instrument === "clip-on") {
+      elements.clipOnArms.setAttribute("d", `M${top.right.toFixed(2)} ${topY} H328 M${bottom.right.toFixed(2)} ${bottomY} H328`);
+      elements.clipOnBody.setAttribute("y", (top.y - 8).toFixed(2));
+      elements.clipOnBody.setAttribute("height", (bottom.y - top.y + 16).toFixed(2));
+      elements.clipOnCaption.setAttribute("y", (bottom.y + 23).toFixed(2));
+    } else if (instrument === "foil") {
+      elements.foilTool.setAttribute("transform", `translate(240 ${middleY})`);
+    } else {
+      elements.videoCamera.setAttribute("transform", `translate(0 ${middleY})`);
+      elements.videoSightlines.setAttribute("d", `M316 ${middleY} L240 ${topY} M316 ${middleY} L240 ${bottomY}`);
+      elements.videoTargetTop.setAttribute("cy", topY);
+      elements.videoTargetBottom.setAttribute("cy", bottomY);
+    }
   }
 
   function visualExtensionFor(material, progress) {
@@ -1093,12 +1224,15 @@
   function renderMachine(reading) {
     const material = currentMaterial();
     const isEmpty = state.status === "unloaded";
-    elements.utmSvg.classList.toggle("is-empty", isEmpty);
+    const instrument = renderStrainReading(material, reading);
+    const fractured = state.status === "fractured";
+    elements.gaugeMarkTop.toggleAttribute("hidden", isEmpty || fractured);
+    elements.gaugeMarkBottom.toggleAttribute("hidden", isEmpty || fractured);
     if (isEmpty) {
       elements.specimenFull.style.display = "none";
       elements.specimenTop.style.display = "none";
       elements.specimenBottom.style.display = "none";
-      elements.fractureMark.style.display = "none";
+      drawStrainTool(null);
       elements.crossheadGroup.setAttribute("transform", "translate(0 0)");
       elements.upperGripGroup.setAttribute("transform", "translate(0 0)");
       elements.utmMaterialLabel.textContent = "No specimen loaded";
@@ -1109,7 +1243,6 @@
     const visualExtension = visualExtensionFor(material, reading.progress);
     const rows = specimenPointRows(material, reading.strain, visualExtension);
     const middleIndex = Math.floor(rows.length / 2);
-    const fractured = state.status === "fractured";
 
     elements.crossheadGroup.setAttribute("transform", `translate(0 ${(-visualExtension).toFixed(2)})`);
     elements.upperGripGroup.setAttribute("transform", `translate(0 ${(-visualExtension).toFixed(2)})`);
@@ -1125,13 +1258,10 @@
       elements.specimenBottom.setAttribute("d", pathFromRows(bottomRows));
       elements.specimenTop.setAttribute("transform", "translate(0 -5)");
       elements.specimenBottom.setAttribute("transform", "translate(0 5)");
-      elements.fractureMark.style.display = "block";
-      elements.fractureMark.setAttribute("transform", `translate(0 ${(rows[middleIndex].y - 291).toFixed(2)})`);
     } else {
       elements.specimenFull.style.display = "block";
       elements.specimenTop.style.display = "none";
       elements.specimenBottom.style.display = "none";
-      elements.fractureMark.style.display = "none";
       elements.specimenFull.setAttribute("d", pathFromRows(rows));
       elements.specimenFull.removeAttribute("transform");
     }
@@ -1144,11 +1274,12 @@
       [elements.gaugeMarkTop, gaugeTop],
       [elements.gaugeMarkBottom, gaugeBottom]
     ].forEach(([line, row]) => {
-      line.setAttribute("x1", (row.left - 7).toFixed(2));
-      line.setAttribute("x2", (row.right + 7).toFixed(2));
+      line.setAttribute("x1", (row.left + 1).toFixed(2));
+      line.setAttribute("x2", (row.right - 1).toFixed(2));
       line.setAttribute("y1", row.y.toFixed(2));
       line.setAttribute("y2", row.y.toFixed(2));
     });
+    drawStrainTool(instrument, gaugeTop, gaugeBottom);
 
     const stressDescription = fractured
       ? `The final plotted stress immediately before separation was ${formatNumber(reading.stress, 1)} megapascals; current load is zero.`
@@ -1615,6 +1746,7 @@
   });
 
   elements.rateInput.addEventListener("input", updateRatePreview);
+  elements.strainInstrument.addEventListener("change", () => renderMachine(currentReading()));
   elements.rateInput.addEventListener("change", () => {
     if (!validateRate(true)) {
       return;

@@ -16,9 +16,9 @@
   <meta name="theme-color" content="#fdf6ec">
   <title>Uniaxial Tension Test | MSE Learning Lab</title>
   <link rel="stylesheet" href="../../css/style.css?v=20261126">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261127-instruments">
   <script src="../../js/main.js?v=2" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=20261127-instruments" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#tension-lab">Skip to tension test</a>
@@ -158,8 +158,17 @@
           </div>
         </div>
 
+        <label class="field-label strain-selector" for="strain-instrument">
+          <span>Strain instrument</span>
+          <select id="strain-instrument" aria-describedby="strain-instrument-detail">
+            <option value="clip-on">Clip-on extensometer</option>
+            <option value="foil">Bonded foil strain gauge</option>
+            <option value="video">Video extensometer</option>
+          </select>
+        </label>
+
         <div class="utm-frame">
-          <svg id="utm-svg" viewBox="0 0 480 520" role="img" aria-labelledby="utm-title utm-description">
+          <svg id="utm-svg" viewBox="0 -52 480 572" role="img" aria-labelledby="utm-title utm-description">
             <title id="utm-title">Universal testing machine with a tensile specimen</title>
             <desc id="utm-description">The machine is empty. Load a specimen to begin.</desc>
             <defs>
@@ -175,11 +184,11 @@
               </linearGradient>
             </defs>
 
-            <rect class="machine-backdrop" x="22" y="18" width="436" height="474" rx="22"></rect>
-            <rect class="machine-column" x="46" y="62" width="34" height="386" rx="10"></rect>
-            <rect class="machine-column" x="400" y="62" width="34" height="386" rx="10"></rect>
+            <rect class="machine-backdrop" x="22" y="-48" width="436" height="540" rx="22"></rect>
+            <rect class="machine-column" x="46" y="-17" width="34" height="465" rx="10"></rect>
+            <rect class="machine-column" x="400" y="-17" width="34" height="465" rx="10"></rect>
             <rect class="machine-base" x="28" y="438" width="424" height="34" rx="12"></rect>
-            <rect class="machine-top" x="28" y="42" width="424" height="34" rx="12"></rect>
+            <rect class="machine-top" x="28" y="-33" width="424" height="28" rx="12"></rect>
 
             <g id="crosshead-group">
               <rect class="crosshead" x="76" y="91" width="328" height="42" rx="9"></rect>
@@ -199,19 +208,50 @@
             <path id="specimen-full" class="specimen" d=""></path>
             <path id="specimen-top" class="specimen" d="" hidden></path>
             <path id="specimen-bottom" class="specimen" d="" hidden></path>
-            <g id="fracture-mark" hidden aria-hidden="true">
-              <path d="M220 295 L231 286 L239 298 L248 285 L260 296"></path>
-              <circle cx="212" cy="288" r="3"></circle>
-              <circle cx="269" cy="291" r="2.4"></circle>
+
+            <line class="gauge-mark" id="gauge-mark-top" x1="222" y1="253" x2="258" y2="253" hidden></line>
+            <line class="gauge-mark" id="gauge-mark-bottom" x1="222" y1="347" x2="258" y2="347" hidden></line>
+
+            <g id="force-dial" transform="translate(145 282)" aria-hidden="true">
+              <circle class="dial-casing" r="58"></circle>
+              <circle class="dial-face" r="53"></circle>
+              <g id="force-dial-ticks"></g>
+              <path id="force-dial-needle" class="dial-needle" d="M0 -43 L-2.6 8 H2.6 Z" transform="rotate(-135)"></path>
+              <circle class="dial-hub" r="4.5"></circle>
+              <text class="dial-caption" x="0" y="15" text-anchor="middle">FORCE</text>
+              <text class="dial-caption dial-number" id="force-dial-value" x="0" y="42" text-anchor="middle">0.000 kN</text>
             </g>
 
-            <line class="gauge-mark" id="gauge-mark-top" x1="222" y1="253" x2="258" y2="253"></line>
-            <line class="gauge-mark" id="gauge-mark-bottom" x1="222" y1="347" x2="258" y2="347"></line>
-            <path class="force-arrow" d="M110 223 V171 M110 171 l-8 13 M110 171 l8 13"></path>
-            <path class="force-arrow" d="M110 333 V385 M110 385 l-8 -13 M110 385 l8 -13"></path>
-            <text class="force-label" x="95" y="282" text-anchor="middle">F</text>
+            <g class="strain-tool" id="clip-on-tool" aria-hidden="true" hidden>
+              <path class="tool-arm" id="clip-on-arms"></path>
+              <rect class="tool-body" id="clip-on-body" x="318" width="20" rx="4"></rect>
+              <text class="tool-caption" id="clip-on-caption" x="328" text-anchor="middle">Clip-on</text>
+            </g>
+            <g class="strain-tool" id="foil-tool" aria-hidden="true" hidden>
+              <path class="tool-wire" d="M3 -6 C18 -6 24 -20 42 -10 S66 1 80 -12 M3 6 C18 6 24 -12 42 -4 S66 7 80 -6"></path>
+              <rect class="foil-patch" x="-3" y="-11" width="6" height="22" rx="1"></rect>
+              <path class="foil-grid" d="M-2 7V-7H0V7H2V-7"></path>
+              <text class="tool-caption" x="83" y="-16">Foil gauge</text>
+            </g>
+            <g class="strain-tool" id="video-tool" aria-hidden="true" hidden>
+              <path class="camera-sightline" id="video-sightlines"></path>
+              <circle class="camera-target" id="video-target-top" cx="240" r="3.5"></circle>
+              <circle class="camera-target" id="video-target-bottom" cx="240" r="3.5"></circle>
+              <g id="video-camera">
+                <path class="tool-body" d="M331 -8 H321 L316 -12 V12 L321 8 H331 Z"></path>
+                <rect class="tool-body" x="329" y="-15" width="43" height="30" rx="5"></rect>
+                <circle class="camera-lamp" cx="359" cy="-6" r="3"></circle>
+                <text class="tool-caption" x="346" y="32" text-anchor="middle">Video</text>
+              </g>
+            </g>
             <text class="material-label" id="utm-material-label" x="240" y="486" text-anchor="middle">No specimen loaded</text>
           </svg>
+        </div>
+
+        <div class="strain-instrument-reading">
+          <p class="instrument-detail" id="strain-instrument-detail">Measures extension between two points on the specimen.</p>
+          <p class="instrument-value"><span class="instrument-reading-label" id="instrument-reading-label">Strain reading</span><output id="instrument-strain" for="strain-instrument" aria-labelledby="instrument-reading-label" aria-live="off">&mdash;</output></p>
+          <p class="instrument-status" id="instrument-status">Load a specimen to attach the extensometer.</p>
         </div>
 
         <p class="stage-explanation" id="stage-explanation">
@@ -239,7 +279,7 @@
         </div>
         <p class="graph-caption">
           Engineering stress uses the original area A<sub>0</sub>; engineering
-          strain uses the original gauge length L<sub>0</sub>.
+          strain uses the original gauge length L<sub>0</sub> for every instrument selection.
         </p>
       </article>
     </section>
